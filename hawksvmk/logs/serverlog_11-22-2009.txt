@@ -1,0 +1,28 @@
+----------------------------
+HAWK'S VMK SERVER
+Sun Nov 22 16:34:37 PST 2009
+----------------------------
+
+Starting VMK server on port 4444...
+Server IP address: 169.234.108.111
+Server host name: Hawkster-PC
+Server started on port 4444
+Sending server IP to web service...
+Server IP set
+
+Listening for client connections...
+
+Client /169.234.108.164:4873 connected to server
+Accepted client socket
+Login message received from client
+Changing thread name: VMKPlayer
+Sending message (MessageLogin) to client...
+Client shutdown (VMKPlayer)
+Sending message (MessageRemoveUserFromRoom) to ALL clients...
+Client /169.234.113.243:4894 connected to server
+Accepted client socket
+Login message received from client
+Changing thread name: VMKPlayer
+Sending message (MessageLogin) to client...
+Client shutdown (VMKPlayer)
+Sending message (MessageRemoveUserFromRoom) to ALL clients...

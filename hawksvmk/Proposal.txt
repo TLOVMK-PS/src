@@ -1,0 +1,52 @@
+Okay, so VMK has been gone almost a year-and-a-half.  Groups of people have tried to re-make VMK with absolutely no success.  Well, none of them have been led by me...
+
+This was originally going to be my anniversary present to Emily with only Main Street and the Boot Hill Shooting Gallery, but then I started thinking about the times I'd talked with some friends about building VMK again.
+
+Screenshot: [url]http://img694.imageshack.us/img694/1173/screenshot2b.png[/url]
+
+What you're looking at is the Boot Hill Shooting Gallery guest room displayed in an in-house Room Viewer that I created.  I've also built an in-house Room Editor to create the isometric grid as well as place certain things.
+
+So how far along have I gotten thus far?
+
+[list]
+[*] Animation support
+[*] Sound support
+[*] Isometric grid created with Walk and Exit spaces
+[*] Low-level chat bubble support
+[*] Image files of almost all the original VMK Beta furniture
+[/list]
+
+I know it doesn't sound like much right now and the screenshot doesn't do it justice since the windmill is animated in the actual room and there are two sound files playing.
+
+I still have a lot of code to do as well as a lot of image files. It's my intention, however, to have several of the original VMK public rooms completed and interactive.  I also plan on including usable, walkable characters.  I intend to make this as close as I can to the original game.
+
+Planned features include:
+[list]
+[*] Create a customized character
+[*] Walk around with your character
+[*] Talk to other characters
+[*] Inventory
+[*] Trade
+[*] Create Guest rooms
+[/list]
+Now, what makes this different from VMK?  First, I'm doing this with entirely different technology and coding it from the ground up... none of the implementation code is the same as VMK's original code.  Second, this will be hosted on a private server and will be invite-only.  As it stands right now, it will NOT be open to the public.
+
+When I open it, it may very well just open as a low-level game with only the ability to walk around and talk.  However, I'll be adding more and more things to it as time progresses.  Have to start somewhere, right? :D
+
+Here's the current proposed staff list as it stands right now:
+
+[list]
+[*] JohnHolzer - HOST_Hawk
+[*] Neverafter - HOST_War
+[*] MajorMinor - HOST_Nicky
+[*] GoldStar - HOST_Tiedye
+[*] ShadowRebel - HOST_Alphie
+[*] SilentRose - HOST_Wish
+[*] GleeGeek - HOST_Glee
+[*] MischiefManaged - HOST_Moony
+[*] RPGSprinkles - HOST_Cat
+[*] SirBannedAlot - VMK_Mix
+[*] Aqua - VMK_Quail
+[/list]
+
+If you want a name change for your proposed HOST_ or VMK_ title, let me know or post it in this thread.  Also, if there's anybody you would like to add to the staff list, please post it here too :D

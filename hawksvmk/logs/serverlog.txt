@@ -1,0 +1,19 @@
+----------------------------
+HAWK'S VMK SERVER 1.0
+Sun Nov 22 22:31:00 PST 2009
+----------------------------
+
+Starting VMK server on port 80...
+Server IP address: 169.234.108.111
+Server host name: Hawkster-PC
+Server started on port 80
+Sending server IP to web service...
+Server IP set
+
+Listening for client connections...
+
+Client /169.234.108.111:52250 connected to server
+Accepted client socket
+Login message received from client
+Changing thread name: HOST_Hawk
+Client shutdown (HOST_Hawk)

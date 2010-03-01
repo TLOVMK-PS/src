@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Sun Nov 22 00:20:23 PST 2009
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=HawksVMKClient.jar
+manifest.mergeall=true
+manifest.mainclass=mainProgram.HawksVirtualMagicKingdom
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=<po|Isometric>~roomeditor/
+includes=

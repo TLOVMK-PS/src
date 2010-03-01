@@ -1,0 +1,1 @@
+C:\JavaStuff\Isometric>java -classpath ./bin mainProgram.VMKServer

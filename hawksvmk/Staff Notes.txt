@@ -1,0 +1,32 @@
+JohnHolzer - HOST_Hawk
+Neverafter - HOST_War
+
+MajorMinor - HOST_Nicky
+GoldStar - HOST_Tiedye
+ShadowRebel - HOST_Alphie
+
+SilentRose - HOST_Wish
+GleeGeek - HOST_Glee
+LightInTheDark - HOST_Riku
+RPGSprinkles - HOST_Cat
+MischiefManaged - HOST_Moony
+
+SirBannedAlot - VMK_Mix
+Aqua - VMK_Quail
+Writtenrevolution - VMK_Arch
+
+Staff break-down (top to bottom, in order of rank):
+
+Lead Developer: HOST_Hawk
+Lead Graphics Artist: HOST_War
+Lead HOSTs: HOST_Nicky, HOST_Tiedye, HOST_Alphie
+HOST staff: HOST_Wish, HOST_Glee, HOST_Riku, HOST_Cat, HOST_Moony
+VMK staff: VMK_Mix, VMK_Quail, VMK_Arch
+
+ID
+Username
+Password
+Email
+
+http://s98.photobucket.com/albums/l249/chescat/VMK/Clothes List/
+http://www.hawksvmk.com
