@@ -106,11 +106,14 @@ public class VMKServerThread extends Thread
 						// make sure we have an actual email address
 						if(!loginMessage.getEmail().equals(""))
 						{
+							// update the username:email mapping file
+							if(!VMKServerPlayerData.containsUsernameEmailMapping(this.getName()))
+							{
+								FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+							}
+							
 							// add the username:email mapping
 							VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
-							
-							// update the username:email mapping file
-							//FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
 						}
 
 						// load up the friends list in the VMKServerPlayerData class

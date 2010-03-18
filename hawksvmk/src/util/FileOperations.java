@@ -9,6 +9,7 @@ package util;
 import interfaces.GridViewable;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -571,7 +572,7 @@ public class FileOperations
 		
 		try
 		{
-			if(usernameEmailMappingWriter == null)
+			/*if(usernameEmailMappingWriter == null)
 			{
 				// load the mapping writer if we haven't already done so
 				usernameEmailMappingWriter = new PrintWriter(filename);
@@ -590,7 +591,15 @@ public class FileOperations
 			{
 				usernameEmailMappingWriter.println(username + ":" + email);
 				usernameEmailMappingWriter.flush();
-			}
+			}*/
+			
+			// open the file for appending
+			FileOutputStream appendedFile = new FileOutputStream(filename, true);
+			PrintWriter writer = new PrintWriter(appendedFile);
+			
+			// write the mapping to the file
+			writer.println(username + ":" + email);
+			writer.flush();
 		}
 		catch(Exception e)
 		{
