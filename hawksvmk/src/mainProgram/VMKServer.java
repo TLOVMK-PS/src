@@ -12,7 +12,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
+import sockets.VMKServerPlayerData;
 import sockets.VMKServerThread;
+import util.FileOperations;
 import util.StaticAppletData;
 
 public class VMKServer
@@ -80,6 +82,12 @@ public class VMKServer
 
         // load up the pin mappings
         StaticAppletData.createPinMappings();
+        
+        // load the username:email mappings
+        System.out.println("Loading username:email mappings...");
+        VMKServerPlayerData.setUsernameEmailMappings(FileOperations.loadUsernameEmailMappings());
+        System.out.println("Username:email mappings loaded");
+        System.out.println();
         
         System.out.println("Listening for client connections...");
         System.out.println();

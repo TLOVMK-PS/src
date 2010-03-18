@@ -13,12 +13,15 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import animations.Animation;
 import animations.AnimationFrame;
 import astar.AStarCharacter;
 
+import sockets.VMKServerPlayerData;
 import sounds.RepeatingSound;
 import sounds.SingleSound;
 import sounds.SoundPlayable;
@@ -26,6 +29,8 @@ import tiles.Tile;
 
 public class FileOperations
 {
+	private static PrintWriter usernameEmailMappingWriter = null; // writer for username:email mappings
+	
 	// save a file given a filename and a map of tiles
 	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles)
 	{
@@ -410,6 +415,186 @@ public class FileOperations
 		catch(Exception e)
 		{
 			System.out.println("ERROR IN saveCharacter()");
+			e.printStackTrace();
+		}
+	}
+	
+	// load a friends list given a player's email address
+	public static synchronized FriendsList loadFriendsList(String email)
+	{
+		String filename = "";
+		FriendsList friendsList = new FriendsList();
+		
+		if(!email.equals(""))
+		{
+			filename = "data/friends/" + email + ".dat"; // filename of the character file
+		}
+		else
+		{
+			filename = "data/friends/default.dat"; // load default character file
+		}
+		
+		Scanner fileReader;
+		
+		String friend = "";
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.startsWith("FRIEND: ")) // username
+					{
+						line = line.replaceAll("FRIEND: ", "");
+						friend = line;
+						
+						// add the friend to the list
+						friendsList.add(friend);
+					}
+				}
+				
+				fileReader.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty friends list
+				return friendsList;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadFriendsList(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new friends list from the file data
+		return friendsList;
+	}
+	
+	// save a friends list given an email address
+	public static synchronized void saveFriendsList(String email, FriendsList theFriendsList)
+	{
+		PrintWriter fileWriter;
+		String filename = "";
+		
+		FriendsList friendsList = theFriendsList;
+		if(friendsList == null)
+		{
+			// make sure we have an actual friends list and that the user just isn't offline
+			friendsList = loadFriendsList(email);
+		}
+		
+		if(!email.equals(""))
+		{
+			// save the friends list file
+			filename = "data/friends/" + email + ".dat";
+		}
+		else
+		{
+			// save the default friends list file
+			filename = "data/friends/default.dat";
+		}
+		
+		try
+		{
+			fileWriter = new PrintWriter(filename);
+			
+			// write out the friends list
+			for(int i = 0; i < friendsList.getFriends().size(); i++)
+			{
+				fileWriter.println("FRIEND: " + friendsList.getFriends().get(i));
+			}
+			
+			fileWriter.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN saveFriendsList()");
+			e.printStackTrace();
+		}
+	}
+	
+	// load username:email mappings
+	public static synchronized HashMap<String,String> loadUsernameEmailMappings()
+	{
+		String filename = "data/mappings/usernameToEmail.dat";
+		HashMap<String,String> usernameEmailMappings = new HashMap<String,String>();
+		
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(!line.equals("")) // username:email
+					{
+						String dataArray[] = line.split(":");
+						usernameEmailMappings.put(dataArray[0], dataArray[1]);
+					}
+				}
+				
+				fileReader.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty mappings list
+				return usernameEmailMappings;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadUsernameEmailMappings(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new mappings list from the file data
+		return usernameEmailMappings;
+	}
+	
+	// append a new username:email mapping to the mappings file
+	public static void addUsernameEmailMapping(String username, String email)
+	{
+		String filename = "data/mappings/usernameToEmail.dat";
+		
+		try
+		{
+			if(usernameEmailMappingWriter == null)
+			{
+				// load the mapping writer if we haven't already done so
+				usernameEmailMappingWriter = new PrintWriter(filename);
+				
+				// write out the entire HashMap first with an iterator before we can start appending
+				Iterator<Entry<String,String>> i = VMKServerPlayerData.getUsernameEmailMappings().entrySet().iterator();
+				while(i.hasNext())
+				{
+					Entry<String,String> entry = (Entry<String,String>)i.next();
+					usernameEmailMappingWriter.println(entry.getKey() + ":" + entry.getValue());
+				}
+			}
+
+			// append out the username and email data if it doesn't already exist
+			if(!VMKServerPlayerData.containsUsernameEmailMapping(username))
+			{
+				usernameEmailMappingWriter.println(username + ":" + email);
+				usernameEmailMappingWriter.flush();
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN saveUsernameEmailMappings()");
 			e.printStackTrace();
 		}
 	}

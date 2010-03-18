@@ -1,1 +1,3 @@
 C:\JavaStuff\Isometric>java -classpath ./bin mainProgram.VMKServer
+
+You can also just run the file "startServer.bat" and it will perform the above command automatically.

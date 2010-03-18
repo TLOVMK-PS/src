@@ -18,8 +18,11 @@ import astar.AStarCharacter;
 import roomviewer.RoomViewerUI;
 import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
+import sockets.messages.MessageAddFriendConfirmation;
+import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageGetCharactersInRoom;
+import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
@@ -150,6 +153,39 @@ public class VMKClientThread extends Thread
 					
 						// move the character in the current room
 						uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
+					}
+					else if(outputMessage instanceof MessageAddFriendRequest)
+					{
+						// add friend response received from server
+						MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)outputMessage;
+						
+						System.out.println("FRIENDSHIP REQUESTED. Add friend request response received from server");
+						
+						// add the friend request to the user's UI
+						uiObject.addFriendRequest(requestMsg.getSender());
+					}
+					else if(outputMessage instanceof MessageAddFriendConfirmation)
+					{
+						MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)outputMessage;
+						
+						// add friend response received from server
+						System.out.println("Add friend confirmation response (" + confirmMsg.isAccepted() + ") received from server for thread: " + this.getName());
+						
+						// add the new friend to the user's UI if the request was accepted
+						if(confirmMsg.isAccepted())
+						{
+							uiObject.addFriendToList(confirmMsg.getSender());
+						}
+					}
+					else if(outputMessage instanceof MessageGetFriendsList)
+					{
+						MessageGetFriendsList getFriendsMsg = (MessageGetFriendsList)outputMessage;
+						
+						// get friends list message received from server
+						System.out.println("Get friends list message received from server");
+						
+						// set the friends list
+						uiObject.setFriendsList(getFriendsMsg.getFriendsList());
 					}
 			    }
 		    }

@@ -47,6 +47,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import ui.WindowRoomDescription;
 import util.FileOperations;
 import util.AppletResourceLoader;
+import util.FriendsList;
 import util.StaticAppletData;
 
 public class RoomViewerUI extends Applet
@@ -619,6 +620,25 @@ public class RoomViewerUI extends Applet
 	public void updateCharacterInRoom(AStarCharacter character)
 	{
 		theGridView.updateCharacterInRoom(character);
+	}
+	
+	// add a friend request
+	public void addFriendRequest(String from)
+	{
+		// TODO: Play a sound and make the Messages button flash
+		theGridView.addFriendRequest(from);
+	}
+	
+	// add a user to this user's friends list
+	public void addFriendToList(String friend)
+	{
+		theGridView.addFriendToList(friend);
+	}
+	
+	// set this user's friends list
+	public void setFriendsList(FriendsList friendsList)
+	{
+		theGridView.setFriendsList(friendsList);
 	}
 	
 	// get a character in the room

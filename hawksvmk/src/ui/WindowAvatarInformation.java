@@ -16,14 +16,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import roomviewer.RoomViewerGrid;
+
 import util.AppletResourceLoader;
 import util.PinInfo;
 import util.StaticAppletData;
 
 public class WindowAvatarInformation extends JPanel
 {
-	Font textFont;
-	Font textFontBold;
+	private RoomViewerGrid gridObject;
+	
+	private Font textFont;
+	private Font textFontBold;
 	
 	private String username = "";
 	private boolean inactive = false; // TRUE if this is the current user's window
@@ -219,6 +223,9 @@ public class WindowAvatarInformation extends JPanel
 				else if(!inactive && askFriendRectangle.contains(e.getPoint()))
 				{
 					// clicked inside "Add To Friends List" rectangle
+					
+					// send a friend request message to the user
+					gridObject.sendFriendRequest(username);
 				}
 				else if(!inactive && tradeRectangle.contains(e.getPoint()))
 				{
@@ -312,6 +319,10 @@ public class WindowAvatarInformation extends JPanel
 			squares[i].setImage("");
 			squares[i].setIcon(null);
 		}
+	}
+	
+	public void setGridObject(RoomViewerGrid gridObject) {
+		this.gridObject = gridObject;
 	}
 }
 

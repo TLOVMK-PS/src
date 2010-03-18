@@ -83,6 +83,12 @@ public class VMKProtocol
         	theOutput = (MessageAddFriendConfirmation)theInput;
         	theOutput.setType("MessageAddFriendConfirmation");
         }
+        else if(theInput instanceof MessageGetFriendsList)
+        {
+        	// pass back the request
+        	theOutput = (MessageGetFriendsList)theInput;
+        	theOutput.setType("MessageGetFriendsList");
+        }
 
         return theOutput;
     }

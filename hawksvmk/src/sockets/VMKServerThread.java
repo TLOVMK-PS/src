@@ -15,8 +15,11 @@ import astar.AStarCharacter;
 
 import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
+import sockets.messages.MessageAddFriendConfirmation;
+import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageGetCharactersInRoom;
+import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
@@ -99,6 +102,19 @@ public class VMKServerThread extends Thread
 							character.setUsername(this.getName());
 							loginMessage.setCharacter(character);
 						}
+						
+						// make sure we have an actual email address
+						if(!loginMessage.getEmail().equals(""))
+						{
+							// add the username:email mapping
+							VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+							
+							// update the username:email mapping file
+							FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+						}
+
+						// send the player's friends list to him
+						sendMessageToClient(new MessageGetFriendsList(FileOperations.loadFriendsList(loginMessage.getEmail())));
 						
 						// send the login message back to the client
 						sendMessageToClient(loginMessage);
@@ -196,6 +212,38 @@ public class VMKServerThread extends Thread
 						// send the message to ALL clients
 						sendMessageToAllClients((MessageMoveCharacter)outputMessage);
 					}
+					else if(outputMessage instanceof MessageAddFriendRequest)
+					{
+						// add friend request message received from client
+						MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)outputMessage;
+						
+						// send the message to the recipient client
+						sendMessageToClient(requestMsg.getRecipient(), requestMsg);
+					}
+					else if(outputMessage instanceof MessageAddFriendConfirmation)
+					{
+						// add friend confirmation message received from client
+						MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)outputMessage;
+						
+						// check if the request has been accepted
+						if(confirmMsg.isAccepted())
+						{
+							// update the sender's friends list to include the new friend
+							VMKServerPlayerData.addFriendToList(confirmMsg.getSender(), confirmMsg.getRecipient());
+							
+							// update the recipient's friends list to include the new friend
+							VMKServerPlayerData.addFriendToList(confirmMsg.getRecipient(), confirmMsg.getSender());
+							
+							// update the sender's friends list file to include the new friend
+							FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getSender()), VMKServerPlayerData.getFriendsList(confirmMsg.getSender()));
+							
+							// udpate the recipient's friends list file to include the new friend
+							FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getRecipient()), VMKServerPlayerData.getFriendsList(confirmMsg.getRecipient()));
+						}
+						
+						// send the message back to the recipient
+						sendMessageToClient(confirmMsg.getRecipient(), confirmMsg);
+					}
 			    }
 		    }
 		    catch(ClassNotFoundException cne)
@@ -257,6 +305,20 @@ public class VMKServerThread extends Thread
     	{
     		System.out.println("Could not send message (" + m.getType() + ") to client");
     		e.printStackTrace();
+    	}
+    }
+    
+    // send a message to a specific client
+    public synchronized void sendMessageToClient(String client, Message m)
+    {
+    	for(int i = 0; i < serverThreads.size(); i++)
+    	{
+    		// find the client thread with the specific name
+    		if(serverThreads.get(i).getName().equals(client))
+    		{
+    			serverThreads.get(i).sendMessageToClient(m);
+    			break;
+    		}
     	}
     }
     

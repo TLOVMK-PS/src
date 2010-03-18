@@ -39,6 +39,8 @@ import astar.AStarCharacter;
 import astar.AStarPathfinder;
 
 import sockets.VMKServerPlayerData;
+import sockets.messages.MessageAddFriendConfirmation;
+import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sounds.RepeatingSound;
@@ -53,6 +55,7 @@ import ui.WindowRoomDescription;
 import ui.WindowSettings;
 import ui.WindowShop;
 import util.AppletResourceLoader;
+import util.FriendsList;
 
 public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 {
@@ -693,6 +696,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 
 		 // set up the messages window
 		 messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
+		 messagesWindow.setGridObject(this);
 		 messagesWindow.setVisible(false);
 		 add(messagesWindow);
 		 
@@ -725,6 +729,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 
 		 // set up the avatar information window
 		 avatarInfoWindow = new WindowAvatarInformation(textFont, textFontBold, 616, 306);
+		 avatarInfoWindow.setGridObject(this);
 		 avatarInfoWindow.setVisible(false);
 		 add(avatarInfoWindow);
 	}
@@ -972,6 +977,36 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		
 		// send the update message to the server
 		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
+	}
+	
+	// add a friend request to the Messages window
+	public void addFriendRequest(String from)
+	{
+		messagesWindow.addFriendRequest(from);
+	}
+	
+	// add a friend to the Messages window
+	public void addFriendToList(String friend)
+	{
+		messagesWindow.addFriendToList(friend);
+	}
+	
+	// send a friend request
+	public void sendFriendRequest(String recipient)
+	{
+		uiObject.sendMessageToServer(new MessageAddFriendRequest(myCharacter.getUsername(), recipient));
+	}
+	
+	// send a friend request confirmation
+	public void sendFriendRequestConfirmation(String recipient, boolean approved)
+	{
+		uiObject.sendMessageToServer(new MessageAddFriendConfirmation(myCharacter.getUsername(), recipient, approved));
+	}
+	
+	// set the player's friends list
+	public void setFriendsList(FriendsList friendsList)
+	{
+		messagesWindow.setFriendsList(friendsList);
 	}
 	
 	// check whether a given username has a staff prefix
