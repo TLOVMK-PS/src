@@ -39,6 +39,10 @@ public class FriendsList implements Serializable
 	// add a friend to the list
 	public void add(String friend)
 	{
-		friends.add(friend);
+		// make sure it isn't already in the ArrayList
+		if(!friends.contains(friend))
+		{
+			friends.add(friend);
+		}
 	}
 }

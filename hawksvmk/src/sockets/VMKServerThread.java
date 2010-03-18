@@ -110,11 +110,14 @@ public class VMKServerThread extends Thread
 							VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
 							
 							// update the username:email mapping file
-							FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+							//FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
 						}
 
+						// load up the friends list in the VMKServerPlayerData class
+						VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
+						
 						// send the player's friends list to him
-						sendMessageToClient(new MessageGetFriendsList(FileOperations.loadFriendsList(loginMessage.getEmail())));
+						sendMessageToClient(new MessageGetFriendsList(VMKServerPlayerData.getFriendsList(this.getName())));
 						
 						// send the login message back to the client
 						sendMessageToClient(loginMessage);
