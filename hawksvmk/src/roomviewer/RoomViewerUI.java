@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
@@ -48,6 +49,7 @@ import ui.WindowRoomDescription;
 import util.FileOperations;
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.MailMessage;
 import util.StaticAppletData;
 
 public class RoomViewerUI extends Applet
@@ -635,10 +637,33 @@ public class RoomViewerUI extends Applet
 		theGridView.addFriendToList(friend);
 	}
 	
+	// remove a friend from this user's friends list
+	public void removeFriendFromList(String friend)
+	{
+		theGridView.removeFriendFromList(friend);
+	}
+	
 	// set this user's friends list
 	public void setFriendsList(FriendsList friendsList)
 	{
 		theGridView.setFriendsList(friendsList);
+	}
+	
+	// add a mail message to the user's messages
+	public void addMailMessage(MailMessage m)
+	{
+		// TODO: Play a sound and make the Messages button flash
+		theGridView.addMailMessage(m);
+	}
+	
+	// set the mail messages for this user
+	public void setMailMessages(ArrayList<MailMessage> messages)
+	{
+		if(messages.size() > 0)
+		{
+			// TODO: Play a sound and make the Messages button flash
+			theGridView.setMailMessages(messages);
+		}
 	}
 	
 	// get a character in the room

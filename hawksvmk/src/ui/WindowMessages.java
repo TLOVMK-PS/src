@@ -9,22 +9,27 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.MailMessage;
 
 public class WindowMessages extends JPanel
 {
@@ -39,7 +44,21 @@ public class WindowMessages extends JPanel
 	private int width = 351;
 	private int height = 427;
 	private ImageIcon messagesWindowImage = AppletResourceLoader.getImageFromJar("img/ui/messages.png");
+	private ImageIcon noMessagesWindowImage = AppletResourceLoader.getImageFromJar("img/ui/no_messages.png");
+	private ImageIcon sendMessageWindowImage = AppletResourceLoader.getImageFromJar("img/ui/send_message.png");
 	private ImageIcon friendsWindowImage = AppletResourceLoader.getImageFromJar("img/ui/friends.png");
+	
+	// images/strings for viewing and replying to messages
+	private String noNewMessages = "You have no new messages.";
+	private JLabel messagesNotification = new JLabel(noNewMessages);
+	private ArrayList<MailMessage> messages = new ArrayList<MailMessage>();
+	private JLabel messageSender = new JLabel("");
+	private JLabel messageDate = new JLabel("");
+	private JLabel messageText = new JLabel("");
+	
+	private JLabel messageRecipient = new JLabel("");
+	private JTextArea messageReplyText = new JTextArea("");
+	private final int maxMessageCharacters = 350; // maximum number of characters in a message reply
 	
 	// images/strings for confirming/denying friend requests
 	private ArrayList<String> friendsItems = new ArrayList<String>();
@@ -49,6 +68,8 @@ public class WindowMessages extends JPanel
 	private ImageIcon friendsWindowHeaderOnImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_header_on.png");
 	private ImageIcon friendsWindowConfirmButtonsImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_confirm_buttons.png");
 	
+	private boolean deleteMode = false; // TRUE if we're deleting a friend
+	
 	private JLabel friendsRequestNotification = new JLabel(noNewFriends);
 	private JLabel friendsRequestHeader = new JLabel(friendsWindowHeaderOffImage);
 	private JLabel friendsRequestInformation = new JLabel("");
@@ -56,17 +77,29 @@ public class WindowMessages extends JPanel
 	
 	private JList friendsListBox = new JList();
 	private JScrollPane friendsScrollPane;
-	private JLabel backgroundLabel = new JLabel(messagesWindowImage);
+	private JLabel backgroundLabel = new JLabel(noMessagesWindowImage);
 	
 	private WindowMessages messagesWindow;
 	private Rectangle titleRectangle = new Rectangle(37, 7, 310, 42);
 	private Rectangle exitRectangle = new Rectangle(321, 15, 16, 16);
+	
 	private Rectangle messagesTabRectangle = new Rectangle(43, 58, 50, 11);
+	private Rectangle replyRectangle = new Rectangle(38, 376, 115, 17);
+	private Rectangle reportRectangle = new Rectangle(178, 350, 116, 16);
+	private Rectangle deleteMessageRectangle = new Rectangle(179, 376, 115, 16);
+	
+	private Rectangle sendReplyRectangle = new Rectangle(47, 375, 114, 17);
+	private Rectangle cancelMessageRectangle = new Rectangle(185, 375, 115, 17);
+	
 	private Rectangle friendsTabRectangle = new Rectangle(117, 58, 38, 11);
 	private Rectangle showFriendRequestRectangle = new Rectangle(238, 85, 67, 17);
 	private Rectangle acceptFriendRequestRectangle = new Rectangle(35, 379, 72, 16);
 	private Rectangle cancelFriendRequestRectangle = new Rectangle(117, 379, 71, 16);
 	private Rectangle ignoreFriendRequestRectangle = new Rectangle(240, 379, 71, 16);
+	
+	private Rectangle deleteFriendRectangle = new Rectangle(37, 377, 49, 17);
+	private Rectangle enterSameRoomRectangle = new Rectangle(199, 302, 115, 17);
+	private Rectangle sendMessageRectangle = new Rectangle(198, 377, 116, 17);
 	
 	public WindowMessages(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -98,16 +131,81 @@ public class WindowMessages extends JPanel
 		
 		this.setLayout(null);
 		
-		/*friendRequests.add("Dillhole");
-		friendRequests.add("Buttknocker");
-		friendRequests.add("Assmunch");
-		friendRequests.add("Fartknocker");
+		// message sender
+		messageSender.setBounds(80, 113, 269, 16);
+		messageSender.setBackground(new Color(6, 33, 86));
+		messageSender.setForeground(Color.WHITE);
+		messageSender.setFont(textFont);
+		add(messageSender);
 		
-		// Friends list box
-		for(int i = 0; i < 50; i++)
-		{
-			friendsItems.add("Item " + i);
-		}*/
+		// message date
+		messageDate.setBounds(80, 127, 269, 16);
+		messageDate.setBackground(new Color(6, 33, 86));
+		messageDate.setForeground(Color.WHITE);
+		messageDate.setFont(textFont);
+		add(messageDate);
+		
+		// message text
+		messageText.setBounds(35, 152, 260, 187);
+		messageText.setBackground(Color.GRAY);//(new Color(6, 33, 86));
+		messageText.setForeground(Color.WHITE);
+		messageText.setFont(textFont);
+		messageText.setHorizontalAlignment(JLabel.LEFT);
+		messageText.setVerticalAlignment(JLabel.TOP);
+		add(messageText);
+		
+		// add the message notification
+		messagesNotification.setBounds(48, 83, 238, 16);
+		messagesNotification.setBackground(new Color(41, 85, 149));
+		messagesNotification.setForeground(Color.white);
+		messagesNotification.setFont(textFont);
+		messagesNotification.setVerticalAlignment(JLabel.TOP);
+		messagesNotification.setHorizontalAlignment(JLabel.CENTER);
+		add(messagesNotification);
+		
+		// add the recipient
+		messageRecipient.setBounds(72, 118, 238, 16);
+		messageRecipient.setBackground(new Color(152, 190, 255));
+		messageRecipient.setForeground(Color.black);
+		messageRecipient.setFont(textFont);
+		messageRecipient.setHorizontalAlignment(JLabel.LEFT);
+		messageRecipient.setVerticalAlignment(JLabel.TOP);
+		messageRecipient.setVisible(false);
+		add(messageRecipient);
+		
+		// add the reply text section
+		messageReplyText.setBounds(51, 160, 247, 182);
+		messageReplyText.setBackground(new Color(152, 190, 255));
+		messageReplyText.setForeground(Color.BLACK);
+		messageReplyText.setFont(textFont);
+		messageReplyText.setBorder(null);
+		messageReplyText.setLineWrap(true);
+		messageReplyText.addKeyListener(new KeyListener()
+	     {
+	    	 public void keyPressed(KeyEvent e)
+	    	 {
+	    		 if(e.getKeyCode() == KeyEvent.VK_ENTER)
+				 {
+					 // don't allow ENTER
+					 e.consume();
+				 }
+	    	 }
+	    	 public void keyTyped(KeyEvent e)
+	    	 {
+				 // only allow a certain number of characters
+				 if(messageReplyText.getText().length() > maxMessageCharacters)
+				 {
+					 e.consume();
+				 }
+	    	 }
+	    	 public void keyReleased(KeyEvent e)
+	    	 {
+	    	 }
+	     });
+		messageReplyText.setVisible(false);
+		add(messageReplyText);
+		
+		// friends list
 		friendsListBox.setBounds(23, 111, 269, 169);
 		friendsListBox.setBackground(new Color(6, 33, 86));
 		friendsListBox.setForeground(Color.WHITE);
@@ -175,7 +273,30 @@ public class WindowMessages extends JPanel
 					friendsRequestNotification.setVisible(false);
 					friendsRequestConfirmationButtons.setVisible(false);
 					friendsScrollPane.setVisible(false);
-					backgroundLabel.setIcon(messagesWindowImage);
+					
+					// check if we actually have messages to display
+					if(messages.size() > 0)
+					{
+						messageSender.setVisible(true);
+						messageDate.setVisible(true);
+						messagesNotification.setVisible(true);
+						messageText.setVisible(true);
+						messageRecipient.setVisible(false);
+						messageReplyText.setVisible(false);
+						
+						backgroundLabel.setIcon(messagesWindowImage);
+					}
+					else
+					{
+						messageSender.setVisible(false);
+						messageDate.setVisible(false);
+						messagesNotification.setVisible(true);
+						messageText.setVisible(false);
+						messageRecipient.setVisible(false);
+						messageReplyText.setVisible(false);
+						
+						backgroundLabel.setIcon(noMessagesWindowImage);
+					}
 				}
 				else if(friendsTabRectangle.contains(e.getPoint()))
 				{
@@ -183,7 +304,143 @@ public class WindowMessages extends JPanel
 					friendsRequestHeader.setVisible(true);
 					friendsRequestNotification.setVisible(true);
 					friendsScrollPane.setVisible(true);
+					
+					messageSender.setVisible(false);
+					messageDate.setVisible(false);
+					messagesNotification.setVisible(false);
+					messageText.setVisible(false);
+					messageRecipient.setVisible(false);
+					messageReplyText.setVisible(false);
+					
 					backgroundLabel.setIcon(friendsWindowImage);
+				}
+				else if(replyRectangle.contains(e.getPoint()) && messageText.isVisible())
+				{
+					// make sure this isn't an automated message from VMK Staff
+					if(!messageSender.getText().equals("VMK Staff"))
+					{
+						// hide the message information
+						messageSender.setVisible(false);
+						messageDate.setVisible(false);
+						messagesNotification.setVisible(false);
+						messageText.setVisible(false);
+						
+						// show the recipient
+						messageRecipient.setText(messageSender.getText());
+						messageRecipient.setVisible(true);
+						messageReplyText.setVisible(true);
+						
+						// reply to the message
+						backgroundLabel.setIcon(sendMessageWindowImage);
+					}
+				}
+				else if(reportRectangle.contains(e.getPoint()) && messageText.isVisible())
+				{
+					// make sure this isn't an automated message from VMK Staff
+					if(!messageSender.getText().equals("VMK Staff"))
+					{
+						// report the message
+					}
+				}
+				else if(deleteMessageRectangle.contains(e.getPoint()) && messageText.isVisible())
+				{	
+					// delete the message if it's visible
+					messages.remove(messages.size() - 1);
+					
+					// send a "Save Mail" message back to the server
+					gridObject.sendSaveMailMessage(messages);
+					
+					// update the Messages tab
+					updateMessagesTab();
+					
+					// show the next message
+					if(messages.size() > 0)
+					{
+						// get the next message
+						MailMessage m = messages.get(messages.size() - 1);
+						
+						// set the information
+						messageSender.setText(m.getSender());
+						messageDate.setText(m.getDateSent().toString());
+						messageText.setText(m.getMessage());
+						
+						// change the background window image to the "Messages" version
+						backgroundLabel.setIcon(messagesWindowImage);
+					}
+					else
+					{
+						// clear the information
+						messageSender.setText("");
+						messageDate.setText("");
+						messageText.setText("");
+						
+						// hide the message controls
+						messageSender.setVisible(false);
+						messageDate.setVisible(false);
+						messageText.setVisible(false);
+						
+						// change the background window image to the "No Messages" version
+						backgroundLabel.setIcon(noMessagesWindowImage);
+					}
+				}
+				else if(sendReplyRectangle.contains(e.getPoint()) && !messageReplyText.getText().equals("") && messageReplyText.isVisible())
+				{
+					// send the reply message to the server
+					gridObject.sendMailMessage(messageRecipient.getText(), messageReplyText.getText());
+					
+					// clear the message data
+					messageRecipient.setText("");
+					messageReplyText.setText("");
+					
+					// hide the reply controls
+					messageRecipient.setVisible(false);
+					messageReplyText.setVisible(false);
+					
+					// check to see if we have messages to display
+					if(messages.size() > 0)
+					{
+						// show the messages controls
+						messageSender.setVisible(true);
+						messageDate.setVisible(true);
+						messagesNotification.setVisible(true);
+						messageText.setVisible(true);
+						
+						// set the window image to the "Messages" version
+						backgroundLabel.setIcon(messagesWindowImage);
+					}
+					else
+					{
+						messagesNotification.setVisible(true);
+						backgroundLabel.setIcon(noMessagesWindowImage);
+					}
+				}
+				else if(cancelMessageRectangle.contains(e.getPoint()) && messageReplyText.isVisible())
+				{
+					// cancel the message
+					messageRecipient.setText("");
+					messageReplyText.setText("");
+					
+					// hide the reply controls
+					messageRecipient.setVisible(false);
+					messageReplyText.setVisible(false);
+					
+					// check to see if we have messages to display
+					if(messages.size() > 0)
+					{
+						// show the messages controls
+						messageSender.setVisible(true);
+						messageDate.setVisible(true);
+						messagesNotification.setVisible(true);
+						messageText.setVisible(true);
+						
+						// set the window image to the "Messages" version
+						backgroundLabel.setIcon(messagesWindowImage);
+					}
+					else
+					{
+						messagesNotification.setVisible(true);
+						backgroundLabel.setIcon(noMessagesWindowImage);
+					}
 				}
 				else if(showFriendRequestRectangle.contains(e.getPoint()) && friendsRequestHeader.isVisible())
 				{
@@ -207,19 +464,43 @@ public class WindowMessages extends JPanel
 					// accept the friend request
 					System.out.println("Clicked the OK button in Friends tab");
 					
-					// add the user to the friends list
-					friendsItems.add(friendRequests.get(friendRequests.size() - 1));
-					friendsListBox.setListData(friendsItems.toArray());
+					// check if delete mode has been activated
+					if(!deleteMode)
+					{
+						// add the user to the friends list
+						friendsItems.add(friendRequests.get(friendRequests.size() - 1));
+						friendsListBox.setListData(friendsItems.toArray());
+						
+						// send the confirmation message to the server (Accepted)
+						gridObject.sendFriendRequestConfirmation(friendRequests.get(friendRequests.size() - 1), true);
+						
+						// remove the request
+						friendRequests.remove(friendRequests.size() - 1);
+						
+						// update the friends request notifications
+						setRequestInformationMessage();
+						updateFriendsRequestTab();
+					}
+					else
+					{
+						// send the friend deletion message to the server
+						gridObject.sendDeleteFriendMessage(friendsItems.get(friendsListBox.getSelectedIndex()));
+						
+						// remove the friend
+						friendsItems.remove(friendsListBox.getSelectedIndex());
+						
+						// update the friends list box
+						friendsListBox.setListData(friendsItems.toArray());
+						
+						// hide the notification(s)
+						friendsRequestInformation.setVisible(false);
+						friendsRequestConfirmationButtons.setVisible(false);
+						
+						// show the friends list again
+						friendsScrollPane.setVisible(true);
+					}
 					
-					// send the confirmation message to the server (Accepted)
-					gridObject.sendFriendRequestConfirmation(friendRequests.get(friendRequests.size() - 1), true);
-					
-					// remove the request
-					friendRequests.remove(friendRequests.size() - 1);
-					
-					// update the friends request notifications
-					setRequestInformationMessage();
-					updateFriendsRequestTab();
+					deleteMode = false;
 				}
 				else if(cancelFriendRequestRectangle.contains(e.getPoint()) && friendsRequestConfirmationButtons.isVisible())
 				{
@@ -232,21 +513,88 @@ public class WindowMessages extends JPanel
 					
 					// show the friends list again
 					friendsScrollPane.setVisible(true);
+					
+					// reset delete mode
+					deleteMode = false;
 				}
 				else if(ignoreFriendRequestRectangle.contains(e.getPoint()) && friendsRequestConfirmationButtons.isVisible())
 				{
 					// ignore the friend request
 					System.out.println("Clicked the Ignore button in Friends tab");
 					
-					// send the confirmation message to the server (Rejected)
-					gridObject.sendFriendRequestConfirmation(friendRequests.get(friendRequests.size() - 1), false);
+					// check if delete mode has been activated
+					if(!deleteMode)
+					{
+						// send the confirmation message to the server (Rejected)
+						gridObject.sendFriendRequestConfirmation(friendRequests.get(friendRequests.size() - 1), false);
+						
+						// remove the request
+						friendRequests.remove(friendRequests.size() - 1);
+						
+						// update the friends request notifications
+						setRequestInformationMessage();
+						updateFriendsRequestTab();
+					}
+					else
+					{
+						// cancel the deletion
+						// hide the notification(s)
+						friendsRequestInformation.setVisible(false);
+						friendsRequestConfirmationButtons.setVisible(false);
+						
+						// show the friends list again
+						friendsScrollPane.setVisible(true);
+					}
 					
-					// remove the request
-					friendRequests.remove(friendRequests.size() - 1);
+					deleteMode = false;
+				}
+				else if(deleteFriendRectangle.contains(e.getPoint()) && friendsScrollPane.isVisible())
+				{
+					// make sure we have a selected friend
+					if(friendsListBox.getSelectedIndex() != -1)
+					{
+						// set delete mode
+						deleteMode = true;
+						
+						// delete the selected friend
+						System.out.println("Clicked the Delete button in Friends tab");
+						
+						// change the notification
+						setDeletionInformationMessage(friendsItems.get(friendsListBox.getSelectedIndex()));
+						
+						// hide the controls and show the notification
+						friendsRequestInformation.setVisible(true);
+						friendsRequestConfirmationButtons.setVisible(true);
+						friendsScrollPane.setVisible(false);
+					}
+				}
+				else if(enterSameRoomRectangle.contains(e.getPoint()) && friendsScrollPane.isVisible())
+				{
+					// enter the same room as the selected friend
+					System.out.println("Clicked the Enter Same Room button in Friends tab");
+				}
+				else if(sendMessageRectangle.contains(e.getPoint()) && friendsScrollPane.isVisible())
+				{
+					// send a message to the selected friend
+					System.out.println("Clicked the Send Message button in Friends tab");
 					
-					// update the friends request notifications
-					setRequestInformationMessage();
-					updateFriendsRequestTab();
+					// make sure a friend has been selected
+					if(friendsListBox.getSelectedIndex() != -1)
+					{
+						// hide the friend information
+						friendsRequestHeader.setVisible(false);
+						friendsRequestNotification.setVisible(false);
+						friendsRequestConfirmationButtons.setVisible(false);
+						friendsScrollPane.setVisible(false);
+						
+						// show the recipient
+						messageRecipient.setText(friendsItems.get(friendsListBox.getSelectedIndex()));
+						messageRecipient.setVisible(true);
+						messageReplyText.setVisible(true);
+						
+						// send him a message
+						backgroundLabel.setIcon(sendMessageWindowImage);
+					}
 				}
 			}
 			public void mouseEntered(MouseEvent e) {}
@@ -307,6 +655,17 @@ public class WindowMessages extends JPanel
 		}
 	}
 	
+	// set the informational message for a friend deletion and handle its visibility
+	private void setDeletionInformationMessage(String friend)
+	{
+		String informationText = "<html><center><b>" + friend + "</b><br>";
+		informationText += "Are you sure you want to delete this friend?<br><br>";
+		informationText += "If you click OK, " + friend + " will disappear from your friends list and you will disappear from " + friend + "'s list.<br><br>";
+		informationText += " Deleting " + friend + " will prevent them from sending you messages and following you into rooms while you're online in the kingdom.";
+		informationText += "</center></html>";
+		friendsRequestInformation.setText(informationText);
+	}
+	
 	// change the status and number of friend requests
 	private void updateFriendsRequestTab()
 	{
@@ -334,6 +693,85 @@ public class WindowMessages extends JPanel
 		}
 	}
 	
+	// change the status and number of new messages
+	private void updateMessagesTab()
+	{
+		if(messages.size() > 0)
+		{
+			// new messages
+			messagesNotification.setText("You have " + messages.size() + " new message");
+			if(messages.size() > 1)
+			{
+				// pluralize the messages correctly
+				messagesNotification.setText(messagesNotification.getText() + "s.");
+			}
+			else
+			{
+				// just add the period since it's only one new message
+				messagesNotification.setText(messagesNotification.getText() + ".");
+			}
+			//friendsRequestHeader.setIcon(friendsWindowHeaderOnImage);
+		}
+		else
+		{
+			// no new messages
+			messagesNotification.setText(noNewMessages);
+			//friendsRequestHeader.setIcon(friendsWindowHeaderOffImage);
+		}
+	}
+	
+	// add a mail message to the ArrayList
+	public void addMailMessage(MailMessage message)
+	{
+		messages.add(message);
+		
+		// show the most recent message in the window
+		messageSender.setText(message.getSender());
+		messageDate.setText(message.getDateSent().toString());
+		messageText.setText(message.getMessage());
+		
+		// make sure we aren't on the Friends tab
+		if(!friendsScrollPane.isVisible())
+		{
+			// make the message information visible
+			messageSender.setVisible(true);
+			messageDate.setVisible(true);
+			messageText.setVisible(true);
+			
+			// change the window background to the "Messages" version
+			backgroundLabel.setIcon(messagesWindowImage);
+		}
+		
+		// update the Messages tab to show new messages
+		updateMessagesTab();
+	}
+	
+	// set the user's mail messages in the ArrayList
+	public void setMailMessages(ArrayList<MailMessage> messages)
+	{
+		this.messages = messages;
+		
+		// make sure we have messages to display
+		if(messages.size() > 0)
+		{
+			// show the most recent message in the window
+			messageSender.setText(messages.get(messages.size() - 1).getSender());
+			messageDate.setText(messages.get(messages.size() - 1).getDateSent());
+			messageText.setText(messages.get(messages.size() - 1).getMessage());
+			
+			// show the message controls
+			messageSender.setVisible(true);
+			messageDate.setVisible(true);
+			messageText.setVisible(true);
+			
+			// change the window background to the "Messages" version
+			backgroundLabel.setIcon(messagesWindowImage);
+			
+			// update the Messages tab to show new messages
+			updateMessagesTab();
+		}
+	}
+	
 	// add a friend request to the ArrayList
 	public void addFriendRequest(String from)
 	{
@@ -348,6 +786,16 @@ public class WindowMessages extends JPanel
 	{
 		// add the friend
 		friendsItems.add(friend);
+		
+		// update the list to reflect the changes
+		friendsListBox.setListData(friendsItems.toArray());
+	}
+	
+	// remove a friend from the ArrayList
+	public void removeFriendFromList(String friend)
+	{
+		// remove the friend
+		friendsItems.remove(friend);
 		
 		// update the list to reflect the changes
 		friendsListBox.setListData(friendsItems.toArray());

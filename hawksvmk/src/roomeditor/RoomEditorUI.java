@@ -164,12 +164,12 @@ public class RoomEditorUI extends JFrame
         	    int returnVal = chooser.showOpenDialog(myRoomEditorWindow);
         	    if(returnVal == JFileChooser.APPROVE_OPTION)
         	    {
-        	    	filename = chooser.getSelectedFile().getPath();
+        	    	filename = "file:///" + chooser.getSelectedFile().getPath();
         	    	
         	    	System.out.println("You chose to load this file: " + filename);
         	    	
         	    	// load the room
-        	    	//FileOperations.loadFile(resourceLoader.getFileFromJar(filename), theGridView);
+        	    	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
         	    }
         	}
         });
@@ -209,8 +209,8 @@ public class RoomEditorUI extends JFrame
         this.getContentPane().add(saveRoomButton);
         
         // pack the window and display it
-        this.setName("Room Editor");
-        this.setTitle("Room Editor");
+        this.setName("Hawk's VMK Room Editor v1.0");
+        this.setTitle("Hawk's VMK Room Editor v1.0");
         this.pack();
         this.setVisible(true);
         

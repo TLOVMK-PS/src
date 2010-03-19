@@ -13,9 +13,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 import animations.Animation;
@@ -30,7 +29,7 @@ import tiles.Tile;
 
 public class FileOperations
 {
-	private static PrintWriter usernameEmailMappingWriter = null; // writer for username:email mappings
+	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
 	
 	// save a file given a filename and a map of tiles
 	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles)
@@ -270,8 +269,58 @@ public class FileOperations
 		return animation;
 	}
 	
+	// create a new player with blank data files
+	private static synchronized void createNewPlayerFiles(String username, String email)
+	{
+		PrintWriter fileWriter = null;
+		String filename = "";
+		
+		try
+		{
+			// character file
+			filename = "data/characters/" + email + ".dat";
+			fileWriter = new PrintWriter(filename);
+			fileWriter.println("USERNAME: " + username);
+			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
+			fileWriter.println("BADGE: badge_2"); // give the user a "Here From Day One" badge
+			
+			// print out empty badge entries
+			for(int i = 0; i < StaticAppletData.MAX_DISPLAYABLE_BADGES - 1; i++)
+			{
+				fileWriter.println("BADGE: ");
+			}
+			
+			// print out empty pin entries
+			for(int j = 0; j < StaticAppletData.MAX_DISPLAYABLE_PINS; j++)
+			{
+				fileWriter.println("PIN: ");
+			}
+			fileWriter.close();
+			
+			// friends file
+			filename = "data/friends/" + email + ".dat";
+			fileWriter = new PrintWriter(filename);
+			fileWriter.println(); // blank friends file
+			fileWriter.close();
+			
+			// messages file (give them one new message from VMK Staff)
+			filename = "data/messages/" + email + ".dat";
+			fileWriter = new PrintWriter(filename);
+			fileWriter.println("SENDER: VMK Staff");
+			fileWriter.println("DATE: " + new Date().toString());
+			fileWriter.println("BODY: " + newPlayerMessage);
+			fileWriter.println();
+			fileWriter.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN createNewPlayerFiles()");
+			e.printStackTrace();
+		}
+	}
+	
 	// load a character given an email address
-	public static synchronized AStarCharacter loadCharacter(String email)
+	public static synchronized AStarCharacter loadCharacter(String username, String email)
 	{
 		String filename = "";
 		
@@ -284,9 +333,15 @@ public class FileOperations
 			filename = "data/characters/default.dat"; // load default character file
 		}
 		
+		// make sure the files exist; if not, create the necessary files
+		if(!(new File(filename).exists()))
+		{
+			// create a new default player with the given email address
+			createNewPlayerFiles(username, email);
+		}
+		
 		Scanner fileReader;
 		
-		String username = "";
 		String signature = "";
 		
 		PinInfo displayedBadges[] = new PinInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
@@ -489,6 +544,8 @@ public class FileOperations
 		{
 			// make sure we have an actual friends list and that the user just isn't offline
 			friendsList = loadFriendsList(email);
+			
+			System.out.println("Loading friends list from file for email: " + email + "...");
 		}
 		
 		if(!email.equals(""))
@@ -501,6 +558,8 @@ public class FileOperations
 			// save the default friends list file
 			filename = "data/friends/default.dat";
 		}
+		
+		System.out.println("Saving friends list: " + filename);
 		
 		try
 		{
@@ -565,34 +624,167 @@ public class FileOperations
 		return usernameEmailMappings;
 	}
 	
+	// load a user's mail messages
+	public static ArrayList<MailMessage> loadMailMessages(String username, String email)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// save the mail messages file
+			filename = "data/messages/" + email + ".dat";
+		}
+		else
+		{
+			// save the default mail messages file
+			filename = "data/messages/default.dat";
+		}
+		
+		ArrayList<MailMessage> messages = new ArrayList<MailMessage>();
+		String sender = "";
+		String dateSent = "";
+		String bodyText = "";
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(!line.equals(""))
+					{
+						if(line.startsWith("SENDER: "))
+						{
+							// get the sender
+							line = line.replaceAll("SENDER: ", "");
+							sender = line;
+						}
+						else if(line.startsWith("DATE: "))
+						{
+							// get the date sent
+							line = line.replaceAll("DATE: ", "");
+							dateSent = line;
+						}
+						else if(line.startsWith("BODY: "))
+						{
+							// get the body text
+							line = line.replaceAll("BODY: ", "");
+							bodyText = line;
+							
+							// add a new mail message to the array list
+							messages.add(new MailMessage(sender, username, bodyText, dateSent));
+						}
+					}
+				}
+				
+				fileReader.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty messages list
+				return messages;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadMailMessages(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new messages list from the file data
+		return messages;
+	}
+	
+	// append a new mail message to a user's messages file
+	public static void addMailMessage(String email, String sender, String body, String dateSent)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// save the mail messages file
+			filename = "data/messages/" + email + ".dat";
+		}
+		else
+		{
+			// save the default mail messages file
+			filename = "data/messages/default.dat";
+		}
+		
+		try
+		{	
+			// open the file for appending
+			FileOutputStream appendedFile = new FileOutputStream(filename, true);
+			PrintWriter writer = new PrintWriter(appendedFile);
+			
+			// write the message to the file
+			writer.println("SENDER: " + sender);
+			writer.println("DATE: " + dateSent);
+			writer.println("BODY: " + body);
+			writer.println();
+			writer.flush();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN addMailMessage()");
+			e.printStackTrace();
+		}
+	}
+	
+	// save the user's mail messages to a file
+	public static void saveMailMessages(String email, ArrayList<MailMessage> messages)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// save the mail messages file
+			filename = "data/messages/" + email + ".dat";
+		}
+		else
+		{
+			// save the default mail messages file
+			filename = "data/messages/default.dat";
+		}
+		
+		try
+		{	
+			// open the file for writing
+			PrintWriter writer = new PrintWriter(filename);
+			
+			// write the messages to the file
+			for(int i = 0; i < messages.size(); i++)
+			{
+				MailMessage m = messages.get(i);
+				writer.println("SENDER: " + m.getSender());
+				writer.println("DATE: " + m.getDateSent());
+				writer.println("BODY: " + m.getMessage());
+				writer.println();
+			}
+			
+			writer.flush();
+			writer.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN saveMailMessages()");
+			e.printStackTrace();
+		}
+	}
+	
 	// append a new username:email mapping to the mappings file
 	public static void addUsernameEmailMapping(String username, String email)
 	{
 		String filename = "data/mappings/usernameToEmail.dat";
 		
 		try
-		{
-			/*if(usernameEmailMappingWriter == null)
-			{
-				// load the mapping writer if we haven't already done so
-				usernameEmailMappingWriter = new PrintWriter(filename);
-				
-				// write out the entire HashMap first with an iterator before we can start appending
-				Iterator<Entry<String,String>> i = VMKServerPlayerData.getUsernameEmailMappings().entrySet().iterator();
-				while(i.hasNext())
-				{
-					Entry<String,String> entry = (Entry<String,String>)i.next();
-					usernameEmailMappingWriter.println(entry.getKey() + ":" + entry.getValue());
-				}
-			}
-
-			// append out the username and email data if it doesn't already exist
-			if(!VMKServerPlayerData.containsUsernameEmailMapping(username))
-			{
-				usernameEmailMappingWriter.println(username + ":" + email);
-				usernameEmailMappingWriter.flush();
-			}*/
-			
+		{	
 			// open the file for appending
 			FileOutputStream appendedFile = new FileOutputStream(filename, true);
 			PrintWriter writer = new PrintWriter(appendedFile);

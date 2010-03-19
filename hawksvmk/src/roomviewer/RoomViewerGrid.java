@@ -11,39 +11,33 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Panel;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import chat.ChatBubble;
 import chat.ChatBubbles;
 
 import animations.Animation;
-import animations.WindmillAnimation;
 import astar.AStarCharacter;
-import astar.AStarPathfinder;
 
-import sockets.VMKServerPlayerData;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageMoveCharacter;
+import sockets.messages.MessageRemoveFriend;
+import sockets.messages.MessageSaveMailMessages;
+import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
-import sounds.RepeatingSound;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowAvatarInformation;
@@ -56,6 +50,7 @@ import ui.WindowSettings;
 import ui.WindowShop;
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.MailMessage;
 
 public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 {
@@ -991,6 +986,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		messagesWindow.addFriendToList(friend);
 	}
 	
+	// remove a friend from the Messages window
+	public void removeFriendFromList(String friend)
+	{
+		messagesWindow.removeFriendFromList(friend);
+	}
+	
 	// send a friend request
 	public void sendFriendRequest(String recipient)
 	{
@@ -1003,10 +1004,40 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		uiObject.sendMessageToServer(new MessageAddFriendConfirmation(myCharacter.getUsername(), recipient, approved));
 	}
 	
+	// send a friend deletion message
+	public void sendDeleteFriendMessage(String recipient)
+	{
+		uiObject.sendMessageToServer(new MessageRemoveFriend(myCharacter.getUsername(), recipient));
+	}
+	
 	// set the player's friends list
 	public void setFriendsList(FriendsList friendsList)
 	{
 		messagesWindow.setFriendsList(friendsList);
+	}
+	
+	// add a mail message to the Messages window
+	public void addMailMessage(MailMessage m)
+	{
+		messagesWindow.addMailMessage(m);
+	}
+	
+	// send a mail message to another user
+	public void sendMailMessage(String recipient, String message)
+	{
+		uiObject.sendMessageToServer(new MessageSendMailToUser(myCharacter.getUsername(), recipient, message, new Date()));
+	}
+	
+	// send a "Save Mail" message to the server
+	public void sendSaveMailMessage(ArrayList<MailMessage> messages)
+	{
+		uiObject.sendMessageToServer(new MessageSaveMailMessages(myCharacter.getUsername(), messages));
+	}
+	
+	// set a user's mail messages
+	public void setMailMessages(ArrayList<MailMessage> messages)
+	{
+		messagesWindow.setMailMessages(messages);
 	}
 	
 	// check whether a given username has a staff prefix

@@ -89,6 +89,24 @@ public class VMKProtocol
         	theOutput = (MessageGetFriendsList)theInput;
         	theOutput.setType("MessageGetFriendsList");
         }
+        else if(theInput instanceof MessageRemoveFriend)
+        {
+        	// pass back the request
+        	theOutput = (MessageRemoveFriend)theInput;
+        	theOutput.setType("MessageRemoveFriend");
+        }
+        else if(theInput instanceof MessageGetOfflineMailMessages)
+        {
+        	// pass back the request
+        	theOutput = (MessageGetOfflineMailMessages)theInput;
+        	theOutput.setType("MessageGetOfflineMailMessages");
+        }
+        else if(theInput instanceof MessageSaveMailMessages)
+        {
+        	// pass back the request
+        	theOutput = (MessageSaveMailMessages)theInput;
+        	theOutput.setType("MessageSaveMailMessages");
+        }
 
         return theOutput;
     }

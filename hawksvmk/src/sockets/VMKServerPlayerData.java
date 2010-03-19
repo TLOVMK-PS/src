@@ -90,6 +90,12 @@ public class VMKServerPlayerData
 		friendsLists.remove(username);
 	}
 	
+	// check whether a friends list is in the HashMap
+	public static boolean containsFriendsList(String username)
+	{
+		return friendsLists.containsKey(username);
+	}
+	
 	// add a username:email mapping to the HashMap
 	public static void addUsernameEmailMapping(String username, String email)
 	{

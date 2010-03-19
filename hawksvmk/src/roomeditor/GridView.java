@@ -28,18 +28,19 @@ public class GridView extends JLabel implements GridViewable
 {
 	private int graphicsDelay = 20; // milliseconds between each frame
 	
-	private AppletResourceLoader resourceLoader = new AppletResourceLoader(); // JAR resource loader
-	
 	String backgroundImagePath = "tiles_img/test_room_image.png";
-	ImageIcon backgroundImage = resourceLoader.getImageFromJar(backgroundImagePath);
+	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(backgroundImagePath);
 	
-	ImageIcon nogoTileImage = new Tile().getNogoTileImage();
-	ImageIcon walkTileImage = new Tile().getWalkTileImage();
-	ImageIcon exitTileImage = new Tile().getExitTileImage();
+	String nogoTileImagePath = "tiles_img/tile_nogo.png";
+	String walkTileImagePath = "tiles_img/tile_walk.png";
+	String exitTileImagePath = "tiles_img/tile_exit.png";
+	ImageIcon nogoTileImage = AppletResourceLoader.getImageFromJar(nogoTileImagePath);
+	ImageIcon walkTileImage = AppletResourceLoader.getImageFromJar(walkTileImagePath);
+	ImageIcon exitTileImage = AppletResourceLoader.getImageFromJar(exitTileImagePath);
 	
 	Tile currentTile = new Tile(0,0,Tile.TILE_WALK); // currently selected tile type
 	
-	ImageIcon reticleTile = resourceLoader.getImageFromJar("tiles_img/tile_selector.png");
+	ImageIcon reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector.png");
 	//ImageIcon reticleTile = new ImageIcon("img/furniture/beta/furni_0/furni_0_A.png");
 	
 	int tileWidth = 64;
@@ -185,30 +186,30 @@ public class GridView extends JLabel implements GridViewable
 						{
 							if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 							else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 							else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 						}
 						else // draw odd rows
 						{
 							if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 							else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 							else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
 							{
-								bufferGraphics.drawImage(tileIcon.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
 							}
 								
 						}
@@ -263,7 +264,7 @@ public class GridView extends JLabel implements GridViewable
 	{
 		this.backgroundImagePath = imagePath;
 		
-		backgroundImage = resourceLoader.getImageFromJar(imagePath);
+		backgroundImage = AppletResourceLoader.getImageFromJar(imagePath);
 	}
 	
 	// set the currently selected tile type

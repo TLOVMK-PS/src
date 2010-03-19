@@ -226,6 +226,9 @@ public class WindowAvatarInformation extends JPanel
 					
 					// send a friend request message to the user
 					gridObject.sendFriendRequest(username);
+					
+					// close the window
+					setVisible(false);
 				}
 				else if(!inactive && tradeRectangle.contains(e.getPoint()))
 				{

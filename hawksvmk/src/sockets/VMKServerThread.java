@@ -20,10 +20,14 @@ import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
+import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
+import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
+import sockets.messages.MessageSaveMailMessages;
+import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.VMKProtocol;
 import util.FileOperations;
@@ -93,7 +97,7 @@ public class VMKServerThread extends Thread
 						System.out.println("Changing thread name: " + loginMessage.getName());
 						
 						// load the character from a file
-						loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getEmail()));
+						loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getName(), loginMessage.getEmail()));
 						
 						// set the username for the first time if necessary
 						if(loginMessage.getCharacter().getUsername().equals(""))
@@ -121,6 +125,9 @@ public class VMKServerThread extends Thread
 						
 						// send the player's friends list to him
 						sendMessageToClient(new MessageGetFriendsList(VMKServerPlayerData.getFriendsList(this.getName())));
+						
+						// load a user's offline messages and send them to him
+						sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
 						
 						// send the login message back to the client
 						sendMessageToClient(loginMessage);
@@ -249,6 +256,52 @@ public class VMKServerThread extends Thread
 						
 						// send the message back to the recipient
 						sendMessageToClient(confirmMsg.getRecipient(), confirmMsg);
+					}
+					else if(outputMessage instanceof MessageRemoveFriend)
+					{
+						// remove friend message received from client
+						MessageRemoveFriend removeMsg = (MessageRemoveFriend)outputMessage;
+						
+						// load the recipient's friend list from the file, if necessary (handles offline cases)
+						if(!VMKServerPlayerData.containsFriendsList(removeMsg.getRecipient()))
+						{
+							// load up the recipient's friends list in the VMKServerPlayerData class
+							VMKServerPlayerData.addFriendsList(removeMsg.getRecipient(), FileOperations.loadFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient())));
+						}
+						
+						// remove the sender and recipient from each other's lists
+						VMKServerPlayerData.removeFriendFromList(removeMsg.getSender(), removeMsg.getRecipient());
+						VMKServerPlayerData.removeFriendFromList(removeMsg.getRecipient(), removeMsg.getSender());
+						
+						// update the friends list files to reflect the changes
+						FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getSender()), VMKServerPlayerData.getFriendsList(removeMsg.getSender()));
+						FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient()), VMKServerPlayerData.getFriendsList(removeMsg.getRecipient()));
+						
+						// send the message to the recipient client
+						sendMessageToClient(removeMsg.getRecipient(), removeMsg);
+					}
+					else if(outputMessage instanceof MessageSendMailToUser)
+					{
+						// mail message to user message received from client
+						MessageSendMailToUser mailMsg = (MessageSendMailToUser)outputMessage;
+						
+						// make sure the user is online
+						if(VMKServerPlayerData.containsFriendsList(mailMsg.getRecipient()))
+						{
+							// send the mail message to the recipient client
+							sendMessageToClient(mailMsg.getRecipient(), mailMsg);
+						}
+						
+						// save the message to hard storage
+						FileOperations.addMailMessage(VMKServerPlayerData.getEmailFromUsername(mailMsg.getRecipient()), mailMsg.getSender(), mailMsg.getMessage(), mailMsg.getDateSent().toString());
+					}
+					else if(outputMessage instanceof MessageSaveMailMessages)
+					{
+						// save mail message received from client
+						MessageSaveMailMessages saveMailMsg = (MessageSaveMailMessages)outputMessage;
+						
+						// save the messages to hard storage
+						FileOperations.saveMailMessages(VMKServerPlayerData.getEmailFromUsername(saveMailMsg.getSender()), saveMailMsg.getMessages());
 					}
 			    }
 		    }

@@ -11,8 +11,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import javax.swing.JOptionPane;
-
 import astar.AStarCharacter;
 
 import roomviewer.RoomViewerUI;
@@ -23,11 +21,15 @@ import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
+import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
+import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
+import sockets.messages.MessageSendMailToUser;
 import sockets.messages.VMKProtocol;
+import util.MailMessage;
 
 public class VMKClientThread extends Thread
 {
@@ -186,6 +188,36 @@ public class VMKClientThread extends Thread
 						
 						// set the friends list
 						uiObject.setFriendsList(getFriendsMsg.getFriendsList());
+					}
+					else if(outputMessage instanceof MessageRemoveFriend)
+					{
+						MessageRemoveFriend removeMsg = (MessageRemoveFriend)outputMessage;
+						
+						// remove friend message received from server
+						System.out.println("Remove friend message received from server");
+						
+						// remove the friend from the list
+						uiObject.removeFriendFromList(removeMsg.getSender());
+					}
+					else if(outputMessage instanceof MessageSendMailToUser)
+					{
+						MessageSendMailToUser mailMsg = (MessageSendMailToUser)outputMessage;
+						
+						// mail message received from server
+						System.out.println("Mail message received from server");
+						
+						// add the message to the user's mail messages
+						uiObject.addMailMessage(new MailMessage(mailMsg.getSender(), mailMsg.getRecipient(), mailMsg.getMessage(), mailMsg.getDateSent().toString()));
+					}
+					else if(outputMessage instanceof MessageGetOfflineMailMessages)
+					{
+						MessageGetOfflineMailMessages offlineMsg = (MessageGetOfflineMailMessages)outputMessage;
+						
+						// offline mail messages received from server
+						System.out.println("Offline mail messages received from server");
+						
+						// set the user's mail messages
+						uiObject.setMailMessages(offlineMsg.getMessages());
 					}
 			    }
 		    }

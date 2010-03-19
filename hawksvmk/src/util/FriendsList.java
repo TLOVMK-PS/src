@@ -26,12 +26,16 @@ public class FriendsList implements Serializable
 	// remove a friend from the list
 	public void remove(String friend)
 	{
-		for(int i = 0; i < friends.size(); i++)
+		// make sure the friend is in the ArrayList
+		if(friends.contains(friend))
 		{
-			if(friends.get(i).equals(friend))
+			for(int i = 0; i < friends.size(); i++)
 			{
-				friends.remove(i);
-				break;
+				if(friends.get(i).equals(friend))
+				{
+					friends.remove(i);
+					break;
+				}
 			}
 		}
 	}
