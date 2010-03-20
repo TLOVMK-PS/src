@@ -892,13 +892,13 @@ public class WindowMessages extends JPanel
 	        	{
 	        		// friend is offline
 	        		setBackground(new Color(6, 33, 86));
-	        		setForeground(list.getForeground());
+	        		setForeground(Color.WHITE);
 	        	}
 	        	else
 	        	{
 	        		// friend is online
-	        		setBackground(Color.GREEN);
-	        		setForeground(list.getForeground());
+	        		setBackground(new Color(82, 240, 101));
+	        		setForeground(Color.WHITE);
 	        	}
 	        }
 
