@@ -107,6 +107,12 @@ public class VMKProtocol
         	theOutput = (MessageSaveMailMessages)theInput;
         	theOutput.setType("MessageSaveMailMessages");
         }
+        else if(theInput instanceof MessageAlterFriendStatus)
+        {
+        	// pass back the request
+        	theOutput = (MessageAlterFriendStatus)theInput;
+        	theOutput.setType("MessageAlterFriendStatus");
+        }
 
         return theOutput;
     }

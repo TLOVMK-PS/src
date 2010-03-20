@@ -66,6 +66,7 @@ public class WindowMessages extends JPanel
 	
 	// images/strings for confirming/denying friend requests
 	private ArrayList<String> friendsItems = new ArrayList<String>();
+	private ArrayList<String> onlineFriends = new ArrayList<String>();
 	private ArrayList<String> friendRequests = new ArrayList<String>();
 	private String noNewFriends = "You have no new friend requests.";
 	private ImageIcon friendsWindowHeaderOffImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_header_off.png");
@@ -827,6 +828,29 @@ public class WindowMessages extends JPanel
 		friendsListBox.setListData(friendsItems.toArray());
 	}
 	
+	// set whether a given friend is online or not
+	public void setFriendOnline(String friend, boolean online)
+	{
+		// make sure this user is in the friends list
+		if(!friendsItems.contains(friend)) {return;}
+		
+		// check if the friend is online
+		if(online)
+		{
+			// make sure the friend isn't already in the list of online friends
+			if(!onlineFriends.contains(friend))
+			{
+				onlineFriends.add(friend);
+			}
+		}
+		else
+		{
+			// remove the friend from the online list
+			onlineFriends.remove(friend);
+			System.out.println("Friend: " + friend + " removed from online friends list");
+		}
+	}
+	
 	public void setGridObject(RoomViewerGrid gridObject)
 	{
 		this.gridObject = gridObject;
@@ -860,9 +884,22 @@ public class WindowMessages extends JPanel
 	        if (isSelected) {
 	            setBackground(list.getSelectionBackground());
 	            setForeground(list.getSelectionForeground());
-	        } else {
-	            setBackground(list.getBackground());
-	            setForeground(list.getForeground());
+	        }
+	        else
+	        {
+	        	// check whether the friend is online
+	        	if(!onlineFriends.contains((String)value))
+	        	{
+	        		// friend is offline
+	        		setBackground(new Color(6, 33, 86));
+	        		setForeground(list.getForeground());
+	        	}
+	        	else
+	        	{
+	        		// friend is online
+	        		setBackground(Color.GREEN);
+	        		setForeground(list.getForeground());
+	        	}
 	        }
 
 	        setText((String)value); // set the text

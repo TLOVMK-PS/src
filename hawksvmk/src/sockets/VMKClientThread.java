@@ -19,6 +19,7 @@ import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
+import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetOfflineMailMessages;
@@ -218,6 +219,14 @@ public class VMKClientThread extends Thread
 						
 						// set the user's mail messages
 						uiObject.setMailMessages(offlineMsg.getMessages());
+					}
+					else if(outputMessage instanceof MessageAlterFriendStatus)
+					{
+						MessageAlterFriendStatus alterStatusMsg = (MessageAlterFriendStatus)outputMessage;
+						
+						// alter friend status message received from server
+						System.out.println("Alter friend status message received for friend: " + alterStatusMsg.getFriend() + " (" + alterStatusMsg.isOnline() + ")");
+						uiObject.setFriendOnline(alterStatusMsg.getFriend(), alterStatusMsg.isOnline());
 					}
 			    }
 		    }

@@ -1040,6 +1040,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		messagesWindow.setMailMessages(messages);
 	}
 	
+	// set whether a given friend is online
+	public void setFriendOnline(String friend, boolean online)
+	{
+		messagesWindow.setFriendOnline(friend, online);
+	}
+	
 	// check whether a given username has a staff prefix
 	private boolean isStaffMember(String username)
 	{

@@ -18,6 +18,7 @@ import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
+import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetOfflineMailMessages;
@@ -31,6 +32,7 @@ import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.VMKProtocol;
 import util.FileOperations;
+import util.FriendsList;
 
 public class VMKServerThread extends Thread
 {
@@ -124,7 +126,24 @@ public class VMKServerThread extends Thread
 						VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
 						
 						// send the player's friends list to him
-						sendMessageToClient(new MessageGetFriendsList(VMKServerPlayerData.getFriendsList(this.getName())));
+						FriendsList playerFriends = VMKServerPlayerData.getFriendsList(this.getName());
+						sendMessageToClient(new MessageGetFriendsList(playerFriends));
+						
+						// send the user's online friends to him by iterating through active users
+						for(int i = 0; i < serverThreads.size(); i++)
+						{
+							// get the friend's name
+							String friendName = serverThreads.get(i).getName();
+							
+							if(playerFriends.getFriends().contains(friendName))
+							{
+								// send a message to the client showing that this friend is online
+								sendMessageToClient(new MessageAlterFriendStatus(friendName, true));
+								
+								// send a message to the friend showing that this player is online
+								sendMessageToClient(friendName, new MessageAlterFriendStatus(this.getName(), true));
+							}
+						}
 						
 						// load a user's offline messages and send them to him
 						sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
@@ -147,6 +166,9 @@ public class VMKServerThread extends Thread
 						
 						// remove this thread from the group
 						serverThreads.remove(this);
+						
+						// set an offline status alteration message to this user's friends
+						sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
 						
 						// send the message to ALL clients
 						sendMessageToAllClients(new MessageRemoveUserFromRoom(this.getName(), "Boot Hill Shooting Gallery Guest Room"));
@@ -319,9 +341,12 @@ public class VMKServerThread extends Thread
 				FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
 				
 				System.out.println("Saved character (" + this.getName() + ") to file");
-	    		
+				
 	    		// remove the character's server thread
 	    		serverThreads.remove(this);
+	    		
+				// set an offline status alteration message to this user's friends
+				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
 	    		
 	    		// remove the character from the room
 				sendMessageToAllClients(new MessageRemoveUserFromRoom(this.getName(), "Boot Hill Shooting Gallery Guest Room"));

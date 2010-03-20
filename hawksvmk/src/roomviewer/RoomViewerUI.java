@@ -666,6 +666,12 @@ public class RoomViewerUI extends Applet
 		}
 	}
 	
+	// set whether a given friend is online
+	public void setFriendOnline(String friend, boolean online)
+	{
+		theGridView.setFriendOnline(friend, online);
+	}
+	
 	// get a character in the room
 	public synchronized AStarCharacter getCharacterInRoom(String username)
 	{
