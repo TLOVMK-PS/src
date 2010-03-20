@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import roomviewer.RoomViewerGrid;
 import sockets.messages.MessageAddChatToRoom;
@@ -160,10 +162,12 @@ public class WindowClothing extends JPanel
 				// check if the mouse is inside the "title bar"
 				if(titleRectangle.contains(e.getPoint()))
 				{
-					int mouseX = e.getXOnScreen() - (getBounds().width / 2);//(e.getXOnScreen() - getBounds().x);
-					int mouseY = e.getYOnScreen() - 75;
+					Point p = new Point(e.getXOnScreen(), e.getYOnScreen());
+					SwingUtilities.convertPointFromScreen(p, gridObject);
+					int mouseX = p.x - (getBounds().width / 2); //gridObject.getBounds().x + getBounds().x;//e.getXOnScreen() - gridObject.getBounds().x - (getBounds().width / 2);
+					int mouseY = p.y - (titleRectangle.height / 2); //e.getYOnScreen() - gridObject.getBounds().y - 75;
 					messagesWindow.setLocation(mouseX, mouseY);
-					repaint();
+					//repaint();
 				}
 			}
 		});

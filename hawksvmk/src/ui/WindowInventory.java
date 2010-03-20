@@ -6,6 +6,7 @@ package ui;
 
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,6 +15,9 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
 
@@ -21,6 +25,8 @@ public class WindowInventory extends JPanel
 {
 	Font textFont;
 	Font textFontBold;
+	
+	private RoomViewerGrid gridObject;
 	
 	private int x = 0;
 	private int y = 0;
@@ -97,10 +103,12 @@ public class WindowInventory extends JPanel
 				// check if the mouse is inside the "title bar"
 				if(titleRectangle.contains(e.getPoint()))
 				{
-					int mouseX = e.getXOnScreen() - (getBounds().width / 2);//(e.getXOnScreen() - getBounds().x);
-					int mouseY = e.getYOnScreen() - 75;
+					Point p = new Point(e.getXOnScreen(), e.getYOnScreen());
+					SwingUtilities.convertPointFromScreen(p, gridObject);
+					int mouseX = p.x - (getBounds().width / 2); //gridObject.getBounds().x + getBounds().x;//e.getXOnScreen() - gridObject.getBounds().x - (getBounds().width / 2);
+					int mouseY = p.y - (titleRectangle.height / 2); //e.getYOnScreen() - gridObject.getBounds().y - 75;
 					messagesWindow.setLocation(mouseX, mouseY);
-					repaint();
+					//repaint();
 				}
 			}
 		});
@@ -112,5 +120,10 @@ public class WindowInventory extends JPanel
 	public void toggleVisibility()
 	{
 		setVisible(!isVisible());
+	}
+	
+	public void setGridObject(RoomViewerGrid gridObject)
+	{
+		this.gridObject = gridObject;
 	}
 }

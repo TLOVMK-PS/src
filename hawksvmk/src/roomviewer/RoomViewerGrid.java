@@ -697,11 +697,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 
 		 // set up the inventory window
 		 inventoryWindow = new WindowInventory(textFont, textFontBold, 100, 100);
+		 inventoryWindow.setGridObject(this);
 		 inventoryWindow.setVisible(false);
 		 add(inventoryWindow);
 		 
 		 // set up the shop window
 		 shopWindow = new WindowShop(textFont, textFontBold, 100, 100);
+		 shopWindow.setGridObject(this);
 		 shopWindow.setVisible(false);
 		 add(shopWindow);
 		 
@@ -714,11 +716,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 
 		 // set up the settings window
 		 settingsWindow = new WindowSettings(textFont, textFontBold, 200, 50);
+		 settingsWindow.setGridObject(this);
 		 settingsWindow.setVisible(false);
 		 add(settingsWindow);
 		 
 		 // set up the help window
 		 helpWindow = new WindowHelp(textFont, textFontBold, 250, 50);
+		 helpWindow.setGridObject(this);
 		 helpWindow.setVisible(false);
 		 add(helpWindow);
 		 
