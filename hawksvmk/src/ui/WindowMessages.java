@@ -6,9 +6,12 @@ package ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -24,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 
 import roomviewer.RoomViewerGrid;
 
@@ -147,7 +151,7 @@ public class WindowMessages extends JPanel
 		
 		// message text
 		messageText.setBounds(35, 152, 260, 187);
-		messageText.setBackground(Color.GRAY);//(new Color(6, 33, 86));
+		messageText.setBackground(new Color(6, 33, 86));
 		messageText.setForeground(Color.WHITE);
 		messageText.setFont(textFont);
 		messageText.setHorizontalAlignment(JLabel.LEFT);
@@ -362,7 +366,7 @@ public class WindowMessages extends JPanel
 						// set the information
 						messageSender.setText(m.getSender());
 						messageDate.setText(m.getDateSent().toString());
-						messageText.setText(m.getMessage());
+						messageText.setText("<html>" + m.getMessage() + "</html>");
 						
 						// change the background window image to the "Messages" version
 						backgroundLabel.setIcon(messagesWindowImage);
@@ -607,16 +611,20 @@ public class WindowMessages extends JPanel
 		
 		this.addMouseMotionListener(new MouseMotionListener()
 		{
-			public void mouseMoved(MouseEvent e) {}
+			public void mouseMoved(MouseEvent e)
+			{
+			}
 			public void mouseDragged(MouseEvent e)
 			{
 				// check if the mouse is inside the "title bar"
 				if(titleRectangle.contains(e.getPoint()))
 				{
-					int mouseX = e.getXOnScreen() - (getBounds().width / 2);//(e.getXOnScreen() - getBounds().x);
-					int mouseY = e.getYOnScreen() - 75;
+					Point p = new Point(e.getXOnScreen(), e.getYOnScreen());
+					SwingUtilities.convertPointFromScreen(p, gridObject);
+					int mouseX = p.x - (getBounds().width / 2); //gridObject.getBounds().x + getBounds().x;//e.getXOnScreen() - gridObject.getBounds().x - (getBounds().width / 2);
+					int mouseY = p.y - (titleRectangle.height / 2); //e.getYOnScreen() - gridObject.getBounds().y - 75;
 					messagesWindow.setLocation(mouseX, mouseY);
-					repaint();
+					//repaint();
 				}
 			}
 		});
@@ -728,7 +736,7 @@ public class WindowMessages extends JPanel
 		// show the most recent message in the window
 		messageSender.setText(message.getSender());
 		messageDate.setText(message.getDateSent().toString());
-		messageText.setText(message.getMessage());
+		messageText.setText("<html>" + message.getMessage() + "</html>");
 		
 		// make sure we aren't on the Friends tab
 		if(!friendsScrollPane.isVisible())
@@ -757,7 +765,7 @@ public class WindowMessages extends JPanel
 			// show the most recent message in the window
 			messageSender.setText(messages.get(messages.size() - 1).getSender());
 			messageDate.setText(messages.get(messages.size() - 1).getDateSent());
-			messageText.setText(messages.get(messages.size() - 1).getMessage());
+			messageText.setText("<html>" + messages.get(messages.size() - 1).getMessage() + "</html>");
 			
 			// show the message controls
 			messageSender.setVisible(true);
@@ -775,10 +783,15 @@ public class WindowMessages extends JPanel
 	// add a friend request to the ArrayList
 	public void addFriendRequest(String from)
 	{
-		friendRequests.add(from);
-		
-		// update the friends request notifications
-		updateFriendsRequestTab();
+		// check to make sure a request isn't already pending and that the player isn't already a friend
+		if(!friendRequests.contains(from) && !friendsItems.contains(from))
+		{
+			// add the request
+			friendRequests.add(from);
+			
+			// update the friends request notifications
+			updateFriendsRequestTab();
+		}
 	}
 	
 	// add a friend to the ArrayList
