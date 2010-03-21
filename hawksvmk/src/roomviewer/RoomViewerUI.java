@@ -89,6 +89,9 @@ public class RoomViewerUI extends Applet
 	Rectangle helpButtonRect = new Rectangle(139,3,29,19); // bounds of the "HELP" button
 	Rectangle exitButtonRect = new Rectangle(171,3,21,19); // bounds of the red "X" button
 	
+	// animation for a new message/friend request
+	private JLabel messagesAnimationLabel;
+	
 	int loginOffsetX = 200;
 	int loginOffsetY = 150;
 	
@@ -413,6 +416,10 @@ public class RoomViewerUI extends Applet
       		else if(messagesButtonRect.contains(mousePoint)) // click inside the messages button
       		{
       			System.out.println("Clicked toolbar messages button");
+      			
+      			// hide the "New Mail" animation
+      			messagesAnimationLabel.setVisible(false);
+      			
       			theGridView.toggleMessagesWindow(); // show/hide the messages window
       		}
       		else if(shopButtonRect.contains(mousePoint)) // click inside the shop button
@@ -489,6 +496,12 @@ public class RoomViewerUI extends Applet
        	}
        });
      add(toolbar_right);
+     
+     // add the "New Mail" animation
+     messagesAnimationLabel = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/mail_anim.gif"));
+     messagesAnimationLabel.setBounds(100, 574, 32, 23);
+     messagesAnimationLabel.setVisible(false);
+     add(messagesAnimationLabel);
      
      // Toolbar image
      final JLabel toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
@@ -627,7 +640,10 @@ public class RoomViewerUI extends Applet
 	// add a friend request
 	public void addFriendRequest(String from)
 	{
-		// TODO: Play a sound and make the Messages button flash
+		// TODO: Play a sound
+		messagesAnimationLabel.setVisible(true);
+		repaint();
+		
 		theGridView.addFriendRequest(from);
 	}
 	
@@ -653,6 +669,9 @@ public class RoomViewerUI extends Applet
 	public void addMailMessage(MailMessage m)
 	{
 		// TODO: Play a sound and make the Messages button flash
+		messagesAnimationLabel.setVisible(true);
+		repaint();
+		
 		theGridView.addMailMessage(m);
 	}
 	
@@ -661,7 +680,10 @@ public class RoomViewerUI extends Applet
 	{
 		if(messages.size() > 0)
 		{
-			// TODO: Play a sound and make the Messages button flash
+			// TODO: Play a sound
+			messagesAnimationLabel.setVisible(true);
+			repaint();
+			
 			theGridView.setMailMessages(messages);
 		}
 	}

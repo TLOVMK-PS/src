@@ -15,7 +15,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 
 import animations.Animation;
 import animations.AnimationFrame;
@@ -566,9 +568,10 @@ public class FileOperations
 			fileWriter = new PrintWriter(filename);
 			
 			// write out the friends list
-			for(int i = 0; i < friendsList.getFriends().size(); i++)
+			Iterator<String> friendsIterator = friendsList.getFriends().keySet().iterator();
+			while(friendsIterator.hasNext())
 			{
-				fileWriter.println("FRIEND: " + friendsList.getFriends().get(i));
+				fileWriter.println("FRIEND: " + friendsIterator.next());
 			}
 			
 			fileWriter.close();

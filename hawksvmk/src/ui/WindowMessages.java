@@ -19,6 +19,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -818,10 +819,11 @@ public class WindowMessages extends JPanel
 	// set the friends list
 	public void setFriendsList(FriendsList friendsList)
 	{
-		for(int i = 0; i < friendsList.getFriends().size(); i++)
+		Iterator<String> friendsIterator = friendsList.getFriends().keySet().iterator();
+		while(friendsIterator.hasNext())
 		{
 			// add the friend to the list
-			friendsItems.add(friendsList.getFriends().get(i));
+			friendsItems.add(friendsIterator.next());
 		}
 		
 		// update the list to reflect the changes

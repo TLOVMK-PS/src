@@ -135,7 +135,7 @@ public class VMKServerThread extends Thread
 							// get the friend's name
 							String friendName = serverThreads.get(i).getName();
 							
-							if(playerFriends.getFriends().contains(friendName))
+							if(playerFriends.contains(friendName))
 							{
 								// send a message to the client showing that this friend is online
 								sendMessageToClient(new MessageAlterFriendStatus(friendName, true));

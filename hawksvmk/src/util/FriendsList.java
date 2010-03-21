@@ -6,19 +6,20 @@ package util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FriendsList implements Serializable
 {
-	private ArrayList<String> friends = new ArrayList<String>();
+	private HashMap<String,String> friends = new HashMap<String,String>();
 	
 	public FriendsList() {}
 	
-	public ArrayList<String> getFriends()
+	public HashMap<String,String> getFriends()
 	{
 		return friends;
 	}
 	
-	public void setFriends(ArrayList<String> friends)
+	public void setFriends(HashMap<String,String> friends)
 	{
 		this.friends = friends;
 	}
@@ -27,16 +28,9 @@ public class FriendsList implements Serializable
 	public void remove(String friend)
 	{
 		// make sure the friend is in the ArrayList
-		if(friends.contains(friend))
+		if(friends.containsKey(friend))
 		{
-			for(int i = 0; i < friends.size(); i++)
-			{
-				if(friends.get(i).equals(friend))
-				{
-					friends.remove(i);
-					break;
-				}
-			}
+			friends.remove(friend);
 		}
 	}
 	
@@ -44,9 +38,15 @@ public class FriendsList implements Serializable
 	public void add(String friend)
 	{
 		// make sure it isn't already in the ArrayList
-		if(!friends.contains(friend))
+		if(!friends.containsKey(friend))
 		{
-			friends.add(friend);
+			friends.put(friend, friend);
 		}
+	}
+	
+	// check whether a friend is contained in the list
+	public boolean contains(String friend)
+	{
+		return friends.containsKey(friend);
 	}
 }
