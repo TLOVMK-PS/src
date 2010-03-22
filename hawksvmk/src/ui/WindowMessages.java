@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -803,7 +804,7 @@ public class WindowMessages extends JPanel
 		friendsItems.add(friend);
 		
 		// update the list to reflect the changes
-		friendsListBox.setListData(friendsItems.toArray());
+		updateFriendsList();
 	}
 	
 	// remove a friend from the ArrayList
@@ -812,8 +813,11 @@ public class WindowMessages extends JPanel
 		// remove the friend
 		friendsItems.remove(friend);
 		
+		// check and make sure the friend is gone from the online friends
+		onlineFriends.remove(friend);
+		
 		// update the list to reflect the changes
-		friendsListBox.setListData(friendsItems.toArray());
+		updateFriendsList();
 	}
 	
 	// set the friends list
@@ -827,7 +831,25 @@ public class WindowMessages extends JPanel
 		}
 		
 		// update the list to reflect the changes
-		friendsListBox.setListData(friendsItems.toArray());
+		updateFriendsList();
+	}
+	
+	// update the friends list, ordering online friends above offline friends
+	private void updateFriendsList()
+	{
+		ArrayList<String> displayedFriends = friendsItems;
+		displayedFriends.removeAll(onlineFriends); // remove all online friends from the offline friends list
+		
+		// sort the offline friends
+		Collections.sort(displayedFriends);
+		
+		// sort the online friends
+		Collections.sort(onlineFriends);
+		
+		// re-add the online friends to the top of the list
+		displayedFriends.addAll(0, onlineFriends);
+		
+		friendsListBox.setListData(displayedFriends.toArray());
 	}
 	
 	// set whether a given friend is online or not
@@ -849,7 +871,6 @@ public class WindowMessages extends JPanel
 		{
 			// remove the friend from the online list
 			onlineFriends.remove(friend);
-			System.out.println("Friend: " + friend + " removed from online friends list");
 		}
 	}
 	
