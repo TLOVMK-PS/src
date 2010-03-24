@@ -157,20 +157,30 @@ public class AppletResourceLoader implements Serializable
 		if(!path.startsWith("/")) {path = "/" + path;}
 		try
 		{
-			// release environment (local machine)
-			return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
-			//return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
-		}
-		catch(FileNotFoundException fnf)
-		{
-			// file doesn't exist yet, so don't worry about it
-			return null;
+			if(StaticAppletData.getCodeBase().contains("/bin"))
+			{
+				// Eclipse development environment (local machine)
+				return new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)).openStream();
+			}
+			else
+			{
+				// release environment (local machine)
+				return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
+			}
 		}
 		catch(Exception e)
 		{
-			System.out.println("Problem loading character from local file system");
-			e.printStackTrace();
-			return null;
+			// release environment (web server)
+			try
+			{
+				return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+			}
+			catch(Exception ex)
+			{
+				System.out.println("Problem loading character from local file system");
+				ex.printStackTrace();
+				return null;
+			}
 		}
 	}
 	

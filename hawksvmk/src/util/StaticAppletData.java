@@ -20,25 +20,11 @@ public class StaticAppletData
 	
 	// create the pin mappings
 	public static void createPinMappings()
-	{
-		// badges
-		pinMappings.put("badge_0", new PinInfo("badge_0", "VMK Staff", "img/badges/staff_badge.png"));
-		pinMappings.put("badge_1", new PinInfo("badge_1", "Development Team", "img/badges/dev_team_badge_small.png"));
-		pinMappings.put("badge_2", new PinInfo("badge_2", "Here From Day One", "img/badges/day_one_badge.png"));
-		pinMappings.put("badge_3", new PinInfo("badge_3", "VIP Member", "img/badges/vip_badge.png"));
-		pinMappings.put("badge_4", new PinInfo("badge_4", "Community Leader", "img/badges/community_leader_badge.png"));
+	{	
+		// load pin mappings from the mappings file
+		pinMappings = FileOperations.loadPinMappings();
 		
-		// magic pins
-		pinMappings.put("magic_pin_0", new PinInfo("magic_pin_0", "Dancing Inferno Magic Pin", "img/pins/magic_pin_dancing_inferno.png"));
-		
-		// pins - Whiskey Set
-		pinMappings.put("pin_whiskey_0", new PinInfo("pin_whiskey_0", "Jack Daniel's Whiskey", "img/pins/pin_whiskey_jack_daniels.png"));
-		pinMappings.put("pin_whiskey_1", new PinInfo("pin_whiskey_1", "Jim Beam Black Whiskey", "img/pins/pin_whiskey_jim_beam_black.png"));
-		pinMappings.put("pin_whiskey_2", new PinInfo("pin_whiskey_2", "Jim Beam White Whiskey", "img/pins/pin_whiskey_jim_beam_white.png"));
-		pinMappings.put("pin_whiskey_3", new PinInfo("pin_whiskey_3", "Southern Comfort Liqueur", "img/pins/pin_whiskey_southern_comfort.png"));
-		pinMappings.put("pin_whiskey_4", new PinInfo("pin_whiskey_4", "Johnnie Walker Black", "img/pins/pin_whiskey_johnnie_walker_black.png"));
-		
-		// pins - Miscellaneous
+		System.out.println("Created badge and pin mappings");
 	}
 	
 	// add a pin mapping

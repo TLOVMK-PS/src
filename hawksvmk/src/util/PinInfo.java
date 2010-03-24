@@ -22,4 +22,8 @@ public class PinInfo implements Serializable
 	public String getID() {return id;}
 	public String getName() {return name;}
 	public String getPath() {return path;}
+	
+	public void setID(String id) {this.id = id;}
+	public void setName(String name) {this.name = name;}
+	public void setPath(String path) {this.path = path;}
 }

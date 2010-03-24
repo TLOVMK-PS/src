@@ -263,6 +263,9 @@ public class RoomViewerUI extends Applet
      
      this.setLayout(null);
      
+     // create the pin mappings
+     StaticAppletData.createPinMappings();
+     
      // set up the fonts
 	 setupFonts();
 	 

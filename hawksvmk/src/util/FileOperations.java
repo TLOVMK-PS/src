@@ -31,6 +31,7 @@ import tiles.Tile;
 
 public class FileOperations
 {
+	private static String commentDelimeter = "//"; // pattern to search for comment lines in files
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
 	
 	// save a file given a filename and a map of tiles
@@ -127,6 +128,10 @@ public class FileOperations
 						// load an animation and add it to the ArrayList
 						animations.add(loadAnimation(line));
 					}
+				}
+				else if(line.startsWith(commentDelimeter))
+				{
+					// comment line, so ignore
 				}
 				else
 				{
@@ -230,6 +235,10 @@ public class FileOperations
 					// set the y-coordinate
 					y_coord = Integer.parseInt(line);
 					animation.setY(y_coord);
+				}
+				else if(line.startsWith(commentDelimeter))
+				{
+					// comment line, so ignore
 				}
 				else
 				{
@@ -384,6 +393,10 @@ public class FileOperations
 						displayedPins[pinNum] = StaticAppletData.getPinInfo(line);
 						pinNum++;
 					}
+					else if(line.startsWith(commentDelimeter))
+					{
+						// comment line, so ignore
+					}
 				}
 				
 				fileReader.close();
@@ -515,6 +528,10 @@ public class FileOperations
 						// add the friend to the list
 						friendsList.add(friend);
 					}
+					else if(line.startsWith(commentDelimeter))
+					{
+						// comment line, so ignore
+					}
 				}
 				
 				fileReader.close();
@@ -602,7 +619,11 @@ public class FileOperations
 				{
 					String line = fileReader.nextLine();
 					
-					if(!line.equals("")) // username:email
+					if(line.startsWith(commentDelimeter))
+					{
+						// comment line, so ignore
+					}
+					else if(!line.equals("")) // username:email
 					{
 						String dataArray[] = line.split(":");
 						usernameEmailMappings.put(dataArray[0], dataArray[1]);
@@ -682,6 +703,10 @@ public class FileOperations
 							
 							// add a new mail message to the array list
 							messages.add(new MailMessage(sender, username, bodyText, dateSent));
+						}
+						else if(line.startsWith(commentDelimeter))
+						{
+							// comment line, so ignore
 						}
 					}
 				}
@@ -801,5 +826,74 @@ public class FileOperations
 			System.out.println("ERROR IN saveUsernameEmailMappings()");
 			e.printStackTrace();
 		}
+	}
+	
+	// load the pin and badge mappings
+	public static HashMap<String,PinInfo> loadPinMappings()
+	{
+		String filename = "data/mappings/pinMappings.dat";
+		HashMap<String,PinInfo> pinMappings = new HashMap<String,PinInfo>();
+		
+		Scanner fileReader;
+		
+		String pinID = "";
+		String pinName = "";
+		String pinPath = "";
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("ID: "))
+					{
+						// get the pin ID
+						line = line.replaceAll("ID: ", "");
+						pinID = line;
+					}
+					else if(line.startsWith("NAME: "))
+					{
+						// get the pin name
+						line = line.replaceAll("NAME: ", "");
+						pinName = line;
+					}
+					else if(line.startsWith("PATH: "))
+					{
+						// get the pin path
+						line = line.replaceAll("PATH: ", "");
+						pinPath = line;
+						
+						// add the pin mapping to the HashMap
+						pinMappings.put(pinID, new PinInfo(pinID, pinName, pinPath));
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty mappings list
+				return pinMappings;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadPinMappings(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new mappings list from the file data
+		return pinMappings;
 	}
 }

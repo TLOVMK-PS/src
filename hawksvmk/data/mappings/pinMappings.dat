@@ -1,0 +1,49 @@
+// Badges
+
+ID: badge_0
+NAME: VMK Staff
+PATH: img/badges/staff_badge.png
+
+ID: badge_1
+NAME: Development Team
+PATH: img/badges/dev_team_badge_small.png
+
+ID: badge_2
+NAME: Here From Day One
+PATH: img/badges/day_one_badge.png
+
+ID: badge_3
+NAME: VIP Member
+PATH: img/badges/vip_badge.png
+
+ID: badge_4
+NAME: Community Leader
+PATH: img/badges/community_leader_badge.png
+
+// Magic pins
+
+ID: magic_pin_0
+NAME: Dancing Inferno Magic Pin
+PATH: img/pins/magic_pin_dancing_inferno.png
+
+// Pin Set - Whiskey
+
+ID: pin_whiskey_0
+NAME: Jack Daniel's Whiskey
+PATH: img/pins/pin_whiskey_jack_daniels.png
+
+ID: pin_whiskey_1
+NAME: Jim Beam Black Bourbon
+PATH: img/pins/pin_whiskey_jim_beam_black.png
+
+ID: pin_whiskey_2
+NAME: Jim Beam White Bourbon
+PATH: img/pins/pin_whiskey_jim_beam_white.png
+
+ID: pin_whiskey_3
+NAME: Southern Comfort Liqueur
+PATH: img/pins/pin_whiskey_southern_comfort.png
+
+ID: pin_whiskey_4
+NAME: Johnnie Walker Black
+PATH: img/pins/pin_whiskey_johnnie_walker_black.png

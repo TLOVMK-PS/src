@@ -99,9 +99,6 @@ public class VMKClient
         	e.printStackTrace();
         }
         
-        // load up the pin mappings
-        StaticAppletData.createPinMappings();
-        
         // start up the client thread to communicate with the server
         clientThread = new VMKClientThread(vmkSocket);
         clientThread.setUIObject(uiObject);
