@@ -74,6 +74,10 @@ public class RoomViewerUI extends Applet
 	private RoomViewerGrid theGridView;
 	//private WindowRoomDescription roomDescriptionWindow;
 	
+	JLabel toolbar_left;
+	JLabel toolbar_right;
+	JLabel toolbar;
+	
 	// Toolbar (left) button bounds
 	Rectangle infoButtonRect = new Rectangle(7,3,24,24); // bounds of the "I" button
 	Rectangle globeButtonRect = new Rectangle(38,3,28,18); // bounds of the globe button
@@ -237,8 +241,9 @@ public class RoomViewerUI extends Applet
 		});
 		add(loginButton);
 		
-		// set a dark green background color
-		setBackground(new Color(0,128,0));
+		// set a background color
+		setBackground(Color.black); // black
+		//setBackground(new Color(0,128,0)); // medium-green
 		
 	    // pack the window and display it
 	    this.setName("Hawk's Virtual Magic Kingdom");
@@ -270,20 +275,6 @@ public class RoomViewerUI extends Applet
      
      // set up the fonts
 	 setupFonts();
-	 
-     // create the grid
-     theGridView = new RoomViewerGrid();
-     theGridView.setBounds(new Rectangle(0,0,800,572));
-     
-     // assign the fonts to the grid
-     theGridView.setTextFont(textFont);
-     theGridView.setTextFontBold(textFontBold);
-     
-     // hide the grid tiles
-     theGridView.showGrid(false);
-     
-     // add the grid
-     add(theGridView);
      
      if(release == false) // in-house development UI
      {
@@ -392,7 +383,7 @@ public class RoomViewerUI extends Applet
      }
      
      // Toolbar (left)
-     final JLabel toolbar_left = new JLabel("");
+     toolbar_left = new JLabel("");
      toolbar_left.setBounds(new Rectangle(0, 572, 228, 28));
      toolbar_left.addMouseListener(new MouseAdapter()
      {
@@ -449,7 +440,7 @@ public class RoomViewerUI extends Applet
       add(toolbar_left);
      
      // Toolbar (right)
-     final JLabel toolbar_right = new JLabel("");
+     toolbar_right = new JLabel("");
      toolbar_right.setBounds(new Rectangle(603, 572, 199, 28));
      toolbar_right.addMouseListener(new MouseAdapter()
      {
@@ -509,7 +500,7 @@ public class RoomViewerUI extends Applet
      add(messagesAnimationLabel);
      
      // Toolbar image
-     final JLabel toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
+     toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
      toolbar.setBounds(new Rectangle(0, 572, 800, 28));
      add(toolbar);
      
@@ -548,6 +539,20 @@ public class RoomViewerUI extends Applet
     	 }
      });
      add(chatTextBox);
+     
+     // create the grid
+     theGridView = new RoomViewerGrid();
+     theGridView.setBounds(new Rectangle(0,0,800,572));
+     
+     // assign the fonts to the grid
+     theGridView.setTextFont(textFont);
+     theGridView.setTextFontBold(textFontBold);
+     
+     // hide the grid tiles
+     theGridView.showGrid(false);
+     
+     // add the grid
+     add(theGridView);
      
      // pack the window and display it
      this.setName("Hawk's Virtual Magic Kingdom");
@@ -718,4 +723,13 @@ public class RoomViewerUI extends Applet
 	
 	public String getEmail() {return email;}
 	public void setEmail(String email) {this.email = email;}
+	
+	// show/hide the toolbar elements based upon the value of the "visible" boolean
+	public void showToolbar(boolean visible)
+	{
+		toolbar_left.setVisible(visible);
+		toolbar_right.setVisible(visible);
+		toolbar.setVisible(visible);
+		chatTextBox.setVisible(visible);
+	}
 }

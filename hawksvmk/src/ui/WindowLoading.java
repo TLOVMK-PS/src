@@ -30,7 +30,9 @@ public class WindowLoading extends JPanel
 	
 	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/logo_loading_background.png");
 	private ImageIcon loadingImage = AppletResourceLoader.getImageFromJar("img/ui/loading_bar_anim.gif");
+	private ImageIcon gradient = AppletResourceLoader.getImageFromJar("img/ui/loading_bar_gradient.png");
 	
+	private JLabel loadingBarGradient = new JLabel(gradient);
 	private JLabel loadingBarLabel = new JLabel(loadingImage);
 	private JLabel roomTitleLabel = new JLabel("");
 	private JLabel descriptionLabel = new JLabel("");
@@ -76,6 +78,10 @@ public class WindowLoading extends JPanel
 		roomTitleLabel.setVerticalAlignment(JLabel.TOP);
 		roomTitleLabel.setFont(textFontBold);
 		add(roomTitleLabel);
+		
+		// add the loading bar gradient
+		loadingBarGradient.setBounds(14, 157, 336, 17);
+		add(loadingBarGradient);
 		
 		// add the loading bar
 		loadingBarLabel.setBounds(14, 157, 336, 17);

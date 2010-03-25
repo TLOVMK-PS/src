@@ -59,7 +59,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	private Thread gridThread;
 	private int graphicsDelay = 20; // milliseconds between each frame
 	
-	String backgroundImagePath = "img/ui/loading_room.png";
+	String backgroundImagePath = "img/ui/loading_room_vmk.png";
 	//String backgroundImagePath = "tiles_img/test_room_image.png";
 	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(backgroundImagePath);
 	
@@ -204,6 +204,14 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	public void loadGridView()
 	{	
+		// set up the "Loading" window
+		loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
+		loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
+		loadingWindow.setDescription("Loading... please wait");
+		loadingWindow.setGridObject(this);
+		loadingWindow.setVisible(true);
+		add(loadingWindow);
+	     
 		this.addMouseListener(new MouseAdapter()
      {
      	public void mouseReleased(MouseEvent e)
@@ -525,9 +533,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				{
 					bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + 32, this);
 				}
-				
-				this.paintComponents(bufferGraphics);
 			}
+			
+			// paint the internal UI components
+			this.paintComponents(bufferGraphics);
 			
 			// draw the chat bubbles
 			if(theChatBubbles != null)
@@ -687,21 +696,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	private void setupInternalUI()
-	{
-		 // set up the "Loading" window
-	     loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
-	     loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
-	     loadingWindow.setDescription("Loading... please wait");
-	     loadingWindow.setGridObject(this);
-	     loadingWindow.setVisible(false);
-	     add(loadingWindow);
-	     repaint();
-		
+	{		
 		 // set up the room description window
 	     roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room.  You can try out the\nfeatures of the game, including chat and walking.\nPlease feel free to wander around.\n\n- Hawk's VMK: Development Team", 0, 424);
 		 roomDescriptionWindow.setRoomTitleX(125);
 		 roomDescriptionWindow.setDrawingSurface(createImage(323,148));
-		 roomDescriptionWindow.setVisible(true);
+		 roomDescriptionWindow.setVisible(false);
 		 
 		 // set up the messages window
 		 messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
@@ -913,6 +913,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				myCharacter.setX(myCharacter.getCurrentTile().getX());
 				myCharacter.setY(myCharacter.getCurrentTile().getY());
 				characters.put(uiObject.getUsername(), myCharacter);
+				
+				// hide the loading window
+				loadingWindow.setVisible(false);
 				return;
 			}
 			else
