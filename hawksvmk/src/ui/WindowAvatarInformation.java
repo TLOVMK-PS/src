@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
-import util.PinInfo;
+import util.InventoryInfo;
 import util.StaticAppletData;
 
 public class WindowAvatarInformation extends JPanel
@@ -288,7 +288,7 @@ public class WindowAvatarInformation extends JPanel
 	}
 	
 	// set the badges
-	public void setBadges(PinInfo[] badges)
+	public void setBadges(InventoryInfo[] badges)
 	{
 		clearPinSquareProperties(this.badges);
 		
@@ -301,7 +301,7 @@ public class WindowAvatarInformation extends JPanel
 	}
 	
 	// set the pins
-	public void setPins(PinInfo[] pins)
+	public void setPins(InventoryInfo[] pins)
 	{
 		clearPinSquareProperties(this.pins);
 		
@@ -345,10 +345,10 @@ class PinSquare extends JLabel
 		super();
 		
 		// get the pin information
-		if(!StaticAppletData.getPinInfo(pinID).getID().equals(""))
+		if(!StaticAppletData.getInvInfo(pinID).getID().equals(""))
 		{
-			this.pinName = StaticAppletData.getPinInfo(pinID).getName();
-			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getPinInfo(pinID).getPath());
+			this.pinName = StaticAppletData.getInvInfo(pinID).getName();
+			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getPath());
 		}
 	}
 	

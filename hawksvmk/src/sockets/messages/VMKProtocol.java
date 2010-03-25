@@ -113,6 +113,12 @@ public class VMKProtocol
         	theOutput = (MessageAlterFriendStatus)theInput;
         	theOutput.setType("MessageAlterFriendStatus");
         }
+        else if(theInput instanceof MessageGetInventory)
+        {
+        	// pass back the request
+        	theOutput = (MessageGetInventory)theInput;
+        	theOutput.setType("MessageGetInventory");
+        }
 
         return theOutput;
     }

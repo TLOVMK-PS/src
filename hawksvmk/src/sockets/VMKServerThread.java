@@ -21,6 +21,7 @@ import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
+import sockets.messages.MessageGetInventory;
 import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
@@ -147,6 +148,9 @@ public class VMKServerThread extends Thread
 						
 						// load a user's offline messages and send them to him
 						sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
+						
+						// load a user's inventory and send it to him
+						sendMessageToClient(new MessageGetInventory(FileOperations.loadInventory(loginMessage.getEmail())));
 						
 						// send the login message back to the client
 						sendMessageToClient(loginMessage);

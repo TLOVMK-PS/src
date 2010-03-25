@@ -50,6 +50,7 @@ import ui.WindowSettings;
 import ui.WindowShop;
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.InventoryItem;
 import util.MailMessage;
 
 public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
@@ -1048,6 +1049,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setFriendOnline(String friend, boolean online)
 	{
 		messagesWindow.setFriendOnline(friend, online);
+	}
+	
+	// set the player's inventory
+	public void setInventory(ArrayList<InventoryItem> inventory)
+	{
+		inventoryWindow.setInventory(inventory);
 	}
 	
 	// check whether a given username has a staff prefix

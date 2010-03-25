@@ -22,6 +22,7 @@ import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
+import sockets.messages.MessageGetInventory;
 import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
@@ -227,6 +228,14 @@ public class VMKClientThread extends Thread
 						// alter friend status message received from server
 						System.out.println("Alter friend status message received for friend: " + alterStatusMsg.getFriend() + " (" + alterStatusMsg.isOnline() + ")");
 						uiObject.setFriendOnline(alterStatusMsg.getFriend(), alterStatusMsg.isOnline());
+					}
+					else if(outputMessage instanceof MessageGetInventory)
+					{
+						MessageGetInventory getInvMsg = (MessageGetInventory)outputMessage;
+						
+						// get inventory message received from server
+						System.out.println("Player inventory received from server");
+						uiObject.setInventory(getInvMsg.getInventory());
 					}
 			    }
 		    }

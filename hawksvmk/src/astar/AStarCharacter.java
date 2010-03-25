@@ -14,7 +14,7 @@ import javax.swing.ImageIcon;
 
 import tiles.Tile;
 import util.AppletResourceLoader;
-import util.PinInfo;
+import util.InventoryInfo;
 import util.StaticAppletData;
 
 public class AStarCharacter implements Serializable
@@ -54,8 +54,8 @@ public class AStarCharacter implements Serializable
 	private String signature = "";
 	
 	// displayed badges/pins
-	private PinInfo displayedBadges[] = new PinInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
-	private PinInfo displayedPins[] = new PinInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
+	private InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
+	private InventoryInfo displayedPins[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
 	
 	public AStarCharacter() {}
 	
@@ -246,9 +246,9 @@ public class AStarCharacter implements Serializable
 	public void setSignature(String signature) {this.signature = signature;}
 	public String getSignature() {return signature;}
 	
-	public void setDisplayedBadges(PinInfo[] displayedBadges) {this.displayedBadges = displayedBadges;}
-	public PinInfo[] getDisplayedBadges() {return displayedBadges;}
+	public void setDisplayedBadges(InventoryInfo[] displayedBadges) {this.displayedBadges = displayedBadges;}
+	public InventoryInfo[] getDisplayedBadges() {return displayedBadges;}
 	
-	public void setDisplayedPins(PinInfo[] displayedPins) {this.displayedPins = displayedPins;}
-	public PinInfo[] getDisplayedPins() {return displayedPins;}
+	public void setDisplayedPins(InventoryInfo[] displayedPins) {this.displayedPins = displayedPins;}
+	public InventoryInfo[] getDisplayedPins() {return displayedPins;}
 }

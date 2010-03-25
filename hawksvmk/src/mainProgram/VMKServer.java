@@ -81,7 +81,7 @@ public class VMKServer
         catch(Exception e) {}
 
         // load up the pin mappings
-        StaticAppletData.createPinMappings();
+        StaticAppletData.createInvMappings();
         
         // load the username:email mappings
         System.out.println("Loading username:email mappings...");

@@ -10,7 +10,7 @@ public class StaticAppletData
 	
 	public static final int MAX_DISPLAYABLE_BADGES = 4; // maximum number of displayable badges
 	public static final int MAX_DISPLAYABLE_PINS = 8; // maximum number of displayable pins
-	private static HashMap<String,PinInfo> pinMappings = new HashMap<String,PinInfo>(); // id,pin info
+	private static HashMap<String,InventoryInfo> invMappings = new HashMap<String,InventoryInfo>(); // id,pin info
 	
 	public static void setCodeBase(String newCodebase) {codebase = newCodebase;}
 	public static String getCodeBase() {return codebase;}
@@ -18,40 +18,40 @@ public class StaticAppletData
 	public static void setCodeBaseURL(URL newCodebaseURL) {codebaseURL = newCodebaseURL;}
 	public static URL getCodeBaseURL() {return codebaseURL;}
 	
-	// create the pin mappings
-	public static void createPinMappings()
+	// create the inventory mappings
+	public static void createInvMappings()
 	{	
 		// load pin mappings from the mappings file
-		pinMappings = FileOperations.loadPinMappings();
+		invMappings = FileOperations.loadInventoryMappings();
 		
-		System.out.println("Created badge and pin mappings");
+		System.out.println("Created inventory mappings");
 	}
 	
-	// add a pin mapping
-	public static void addPinMapping(String pinID, String pinName, String pinPath)
+	// add an inventory mapping
+	public static void addInvMapping(String invID, String invName, String invPath, String invCardPath)
 	{
-		pinMappings.put(pinID, new PinInfo(pinID, pinName, pinPath));
+		invMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath));
 	}
 	
-	// remove a pin mapping
-	public static void removePinMapping(String pinID)
+	// remove an inventory mapping
+	public static void removeInvMapping(String invID)
 	{
-		pinMappings.remove(pinID);
+		invMappings.remove(invID);
 	}
 	
-	// get pin info
-	public static PinInfo getPinInfo(String pinID)
+	// get inventory info
+	public static InventoryInfo getInvInfo(String invID)
 	{
-		PinInfo pin = pinMappings.get(pinID);
+		InventoryInfo inv = invMappings.get(invID);
 		
-		if(pin != null)
+		if(inv != null)
 		{
-			return pin;
+			return inv;
 		}
 		else
 		{
-			// return a blank pin
-			return new PinInfo("", "", "");
+			// return blank inventory info
+			return new InventoryInfo("", "", "", "");
 		}
 	}
 }

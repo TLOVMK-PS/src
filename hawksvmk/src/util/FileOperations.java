@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -355,8 +356,8 @@ public class FileOperations
 		
 		String signature = "";
 		
-		PinInfo displayedBadges[] = new PinInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
-		PinInfo displayedPins[] = new PinInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
+		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
+		InventoryInfo displayedPins[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
 		
 		try
 		{
@@ -384,13 +385,13 @@ public class FileOperations
 					else if(line.startsWith("BADGE: ")) // badge
 					{
 						line = line.replaceAll("BADGE: ", "");
-						displayedBadges[badgeNum] = StaticAppletData.getPinInfo(line);
+						displayedBadges[badgeNum] = StaticAppletData.getInvInfo(line);
 						badgeNum++;
 					}
 					else if(line.startsWith("PIN: ")) // pin
 					{
 						line = line.replaceAll("PIN: ", "");
-						displayedPins[pinNum] = StaticAppletData.getPinInfo(line);
+						displayedPins[pinNum] = StaticAppletData.getInvInfo(line);
 						pinNum++;
 					}
 					else if(line.startsWith(commentDelimeter))
@@ -412,13 +413,13 @@ public class FileOperations
 				// create blank badges
 				for(int j = 0; j < StaticAppletData.MAX_DISPLAYABLE_BADGES; j++)
 				{
-					displayedBadges[j] = StaticAppletData.getPinInfo("");
+					displayedBadges[j] = StaticAppletData.getInvInfo("");
 				}
 				
 				// create blank pins
 				for(int j = 0; j < StaticAppletData.MAX_DISPLAYABLE_PINS; j++)
 				{
-					displayedPins[j] = StaticAppletData.getPinInfo("");
+					displayedPins[j] = StaticAppletData.getInvInfo("");
 				}
 				
 				newCharacter.setDisplayedBadges(displayedBadges);
@@ -468,14 +469,14 @@ public class FileOperations
 			fileWriter.println("SIGNATURE: " + character.getSignature());
 			
 			// write out the badges
-			PinInfo[] displayedBadges = character.getDisplayedBadges();
+			InventoryInfo[] displayedBadges = character.getDisplayedBadges();
 			for(int i = 0; i < displayedBadges.length; i++)
 			{
 				fileWriter.println("BADGE: " + displayedBadges[i].getID());
 			}
 			
 			// write out the pins
-			PinInfo[] displayedPins = character.getDisplayedPins();
+			InventoryInfo[] displayedPins = character.getDisplayedPins();
 			for(int i = 0; i < displayedPins.length; i++)
 			{
 				fileWriter.println("PIN: " + displayedPins[i].getID());
@@ -829,16 +830,17 @@ public class FileOperations
 	}
 	
 	// load the pin and badge mappings
-	public static HashMap<String,PinInfo> loadPinMappings()
+	public static HashMap<String,InventoryInfo> loadInventoryMappings()
 	{
-		String filename = "data/mappings/pinMappings.dat";
-		HashMap<String,PinInfo> pinMappings = new HashMap<String,PinInfo>();
+		String filename = "data/mappings/inventoryMappings.dat";
+		HashMap<String,InventoryInfo> inventoryMappings = new HashMap<String,InventoryInfo>();
 		
 		Scanner fileReader;
 		
-		String pinID = "";
-		String pinName = "";
-		String pinPath = "";
+		String invID = "";
+		String invName = "";
+		String invPath = "";
+		String invCardPath = "";
 		
 		try
 		{
@@ -857,24 +859,30 @@ public class FileOperations
 					}
 					else if(line.startsWith("ID: "))
 					{
-						// get the pin ID
+						// get the inventory ID
 						line = line.replaceAll("ID: ", "");
-						pinID = line;
+						invID = line;
 					}
 					else if(line.startsWith("NAME: "))
 					{
-						// get the pin name
+						// get the inventory name
 						line = line.replaceAll("NAME: ", "");
-						pinName = line;
+						invName = line;
 					}
 					else if(line.startsWith("PATH: "))
 					{
-						// get the pin path
+						// get the inventory path
 						line = line.replaceAll("PATH: ", "");
-						pinPath = line;
+						invPath = line;
+					}
+					else if(line.startsWith("CARD: "))
+					{
+						// get the inventory card path
+						line = line.replaceAll("CARD: ", "");
+						invCardPath = line;
 						
-						// add the pin mapping to the HashMap
-						pinMappings.put(pinID, new PinInfo(pinID, pinName, pinPath));
+						// add the inventory mapping to the HashMap
+						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath));
 					}
 				}
 				
@@ -885,15 +893,95 @@ public class FileOperations
 			{
 				// file doesn't exist
 				// return the default empty mappings list
-				return pinMappings;
+				return inventoryMappings;
 			}
 		}
 		catch(Exception e)
 		{
-			System.out.println("ERROR IN loadPinMappings(): " + e.getClass().getName() + " - " + e.getMessage());
+			System.out.println("ERROR IN loadInventoryMappings(): " + e.getClass().getName() + " - " + e.getMessage());
 		}
 
 		// create a new mappings list from the file data
-		return pinMappings;
+		return inventoryMappings;
+	}
+	
+	// load a player's inventory
+	public static ArrayList<InventoryItem> loadInventory(String email)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// load the inventory file
+			filename = "data/inventory/" + email + ".dat";
+		}
+		else
+		{
+			// load the default inventory file
+			filename = "data/inventory/default.dat";
+		}
+		
+		ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
+		String inventoryID = "";
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(!line.equals(""))
+					{
+						if(line.startsWith("FURNITURE: "))
+						{
+							// get the furniture item
+							line = line.replaceAll("FURNITURE: ", "");
+							inventoryID = line;
+							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.FURNITURE));
+						}
+						else if(line.startsWith("PIN: "))
+						{
+							// get the pin item
+							line = line.replaceAll("PIN: ", "");
+							inventoryID = line;
+							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.PIN));
+						}
+						else if(line.startsWith("POSTER: "))
+						{
+							// get the poster item
+							line = line.replaceAll("POSTER: ", "");
+							inventoryID = line;
+							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.POSTER));
+						}
+						else if(line.startsWith(commentDelimeter))
+						{
+							// comment line, so ignore
+						}
+					}
+				}
+				
+				fileReader.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty inventory list
+				return inventoryItems;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadInventory(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new sorted inventory list from the file data
+		Collections.sort(inventoryItems);
+		return inventoryItems;
 	}
 }

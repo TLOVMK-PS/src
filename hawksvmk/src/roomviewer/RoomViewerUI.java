@@ -49,6 +49,7 @@ import ui.WindowRoomDescription;
 import util.FileOperations;
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.InventoryItem;
 import util.MailMessage;
 import util.StaticAppletData;
 
@@ -264,7 +265,7 @@ public class RoomViewerUI extends Applet
      this.setLayout(null);
      
      // create the pin mappings
-     StaticAppletData.createPinMappings();
+     StaticAppletData.createInvMappings();
      
      // set up the fonts
 	 setupFonts();
@@ -701,6 +702,12 @@ public class RoomViewerUI extends Applet
 	public synchronized AStarCharacter getCharacterInRoom(String username)
 	{
 		return theGridView.getCharacterInRoom(username);
+	}
+	
+	// set the player's inventory
+	public void setInventory(ArrayList<InventoryItem> inventory)
+	{
+		theGridView.setInventory(inventory);
 	}
 	
 	// send a message to the server (only used for messages from the grid)
