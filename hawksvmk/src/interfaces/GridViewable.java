@@ -12,6 +12,7 @@ import animations.Animation;
 
 import sounds.SoundPlayable;
 import tiles.Tile;
+import ui.WindowLoading;
 
 public interface GridViewable
 {

@@ -45,6 +45,7 @@ import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageRemoveUserFromRoom;
+import ui.WindowLoading;
 import ui.WindowRoomDescription;
 import util.FileOperations;
 import util.AppletResourceLoader;
@@ -572,7 +573,6 @@ public class RoomViewerUI extends Applet
 	 theVMKClient = new VMKClient(getUsername());
 	 theVMKClient.setUIObject(roomViewerUI);
 	 theVMKClient.startClient();
-     
 	}
 
 	// set up the fonts

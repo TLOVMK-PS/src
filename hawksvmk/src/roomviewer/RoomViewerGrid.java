@@ -44,6 +44,7 @@ import ui.WindowAvatarInformation;
 import ui.WindowClothing;
 import ui.WindowHelp;
 import ui.WindowInventory;
+import ui.WindowLoading;
 import ui.WindowMessages;
 import ui.WindowRoomDescription;
 import ui.WindowSettings;
@@ -140,6 +141,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// avatar information window
 	WindowAvatarInformation avatarInfoWindow;
 	
+	// "Loading" window
+	WindowLoading loadingWindow;
+	
 	// Pathfinding stuff
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
@@ -199,7 +203,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	public void loadGridView()
-	{
+	{	
 		this.addMouseListener(new MouseAdapter()
      {
      	public void mouseReleased(MouseEvent e)
@@ -684,6 +688,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	private void setupInternalUI()
 	{
+		 // set up the "Loading" window
+	     loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
+	     loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
+	     loadingWindow.setDescription("Loading... please wait");
+	     loadingWindow.setGridObject(this);
+	     loadingWindow.setVisible(false);
+	     add(loadingWindow);
+	     repaint();
+		
 		 // set up the room description window
 	     roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room.  You can try out the\nfeatures of the game, including chat and walking.\nPlease feel free to wander around.\n\n- Hawk's VMK: Development Team", 0, 424);
 		 roomDescriptionWindow.setRoomTitleX(125);
@@ -735,7 +748,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	public void graphicsLoop()
-	{   
+	{    
 		// set up the animations
 		setupAnimations();
 		
@@ -1055,6 +1068,20 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setInventory(ArrayList<InventoryItem> inventory)
 	{
 		inventoryWindow.setInventory(inventory);
+	}
+	
+	// show the loading window
+	public void showLoadingWindow(String roomTitle, String description)
+	{
+		loadingWindow.setRoomTitle(roomTitle);
+		loadingWindow.setDescription(description);
+		loadingWindow.setVisible(true);
+	}
+	
+	// hide the loading window
+	public void hideLoadingWindow()
+	{
+		loadingWindow.setVisible(false);
 	}
 	
 	// check whether a given username has a staff prefix
