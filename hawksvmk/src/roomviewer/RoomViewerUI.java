@@ -46,6 +46,7 @@ import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageRemoveUserFromRoom;
 import ui.WindowLoading;
+import ui.WindowMap;
 import ui.WindowRoomDescription;
 import util.FileOperations;
 import util.AppletResourceLoader;
@@ -71,8 +72,9 @@ public class RoomViewerUI extends Applet
 	
 	private int maximumChatCharacters = 90; // maximum number of chat characters
 	
+	private JLabel loadingBackground;
+	private WindowLoading loadingWindow;
 	private RoomViewerGrid theGridView;
-	//private WindowRoomDescription roomDescriptionWindow;
 	
 	JLabel toolbar_left;
 	JLabel toolbar_right;
@@ -216,6 +218,10 @@ public class RoomViewerUI extends Applet
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				loginButton.setEnabled(false);
+				emailTextBox.setEnabled(false);
+				passwordTextBox.setEnabled(false);
+				
 				// check the login credentials
 				if(loginModule.login(loginPath, emailTextBox.getText(), new String(passwordTextBox.getPassword())))
 				{
@@ -236,6 +242,10 @@ public class RoomViewerUI extends Applet
 				{
 					// incorrect credentials
 					errorLabel.setVisible(true);
+					
+					loginButton.setEnabled(true);
+					emailTextBox.setEnabled(true);
+					passwordTextBox.setEnabled(true);
 				}
 			}
 		});
@@ -382,6 +392,19 @@ public class RoomViewerUI extends Applet
 	     add(addChatButton);
      }
      
+     // set up the "Loading" window
+     loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
+     loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
+     loadingWindow.setDescription("Loading... please wait");
+     loadingWindow.setVisible(true);
+     add(loadingWindow);
+     
+     // set up the "Loading" window background
+     loadingBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/loading_room_vmk.png"));
+     loadingBackground.setBounds(0,0,800,600);
+     loadingBackground.setVisible(true);
+     add(loadingBackground);
+     
      // Toolbar (left)
      toolbar_left = new JLabel("");
      toolbar_left.setBounds(new Rectangle(0, 572, 228, 28));
@@ -403,6 +426,7 @@ public class RoomViewerUI extends Applet
       		else if(globeButtonRect.contains(mousePoint)) // click inside the globe button
       		{
       			System.out.println("Clicked toolbar globe button");
+      			theGridView.showMap(); // show the map
       		}
       		else if(inventoryButtonRect.contains(mousePoint)) // click inside the inventory button
       		{
@@ -542,6 +566,7 @@ public class RoomViewerUI extends Applet
      
      // create the grid
      theGridView = new RoomViewerGrid();
+     theGridView.setVisible(false);
      theGridView.setBounds(new Rectangle(0,0,800,572));
      
      // assign the fonts to the grid
@@ -731,5 +756,21 @@ public class RoomViewerUI extends Applet
 		toolbar_right.setVisible(visible);
 		toolbar.setVisible(visible);
 		chatTextBox.setVisible(visible);
+	}
+	
+	// show/hide the loading window
+	public void showLoadingWindow(boolean visible, boolean backgroundVisible)
+	{
+		loadingWindow.setVisible(visible);
+		loadingBackground.setVisible(backgroundVisible);
+	}
+	
+	// show/hide the loading window and change its text
+	public void showLoadingWindow(String roomTitle, String description, boolean visible, boolean backgroundVisible)
+	{
+		loadingWindow.setRoomTitle(roomTitle);
+		loadingWindow.setDescription(description);
+		loadingWindow.setVisible(visible);
+		loadingBackground.setVisible(backgroundVisible);
 	}
 }

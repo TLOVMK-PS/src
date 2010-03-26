@@ -1,8 +1,8 @@
 package roomviewer;
 
-//GridView.java by Matt Fritz
+//RoomViewerGrid.java by Matt Fritz
 //March 26, 2009
-//Class that implements the grid portion of the Room Editor
+//Class that implements the grid portion of the Room Viewer
 
 import interfaces.GridViewable;
 
@@ -44,7 +44,7 @@ import ui.WindowAvatarInformation;
 import ui.WindowClothing;
 import ui.WindowHelp;
 import ui.WindowInventory;
-import ui.WindowLoading;
+import ui.WindowMap;
 import ui.WindowMessages;
 import ui.WindowRoomDescription;
 import ui.WindowSettings;
@@ -141,12 +141,17 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// avatar information window
 	WindowAvatarInformation avatarInfoWindow;
 	
-	// "Loading" window
-	WindowLoading loadingWindow;
+	// map window
+	WindowMap mapWindow;
 	
 	// Pathfinding stuff
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
+	
+	public RoomViewerGrid()
+	{
+		
+	}
 	
 	public void start()
 	{
@@ -164,7 +169,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		while(this != null)
 		{
-			paint(this.getGraphics());
+			// only paint if this grid is visible
+			if(isVisible())
+			{
+				paint(this.getGraphics());
+			}
+			
 			try
 			{
 				Thread.sleep(graphicsDelay);
@@ -203,82 +213,78 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	public void loadGridView()
-	{	
-		// set up the "Loading" window
-		loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
-		loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
-		loadingWindow.setDescription("Loading... please wait");
-		loadingWindow.setGridObject(this);
-		loadingWindow.setVisible(true);
-		add(loadingWindow);
-	     
+	{	 
 		this.addMouseListener(new MouseAdapter()
      {
      	public void mouseReleased(MouseEvent e)
      	{	
-     		// make sure we only process these events when the mouse
-     		// is within the editing grid
-     		mouseX = e.getX();
-     		mouseY = e.getY();
-     		
-     		if(mouseX < 0 || mouseX > 800) {return;}
-     		if(mouseY < 0 || mouseY > 600) {return;}
-     		
-     		Point mousePoint = new Point(mouseX, mouseY);
-     		
-     		if(roomDescriptionWindow != null)
+     		// make sure the map is not visible
+     		if(!mapWindow.isVisible())
      		{
-     			if(roomDescriptionWindow.isVisible())
-     			{	
-     				// check to see if the user clicked on the "X"
-     				if(roomDescriptionWindow.getExitButtonRectAbsolute().contains(mousePoint))
-     				{
-     					// hide the Room Description window
-     					roomDescriptionWindow.toggleVisibility();
-     					
-     					return;
-     				}
-     			}
+	     		// make sure we only process these events when the mouse
+	     		// is within the editing grid
+	     		mouseX = e.getX();
+	     		mouseY = e.getY();
+	     		
+	     		if(mouseX < 0 || mouseX > 800) {return;}
+	     		if(mouseY < 0 || mouseY > 600) {return;}
+	     		
+	     		Point mousePoint = new Point(mouseX, mouseY);
+	     		
+	     		if(roomDescriptionWindow != null)
+	     		{
+	     			if(roomDescriptionWindow.isVisible())
+	     			{	
+	     				// check to see if the user clicked on the "X"
+	     				if(roomDescriptionWindow.getExitButtonRectAbsolute().contains(mousePoint))
+	     				{
+	     					// hide the Room Description window
+	     					roomDescriptionWindow.toggleVisibility();
+	     					
+	     					return;
+	     				}
+	     			}
+	     		}
+	     		
+	     		// check to see if we clicked inside a bounding box
+	     		for(AStarCharacter c : characters.values())
+	     		{
+	     			if(c.getBoundingBox().contains(mousePoint))
+	     			{
+	     				// check if it should be inactive
+	     				if(c.getUsername().equals(uiObject.getUsername()))
+	     				{
+	     					avatarInfoWindow.setInactive(true);
+	     				}
+	     				else
+	     				{
+	     					avatarInfoWindow.setInactive(false);
+	     				}
+	     				
+	     				avatarInfoWindow.setUsername(c.getUsername());
+	     				avatarInfoWindow.setSignature(c.getSignature());
+	     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
+	     				avatarInfoWindow.setPins(c.getDisplayedPins());
+	     				avatarInfoWindow.setVisible(true);
+	     				
+	     				System.out.println("Clicked bounding box for character: " + c.getUsername());
+	     				
+	     				convertMouseToGridCoords(); // convert the mouse coords back to grid coords
+	     				
+	     				return;
+	     			}
+	     		}
+	     		
+	     		convertMouseToGridCoords(); // convert the mouse coords back to grid coords
+	     		
+	     		// move the character locally
+	     		moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
+	     		
+	     		// send a "move character" message to the server to update all clients
+	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, "Boot Hill Shooting Gallery Guest Room", (gridX / 2), gridY));
+	     		
+	     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      		}
-     		
-     		// check to see if we clicked inside a bounding box
-     		for(AStarCharacter c : characters.values())
-     		{
-     			if(c.getBoundingBox().contains(mousePoint))
-     			{
-     				// check if it should be inactive
-     				if(c.getUsername().equals(uiObject.getUsername()))
-     				{
-     					avatarInfoWindow.setInactive(true);
-     				}
-     				else
-     				{
-     					avatarInfoWindow.setInactive(false);
-     				}
-     				
-     				avatarInfoWindow.setUsername(c.getUsername());
-     				avatarInfoWindow.setSignature(c.getSignature());
-     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
-     				avatarInfoWindow.setPins(c.getDisplayedPins());
-     				avatarInfoWindow.setVisible(true);
-     				
-     				System.out.println("Clicked bounding box for character: " + c.getUsername());
-     				
-     				convertMouseToGridCoords(); // convert the mouse coords back to grid coords
-     				
-     				return;
-     			}
-     		}
-     		
-     		convertMouseToGridCoords(); // convert the mouse coords back to grid coords
-     		
-     		// move the character locally
-     		moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
-     		
-     		// send a "move character" message to the server to update all clients
-     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, "Boot Hill Shooting Gallery Guest Room", (gridX / 2), gridY));
-     		
-     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      	}
      });
      
@@ -286,29 +292,33 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
      {
      	public void mouseMoved(MouseEvent e)
      	{
-     		mouseX = e.getX();
-     		mouseY = e.getY();
-     		
-     		// make sure we only process these events when the mouse
-     		// is within the editing grid
-     		if(mouseX < 0 || mouseX > 800) {return;}
-     		if(mouseY < 0 || mouseY > 600) {return;}
-     		
-     		// check the UI elements
-     		
-     		// convert back to the grid coords
-     		convertMouseToGridCoords();
-     		
-     		// figure out the correct reticle to display
-     		Tile currentTile = tilesMap.get(gridY + "-" + (gridX / 2));
-     		if(currentTile != null)
+     		// make sure the map isn't visible
+     		if(!mapWindow.isVisible())
      		{
-     			if(currentTile.getType() == Tile.TILE_EXIT) {reticleTile = reticleExit;}
-     			if(currentTile.getType() == Tile.TILE_WALK) {reticleTile = reticleWalk;}
-     			if(currentTile.getType() == Tile.TILE_NOGO) {reticleTile = reticleNogo;}
+	     		mouseX = e.getX();
+	     		mouseY = e.getY();
+	     		
+	     		// make sure we only process these events when the mouse
+	     		// is within the editing grid
+	     		if(mouseX < 0 || mouseX > 800) {return;}
+	     		if(mouseY < 0 || mouseY > 600) {return;}
+	     		
+	     		// check the UI elements
+	     		
+	     		// convert back to the grid coords
+	     		convertMouseToGridCoords();
+	     		
+	     		// figure out the correct reticle to display
+	     		Tile currentTile = tilesMap.get(gridY + "-" + (gridX / 2));
+	     		if(currentTile != null)
+	     		{
+	     			if(currentTile.getType() == Tile.TILE_EXIT) {reticleTile = reticleExit;}
+	     			if(currentTile.getType() == Tile.TILE_WALK) {reticleTile = reticleWalk;}
+	     			if(currentTile.getType() == Tile.TILE_NOGO) {reticleTile = reticleNogo;}
+	     		}
+	     		
+	     		setCurrentTileType(tileTypeString); // set the current tile type and coords
      		}
-     		
-     		setCurrentTileType(tileTypeString); // set the current tile type and coords
      	}
      });
      
@@ -336,161 +346,185 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		{
 			// clear the screen
 			bufferGraphics.clearRect(0, 0, 800, 572);
-		
-			bufferGraphics.drawImage(backgroundImage.getImage(), 0, 0, new GridViewMovementImageObserver(this));
 			
-			// draw the grid
-			if(showGrid == true)
+			// only draw if the map is not visible
+			if(!mapWindow.isVisible())
 			{
-				for(int i = 0; i < tileColumns; i++) // columns (3)
+				bufferGraphics.drawImage(backgroundImage.getImage(), 0, 0, new GridViewMovementImageObserver(this));
+				
+				// draw the grid
+				if(showGrid == true)
 				{
-					for(int j = 0; j < tileRows; j++) // rows (4)
+					for(int i = 0; i < tileColumns; i++) // columns (3)
 					{
-						// get the tile
-						Tile tileIcon = tilesMap.get(j + "-" + i);
-						
-						if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
+						for(int j = 0; j < tileRows; j++) // rows (4)
 						{
-							bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
-						}
-						else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
-						{
-							bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
-						}
-						else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
-						{
-							bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
+							// get the tile
+							Tile tileIcon = tilesMap.get(j + "-" + i);
+							
+							if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
+							{
+								bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
+							}
+							else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
+							{
+								bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
+							}
+							else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
+							{
+								bufferGraphics.drawImage(tileIcon.getImage(), tileIcon.getX(), tileIcon.getY(), new GridViewMovementImageObserver(this));
+							}
 						}
 					}
 				}
-			}
-			
-			bufferGraphics.drawImage(reticleTile.getImage(), mouseX - (tileWidth / 2), mouseY - (tileHeight / 2), new GridViewMovementImageObserver(this));
-		
-			// draw the animations
-			for(Animation anim : animations)
-			{
-				bufferGraphics.drawImage(anim.getNextFrame().getImage(), anim.getX(), anim.getY(), this);
-			}
-			
-			// draw the path to the target tile for each character
-			//for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
-			//for(AStarCharacter character : characters.values())
-			for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
-			{
-				// get a character
-				AStarCharacter character = (AStarCharacter)characters.values().toArray()[characterCount];
 				
-				if(character.getPath() != null)
+				bufferGraphics.drawImage(reticleTile.getImage(), mouseX - (tileWidth / 2), mouseY - (tileHeight / 2), new GridViewMovementImageObserver(this));
+			
+				// draw the animations
+				for(Animation anim : animations)
 				{
-					if(character.getPath().size() > 0)
+					bufferGraphics.drawImage(anim.getNextFrame().getImage(), anim.getX(), anim.getY(), this);
+				}
+				
+				// draw the path to the target tile for each character
+				//for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
+				//for(AStarCharacter character : characters.values())
+				for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
+				{
+					// get a character
+					AStarCharacter character = (AStarCharacter)characters.values().toArray()[characterCount];
+					
+					if(character.getPath() != null)
 					{
-						Tile nextTile = character.getPath().get(0); // get the next step in the path
-						
-						// check if movement is necessary
-						character.setColDiff(Math.abs(character.getCol() - nextTile.getColumn()));
-						//System.out.println("COLDIFF: " + character.getColDiff());
-						if(character.getColDiff() > 0) // prevent the back-and-forth movement across the same column
+						if(character.getPath().size() > 0)
 						{
-							if(character.getX() == nextTile.getX())
+							Tile nextTile = character.getPath().get(0); // get the next step in the path
+							
+							// check if movement is necessary
+							character.setColDiff(Math.abs(character.getCol() - nextTile.getColumn()));
+							//System.out.println("COLDIFF: " + character.getColDiff());
+							if(character.getColDiff() > 0) // prevent the back-and-forth movement across the same column
 							{
-								//System.out.println("Character X speed at 0");
-								character.setxSpeed(0);
-							}
-							else
-							{	
-								// move along the X-axis
 								if(character.getX() == nextTile.getX())
 								{
-									// stay along the same line of movement to prevent
-									// the "back-and-forth" vertical movement
-								}
-								else
-								{
-									if(character.getX() < nextTile.getX())
-									{
-										character.setxSpeed(4);
-										character.setX(character.getX() + character.getxSpeed());
-									}
-									if(character.getX() > nextTile.getX())
-									{
-										character.setxSpeed(-4);
-										character.setX(character.getX() + character.getxSpeed());
-									}
-								}
-							}
-						}
-						else
-						{
-							if(character.getPath().size() == 1)
-							{
-								// move along the X-axis
-								if(character.getX() == nextTile.getX())
-								{
-									// stay along the same line of movement to prevent
-									// the "back-and-forth" vertical movement
-								}
-								else
-								{
-									if(character.getX() < nextTile.getX())
-									{
-										character.setxSpeed(4);
-										character.setX(character.getX() + character.getxSpeed());
-									}
-									if(character.getX() > nextTile.getX())
-									{
-										character.setxSpeed(-4);
-										character.setX(character.getX() + character.getxSpeed());
-									}
-								}
-							}
-							else
-							{
-								if(character.getySpeed() > 0 || character.getySpeed() < 0)
-								{
+									//System.out.println("Character X speed at 0");
 									character.setxSpeed(0);
 								}
-							}
-						}
-						
-						if(character.getY() == nextTile.getY())
-						{
-							//System.out.println("Character Y speed at 0");
-							character.setySpeed(0);
-						}
-						else
-						{
-							// move along the Y-axis
-							if(character.getY() < nextTile.getY())
-							{
-								character.setySpeed(2);
-							}
-							if(character.getY() > nextTile.getY())
-							{
-								character.setySpeed(-2);
-							}
-							character.setY(character.getY() + character.getySpeed());
-						}
-						
-						if(character.getColDiff() == 0)
-						{
-							if(character.getPath() != null)
-							{
-								if(character.getPath().size() > 1)
-								{
-									if(character.getCol() == nextTile.getColumn() && character.getY() == nextTile.getY())
+								else
+								{	
+									// move along the X-axis
+									if(character.getX() == nextTile.getX())
 									{
-										// remove the first step in the path so we can proceed to the next
-										character.setCurrentTile(character.getPath().get(0));
-										//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
-										character.removeTopmostPathStep();
+										// stay along the same line of movement to prevent
+										// the "back-and-forth" vertical movement
+									}
+									else
+									{
+										if(character.getX() < nextTile.getX())
+										{
+											character.setxSpeed(4);
+											character.setX(character.getX() + character.getxSpeed());
+										}
+										if(character.getX() > nextTile.getX())
+										{
+											character.setxSpeed(-4);
+											character.setX(character.getX() + character.getxSpeed());
+										}
+									}
+								}
+							}
+							else
+							{
+								if(character.getPath().size() == 1)
+								{
+									// move along the X-axis
+									if(character.getX() == nextTile.getX())
+									{
+										// stay along the same line of movement to prevent
+										// the "back-and-forth" vertical movement
+									}
+									else
+									{
+										if(character.getX() < nextTile.getX())
+										{
+											character.setxSpeed(4);
+											character.setX(character.getX() + character.getxSpeed());
+										}
+										if(character.getX() > nextTile.getX())
+										{
+											character.setxSpeed(-4);
+											character.setX(character.getX() + character.getxSpeed());
+										}
 									}
 								}
 								else
 								{
-									if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+									if(character.getySpeed() > 0 || character.getySpeed() < 0)
 									{
-										// remove the first step in the path so we can proceed to the next
+										character.setxSpeed(0);
+									}
+								}
+							}
+							
+							if(character.getY() == nextTile.getY())
+							{
+								//System.out.println("Character Y speed at 0");
+								character.setySpeed(0);
+							}
+							else
+							{
+								// move along the Y-axis
+								if(character.getY() < nextTile.getY())
+								{
+									character.setySpeed(2);
+								}
+								if(character.getY() > nextTile.getY())
+								{
+									character.setySpeed(-2);
+								}
+								character.setY(character.getY() + character.getySpeed());
+							}
+							
+							if(character.getColDiff() == 0)
+							{
+								if(character.getPath() != null)
+								{
+									if(character.getPath().size() > 1)
+									{
+										if(character.getCol() == nextTile.getColumn() && character.getY() == nextTile.getY())
+										{
+											// remove the first step in the path so we can proceed to the next
+											character.setCurrentTile(character.getPath().get(0));
+											//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
+											character.removeTopmostPathStep();
+										}
+									}
+									else
+									{
+										if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+										{
+											// remove the first step in the path so we can proceed to the next
+											character.setCurrentTile(character.getPath().get(0));
+											//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
+											character.removeTopmostPathStep();
+											
+											if(character.getPath().size() == 0)
+											{
+												// tell the server to update the final position of the character
+												//System.out.println("Movement finished; updating character position");
+												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
+											}
+										}
+									}
+								}
+							}
+							else
+							{
+								if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+								{
+									// remove the first step in the path so we can proceed to the next
+									if(character.getPath() != null)
+									{
 										character.setCurrentTile(character.getPath().get(0));
 										//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
 										character.removeTopmostPathStep();
@@ -505,60 +539,44 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 								}
 							}
 						}
-						else
-						{
-							if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
-							{
-								// remove the first step in the path so we can proceed to the next
-								if(character.getPath() != null)
-								{
-									character.setCurrentTile(character.getPath().get(0));
-									//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
-									character.removeTopmostPathStep();
-									
-									if(character.getPath().size() == 0)
-									{
-										// tell the server to update the final position of the character
-										//System.out.println("Movement finished; updating character position");
-										uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
-									}
-								}
-							}
-						}
 					}
-				}
-				
-				// draw the character
-				if(character != null)
-				{
-					bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + 32, this);
+					
+					// draw the character
+					if(character != null)
+					{
+						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + 32, this);
+					}
 				}
 			}
 			
 			// paint the internal UI components
 			this.paintComponents(bufferGraphics);
 			
-			// draw the chat bubbles
-			if(theChatBubbles != null)
+			// only draw if the map is not visible
+			if(!mapWindow.isVisible())
 			{
-				for(int bubbleIndex = 0; bubbleIndex < theChatBubbles.getChatBubbles().size(); bubbleIndex++)
+				// draw the chat bubbles
+				if(theChatBubbles != null)
 				{
-					ChatBubble bubble = theChatBubbles.getChatBubbles().get(bubbleIndex);
-					
-					// orient the chat bubble above the avatar
-					//bubble.setX(character.getX());
-					drawTextBubble(bubble.getUsername(), bubble.getText(), bubble.getX(), bubble.getY());
+					for(int bubbleIndex = 0; bubbleIndex < theChatBubbles.getChatBubbles().size(); bubbleIndex++)
+					{
+						ChatBubble bubble = theChatBubbles.getChatBubbles().get(bubbleIndex);
+						
+						// orient the chat bubble above the avatar
+						//bubble.setX(character.getX());
+						drawTextBubble(bubble.getUsername(), bubble.getText(), bubble.getX(), bubble.getY());
+					}
 				}
-			}
-			// draw a test text bubble
-			//drawTextBubble("HOST_Hawk", "Haha, I made this shit work.  Take THAT, bitches!", 100, 100);
-			
-			// draw the room description window
-			if(roomDescriptionWindow != null)
-			{
-				if(roomDescriptionWindow.isVisible())
+				// draw a test text bubble
+				//drawTextBubble("HOST_Hawk", "Haha, I made this shit work.  Take THAT, bitches!", 100, 100);
+				
+				// draw the room description window
+				if(roomDescriptionWindow != null)
 				{
-					bufferGraphics.drawImage(roomDescriptionWindow.getImage(), roomDescriptionWindow.getX(), roomDescriptionWindow.getY(), this);
+					if(roomDescriptionWindow.isVisible())
+					{
+						bufferGraphics.drawImage(roomDescriptionWindow.getImage(), roomDescriptionWindow.getX(), roomDescriptionWindow.getY(), this);
+					}
 				}
 			}
 			
@@ -745,6 +763,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 avatarInfoWindow.setGridObject(this);
 		 avatarInfoWindow.setVisible(false);
 		 add(avatarInfoWindow);
+		 
+		 // set up the map
+		 mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
+		 mapWindow.setVisible(true);
+		 add(mapWindow);
 	}
 	
 	public void graphicsLoop()
@@ -915,7 +938,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				characters.put(uiObject.getUsername(), myCharacter);
 				
 				// hide the loading window
-				loadingWindow.setVisible(false);
+				uiObject.showLoadingWindow(false, false);
+				setVisible(true);
+				
 				return;
 			}
 			else
@@ -1073,18 +1098,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		inventoryWindow.setInventory(inventory);
 	}
 	
-	// show the loading window
-	public void showLoadingWindow(String roomTitle, String description)
+	// show the map
+	public void showMap()
 	{
-		loadingWindow.setRoomTitle(roomTitle);
-		loadingWindow.setDescription(description);
-		loadingWindow.setVisible(true);
-	}
-	
-	// hide the loading window
-	public void hideLoadingWindow()
-	{
-		loadingWindow.setVisible(false);
+		mapWindow.setVisible(true);
 	}
 	
 	// check whether a given username has a staff prefix
