@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.ImageObserver;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -264,7 +265,15 @@ public class GridView extends JLabel implements GridViewable
 	{
 		this.backgroundImagePath = imagePath;
 		
-		backgroundImage = AppletResourceLoader.getImageFromJar(imagePath);
+		try
+		{
+			backgroundImage = new ImageIcon(new URL(imagePath));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		//backgroundImage = AppletResourceLoader.getImageFromJar(imagePath);
 	}
 	
 	// set the currently selected tile type

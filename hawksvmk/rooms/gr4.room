@@ -1,4 +1,4 @@
-IMAGE: img/gr4/gr4.jpg
+IMAGE: img/rooms/gr4/gr4.jpg
 ANIMATION: anims/BootHillWindmill.anim
 REPEATING SOUND: sound/GR_BootHill_Music.wav,GR_BootHill_Music,60000
 REPEATING SOUND: sound/GR_BootHill_sfx.wav,GR_BootHill_sfx,0

@@ -142,7 +142,7 @@ public class RoomEditorUI extends JFrame
         	    if(returnVal == JFileChooser.APPROVE_OPTION)
         	    {
         	    	// load the background image
-        	    	theGridView.setBackgroundImage(chooser.getSelectedFile().getPath());
+        	    	theGridView.setBackgroundImage("file:///" + chooser.getSelectedFile().getPath());
         	    }
         	}
         });
