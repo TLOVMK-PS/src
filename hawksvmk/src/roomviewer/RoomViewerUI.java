@@ -74,7 +74,19 @@ public class RoomViewerUI extends Applet
 	
 	private JLabel loadingBackground;
 	private WindowLoading loadingWindow;
-	private RoomViewerGrid theGridView;
+	RoomViewerGrid theGridView;
+	private String roomName = "";
+	
+	private boolean roomDescriptionWindowVisible = false;
+	private boolean messagesWindowVisible = false;
+	private boolean inventoryWindowVisible = false;
+	private boolean shopWindowVisible = false;
+	private boolean clothingWindowVisible = false;
+	private boolean settingsWindowVisible = false;
+	private boolean helpWindowVisible = false;
+	private boolean avatarInfoWindowVisible = false;
+	private boolean mapWindowVisible = true;
+	private boolean loadingWindowVisible = false;
 	
 	JLabel toolbar_left;
 	JLabel toolbar_right;
@@ -128,14 +140,52 @@ public class RoomViewerUI extends Applet
 		//loadRoomViewerUI();
 	}
 	
+	public void start()
+	{
+		// show the UI elements again if they had been hidden
+		/*if(theGridView != null)
+		{
+			theGridView.roomDescriptionWindow.setVisible(roomDescriptionWindowVisible);
+			theGridView.messagesWindow.setVisible(messagesWindowVisible);
+			theGridView.inventoryWindow.setVisible(inventoryWindowVisible);
+			theGridView.shopWindow.setVisible(shopWindowVisible);
+			theGridView.clothingWindow.setVisible(clothingWindowVisible);
+			theGridView.settingsWindow.setVisible(settingsWindowVisible);
+			theGridView.helpWindow.setVisible(helpWindowVisible);
+			theGridView.avatarInfoWindow.setVisible(avatarInfoWindowVisible);
+			theGridView.mapWindow.setVisible(mapWindowVisible);
+			loadingWindow.setVisible(loadingWindowVisible);
+		}*/
+	}
+	
 	public void stop()
 	{
-		// send a "logout" message back to the server
-		if(theVMKClient != null)
+		// hide the UI elements so they don't disappear forever
+		if(theGridView != null)
 		{
-			// logout
-			System.out.println("Sending logout message to server for user " + username);
-			sendMessageToServer(new MessageLogout());
+			// keep track of their visibility before they are all hidden
+			roomDescriptionWindowVisible = theGridView.roomDescriptionWindow.isVisible();
+			messagesWindowVisible = theGridView.messagesWindow.isVisible();
+			inventoryWindowVisible = theGridView.inventoryWindow.isVisible();
+			shopWindowVisible = theGridView.shopWindow.isVisible();
+			clothingWindowVisible = theGridView.clothingWindow.isVisible();
+			settingsWindowVisible = theGridView.settingsWindow.isVisible();
+			helpWindowVisible = theGridView.helpWindow.isVisible();
+			avatarInfoWindowVisible = theGridView.avatarInfoWindow.isVisible();
+			mapWindowVisible = theGridView.mapWindow.isVisible();
+			loadingWindowVisible = loadingWindow.isVisible();
+			
+			// hide the UI elements
+			theGridView.roomDescriptionWindow.setVisible(false);
+			theGridView.messagesWindow.setVisible(false);
+			theGridView.inventoryWindow.setVisible(false);
+			theGridView.shopWindow.setVisible(false);
+			theGridView.clothingWindow.setVisible(false);
+			theGridView.settingsWindow.setVisible(false);
+			theGridView.helpWindow.setVisible(false);
+			theGridView.avatarInfoWindow.setVisible(false);
+			theGridView.mapWindow.setVisible(false);
+			loadingWindow.setVisible(false);
 		}
 	}
 	
@@ -144,6 +194,10 @@ public class RoomViewerUI extends Applet
 		// stop the client
 		if(theVMKClient != null)
 		{
+			// logout
+			System.out.println("Sending logout message to server for user " + username);
+			sendMessageToServer(new MessageLogout());
+			
 			theVMKClient.stopClient();
 		}
 	}
@@ -282,6 +336,9 @@ public class RoomViewerUI extends Applet
      
      // create the pin mappings
      StaticAppletData.createInvMappings();
+     
+     // create the room mappings
+     StaticAppletData.createRoomMappings();
      
      // set up the fonts
 	 setupFonts();
@@ -555,7 +612,7 @@ public class RoomViewerUI extends Applet
     			 theGridView.addTextBubble(username, chatTextBox.getText(), 100);
     			 
     			 // send an "Add Chat" message to the server
-    			 theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, "Boot Hill Shooting Gallery Guest Room", chatTextBox.getText()));
+    			 theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomName, chatTextBox.getText()));
     			 
     			 // clear the text box
     			 chatTextBox.setText("");
@@ -772,5 +829,12 @@ public class RoomViewerUI extends Applet
 		loadingWindow.setDescription(description);
 		loadingWindow.setVisible(visible);
 		loadingBackground.setVisible(backgroundVisible);
+	}
+	
+	// set the current room name
+	public void setRoomName(String newRoomName)
+	{
+		roomName = newRoomName;
+		theGridView.setRoomName(newRoomName);
 	}
 }

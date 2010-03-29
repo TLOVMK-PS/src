@@ -1,0 +1,11 @@
+// ===================
+// GUEST ROOMS
+// ===================
+
+ID: gr4
+NAME: Boot Hill Shooting Gallery Guest Room
+PATH: rooms/gr4.room
+
+ID: nos1
+NAME: Main Street
+PATH: rooms/nos1.room

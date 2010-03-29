@@ -984,4 +984,73 @@ public class FileOperations
 		Collections.sort(inventoryItems);
 		return inventoryItems;
 	}
+	
+	// load the room mappings
+	public static HashMap<String,VMKRoom> loadRoomMappings()
+	{
+		String filename = "data/mappings/roomNames.dat";
+		HashMap<String,VMKRoom> roomMappings = new HashMap<String,VMKRoom>();
+		
+		Scanner fileReader;
+		
+		String roomID = "";
+		String roomName = "";
+		String roomPath = "";
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("ID: "))
+					{
+						// get the room ID
+						line = line.replaceAll("ID: ", "");
+						roomID = line;
+					}
+					else if(line.startsWith("NAME: "))
+					{
+						// get the room name
+						line = line.replaceAll("NAME: ", "");
+						roomName = line;
+					}
+					else if(line.startsWith("PATH: "))
+					{
+						// get the room path
+						line = line.replaceAll("PATH: ", "");
+						roomPath = line;
+						
+						// add the room mapping to the HashMap
+						roomMappings.put(roomName, new VMKRoom(roomID, roomName, roomPath));
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty mappings list
+				return roomMappings;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadRoomMappings(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new mappings list from the file data
+		return roomMappings;
+	}
 }

@@ -89,6 +89,12 @@ public class VMKServer
         System.out.println("Username:email mappings loaded");
         System.out.println();
         
+        // load the room mappings
+        System.out.println("Loading room mappings...");
+        VMKServerPlayerData.setRooms(FileOperations.loadRoomMappings());
+        System.out.println("Room mappings loaded");
+        System.out.println();
+        
         System.out.println("Listening for client connections...");
         System.out.println();
         

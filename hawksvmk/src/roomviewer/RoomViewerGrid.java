@@ -33,8 +33,10 @@ import astar.AStarCharacter;
 
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
+import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
+import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
@@ -50,9 +52,11 @@ import ui.WindowRoomDescription;
 import ui.WindowSettings;
 import ui.WindowShop;
 import util.AppletResourceLoader;
+import util.FileOperations;
 import util.FriendsList;
 import util.InventoryItem;
 import util.MailMessage;
+import util.StaticAppletData;
 
 public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 {
@@ -147,6 +151,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// Pathfinding stuff
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
+	
+	String roomName = ""; // name of the current room
 	
 	public RoomViewerGrid()
 	{
@@ -281,7 +287,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
 	     		
 	     		// send a "move character" message to the server to update all clients
-	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, "Boot Hill Shooting Gallery Guest Room", (gridX / 2), gridY));
+	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomName, (gridX / 2), gridY));
 	     		
 	     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      		}
@@ -512,7 +518,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											{
 												// tell the server to update the final position of the character
 												//System.out.println("Movement finished; updating character position");
-												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
+												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
 											}
 										}
 									}
@@ -533,7 +539,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 										{
 											// tell the server to update the final position of the character
 											//System.out.println("Movement finished; updating character position");
-											uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
+											uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
 										}
 									}
 								}
@@ -551,6 +557,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			
 			// paint the internal UI components
 			this.paintComponents(bufferGraphics);
+			
+			
 			
 			// only draw if the map is not visible
 			if(!mapWindow.isVisible())
@@ -766,6 +774,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 
 		 // set up the map
 		 mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
+		 mapWindow.setGridObject(this);
 		 mapWindow.setVisible(true);
 		 add(mapWindow);
 	}
@@ -1017,7 +1026,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		character.setSignature(signature); // set the signature
 		
 		// send the update message to the server
-		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, "Boot Hill Shooting Gallery Guest Room"));
+		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
 	}
 	
 	// add a friend request to the Messages window
@@ -1102,6 +1111,47 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void showMap()
 	{
 		mapWindow.setVisible(true);
+	}
+	
+	// change to another room
+	public void changeRoom(String newRoomName)
+	{
+		// show the loading window
+		uiObject.showLoadingWindow(newRoomName, "Room loading... please wait", true, true);
+		
+		uiObject.theGridView.setVisible(false);
+		
+		// hide the map
+		mapWindow.setVisible(false);
+		
+		// remove this player from the current room
+		uiObject.sendMessageToServer(new MessageRemoveUserFromRoom(myCharacter.getUsername(), roomName));
+		
+		// remove all users from the room
+		characters.clear();
+		
+		// remove all chat bubbles from the room
+		theChatBubbles.clearAll();
+		
+		// load the room file
+	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomName).getRoomPath()), this);
+	  	
+	  	// add this player to the new room
+	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomName));
+	  	
+	  	// set the room name
+	  	roomName = newRoomName;
+	  	
+	  	// hide the loading window
+	  	uiObject.showLoadingWindow(false, false);
+	  	
+	  	uiObject.theGridView.setVisible(true);
+	}
+	
+	// set the current room name
+	public void setRoomName(String roomName)
+	{
+		this.roomName = roomName;
 	}
 	
 	// check whether a given username has a staff prefix

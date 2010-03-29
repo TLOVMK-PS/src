@@ -44,6 +44,7 @@ public class VMKClientThread extends Thread
     Message outputMessage; // output message sent to server
     VMKProtocol vmkp = new VMKProtocol(); // message handler protocol
     
+    private String roomName = "";
     RoomViewerUI uiObject; // reference to the client UI
 
     public VMKClientThread(Socket socket)
@@ -89,7 +90,9 @@ public class VMKClientThread extends Thread
 						this.setName(loginMessage.getName());
 						
 						// send an "Add To Room" message
-						sendMessageToServer(new MessageAddUserToRoom(loginMessage.getCharacter(), "Boot Hill Shooting Gallery Guest Room"));
+						roomName = "Boot Hill Shooting Gallery Guest Room";
+						uiObject.setRoomName(roomName);
+						sendMessageToServer(new MessageAddUserToRoom(loginMessage.getCharacter(), roomName));
 					}
 					else if (outputMessage instanceof MessageLogout)
 					{
@@ -120,10 +123,12 @@ public class VMKClientThread extends Thread
 						//MessageAddUserToRoom userMsg = (MessageAddUserToRoom)outputMessage;
 						
 						// user response received from server
+						roomName = ((MessageAddUserToRoom)outputMessage).getRoomName();
+						uiObject.setRoomName(roomName);
 						System.out.println("Add user to room response received from server for thread: " + this.getName());
 						
 						// get all characters currently in the room
-						sendMessageToServer(new MessageGetCharactersInRoom("Boot Hill Shooting Gallery Guest Room"));
+						sendMessageToServer(new MessageGetCharactersInRoom(roomName));
 						
 						// add the user to the current room
 						//uiObject.addUserToRoom(userMsg.getUsername(), userMsg.getRow(), userMsg.getCol());

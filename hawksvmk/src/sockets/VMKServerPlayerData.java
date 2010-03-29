@@ -7,12 +7,16 @@ package sockets;
 import java.util.HashMap;
 
 import util.FriendsList;
+import util.VMKRoom;
 
 import astar.AStarCharacter;
 
 public class VMKServerPlayerData
 {
 	private static HashMap<String, AStarCharacter> characters = new HashMap<String, AStarCharacter>(); // character HashMap
+	
+	private static HashMap<String, VMKRoom> rooms = new HashMap<String, VMKRoom>(); // HashMap of VMK rooms
+	
 	private static HashMap<String, FriendsList> friendsLists = new HashMap<String, FriendsList>();
 	private static HashMap<String, String> usernameToEmail = new HashMap<String, String>();
 	
@@ -26,6 +30,13 @@ public class VMKServerPlayerData
 		characters.put(username, character);
 	}
 	
+	// add a character to the HashMap and a room
+	public static void addCharacter(String username, AStarCharacter character, String roomName)
+	{
+		characters.put(username, character);
+		rooms.get(roomName).addCharacterName(username);
+	}
+	
 	// get a character from the HashMap
 	public static AStarCharacter getCharacter(String username)
 	{
@@ -37,6 +48,25 @@ public class VMKServerPlayerData
 	public static void removeCharacter(String username)
 	{
 		characters.remove(username);
+	}
+	
+	// remove a character from the HashMap and room
+	public static void removeCharacter(String username, String room)
+	{
+		characters.remove(username);
+		rooms.get(room).removeCharacterName(username);
+	}
+	
+	// check whether a room contains a given user
+	public static boolean roomContainsUser(String username, String room)
+	{
+		return rooms.get(room).contains(username);
+	}
+	
+	// set the rooms
+	public static void setRooms(HashMap<String,VMKRoom> theRooms)
+	{
+		rooms = theRooms;
 	}
 	
 	// add a friends list to the HashMap
