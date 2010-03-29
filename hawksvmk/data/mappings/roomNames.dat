@@ -6,6 +6,14 @@ ID: gr4
 NAME: Boot Hill Shooting Gallery Guest Room
 PATH: rooms/gr4.room
 
-ID: nos1
+// ===================
+// PUBLIC ROOMS
+// ===================
+
+ID: ms6
 NAME: Main Street
+PATH: rooms/ms6.room
+
+ID: nos1
+NAME: VMK Gallery
 PATH: rooms/nos1.room

@@ -21,6 +21,7 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -153,6 +154,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
 	
 	String roomName = ""; // name of the current room
+	boolean roomLoading = false;
 	
 	public RoomViewerGrid()
 	{
@@ -941,12 +943,51 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				System.out.println("Character (" + uiObject.getUsername() + ") already exists in room");
 				myCharacter = character;
 				myCharacter.setUsername(uiObject.getUsername());
-				myCharacter.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
-				myCharacter.setX(myCharacter.getCurrentTile().getX());
-				myCharacter.setY(myCharacter.getCurrentTile().getY());
+				
+				// if this is the first time the room is loaded...
+				if(!uiObject.theGridView.isVisible() || roomLoading == true)
+				{
+					System.out.println("The room is LOADING, buttknocker");
+					// find an exit tile to start on
+					Iterator<Tile> it = tilesMap.values().iterator();
+					while(it.hasNext())
+					{
+						Tile t = it.next();
+						
+						if(t.getType() == Tile.TILE_EXIT)
+						{
+							// set the position to this exit tile
+							myCharacter.setRow(t.getRow());
+							myCharacter.setCol(t.getColumn());
+							myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+							myCharacter.setX(t.getX());
+							myCharacter.setY(t.getY());
+							
+							character.setRow(t.getRow());
+							character.setCol(t.getColumn());
+							character.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+							character.setX(t.getX());
+							character.setY(t.getY());
+							break;
+						}
+					}
+				}
+				else
+				{
+					// set the existing position
+					myCharacter.setRow(character.getRow());
+					myCharacter.setCol(character.getCol());
+					myCharacter.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
+					myCharacter.setX(character.getCurrentTile().getX());
+					myCharacter.setY(character.getCurrentTile().getY());
+				}
+				
 				characters.put(uiObject.getUsername(), myCharacter);
 				
+				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomName));
+				
 				// hide the loading window
+				roomLoading = false;
 				uiObject.showLoadingWindow(false, false);
 				setVisible(true);
 				
@@ -1119,6 +1160,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		// show the loading window
 		uiObject.showLoadingWindow(newRoomName, "Room loading... please wait", true, true);
 		
+		roomLoading = true;
+		
 		uiObject.theGridView.setVisible(false);
 		
 		// hide the map
@@ -1135,6 +1178,24 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		
 		// load the room file
 	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomName).getRoomPath()), this);
+	  	
+	  	// find an exit tile to start on
+		Iterator<Tile> it = tilesMap.values().iterator();
+		while(it.hasNext())
+		{
+			Tile t = it.next();
+			
+			if(t.getType() == Tile.TILE_EXIT)
+			{
+				// set the position to this exit tile
+				myCharacter.setRow(t.getRow());
+				myCharacter.setCol(t.getColumn());
+				myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+				myCharacter.setX(t.getX());
+				myCharacter.setY(t.getY());
+				break;
+			}
+		}
 	  	
 	  	// add this player to the new room
 	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomName));

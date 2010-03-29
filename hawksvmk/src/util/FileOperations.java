@@ -130,9 +130,9 @@ public class FileOperations
 						animations.add(loadAnimation(line));
 					}
 				}
-				else if(line.startsWith(commentDelimeter))
+				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
-					// comment line, so ignore
+					// comment line or blank line, so ignore
 				}
 				else
 				{

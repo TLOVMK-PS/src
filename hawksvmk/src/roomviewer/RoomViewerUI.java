@@ -831,6 +831,11 @@ public class RoomViewerUI extends Applet
 		loadingBackground.setVisible(backgroundVisible);
 	}
 	
+	public boolean isLoadingVisible()
+	{
+		return loadingWindow.isVisible();
+	}
+	
 	// set the current room name
 	public void setRoomName(String newRoomName)
 	{
