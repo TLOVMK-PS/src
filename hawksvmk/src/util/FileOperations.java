@@ -216,6 +216,9 @@ public class FileOperations
 					
 					// add the tile to the HashMap
 					Tile newTile = new Tile(row,col,tileType,tileDest);
+					newTile.setWidth(Integer.parseInt(tileDimensions[0]));
+					newTile.setHeight(Integer.parseInt(tileDimensions[1]));
+					newTile.setAbsoluteCoordinates();
 					tiles.put(row + "-" + col, newTile);
 					
 					tileScanner.close();

@@ -79,7 +79,7 @@ public class Tile implements Serializable
 	}
 	
 	// set the tile's absolute X-Y coordinates on the screen
-	private void setAbsoluteCoordinates()
+	public void setAbsoluteCoordinates()
 	{
 		if(row % 2 == 0) // set coordinates for an even row
 		{

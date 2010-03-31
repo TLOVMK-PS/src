@@ -28,6 +28,8 @@ public class AStarCharacter implements Serializable
 	private int row = 0;
 	private int col = 0;
 	
+	private int tileHeight = 32; // height of the tiles of the room
+	
 	private int xSpeed = 8;
 	private int ySpeed = 4;
 	
@@ -38,14 +40,14 @@ public class AStarCharacter implements Serializable
 	private Tile currentTile;
 	
 	// avatar images for the eight directions
-	private ImageIcon avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n.png");
-	private ImageIcon avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw.png");
-	private ImageIcon avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w.png");
-	private ImageIcon avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw.png");
-	private ImageIcon avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s.png");
-	private ImageIcon avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se.png");
-	private ImageIcon avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e.png");
-	private ImageIcon avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne.png");
+	private ImageIcon avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_64.png");
+	private ImageIcon avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_64.png");
+	private ImageIcon avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_64.png");
+	private ImageIcon avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_64.png");
+	private ImageIcon avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_64.png");
+	private ImageIcon avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_64.png");
+	private ImageIcon avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_64.png");
+	private ImageIcon avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_64.png");
 	
 	private ImageIcon characterImage = avatarSouthEast;
 	
@@ -102,7 +104,7 @@ public class AStarCharacter implements Serializable
 
 	public void setY(int y) {
 		this.y = y;
-		boundingBox.y = y + 32 - characterImage.getIconHeight();
+		boundingBox.y = y + tileHeight - characterImage.getIconHeight();
 	}
 
 	public int getRow() {
@@ -251,4 +253,59 @@ public class AStarCharacter implements Serializable
 	
 	public void setDisplayedPins(InventoryInfo[] displayedPins) {this.displayedPins = displayedPins;}
 	public InventoryInfo[] getDisplayedPins() {return displayedPins;}
+	
+	// change the size of the avatar given the width and height of the room tiles
+	public void changeAvatarSizeForTile(int tileWidth, int tileHeight)
+	{
+		// make sure the character is 87.5% the width of the tile
+		// make sure the character height = (width) / 0.44094488188976377952755905511811 
+		if(tileWidth == 64 && tileHeight == 32)
+		{
+			// 64x32 tile
+			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_64.png");
+			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_64.png");
+			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_64.png");
+			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_64.png");
+			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_64.png");
+			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_64.png");
+			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_64.png");
+			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_64.png");
+			
+			// scale the current image for consistency
+			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(56, 127, Image.SCALE_DEFAULT));
+		}
+		else if(tileWidth == 48 && tileHeight == 24)
+		{
+			// 48x24 tile
+			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_48.png");
+			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_48.png");
+			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_48.png");
+			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_48.png");
+			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_48.png");
+			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_48.png");
+			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_48.png");
+			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_48.png");
+			
+			// scale the current image for consistency
+			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(42, 95, Image.SCALE_DEFAULT));
+		}
+		else if(tileWidth == 32 && tileHeight == 16)
+		{
+			// 32x16 tile
+			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_32.png");
+			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_32.png");
+			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_32.png");
+			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_32.png");
+			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_32.png");
+			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_32.png");
+			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_32.png");
+			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_32.png");
+			
+			// scale the current image for consistency
+			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(28, 63, Image.SCALE_DEFAULT));
+		}
+		
+		// set the tile height
+		this.tileHeight = tileHeight;
+	}
 }

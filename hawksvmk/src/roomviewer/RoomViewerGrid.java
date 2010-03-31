@@ -552,7 +552,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					// draw the character
 					if(character != null)
 					{
-						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + 32, this);
+						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + tileHeight, this);
 					}
 				}
 			}
@@ -816,7 +816,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			for(int j = 0; j < tileRows; j++) // rows (4)
 			{	
 				// put the tile into the HashMap
-				tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO, ""));
+				Tile newTile = new Tile(j,i,Tile.TILE_NOGO, "");
+				newTile.setWidth(tileWidth);
+				newTile.setHeight(tileHeight);
+				newTile.setAbsoluteCoordinates();
+				tilesMap.put(j + "-" + i, newTile);
 			}
 		}
 		
@@ -949,7 +953,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				// if this is the first time the room is loaded...
 				if(!uiObject.theGridView.isVisible() || roomLoading == true)
 				{
-					System.out.println("The room is LOADING, buttknocker");
+					// make sure the correct size is set
+					myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
+					
 					// find an exit tile to start on
 					Iterator<Tile> it = tilesMap.values().iterator();
 					while(it.hasNext())
@@ -1001,6 +1007,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				character.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
 				character.setX(character.getCurrentTile().getX());
 				character.setY(character.getCurrentTile().getY());
+				
+				// make sure the correct avatar size is set
+				character.changeAvatarSizeForTile(tileWidth, tileHeight);
 				
 				// add the character to the HashMap
 				characters.put(character.getUsername(), character);
@@ -1199,6 +1208,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			}
 		}
 	  	
+		// make sure the correct size is set
+		myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
+		
 	  	// add this player to the new room
 	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomName));
 	  	
