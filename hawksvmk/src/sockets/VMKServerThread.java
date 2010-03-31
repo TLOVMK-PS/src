@@ -46,6 +46,7 @@ public class VMKServerThread extends Thread
     Message outputMessage; // output message sent to client
     VMKProtocol vmkp = new VMKProtocol(); // message handler protocol
     
+    private String roomID = ""; // ID of the current room the user is in
     private String roomName = ""; // name of the current room the user is in
     
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
@@ -177,7 +178,7 @@ public class VMKServerThread extends Thread
 						sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
 						
 						// send the message to ALL clients
-						sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomName), roomName);
+						sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
 						
 						// send the logout message back to the client
 						//sendMessageToClient((MessageLogout)outputMessage);
@@ -194,7 +195,7 @@ public class VMKServerThread extends Thread
 						// add each character in the room to the return message
 						for(int i = 0; i < serverThreads.size(); i++)
 						{
-							if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), userMsg.getRoomName()))
+							if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), userMsg.getRoomID()))
 							{
 								userMsg.addCharacter(VMKServerPlayerData.getCharacter(serverThreads.get(i).getName()));
 							}
@@ -210,8 +211,8 @@ public class VMKServerThread extends Thread
 						
 						// update the character in the room HashMap
 						MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)outputMessage;
-						roomName = userMsg.getRoomName();
-						VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomName());
+						roomID = userMsg.getRoomID();
+						VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
 					}
 					else if(outputMessage instanceof MessageAddUserToRoom)
 					{
@@ -223,12 +224,13 @@ public class VMKServerThread extends Thread
 						if(VMKServerPlayerData.getCharacter(userMsg.getUsername()) == null)
 						{
 							// only add the character if it doesn't already exist in the room
+							roomID = userMsg.getRoomID();
 							roomName = userMsg.getRoomName();
-							VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomName());
+							VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
 						}
 
 						// send the message to ALL clients
-						sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomName());
+						sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
 					}
 					else if(outputMessage instanceof MessageRemoveUserFromRoom)
 					{
@@ -237,10 +239,10 @@ public class VMKServerThread extends Thread
 						
 						// remove the character from the static server HashMap
 						MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)outputMessage;
-						VMKServerPlayerData.removeCharacter(userMsg.getUsername(), userMsg.getRoomName());
+						VMKServerPlayerData.removeCharacter(userMsg.getUsername(), userMsg.getRoomID());
 						
 						// send the message to ALL clients
-						sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomName());
+						sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
 					}
 					else if(outputMessage instanceof MessageAddChatToRoom)
 					{
@@ -249,7 +251,7 @@ public class VMKServerThread extends Thread
 						
 						// send the message to ALL clients
 						MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)outputMessage;
-						sendMessageToAllClientsInRoom(chatMsg, chatMsg.getRoomName());
+						sendMessageToAllClientsInRoom(chatMsg, chatMsg.getRoomID());
 					}
 					else if(outputMessage instanceof MessageMoveCharacter)
 					{
@@ -258,7 +260,7 @@ public class VMKServerThread extends Thread
 						
 						// send the message to ALL clients
 						MessageMoveCharacter moveMsg = (MessageMoveCharacter)outputMessage;
-						sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomName());
+						sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomID());
 					}
 					else if(outputMessage instanceof MessageAddFriendRequest)
 					{
@@ -362,7 +364,7 @@ public class VMKServerThread extends Thread
 				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
 	    		
 	    		// remove the character from the room
-				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomName), roomName);
+				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
 	    		
 	    		this.interrupt(); // stop this server thread
 	    	}

@@ -75,6 +75,7 @@ public class RoomViewerUI extends Applet
 	private JLabel loadingBackground;
 	private WindowLoading loadingWindow;
 	RoomViewerGrid theGridView;
+	private String roomID = "";
 	private String roomName = "";
 	
 	private boolean roomDescriptionWindowVisible = false;
@@ -612,7 +613,7 @@ public class RoomViewerUI extends Applet
     			 theGridView.addTextBubble(username, chatTextBox.getText(), 100);
     			 
     			 // send an "Add Chat" message to the server
-    			 theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomName, chatTextBox.getText()));
+    			 theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomID, chatTextBox.getText()));
     			 
     			 // clear the text box
     			 chatTextBox.setText("");
@@ -837,9 +838,10 @@ public class RoomViewerUI extends Applet
 	}
 	
 	// set the current room name
-	public void setRoomName(String newRoomName)
+	public void setRoomInformation(String newRoomID, String newRoomName)
 	{
+		roomID = newRoomID;
 		roomName = newRoomName;
-		theGridView.setRoomName(newRoomName);
+		theGridView.setRoomInformation(newRoomID, newRoomName);
 	}
 }

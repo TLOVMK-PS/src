@@ -11,18 +11,18 @@ import astar.AStarCharacter;
 public class MessageUpdateCharacterInRoom extends Message implements Serializable
 {
 	private AStarCharacter character;
-	private String roomName = "";
+	private String roomID = "";
 	
 	private int row = 0;
 	private int col = 0;
 	
 	public MessageUpdateCharacterInRoom() {super("MessageUpdateCharacterInRoom");}
 	
-	public MessageUpdateCharacterInRoom(AStarCharacter character, String roomName)
+	public MessageUpdateCharacterInRoom(AStarCharacter character, String roomID)
 	{
 		super("MessageUpdateCharactersInRoom");
 		this.character = character;
-		this.roomName = roomName;
+		this.roomID = roomID;
 	}
 
 	public AStarCharacter getCharacter() {
@@ -33,12 +33,12 @@ public class MessageUpdateCharacterInRoom extends Message implements Serializabl
 		this.character = character;
 	}
 
-	public String getRoomName() {
-		return roomName;
+	public String getRoomID() {
+		return roomID;
 	}
 
-	public void setRoomName(String roomName) {
-		this.roomName = roomName;
+	public void setRoomID(String roomID) {
+		this.roomID = roomID;
 	}
 
 	public int getRow() {

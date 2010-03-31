@@ -31,10 +31,10 @@ public class VMKServerPlayerData
 	}
 	
 	// add a character to the HashMap and a room
-	public static void addCharacter(String username, AStarCharacter character, String roomName)
+	public static void addCharacter(String username, AStarCharacter character, String roomID)
 	{
 		characters.put(username, character);
-		rooms.get(roomName).addCharacterName(username);
+		rooms.get(roomID).addCharacterName(username);
 	}
 	
 	// get a character from the HashMap

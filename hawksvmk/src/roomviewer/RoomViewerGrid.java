@@ -153,6 +153,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
 	
+	String roomID = ""; // ID of the current room
 	String roomName = ""; // name of the current room
 	boolean roomLoading = false;
 	
@@ -289,7 +290,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
 	     		
 	     		// send a "move character" message to the server to update all clients
-	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomName, (gridX / 2), gridY));
+	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
 	     		
 	     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      		}
@@ -520,7 +521,18 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											{
 												// tell the server to update the final position of the character
 												//System.out.println("Movement finished; updating character position");
-												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
+												
+												if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
+												{
+													// exit tile, so change rooms
+													String destination = character.getCurrentTile().getDest();
+													if(!destination.equals(""))
+													{
+														// this EXIT tile actually goes somewhere
+													}
+													System.out.println("EXIT TILE: " + character.getCurrentTile().getDest());
+												}
+												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
 											}
 										}
 									}
@@ -541,7 +553,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 										{
 											// tell the server to update the final position of the character
 											//System.out.println("Movement finished; updating character position");
-											uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
+											if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
+											{
+												// exit tile, so change rooms
+												System.out.println("EXIT TILE: " + character.getCurrentTile().getDest());
+											}
+											uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
 										}
 									}
 								}
@@ -992,7 +1009,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				
 				characters.put(uiObject.getUsername(), myCharacter);
 				
-				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomName));
+				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomID));
 				
 				// hide the loading window
 				roomLoading = false;
@@ -1078,7 +1095,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		character.setSignature(signature); // set the signature
 		
 		// send the update message to the server
-		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomName));
+		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
 	}
 	
 	// add a friend request to the Messages window
@@ -1166,8 +1183,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// change to another room
-	public void changeRoom(String newRoomName)
+	public void changeRoom(String newRoomID)
 	{
+		String newRoomName = StaticAppletData.getRoomMapping(newRoomID).getRoomName();
+		
 		// show the loading window
 		uiObject.showLoadingWindow(newRoomName, "Room loading... please wait", true, true);
 		
@@ -1179,7 +1198,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		mapWindow.setVisible(false);
 		
 		// remove this player from the current room
-		uiObject.sendMessageToServer(new MessageRemoveUserFromRoom(myCharacter.getUsername(), roomName));
+		uiObject.sendMessageToServer(new MessageRemoveUserFromRoom(myCharacter.getUsername(), roomID));
 		
 		// remove all users from the room
 		characters.clear();
@@ -1188,7 +1207,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		theChatBubbles.clearAll();
 		
 		// load the room file
-	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomName).getRoomPath()), this);
+	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), this);
 	  	
 	  	// find an exit tile to start on
 		Iterator<Tile> it = tilesMap.values().iterator();
@@ -1212,9 +1231,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
 		
 	  	// add this player to the new room
-	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomName));
+	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomID, newRoomName));
 	  	
-	  	// set the room name
+	  	// set the room name and ID
+	  	roomID = newRoomID;
 	  	roomName = newRoomName;
 	  	
 	  	// hide the loading window
@@ -1224,8 +1244,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// set the current room name
-	public void setRoomName(String roomName)
+	public void setRoomInformation(String roomID, String roomName)
 	{
+		this.roomID = roomID;
 		this.roomName = roomName;
 	}
 	

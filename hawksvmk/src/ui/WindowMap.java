@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import roomviewer.RoomViewerGrid;
 import util.AppletResourceLoader;
 
+// TODO: Change all the changeRoom() instructions to use room IDs instead of room names
 public class WindowMap extends JPanel
 {
 	Font textFont;
@@ -1198,7 +1199,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Main Street room
-				changeRoom("Main Street");
+				changeRoom("ms6");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -1416,9 +1417,9 @@ public class WindowMap extends JPanel
 	}
 	
 	// change to a different room
-	public void changeRoom(String roomName)
+	public void changeRoom(String roomID)
 	{
-		gridObject.changeRoom(roomName);
+		gridObject.changeRoom(roomID);
 	}
 	
 	// toggle the visibility of this window

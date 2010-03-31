@@ -11,18 +11,18 @@ import astar.AStarCharacter;
 public class MessageMoveCharacter extends Message implements Serializable
 {
 	private AStarCharacter character;
-	private String roomName = "";
+	private String roomID = "";
 	private int destGridX = 0;
 	private int destGridY = 0;
 	
 	public MessageMoveCharacter() {super("MessageMoveCharacter");}
 	
-	public MessageMoveCharacter(AStarCharacter character, String roomName, int destGridX, int destGridY)
+	public MessageMoveCharacter(AStarCharacter character, String roomID, int destGridX, int destGridY)
 	{
 		super("MessageMoveCharacter");
 		
 		this.character = character;
-		this.roomName = roomName;
+		this.roomID = roomID;
 		this.destGridX = destGridX;
 		this.destGridY = destGridY;
 	}
@@ -35,12 +35,12 @@ public class MessageMoveCharacter extends Message implements Serializable
 		this.character = character;
 	}
 
-	public String getRoomName() {
-		return roomName;
+	public String getRoomID() {
+		return roomID;
 	}
 
-	public void setRoomName(String roomName) {
-		this.roomName = roomName;
+	public void setRoomID(String roomID) {
+		this.roomID = roomID;
 	}
 
 	public int getDestGridX() {

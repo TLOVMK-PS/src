@@ -67,8 +67,8 @@ public class StaticAppletData
 	}
 	
 	// get room mapping
-	public static VMKRoom getRoomMapping(String roomName)
+	public static VMKRoom getRoomMapping(String roomID)
 	{
-		return roomMappings.get(roomName);
+		return roomMappings.get(roomID);
 	}
 }

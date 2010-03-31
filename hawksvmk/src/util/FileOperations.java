@@ -1103,7 +1103,7 @@ public class FileOperations
 						roomPath = line;
 						
 						// add the room mapping to the HashMap
-						roomMappings.put(roomName, new VMKRoom(roomID, roomName, roomPath));
+						roomMappings.put(roomID, new VMKRoom(roomID, roomName, roomPath));
 					}
 				}
 				

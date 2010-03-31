@@ -13,23 +13,23 @@ import sockets.VMKServerThread;
 
 public class MessageGetCharactersInRoom extends Message implements Serializable
 {
-	private String roomName = "";
+	private String roomID = "";
 	private ArrayList<AStarCharacter> characters = new ArrayList<AStarCharacter>(); // ArrayList of server threads
 	
 	public MessageGetCharactersInRoom() {super("MessageGetCharactersInRoom");}
 	
-	public MessageGetCharactersInRoom(String roomName)
+	public MessageGetCharactersInRoom(String roomID)
 	{
 		super("MessageGetCharactersInRoom");
-		this.roomName = roomName;
+		this.roomID = roomID;
 	}
 
-	public String getRoomName() {
-		return roomName;
+	public String getRoomID() {
+		return roomID;
 	}
 
-	public void setRoomName(String roomName) {
-		this.roomName = roomName;
+	public void setRoomID(String roomID) {
+		this.roomID = roomID;
 	}
 
 	public ArrayList<AStarCharacter> getCharacters() {
