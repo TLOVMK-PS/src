@@ -35,6 +35,7 @@ public class RoomEditorUI extends JFrame
 	private String currentDirectory = System.getProperty("user.dir");
 	
 	private JLabel tileInfo = new JLabel();
+	private JComboBox tileDest = new JComboBox();
 	private JComboBox tileSize = new JComboBox();
 	
 	public RoomEditorUI() {}
@@ -220,13 +221,36 @@ public class RoomEditorUI extends JFrame
         tileInfo.setText("<html>Row:<br />Col:<br />Dest:</html>");
         tileInfo.setHorizontalAlignment(JLabel.LEFT);
         tileInfo.setVerticalAlignment(JLabel.TOP);
-        tileInfo.setBounds(835, 444, 132, 48);
+        tileInfo.setBounds(835, 434, 132, 48);
         this.getContentPane().add(tileInfo);
+        
+        JLabel tileDestLabel = new JLabel("Tile Destination");
+        tileDestLabel.setHorizontalAlignment(JLabel.CENTER);
+        tileDestLabel.setVerticalAlignment(JLabel.TOP);
+        tileDestLabel.setBounds(835, 488, 132, 16);
+        this.getContentPane().add(tileDestLabel);
+        
+        // Tile size selector
+        String tileDests[] = {"","gr4","ms3","ms4","ms5","ms6","ms7","ms8","nos1"};
+        tileDest = new JComboBox(tileDests);
+        tileDest.setSelectedItem("");
+        tileDest.addItemListener(new ItemListener()
+        {
+        	public void itemStateChanged(ItemEvent e)
+        	{
+        		String selectedDest = (String)tileDest.getSelectedItem();
+        		
+        		// change the tile size
+        		theGridView.changeSelectedDest(selectedDest);
+        	}
+        });
+        tileDest.setBounds(new Rectangle(835, 504, 132, 20));
+        this.getContentPane().add(tileDest);
         
         JLabel tileSizeLabel = new JLabel("Tile Size");
         tileSizeLabel.setHorizontalAlignment(JLabel.CENTER);
         tileSizeLabel.setVerticalAlignment(JLabel.TOP);
-        tileSizeLabel.setBounds(835, 508, 132, 16);
+        tileSizeLabel.setBounds(835, 534, 132, 16);
         this.getContentPane().add(tileSizeLabel);
         
         // Tile size selector
@@ -262,7 +286,7 @@ public class RoomEditorUI extends JFrame
         		}
         	}
         });
-        tileSize.setBounds(new Rectangle(835, 524, 132, 20));
+        tileSize.setBounds(new Rectangle(835, 550, 132, 20));
         this.getContentPane().add(tileSize);
         
         // pack the window and display it

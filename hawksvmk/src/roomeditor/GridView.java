@@ -80,6 +80,8 @@ public class GridView extends JLabel implements GridViewable
 	ArrayList<Animation> animations = new ArrayList<Animation>();
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
 	
+	private String currentDest = "";
+	
 	private boolean loading = false; // true if some kind of loading operation is taking place
 	
 	public void loadGridView()
@@ -99,7 +101,22 @@ public class GridView extends JLabel implements GridViewable
         		if(showGrid == true)
         		{
         			// put a current tile in the HashMap
+        			if(currentTile.getType() == Tile.TILE_EXIT)
+        			{
+        				// exit tile, so change the destination
+        				currentTile.setDest(currentDest);
+        			}
+        			else
+        			{
+        				currentTile.setDest("");
+        			}
             		tilesMap.put(gridY + "-" + (gridX / 2), currentTile);
+            		
+            		// update the tile information on the UI
+            		if(uiObject != null)
+            		{
+            			uiObject.changeTileInfo(gridY, gridX, currentTile.getDest());
+            		}
         		}
         	}
         });
@@ -447,6 +464,12 @@ public class GridView extends JLabel implements GridViewable
 	public String getTileSize()
 	{
 		return tileWidth + "x" + tileHeight;
+	}
+	
+	// set to a new selected destination
+	public void changeSelectedDest(String dest)
+	{
+		currentDest = dest;
 	}
 }
 
