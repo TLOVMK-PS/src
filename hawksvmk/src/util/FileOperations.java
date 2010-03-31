@@ -1125,4 +1125,68 @@ public class FileOperations
 		// create a new mappings list from the file data
 		return roomMappings;
 	}
+	
+	// load the tile destinations for the Room Editor
+	public static String[] loadEditorTileDestinations()
+	{
+		String filename = "tileDestinations.dat";
+		ArrayList<String> destinations = new ArrayList<String>();
+		String[] destinationArray;
+		
+		Scanner fileReader;
+		
+		String dest = "";
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("DEST: "))
+					{
+						// get the room ID
+						line = line.replaceAll("DEST: ", "");
+						dest = line;
+						
+						if(dest == null)
+						{
+							destinations.add("");
+						}
+						else
+						{
+							destinations.add(dest);
+						}
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty mappings list
+				destinationArray = new String[0];
+				return destinations.toArray(destinationArray);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadEditorTileDestinations(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new mappings list from the file data
+		destinationArray = new String[destinations.size()];
+		return destinations.toArray(destinationArray);
+	}
 }

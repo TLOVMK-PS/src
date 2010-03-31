@@ -526,14 +526,17 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 												{
 													// exit tile, so change rooms
 													String destination = character.getCurrentTile().getDest();
-													if(!destination.equals(""))
+													if(!destination.equals("") && destination != null)
 													{
 														// this EXIT tile actually goes somewhere
-														changeRoom(character.getCurrentTile().getDest());
+														System.out.println("Changing room: " + destination);
+														changeRoom(destination);
 													}
-													System.out.println("EXIT TILE: " + destination);
 												}
-												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+												else
+												{
+													uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+												}
 											}
 										}
 									}
@@ -558,14 +561,17 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											{
 												// exit tile, so change rooms
 												String destination = character.getCurrentTile().getDest();
-												if(!destination.equals(""))
+												if(!destination.equals("") && destination != null)
 												{
 													// this EXIT tile actually goes somewhere
-													changeRoom(character.getCurrentTile().getDest());
+													System.out.println("Changing room: " + destination);
+													changeRoom(destination);
 												}
-												System.out.println("EXIT TILE: " + destination);
 											}
-											uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+											else
+											{
+												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+											}
 										}
 									}
 								}

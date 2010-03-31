@@ -10,6 +10,10 @@ PATH: rooms/gr4.room
 // PUBLIC ROOMS
 // ===================
 
+ID: ms2
+NAME: Central Plaza
+PATH: rooms/ms2.room
+
 ID: ms6
 NAME: Main Street
 PATH: rooms/ms6.room

@@ -1,5 +1,5 @@
 // ms6.room
-// Created on Tue Mar 30 22:31:06 PDT 2010
+// Created on Wed Mar 31 16:14:09 PDT 2010
 
 // Background image
 IMAGE: img/rooms/ms6/ms6.jpg
@@ -79,12 +79,12 @@ TILES: 48x24
 @14,6,EXIT,@
 @14,7,NOGO,@
 @2,16,NOGO,@
-@14,0,EXIT,@
+@14,0,EXIT,ms2@
 @14,1,WALK,@
 @12,3,WALK,@
 @12,2,WALK,@
 @12,1,NOGO,@
-@12,0,EXIT,@
+@12,0,EXIT,ms2@
 @12,7,NOGO,@
 @12,6,EXIT,@
 @12,5,NOGO,@
@@ -93,7 +93,7 @@ TILES: 48x24
 @12,8,NOGO,@
 @46,16,EXIT,@
 @18,6,NOGO,@
-@16,0,EXIT,@
+@16,0,EXIT,ms2@
 @42,10,WALK,@
 @18,7,NOGO,@
 @16,1,WALK,@
@@ -111,7 +111,7 @@ TILES: 48x24
 @18,1,WALK,@
 @2,10,NOGO,@
 @42,16,EXIT,@
-@18,0,EXIT,@
+@18,0,EXIT,ms2@
 @2,11,NOGO,@
 @18,3,WALK,@
 @2,12,NOGO,@
@@ -152,7 +152,7 @@ TILES: 48x24
 @30,3,WALK,@
 @30,2,WALK,@
 @30,1,WALK,@
-@30,0,EXIT,@
+@30,0,EXIT,ms2@
 @7,2,NOGO,@
 @7,3,NOGO,@
 @7,4,NOGO,@
@@ -384,7 +384,7 @@ TILES: 48x24
 @22,5,WALK,@
 @22,6,WALK,@
 @22,9,NOGO,@
-@22,0,EXIT,@
+@22,0,EXIT,ms2@
 @22,3,WALK,@
 @22,4,WALK,@
 @22,1,WALK,@
@@ -432,7 +432,7 @@ TILES: 48x24
 @8,15,NOGO,@
 @8,16,NOGO,@
 @26,9,WALK,@
-@26,0,EXIT,@
+@26,0,EXIT,ms2@
 @26,8,NOGO,@
 @26,7,WALK,@
 @26,6,WALK,@
@@ -507,7 +507,7 @@ TILES: 48x24
 @10,10,NOGO,@
 @20,5,WALK,@
 @15,0,WALK,@
-@20,0,EXIT,@
+@20,0,EXIT,ms2@
 @0,11,NOGO,@
 @0,10,NOGO,@
 @20,2,WALK,@
@@ -551,7 +551,7 @@ TILES: 48x24
 @19,7,NOGO,@
 @19,8,NOGO,@
 @19,9,NOGO,@
-@6,0,EXIT,@
+@6,0,EXIT,ms2@
 @31,9,WALK,@
 @6,1,NOGO,@
 @19,0,WALK,@
@@ -579,7 +579,7 @@ TILES: 48x24
 @28,3,WALK,@
 @28,2,WALK,@
 @28,1,WALK,@
-@28,0,EXIT,@
+@28,0,EXIT,ms2@
 @28,9,WALK,@
 @28,7,WALK,@
 @28,8,WALK,@
@@ -595,7 +595,7 @@ TILES: 48x24
 @9,11,NOGO,@
 @24,6,WALK,@
 @9,12,NOGO,@
-@24,0,EXIT,@
+@24,0,EXIT,ms2@
 @24,1,WALK,@
 @9,15,NOGO,@
 @24,2,WALK,@
@@ -748,7 +748,7 @@ TILES: 48x24
 @11,10,NOGO,@
 @10,5,NOGO,@
 @11,11,NOGO,@
-@10,0,EXIT,@
+@10,0,EXIT,ms2@
 @10,1,WALK,@
 @37,12,WALK,@
 @37,13,WALK,@

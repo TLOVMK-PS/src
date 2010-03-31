@@ -1127,7 +1127,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Central Plaza room
-				changeRoom("Central Plaza");
+				changeRoom("ms2");
 			}
 			public void mouseEntered(MouseEvent e)
 			{

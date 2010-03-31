@@ -231,7 +231,7 @@ public class RoomEditorUI extends JFrame
         this.getContentPane().add(tileDestLabel);
         
         // Tile size selector
-        String tileDests[] = {"","gr4","ms3","ms4","ms5","ms6","ms7","ms8","nos1"};
+        String tileDests[] = FileOperations.loadEditorTileDestinations();
         tileDest = new JComboBox(tileDests);
         tileDest.setSelectedItem("");
         tileDest.addItemListener(new ItemListener()
