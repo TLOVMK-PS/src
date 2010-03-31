@@ -12,6 +12,7 @@ public class RepeatingSound implements Runnable, SoundPlayable
 {
 	private String name = ""; // name of the sound
 	private int delay = 0; // delay in milliseconds from when the sound starts up again
+	private String path = "";
 	
 	private AudioClip sound; // sound player
 	
@@ -19,15 +20,24 @@ public class RepeatingSound implements Runnable, SoundPlayable
 	
 	public RepeatingSound() {}
 	
-	public RepeatingSound(String name, int delay, AudioClip soundFile)
+	public RepeatingSound(String name, int delay, String path, AudioClip soundFile)
 	{
 		this();
 		
 		this.name = name;
 		this.delay = delay;
+		this.path = path;
 		
 		// create the sound
 		createSound(soundFile);
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	// create the sound

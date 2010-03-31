@@ -72,11 +72,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	ImageIcon walkTileImage = null; //new Tile().getWalkTileImage();
 	ImageIcon exitTileImage = null; //new Tile().getExitTileImage();
 	
-	Tile currentTile = new Tile(0,0,Tile.TILE_WALK); // currently selected tile type
+	Tile currentTile = new Tile(0,0,Tile.TILE_WALK, ""); // currently selected tile type
 	
-	ImageIcon reticleExit = AppletResourceLoader.getImageFromJar("tiles_img/exit_reticle.png"); // "walk" reticle
-	ImageIcon reticleNogo = AppletResourceLoader.getImageFromJar("tiles_img/nogo_reticle.png"); // "nogo" reticle
-	ImageIcon reticleWalk = AppletResourceLoader.getImageFromJar("tiles_img/walk_reticle.png"); // "exit" reticle
+	ImageIcon reticleExit = AppletResourceLoader.getImageFromJar("tiles_img/exit_reticle_64.png"); // "walk" reticle
+	ImageIcon reticleNogo = AppletResourceLoader.getImageFromJar("tiles_img/nogo_reticle_64.png"); // "nogo" reticle
+	ImageIcon reticleWalk = AppletResourceLoader.getImageFromJar("tiles_img/walk_reticle_64.png"); // "exit" reticle
 	
 	ImageIcon reticleTile = reticleWalk; // currently displayed reticle
 	
@@ -808,13 +808,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	private void initTilesMap()
 	{
+		tilesMap = new HashMap<String,Tile>(); // clear the tiles
+		
 		// draw the grid
 		for(int i = 0; i < tileColumns; i++) // columns (3)
 		{
 			for(int j = 0; j < tileRows; j++) // rows (4)
 			{	
 				// put the tile into the HashMap
-				tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO));
+				tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO, ""));
 			}
 		}
 		
@@ -834,9 +836,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		tileTypeString = type;
 		
-		if(type.equals("walk")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_WALK);}
-		if(type.equals("nogo")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_NOGO);}
-		if(type.equals("exit")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_EXIT);}
+		if(type.equals("walk")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_WALK, "");}
+		if(type.equals("nogo")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_NOGO, "");}
+		if(type.equals("exit")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_EXIT, tilesMap.get(gridY + "-" + (gridX / 2)).getDest());}
 	}
 	
 	// show/hide the grid
@@ -1223,6 +1225,44 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		if(username.toLowerCase().startsWith("qa_")) {return true;}
 		
 		return false;
+	}
+	
+	// set the size of the tiles and also the number of rows/columns
+	public void changeTileSize(int width, int height)
+	{
+		// prevent a stack overflow error
+		if(width == tileWidth && height == tileHeight) {return;}
+		
+		// set the loading flag
+		//loading = true;
+		
+		// set the columns and tile width
+		if(width == 64) {tileColumns = 13;}
+		if(width == 48) {tileColumns = 17;}
+		if(width == 32) {tileColumns = 25;}
+		tileWidth = width;
+		
+		// set the rows and tile height
+		if(height == 32) {tileRows = 38;}
+		if(height == 24) {tileRows = 47;}
+		if(height == 16) {tileRows = 71;}
+		tileHeight = height;
+		
+		// set the paths and image icons
+		reticleExit = AppletResourceLoader.getImageFromJar("tiles_img/exit_reticle_" + width + ".png"); // "walk" reticle
+		reticleNogo = AppletResourceLoader.getImageFromJar("tiles_img/nogo_reticle_" + width + ".png"); // "nogo" reticle
+		reticleWalk = AppletResourceLoader.getImageFromJar("tiles_img/walk_reticle_" + width + ".png"); // "exit" reticle
+		
+		// initialize the tiles
+		initTilesMap();
+		
+		// clear the loading flag
+		//loading = false;
+	}
+	
+	public String getTileSize()
+	{
+		return tileWidth + "x" + tileHeight;
 	}
 }
 

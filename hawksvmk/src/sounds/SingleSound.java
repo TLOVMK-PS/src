@@ -10,17 +10,27 @@ public class SingleSound implements SoundPlayable
 {
 	private String name; // name of the sound
 	private AudioClip sound; // sound player
+	private String path = "";
 	
 	public SingleSound() {}
 	
-	public SingleSound(String name, AudioClip soundFile)
+	public SingleSound(String name, String path, AudioClip soundFile)
 	{
 		this();
 		
 		this.name = name;
+		this.path = path;
 		
 		// create the sound
 		createSound(soundFile);
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	// create the sound

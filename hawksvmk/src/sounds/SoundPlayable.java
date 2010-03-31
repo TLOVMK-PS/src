@@ -11,6 +11,9 @@ public interface SoundPlayable
 	public String getName();
 	public void setName(String name);
 	
+	public void setPath(String path);
+	public String getPath();
+	
 	public void createSound(AudioClip clip);
 	public void playSound();
 	public void stop();

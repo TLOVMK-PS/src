@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,6 +34,9 @@ public class RoomEditorUI extends JFrame
 	private String filename = "";
 	private String currentDirectory = System.getProperty("user.dir");
 	
+	private JLabel tileInfo = new JLabel();
+	private JComboBox tileSize = new JComboBox();
+	
 	public RoomEditorUI() {}
 	
 	public void loadRoomEditorUI()
@@ -45,9 +49,10 @@ public class RoomEditorUI extends JFrame
         // create the grid
         final GridView theGridView = new GridView();
         theGridView.setBounds(new Rectangle(0,0,800,600));
+        theGridView.setUIObject(this);
         this.getContentPane().add(theGridView);
         
-        JLabel titleLabel = new JLabel("<html><center>Room Editor v.1<br>by Matt Fritz</center></html>");
+        JLabel titleLabel = new JLabel("<html><center>Room Editor v.2<br>by Matt Fritz</center></html>");
         titleLabel.setBounds(new Rectangle(860, 10, 100, 40));
         this.getContentPane().add(titleLabel);
         
@@ -202,15 +207,67 @@ public class RoomEditorUI extends JFrame
         	    	System.out.println("You chose to save this file: " + filename);
         	       
         	    	// write the file out
-        	    	FileOperations.saveFile(filename, theGridView.getBackgroundImagePath(), theGridView.getTilesMap());
+        	    	FileOperations.saveFile(filename, theGridView.getBackgroundImagePath(), theGridView.getTilesMap(), theGridView.getAnimations(), theGridView.getSounds(), theGridView.getTileSize());
+        	    	
+        	    	// show a notification that the file has been saved
+        	    	JOptionPane.showMessageDialog(myRoomEditorWindow, "The file " + filename + " has been saved", "File Saved", JOptionPane.INFORMATION_MESSAGE);
         	    }
         	}
         });
         this.getContentPane().add(saveRoomButton);
         
+        // Tile info label
+        tileInfo.setText("<html>Row:<br />Col:<br />Dest:</html>");
+        tileInfo.setHorizontalAlignment(JLabel.LEFT);
+        tileInfo.setVerticalAlignment(JLabel.TOP);
+        tileInfo.setBounds(835, 444, 132, 48);
+        this.getContentPane().add(tileInfo);
+        
+        JLabel tileSizeLabel = new JLabel("Tile Size");
+        tileSizeLabel.setHorizontalAlignment(JLabel.CENTER);
+        tileSizeLabel.setVerticalAlignment(JLabel.TOP);
+        tileSizeLabel.setBounds(835, 508, 132, 16);
+        this.getContentPane().add(tileSizeLabel);
+        
+        // Tile size selector
+        String tileSizes[] = {"64x32","48x24","32x16"};
+        tileSize = new JComboBox(tileSizes);
+        tileSize.setSelectedItem("64x32");
+        tileSize.addItemListener(new ItemListener()
+        {
+        	public void itemStateChanged(ItemEvent e)
+        	{
+        		String selectedSize = (String)tileSize.getSelectedItem();
+        		
+        		// change the tile size
+        		if(selectedSize.equals("64x32"))
+        		{
+        			// large tiles
+        			theGridView.changeTileSize(64, 32);
+        		}
+        		else if(selectedSize.equals("48x24"))
+        		{
+        			// medium tiles
+        			theGridView.changeTileSize(48, 24);
+        		}
+        		else if(selectedSize.equals("32x16"))
+        		{
+        			// small tiles
+        			theGridView.changeTileSize(32, 16);
+        		}
+        		else
+        		{
+        			// default to medium tiles
+        			theGridView.changeTileSize(48, 24);
+        		}
+        	}
+        });
+        tileSize.setBounds(new Rectangle(835, 524, 132, 20));
+        this.getContentPane().add(tileSize);
+        
         // pack the window and display it
-        this.setName("Hawk's VMK Room Editor v1.0");
-        this.setTitle("Hawk's VMK Room Editor v1.0");
+        this.setName("Hawk's VMK Room Editor v2.0");
+        this.setTitle("Hawk's VMK Room Editor v2.0");
         this.pack();
         this.setVisible(true);
         
@@ -219,5 +276,22 @@ public class RoomEditorUI extends JFrame
         theGridView.loadGridView();
         
         myRoomEditorWindow = this;
+	}
+	
+	// change the tile information
+	public void changeTileInfo(int row, int col, String dest)
+	{
+		String infoString = "<html>";
+		infoString += "Row: " + row + "<br />";
+		infoString += "Col: " + col + "<br />";
+		infoString += "Dest: " + dest;
+		infoString += "</html>";
+		tileInfo.setText(infoString);
+	}
+	
+	// change the tile size
+	public void changeTileSize(String size)
+	{
+		tileSize.setSelectedItem((String)size);
 	}
 }

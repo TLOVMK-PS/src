@@ -36,4 +36,7 @@ public interface GridViewable
 	
 	public void addTextBubble(String username, String text, int x);
 	public void setupChatBubbles();
+	
+	public void changeTileSize(int width, int height);
+	public String getTileSize();
 }

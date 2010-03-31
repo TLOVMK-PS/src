@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -36,16 +37,62 @@ public class FileOperations
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
 	
 	// save a file given a filename and a map of tiles
-	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles)
+	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, String tileSize)
 	{
 		PrintWriter fileWriter;
 		try
 		{
 			fileWriter = new PrintWriter(new File(filename));
 			
-			// write out the background image location
-			fileWriter.println("IMAGE: " + backgroundImagePath);
+			// print out the filename and creation date
+			int fileIndex = filename.lastIndexOf("\\"); // get the position of the last directory separator
+			if(fileIndex == -1)
+			{
+				// not a Windows machine, so check the other kind of directory separator
+				fileIndex = filename.lastIndexOf("/");
+			}
+			fileWriter.println("// " + filename.substring(fileIndex + 1));
+			fileWriter.println("// Created on " + new Date().toString());
+			fileWriter.println();
 			
+			// write out the background image location
+			fileWriter.println("// Background image");
+			fileWriter.println("IMAGE: " + backgroundImagePath);
+			fileWriter.println();
+			
+			// write out the tile size
+			fileWriter.println("// Size of the tiles (width by height)");
+			fileWriter.println("TILES: " + tileSize);
+			fileWriter.println();
+			
+			// write out the animations
+			fileWriter.println("// Animations");
+			for(int i = 0; i < animations.size(); i++)
+			{
+				fileWriter.println("ANIMATION: " + animations.get(i).getPath());
+			}
+			fileWriter.println();
+			
+			// write out the sounds
+			fileWriter.println("// Sounds");
+			for(int j = 0; j < sounds.size(); j++)
+			{
+				SoundPlayable sound = sounds.get(j);
+				
+				if(sound instanceof SingleSound)
+				{
+					// single sound
+					fileWriter.println("SOUND: " + sound.getPath());
+				}
+				else if(sound instanceof RepeatingSound)
+				{
+					// repeating sound
+					fileWriter.println("REPEATING SOUND: " + sound.getPath());
+				}
+			}
+			fileWriter.println();
+			
+			fileWriter.println("// Tile map");
 			for(Tile t : tiles.values())
 			{
 				// write out a tile to the file
@@ -65,6 +112,7 @@ public class FileOperations
 		Scanner fileReader;
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
 		String backgroundImagePath = "";
+		String[] tileDimensions = null;
 		ArrayList<Animation> animations = new ArrayList<Animation>();
 		ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
 		
@@ -86,6 +134,13 @@ public class FileOperations
 					// set the background image path
 					backgroundImagePath = line;
 				}
+				else if(line.startsWith("TILES: "))
+				{
+					// get the size of the tiles
+					line = line.replaceAll("TILES: ", "");
+					
+					tileDimensions = line.split("x"); // split at the "x"
+				}
 				else if(line.startsWith("SOUND: "))
 				{
 					line = line.replaceAll("SOUND: ", "");
@@ -96,7 +151,7 @@ public class FileOperations
 					String soundName = soundScanner.next();
 					
 					// add the single sound to the ArrayList
-					sounds.add(new SingleSound(soundName, AppletResourceLoader.getSoundFromJar(soundFilename)));
+					sounds.add(new SingleSound(soundName, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename)));
 					
 					soundScanner.close();
 				}
@@ -114,7 +169,7 @@ public class FileOperations
 					int soundDelay = Integer.parseInt(soundScanner.next());
 					
 					// add the repeating sound to the ArrayList
-					sounds.add(new RepeatingSound(soundName, soundDelay, AppletResourceLoader.getSoundFromJar(soundFilename)));
+					sounds.add(new RepeatingSound(soundName, soundDelay, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename)));
 					
 					soundScanner.close();
 				}
@@ -148,9 +203,19 @@ public class FileOperations
 					int row = Integer.parseInt(tileScanner.next());
 					int col = Integer.parseInt(tileScanner.next());
 					String tileType = tileScanner.next();
+					String tileDest = "";
+					
+					try
+					{
+						tileDest = tileScanner.next();
+					}
+					catch(NoSuchElementException e)
+					{
+						tileDest = "";
+					}
 					
 					// add the tile to the HashMap
-					Tile newTile = new Tile(row,col,tileType);
+					Tile newTile = new Tile(row,col,tileType,tileDest);
 					tiles.put(row + "-" + col, newTile);
 					
 					tileScanner.close();
@@ -159,6 +224,9 @@ public class FileOperations
 			
 			// set the background image
 			gridView.setBackgroundImage(backgroundImagePath);
+			
+			// set the tile size
+			gridView.changeTileSize(Integer.parseInt(tileDimensions[0]), Integer.parseInt(tileDimensions[1]));
 			
 			// set the tiles
 			gridView.setTilesMap(tiles);
@@ -278,6 +346,7 @@ public class FileOperations
 		}
 		
 		// return the animation
+		animation.setPath(filename);
 		return animation;
 	}
 	

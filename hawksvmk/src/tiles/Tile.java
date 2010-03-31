@@ -27,6 +27,8 @@ public class Tile implements Serializable
 	
 	private int type = TILE_WALK; // tile type
 	
+	private String dest = ""; // destination that the tile leads to
+	
 	private int row = 0; // grid row
 	private int col = 0; // grid column
 	
@@ -41,11 +43,12 @@ public class Tile implements Serializable
 	
 	public Tile() {}
 	
-	public Tile(int row, int col, int type)
+	public Tile(int row, int col, int type, String dest)
 	{
 		this.row = row;
 		this.col = col;
 		this.type = type;
+		this.dest = dest;
 		
 		// set the tile image
 		setImageFromType();
@@ -54,16 +57,25 @@ public class Tile implements Serializable
 		setAbsoluteCoordinates();
 	}
 	
-	public Tile(int row, int col, String typeString)
+	public Tile(int row, int col, String typeString, String dest)
 	{
 		this.row = row;
 		this.col = col;
+		this.dest = dest;
 		
 		// set the tile image
 		setTypeFromString(typeString);
 		
 		// set the absolute coordinates
 		setAbsoluteCoordinates();
+	}
+	
+	public String getDest() {
+		return dest;
+	}
+	
+	public void setDest(String dest) {
+		this.dest = dest;
 	}
 	
 	// set the tile's absolute X-Y coordinates on the screen
@@ -210,6 +222,6 @@ public class Tile implements Serializable
 
 	public String toString()
 	{
-		return "@" + row + "," + col + "," + getTypeString() + "@";
+		return "@" + row + "," + col + "," + getTypeString() + "," + dest + "@";
 	}
 }

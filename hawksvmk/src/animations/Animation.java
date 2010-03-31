@@ -18,6 +18,8 @@ public class Animation implements Runnable
 	
 	private Thread animationThread; // thread to run the animation
 	
+	private String path = "";
+	
 	public Animation()
 	{
 		
@@ -40,6 +42,14 @@ public class Animation implements Runnable
 		this(name, totalFrames);
 		this.x = x;
 		this.y = y;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	// start the thread

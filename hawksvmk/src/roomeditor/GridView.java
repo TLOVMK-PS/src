@@ -32,23 +32,30 @@ public class GridView extends JLabel implements GridViewable
 	String backgroundImagePath = "tiles_img/test_room_image.png";
 	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(backgroundImagePath);
 	
-	String nogoTileImagePath = "tiles_img/tile_nogo.png";
-	String walkTileImagePath = "tiles_img/tile_walk.png";
-	String exitTileImagePath = "tiles_img/tile_exit.png";
+	String nogoTileImagePath = "tiles_img/tile_nogo_64.png";
+	String walkTileImagePath = "tiles_img/tile_walk_64.png";
+	String exitTileImagePath = "tiles_img/tile_exit_64.png";
 	ImageIcon nogoTileImage = AppletResourceLoader.getImageFromJar(nogoTileImagePath);
 	ImageIcon walkTileImage = AppletResourceLoader.getImageFromJar(walkTileImagePath);
 	ImageIcon exitTileImage = AppletResourceLoader.getImageFromJar(exitTileImagePath);
 	
-	Tile currentTile = new Tile(0,0,Tile.TILE_WALK); // currently selected tile type
+	Tile currentTile = new Tile(0,0,Tile.TILE_WALK, ""); // currently selected tile type
 	
-	ImageIcon reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector.png");
+	ImageIcon reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector_64.png");
 	//ImageIcon reticleTile = new ImageIcon("img/furniture/beta/furni_0/furni_0_A.png");
 	
 	int tileWidth = 64;
 	int tileHeight = 32;
 	
-	int tileRows = 38; // 19
-	int tileColumns = 13; // 13
+	// 64x32 tile = 38 rows
+	// 48x24 tile = 47 rows
+	// 32x16 tile = 71 rows
+	int tileRows = 38;
+	
+	// 64x32 tile = 13 columns
+	// 48x24 tile = 17 columns
+	// 32x16 tile = 25 columns
+	int tileColumns = 13;
 	
 	int mouseX = 0;
 	int mouseY = 0;
@@ -64,7 +71,7 @@ public class GridView extends JLabel implements GridViewable
 	Graphics bufferGraphics;
 	Image offscreen;
 	
-	RoomEditorUI myRoomEditorWindow;
+	RoomEditorUI uiObject = null;
 	
 	HashMap<String,Tile> tilesMap = new HashMap<String,Tile>();
 	
@@ -72,6 +79,8 @@ public class GridView extends JLabel implements GridViewable
 	
 	ArrayList<Animation> animations = new ArrayList<Animation>();
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
+	
+	private boolean loading = false; // true if some kind of loading operation is taking place
 	
 	public void loadGridView()
 	{
@@ -136,15 +145,21 @@ public class GridView extends JLabel implements GridViewable
         		if(e.getModifiers() == MouseEvent.CTRL_MASK && showGrid == true && showWalkTiles == true)
         		{
         			// put a "walk" tile in the HashMap
-            		tilesMap.put(gridY + "-" + (gridX / 2), new Tile(gridY, (gridX / 2), Tile.TILE_WALK));
+            		tilesMap.put(gridY + "-" + (gridX / 2), new Tile(gridY, (gridX / 2), Tile.TILE_WALK, ""));
         		}
         		else if(e.getModifiers() == MouseEvent.SHIFT_MASK && showGrid == true && showNogoTiles == true)
         		{
         			// put a "nogo" tile on the HashMap
-        			tilesMap.put(gridY + "-" + (gridX / 2), new Tile(gridY, (gridX / 2), Tile.TILE_NOGO));
+        			tilesMap.put(gridY + "-" + (gridX / 2), new Tile(gridY, (gridX / 2), Tile.TILE_NOGO, ""));
         		}
         		
         		setCurrentTileType(tileTypeString); // set the current tile type and coords
+        		
+        		// update the tile information on the UI
+        		if(uiObject != null)
+        		{
+        			uiObject.changeTileInfo(gridY, gridX, currentTile.getDest());
+        		}
         	}
         });
         
@@ -183,36 +198,40 @@ public class GridView extends JLabel implements GridViewable
 						// get the tile
 						Tile tileIcon = tilesMap.get(j + "-" + i);
 						
-						if(j % 2 == 0) // draw even rows
+						// make sure there is actually a tile at this index
+						if(tileIcon != null)
 						{
-							if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
+							if(j % 2 == 0) // draw even rows
 							{
-								bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
+								{
+									bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
+								else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
+								{
+									bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
+								else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
+								{
+									bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
 							}
-							else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
+							else // draw odd rows
 							{
-								bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
+								{
+									bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
+								else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
+								{
+									bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
+								else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
+								{
+									bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
+								}
+									
 							}
-							else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
-							{
-								bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth, j * (tileHeight / 2), new GridViewMovementImageObserver(this));
-							}
-						}
-						else // draw odd rows
-						{
-							if(tileIcon.getType() == Tile.TILE_NOGO && showNogoTiles == true)
-							{
-								bufferGraphics.drawImage(nogoTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
-							}
-							else if(tileIcon.getType() == Tile.TILE_EXIT && showExitTiles == true)
-							{
-								bufferGraphics.drawImage(exitTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
-							}
-							else if(tileIcon.getType() == Tile.TILE_WALK && showWalkTiles == true)
-							{
-								bufferGraphics.drawImage(walkTileImage.getImage(), i * tileWidth + (tileWidth / 2), j * (tileHeight / 2), new GridViewMovementImageObserver(this));
-							}
-								
 						}
 					}
 				}
@@ -238,7 +257,11 @@ public class GridView extends JLabel implements GridViewable
 	{
 		while(this != null)
 		{
-			paint(this.getGraphics());
+			if(!loading)
+			{
+				paint(this.getGraphics());
+			}
+			
 			try
 			{
 				Thread.sleep(graphicsDelay);
@@ -249,13 +272,42 @@ public class GridView extends JLabel implements GridViewable
 	
 	private void initTilesMap()
 	{
-		// draw the grid
-		for(int i = 0; i < tileColumns; i++) // columns (3)
+		HashMap<String,Tile> tempTiles = tilesMap; // create a temporary copy
+		tilesMap = new HashMap<String,Tile>(); // clear the original map
+		
+		if(tempTiles.size() != 0)
 		{
-			for(int j = 0; j < tileRows; j++) // rows (4)
-			{	
-				// put the tile into the HashMap
-				tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO));
+			System.out.println("Preserving data...");
+			// copy over the tiles to preserve the data
+			for(int i = 0; i < tileColumns; i++) // columns
+			{
+				for(int j = 0; j < tileRows; j++) // rows
+				{	
+					if(tempTiles.containsKey(j + "-" + i))
+					{
+						// copy the existing tile over
+						tilesMap.put(j + "-" + i, tempTiles.get(j + "-" + i));
+					}
+					else
+					{
+						// create a new tile
+						tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO,""));
+					}
+				}
+			}
+			
+			// clear the temporary copy
+			tempTiles = new HashMap<String,Tile>();
+		}
+		else
+		{
+			// draw the grid
+			for(int i = 0; i < tileColumns; i++) // columns (3)
+			{
+				for(int j = 0; j < tileRows; j++) // rows (4)
+				{	
+					tilesMap.put(j + "-" + i, new Tile(j,i,Tile.TILE_NOGO, ""));
+				}
 			}
 		}
 	}
@@ -267,7 +319,8 @@ public class GridView extends JLabel implements GridViewable
 		
 		try
 		{
-			backgroundImage = new ImageIcon(new URL(imagePath));
+			imagePath = imagePath.replaceAll("file:///", "");
+			backgroundImage = new ImageIcon(imagePath);
 		}
 		catch(Exception e)
 		{
@@ -281,9 +334,16 @@ public class GridView extends JLabel implements GridViewable
 	{
 		tileTypeString = type;
 		
-		if(type.equals("walk")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_WALK);}
-		if(type.equals("nogo")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_NOGO);}
-		if(type.equals("exit")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_EXIT);}
+		if(type.equals("walk")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_WALK, "");}
+		if(type.equals("nogo")) {currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_NOGO, "");}
+		if(type.equals("exit"))
+		{
+			// make sure the tile actually exists
+			if(tilesMap.containsKey(gridY + "-" + (gridX / 2)))
+			{
+				currentTile = new Tile(gridY, (gridX / 2), Tile.TILE_EXIT, tilesMap.get(gridY + "-" + (gridX / 2)).getDest());
+			}
+		}
 	}
 	
 	// show/hide the grid
@@ -316,10 +376,18 @@ public class GridView extends JLabel implements GridViewable
 		this.animations = animations;
 	}
 	
+	public ArrayList<Animation> getAnimations() {
+		return animations;
+	}
+	
 	// set the sounds
 	public void setSounds(ArrayList<SoundPlayable> sounds)
 	{
 		this.sounds = sounds;
+	}
+	
+	public ArrayList<SoundPlayable> getSounds() {
+		return sounds;
 	}
 	
 	public void setupChatBubbles() {}
@@ -327,6 +395,58 @@ public class GridView extends JLabel implements GridViewable
 	// add a text bubble (called from the UI)
 	public void addTextBubble(String username, String text, int x)
 	{
+	}
+	
+	public void setUIObject(RoomEditorUI uiObject)
+	{
+		this.uiObject = uiObject;
+	}
+	
+	// set the size of the tiles and also the number of rows/columns
+	public void changeTileSize(int width, int height)
+	{
+		// prevent a stack overflow error
+		if(width == tileWidth && height == tileHeight) {return;}
+		
+		// set the loading flag
+		loading = true;
+		
+		// set the columns and tile width
+		if(width == 64) {tileColumns = 13;}
+		if(width == 48) {tileColumns = 17;}
+		if(width == 32) {tileColumns = 25;}
+		tileWidth = width;
+		
+		// set the rows and tile height
+		if(height == 32) {tileRows = 38;}
+		if(height == 24) {tileRows = 47;}
+		if(height == 16) {tileRows = 71;}
+		tileHeight = height;
+		
+		// set the paths and image icons
+		nogoTileImagePath = "tiles_img/tile_nogo_" + width + ".png";
+		walkTileImagePath = "tiles_img/tile_walk_" + width + ".png";
+		exitTileImagePath = "tiles_img/tile_exit_" + width + ".png";
+		nogoTileImage = AppletResourceLoader.getImageFromJar(nogoTileImagePath);
+		walkTileImage = AppletResourceLoader.getImageFromJar(walkTileImagePath);
+		exitTileImage = AppletResourceLoader.getImageFromJar(exitTileImagePath);
+		
+		// set the tile selector
+		reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector_" + width + ".png");
+		
+		// initialize the tiles
+		initTilesMap();
+		
+		// show the tile size on the UI
+		uiObject.changeTileSize(width + "x" + height);
+		
+		// clear the loading flag
+		loading = false;
+	}
+	
+	public String getTileSize()
+	{
+		return tileWidth + "x" + tileHeight;
 	}
 }
 
