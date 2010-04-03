@@ -10,13 +10,37 @@ PATH: rooms/gr4.room
 // PUBLIC ROOMS
 // ===================
 
+// Main Street
+
+ID: ms1
+NAME: Castle Forecourt
+PATH: rooms/ms1.room
+
 ID: ms2
 NAME: Central Plaza
 PATH: rooms/ms2.room
 
+ID: ms5
+NAME: VMK Central
+PATH: rooms/ms5.room
+
 ID: ms6
 NAME: Main Street
 PATH: rooms/ms6.room
+
+ID: ms8
+NAME: Town Square
+PATH: rooms/ms8.room
+
+ID: ms10
+NAME: Emporium
+PATH: rooms/ms10.room
+
+ID: ms11
+NAME: Esplanade
+PATH: rooms/ms11.room
+
+// New Orleans Square
 
 ID: nos1
 NAME: VMK Gallery

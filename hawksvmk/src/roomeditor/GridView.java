@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import animations.Animation;
+import animations.StationaryAnimation;
 
 import sounds.SoundPlayable;
 import tiles.Tile;
@@ -175,7 +176,7 @@ public class GridView extends JLabel implements GridViewable
         		// update the tile information on the UI
         		if(uiObject != null)
         		{
-        			uiObject.changeTileInfo(gridY, gridX, currentTile.getDest());
+        			uiObject.changeTileInfo(gridY, gridX, tilesMap.get(gridY + "-" + (gridX / 2)).getDest());
         		}
         	}
         });

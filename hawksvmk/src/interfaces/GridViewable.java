@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import animations.Animation;
+import animations.StationaryAnimation;
 
 import sounds.SoundPlayable;
 import tiles.Tile;

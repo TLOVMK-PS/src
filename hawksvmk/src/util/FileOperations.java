@@ -22,6 +22,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 import animations.Animation;
+import animations.MovingAnimation;
+import animations.StationaryAnimation;
 import animations.AnimationFrame;
 import astar.AStarCharacter;
 
@@ -259,6 +261,7 @@ public class FileOperations
 	{
 		Scanner fileReader;
 		
+		String animationType = "";
 		String animationName = "";
 		int totalFrames = 0;
 		int x_coord = 0;
@@ -267,6 +270,8 @@ public class FileOperations
 		
 		Scanner animationFrameScanner;
 		int currentFrame = 0;
+		int x = 0;
+		int y = 0;
 		
 		try
 		{
@@ -276,7 +281,21 @@ public class FileOperations
 			{
 				String line = fileReader.nextLine();
 				
-				if(line.startsWith("ANIMATION NAME: "))
+				if(line.startsWith("TYPE: "))
+				{
+					// figure out the animation type
+					line = line.replaceAll("TYPE: ", "");
+					animationType = line;
+					if(animationType.equals("stationary"))
+					{
+						animation = new StationaryAnimation();
+					}
+					else
+					{
+						animation = new MovingAnimation();
+					}
+				}
+				else if(line.startsWith("ANIMATION NAME: "))
 				{
 					line = line.replaceAll("ANIMATION NAME: ", "");
 					
@@ -314,7 +333,8 @@ public class FileOperations
 				}
 				else
 				{
-					// image path,delay
+					// stationary: image path,delay
+					// moving: image path,delay,x,y
 					// remove the commas and turn them into spaces
 					line = line.replaceAll(",", " ");
 					
@@ -324,10 +344,20 @@ public class FileOperations
 					animationFrameScanner = new Scanner(line);
 					
 					String imagePath = animationFrameScanner.next();
+					
+					// check if it's a moving animation
+					if(!animationType.equals("stationary"))
+					{
+						x = Integer.parseInt(animationFrameScanner.next());
+						y = Integer.parseInt(animationFrameScanner.next());
+					}
+					
 					int delay = Integer.parseInt(animationFrameScanner.next());
 					
 					// create a new animation frame
 					AnimationFrame newFrame = new AnimationFrame(currentFrame, AppletResourceLoader.getImageFromJar(imagePath), delay);
+					newFrame.setX(x);
+					newFrame.setY(y);
 					
 					// add the new frame to the animation
 					animation.addFrame(currentFrame, newFrame);

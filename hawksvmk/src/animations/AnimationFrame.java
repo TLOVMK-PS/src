@@ -14,6 +14,9 @@ public class AnimationFrame
 	private ImageIcon image; // frame image
 	private int delay = 20; // milliseconds until next frame
 	
+	private int x = 0; // used by MovingAnimation
+	private int y = 0; // used by MovingAnimation
+	
 	public AnimationFrame(int frameNum, ImageIcon image, int delay)
 	{
 		this.frameNum = frameNum;
@@ -47,5 +50,21 @@ public class AnimationFrame
 
 	public void setDelay(int delay) {
 		this.delay = delay;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
 	}
 }

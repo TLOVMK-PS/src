@@ -30,6 +30,7 @@ import chat.ChatBubble;
 import chat.ChatBubbles;
 
 import animations.Animation;
+import animations.StationaryAnimation;
 import astar.AStarCharacter;
 
 import sockets.messages.MessageAddFriendConfirmation;
@@ -156,6 +157,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	String roomID = ""; // ID of the current room
 	String roomName = ""; // name of the current room
 	boolean roomLoading = false;
+	boolean suspendMessages = false; // true to prevent the sending of messages
 	
 	public RoomViewerGrid()
 	{
@@ -227,6 +229,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
      {
      	public void mouseReleased(MouseEvent e)
      	{	
+     		if(suspendMessages == true) {return;}
+     		
      		// make sure the map is not visible
      		if(!mapWindow.isVisible())
      		{
@@ -987,26 +991,31 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
 					
 					// find an exit tile to start on
-					Iterator<Tile> it = tilesMap.values().iterator();
-					while(it.hasNext())
+					//if(character.getCurrentTile().getType() != Tile.TILE_EXIT)
+					//{
+					if(character.getCurrentTile() == null)
 					{
-						Tile t = it.next();
-						
-						if(t.getType() == Tile.TILE_EXIT)
+						Iterator<Tile> it = tilesMap.values().iterator();
+						while(it.hasNext())
 						{
-							// set the position to this exit tile
-							myCharacter.setRow(t.getRow());
-							myCharacter.setCol(t.getColumn());
-							myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
-							myCharacter.setX(t.getX());
-							myCharacter.setY(t.getY());
+							Tile t = it.next();
 							
-							character.setRow(t.getRow());
-							character.setCol(t.getColumn());
-							character.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
-							character.setX(t.getX());
-							character.setY(t.getY());
-							break;
+							if(t.getType() == Tile.TILE_EXIT)
+							{
+								// set the position to this exit tile
+								myCharacter.setRow(t.getRow());
+								myCharacter.setCol(t.getColumn());
+								myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+								myCharacter.setX(t.getX());
+								myCharacter.setY(t.getY());
+								
+								character.setRow(t.getRow());
+								character.setCol(t.getColumn());
+								character.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+								character.setX(t.getX());
+								character.setY(t.getY());
+								break;
+							}
 						}
 					}
 				}
@@ -1022,7 +1031,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				
 				characters.put(uiObject.getUsername(), myCharacter);
 				
-				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomID));
+				//uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomID));
 				
 				// hide the loading window
 				roomLoading = false;
@@ -1223,20 +1232,49 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), this);
 	  	
 	  	// find an exit tile to start on
+	  	myCharacter.setCurrentTile(null);
 		Iterator<Tile> it = tilesMap.values().iterator();
 		while(it.hasNext())
 		{
 			Tile t = it.next();
 			
+			// check and make sure the tile's destination is the same ID as the room
+			// this character just exited from
 			if(t.getType() == Tile.TILE_EXIT)
 			{
-				// set the position to this exit tile
-				myCharacter.setRow(t.getRow());
-				myCharacter.setCol(t.getColumn());
-				myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
-				myCharacter.setX(t.getX());
-				myCharacter.setY(t.getY());
-				break;
+				if(t.getDest().equals(roomID) || roomID.equals(""))
+				{
+					// set the position to this exit tile
+					myCharacter.setRow(t.getRow());
+					myCharacter.setCol(t.getColumn());
+					myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+					myCharacter.setX(t.getX());
+					myCharacter.setY(t.getY());
+					break;
+				}
+			}
+		}
+		
+		// no suitable EXIT tile found above, so default to any exit tile
+		if(myCharacter.getCurrentTile() == null)
+		{
+			Iterator<Tile> it2 = tilesMap.values().iterator();
+			while(it2.hasNext())
+			{
+				Tile t = it2.next();
+				
+				// check and make sure the tile's destination is the same ID as the room
+				// this character just exited from
+				if(t.getType() == Tile.TILE_EXIT)
+				{
+					// set the position to this exit tile
+					myCharacter.setRow(t.getRow());
+					myCharacter.setCol(t.getColumn());
+					myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+					myCharacter.setX(t.getX());
+					myCharacter.setY(t.getY());
+					break;
+				}
 			}
 		}
 	  	

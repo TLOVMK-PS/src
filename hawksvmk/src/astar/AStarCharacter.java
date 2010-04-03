@@ -210,10 +210,13 @@ public class AStarCharacter implements Serializable
 	
 	public void setCurrentTile(Tile currentTile)
 	{
-		this.row = currentTile.getRow();
-		this.col = currentTile.getColumn();
+		if(currentTile != null)
+		{
+			this.row = currentTile.getRow();
+			this.col = currentTile.getColumn();
 			//this.x = currentTile.getX();
 			//this.y = currentTile.getY();
+		}
 		this.currentTile = currentTile;
 	}
 	

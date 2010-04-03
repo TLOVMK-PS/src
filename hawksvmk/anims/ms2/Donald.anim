@@ -1,0 +1,17 @@
+TYPE: stationary
+ANIMATION NAME: donald
+TOTAL FRAMES: 12
+X-COORD: 530
+Y-COORD: 19
+@img/rooms/ms2/donald_0.jpg,200@
+@img/rooms/ms2/donald_1.jpg,200@
+@img/rooms/ms2/donald_2.jpg,200@
+@img/rooms/ms2/donald_3.jpg,200@
+@img/rooms/ms2/donald_4.jpg,200@
+@img/rooms/ms2/donald_10.jpg,5000@
+@img/rooms/ms2/donald_5.jpg,200@
+@img/rooms/ms2/donald_6.jpg,200@
+@img/rooms/ms2/donald_7.jpg,200@
+@img/rooms/ms2/donald_8.jpg,200@
+@img/rooms/ms2/donald_9.jpg,200@
+@img/rooms/ms2/donald_10.jpg,10000@

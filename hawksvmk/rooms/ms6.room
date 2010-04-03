@@ -1,5 +1,5 @@
 // ms6.room
-// Created on Wed Mar 31 16:14:09 PDT 2010
+// Created on Wed Mar 31 20:14:20 PDT 2010
 
 // Background image
 IMAGE: img/rooms/ms6/ms6.jpg
@@ -8,6 +8,7 @@ IMAGE: img/rooms/ms6/ms6.jpg
 TILES: 48x24
 
 // Animations
+ANIMATION: anims/ms6/MusicGame.anim
 
 // Sounds
 
@@ -60,7 +61,7 @@ TILES: 48x24
 @40,11,WALK,@
 @45,2,NOGO,@
 @40,10,WALK,@
-@40,16,EXIT,@
+@40,16,EXIT,ms8@
 @40,15,NOGO,@
 @40,14,WALK,@
 @20,11,NOGO,@
@@ -76,7 +77,7 @@ TILES: 48x24
 @14,3,WALK,@
 @14,8,NOGO,@
 @14,9,NOGO,@
-@14,6,EXIT,@
+@14,6,EXIT,ms5@
 @14,7,NOGO,@
 @2,16,NOGO,@
 @14,0,EXIT,ms2@
@@ -86,12 +87,12 @@ TILES: 48x24
 @12,1,NOGO,@
 @12,0,EXIT,ms2@
 @12,7,NOGO,@
-@12,6,EXIT,@
-@12,5,NOGO,@
+@12,6,EXIT,ms5@
+@12,5,EXIT,ms5@
 @12,4,NOGO,@
 @12,9,NOGO,@
 @12,8,NOGO,@
-@46,16,EXIT,@
+@46,16,EXIT,ms8@
 @18,6,NOGO,@
 @16,0,EXIT,ms2@
 @42,10,WALK,@
@@ -110,7 +111,7 @@ TILES: 48x24
 @16,8,NOGO,@
 @18,1,WALK,@
 @2,10,NOGO,@
-@42,16,EXIT,@
+@42,16,EXIT,ms8@
 @18,0,EXIT,ms2@
 @2,11,NOGO,@
 @18,3,WALK,@
@@ -125,12 +126,12 @@ TILES: 48x24
 @18,4,WALK,@
 @42,12,WALK,@
 @2,15,NOGO,@
-@46,11,EXIT,@
-@46,10,EXIT,@
-@46,15,EXIT,@
-@46,14,EXIT,@
-@46,13,EXIT,@
-@46,12,EXIT,@
+@46,11,EXIT,ms8@
+@46,10,EXIT,ms8@
+@46,15,EXIT,ms8@
+@46,14,EXIT,ms8@
+@46,13,EXIT,ms8@
+@46,12,EXIT,ms8@
 @3,1,NOGO,@
 @3,0,NOGO,@
 @7,9,NOGO,@
@@ -242,7 +243,7 @@ TILES: 48x24
 @38,11,WALK,@
 @38,14,WALK,@
 @38,13,WALK,@
-@38,16,EXIT,@
+@38,16,EXIT,ms8@
 @41,10,WALK,@
 @38,15,WALK,@
 @38,10,WALK,@
@@ -461,7 +462,7 @@ TILES: 48x24
 @13,9,NOGO,@
 @13,7,NOGO,@
 @13,8,NOGO,@
-@13,5,EXIT,@
+@13,5,EXIT,ms5@
 @13,6,NOGO,@
 @13,3,NOGO,@
 @13,4,WALK,@
@@ -646,10 +647,10 @@ TILES: 48x24
 @46,3,NOGO,@
 @46,4,NOGO,@
 @46,5,WALK,@
-@46,6,EXIT,@
-@46,7,EXIT,@
-@46,8,EXIT,@
-@46,9,EXIT,@
+@46,6,EXIT,ms8@
+@46,7,EXIT,ms8@
+@46,8,EXIT,ms8@
+@46,9,EXIT,ms8@
 @4,9,NOGO,@
 @36,1,WALK,@
 @36,0,WALK,@
@@ -707,7 +708,7 @@ TILES: 48x24
 @3,11,NOGO,@
 @1,10,NOGO,@
 @1,14,NOGO,@
-@44,16,EXIT,@
+@44,16,EXIT,ms8@
 @1,13,NOGO,@
 @1,12,NOGO,@
 @44,15,WALK,@

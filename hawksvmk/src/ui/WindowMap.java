@@ -1103,7 +1103,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Castle Forecourt room
-				changeRoom("Castle Forecourt");
+				changeRoom("ms1");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -1175,7 +1175,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the VMK Central room
-				changeRoom("VMK Central");
+				changeRoom("ms5");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -1271,7 +1271,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Town Square room
-				changeRoom("Town Square");
+				changeRoom("ms8");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -1295,7 +1295,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Emporium room
-				changeRoom("Emporium");
+				changeRoom("ms10");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -1343,7 +1343,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Esplanade room
-				changeRoom("Esplanade");
+				changeRoom("ms11");
 			}
 			public void mouseEntered(MouseEvent e)
 			{

@@ -6,7 +6,7 @@ package animations;
 
 import javax.swing.ImageIcon;
 
-public class WindmillAnimation extends Animation
+public class WindmillAnimation extends StationaryAnimation
 {
 	public WindmillAnimation()
 	{

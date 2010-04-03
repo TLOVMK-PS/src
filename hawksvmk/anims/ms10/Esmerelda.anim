@@ -1,0 +1,34 @@
+TYPE: moving
+ANIMATION NAME: esmerelda
+TOTAL FRAMES: 29
+X-COORD: 303
+Y-COORD: 345
+@img/rooms/ms10/esmerelda_0.png,303,345,500@
+@img/rooms/ms10/esmerelda_1.png,303,335,500@
+@img/rooms/ms10/esmerelda_2.png,303,325,500@
+@img/rooms/ms10/esmerelda_3.png,303,325,500@
+@img/rooms/ms10/esmerelda_4.png,303,325,500@
+@img/rooms/ms10/esmerelda_5.png,303,325,500@
+@img/rooms/ms10/esmerelda_6.png,303,325,500@
+@img/rooms/ms10/esmerelda_7.png,303,325,500@
+@img/rooms/ms10/esmerelda_8.png,303,325,500@
+@img/rooms/ms10/esmerelda_9.png,303,325,500@
+@img/rooms/ms10/esmerelda_10.png,303,325,500@
+@img/rooms/ms10/esmerelda_11.png,303,325,500@
+@img/rooms/ms10/esmerelda_12.png,303,325,500@
+@img/rooms/ms10/esmerelda_13.png,303,325,500@
+@img/rooms/ms10/esmerelda_14.png,303,325,500@
+@img/rooms/ms10/esmerelda_15.png,303,325,500@
+@img/rooms/ms10/esmerelda_16.png,303,325,500@
+@img/rooms/ms10/esmerelda_17.png,303,325,500@
+@img/rooms/ms10/esmerelda_18.png,303,325,500@
+@img/rooms/ms10/esmerelda_19.png,303,325,500@
+@img/rooms/ms10/esmerelda_20.png,303,325,500@
+@img/rooms/ms10/esmerelda_21.png,303,325,500@
+@img/rooms/ms10/esmerelda_22.png,303,325,500@
+@img/rooms/ms10/esmerelda_23.png,303,325,500@
+@img/rooms/ms10/esmerelda_24.png,303,325,500@
+@img/rooms/ms10/esmerelda_25.png,303,325,500@
+@img/rooms/ms10/esmerelda_26.png,303,325,500@
+@img/rooms/ms10/esmerelda_27.png,303,335,500@
+@img/rooms/ms10/esmerelda_28.png,303,345,10000@

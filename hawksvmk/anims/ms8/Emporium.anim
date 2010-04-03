@@ -1,0 +1,7 @@
+TYPE: stationary
+ANIMATION NAME: emporium
+TOTAL FRAMES: 2
+X-COORD: 0
+Y-COORD: 5
+@img/rooms/ms8/emporium_0.png,500@
+@img/rooms/ms8/emporium_1.png,500@

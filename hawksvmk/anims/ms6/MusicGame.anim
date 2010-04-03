@@ -1,0 +1,8 @@
+TYPE: stationary
+ANIMATION NAME: music_game
+TOTAL FRAMES: 3
+X-COORD: 706
+Y-COORD: 161
+@img/rooms/ms6/music_game_0.png,1000@
+@img/rooms/ms6/music_game_1.png,1000@
+@img/rooms/ms6/music_game_2.png,2000@

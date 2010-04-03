@@ -1,0 +1,9 @@
+TYPE: stationary
+ANIMATION NAME: magic_shop
+TOTAL FRAMES: 4
+X-COORD: 479
+Y-COORD: 53
+@img/rooms/ms2/magic_0.jpg,400@
+@img/rooms/ms2/magic_1.jpg,400@
+@img/rooms/ms2/magic_2.jpg,400@
+@img/rooms/ms2/magic_3.jpg,400@

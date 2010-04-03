@@ -1,24 +1,24 @@
 // Animation.java by Matt Fritz
-// November 10, 2009
-// Controls the animation of various objects on the grid
+// April 1, 2010
+// Super-class for all Animation classes
 
 package animations;
 
 import java.util.HashMap;
 
-public class Animation implements Runnable
+public class Animation
 {
-	private String name; // name of the animation
-	private int currentFrame = 0; // current frame of the animation
-	private int totalFrames = 0; // total number of frames in the animation
-	private HashMap<String,AnimationFrame> frames = new HashMap<String,AnimationFrame>(); // map of animation frames
+	protected String name; // name of the animation
+	protected int currentFrame = 0; // current frame of the animation
+	protected int totalFrames = 0; // total number of frames in the animation
+	protected HashMap<String,AnimationFrame> frames = new HashMap<String,AnimationFrame>(); // map of animation frames
 	
-	private int x = 0; // x-coordinate of the animation
-	private int y = 0; // y-coordinate of the animation
+	protected Thread animationThread; // thread to run the animation
 	
-	private Thread animationThread; // thread to run the animation
+	protected String path = "";
 	
-	private String path = "";
+	protected int x = 0;
+	protected int y = 0;
 	
 	public Animation()
 	{
@@ -52,14 +52,6 @@ public class Animation implements Runnable
 		return path;
 	}
 	
-	// start the thread
-	public void start()
-	{
-		System.out.println("Animation.java - start()");
-		animationThread = new Thread(this, name + " Animation Thread");
-		animationThread.start();
-	}
-	
 	// add a frame to the HashMap
 	public void addFrame(int frameNum, AnimationFrame theFrame)
 	{
@@ -82,36 +74,6 @@ public class Animation implements Runnable
 	public void removeFrame(int frameNum)
 	{
 		frames.remove(name + "-" + frameNum);
-	}
-	
-	// stop the animation
-	public void stop()
-	{
-		animationThread.interrupt();
-		animationThread = null;
-	}
-	
-	// run the animation
-	public void run()
-	{
-		while(animationThread != null)
-		{
-			if(currentFrame >= (totalFrames - 1))
-			{
-				currentFrame = 0; // set the current frame to 0 so it loops back
-			}
-			else
-			{
-				currentFrame++; // increment the frame count
-			}
-			
-			// sleep
-			try
-			{
-				Thread.sleep(getNextFrame().getDelay());
-			}
-			catch(Exception e) {System.out.println("Exception in Animation - " + e.getMessage());}
-		}
 	}
 
 	public String getName() {
@@ -161,4 +123,7 @@ public class Animation implements Runnable
 	public void setY(int y) {
 		this.y = y;
 	}
+	
+	public void start() {}
+	public void stop() {}
 }
