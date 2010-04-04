@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import animations.Animation;
 import animations.StationaryAnimation;
 
+import roomobject.RoomItem;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import util.AppletResourceLoader;
@@ -80,6 +81,7 @@ public class GridView extends JLabel implements GridViewable
 	
 	ArrayList<Animation> animations = new ArrayList<Animation>();
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
+	HashMap<String,RoomItem> items = new HashMap<String,RoomItem>();
 	
 	private String currentDest = "";
 	
@@ -471,6 +473,11 @@ public class GridView extends JLabel implements GridViewable
 	public void changeSelectedDest(String dest)
 	{
 		currentDest = dest;
+	}
+	
+	public void setRoomItems(HashMap<String,RoomItem> items)
+	{
+		this.items = items;
 	}
 }
 

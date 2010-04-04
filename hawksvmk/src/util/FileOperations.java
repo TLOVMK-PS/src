@@ -27,6 +27,8 @@ import animations.StationaryAnimation;
 import animations.AnimationFrame;
 import astar.AStarCharacter;
 
+import roomobject.RoomFurniture;
+import roomobject.RoomItem;
 import sockets.VMKServerPlayerData;
 import sounds.RepeatingSound;
 import sounds.SingleSound;
@@ -113,6 +115,7 @@ public class FileOperations
 	{
 		Scanner fileReader;
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
+		HashMap<String,RoomItem> items = new HashMap<String,RoomItem>(); // room items like furniture and posters
 		String backgroundImagePath = "";
 		String[] tileDimensions = null;
 		ArrayList<Animation> animations = new ArrayList<Animation>();
@@ -187,6 +190,25 @@ public class FileOperations
 						animations.add(loadAnimation(line));
 					}
 				}
+				else if(line.startsWith("FURNITURE: "))
+				{
+					// room furniture
+					line = line.replaceAll("FURNITURE: ", "");
+					
+					// id,row,col,rotation
+					String furniture = line.replaceAll(",", " ");
+					Scanner furnitureScanner = new Scanner(furniture);
+					
+					String id = furnitureScanner.next();
+					int row = Integer.parseInt(furnitureScanner.next());
+					int col = Integer.parseInt(furnitureScanner.next()) / 2;
+					String rotation = furnitureScanner.next();
+					
+					// add a new piece of furniture
+					Tile furniTile = tiles.get(row + "-" + col);
+					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
+					items.put(row + "-" + col, new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation));
+				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
@@ -235,6 +257,9 @@ public class FileOperations
 			
 			// set the tiles
 			gridView.setTilesMap(tiles);
+			
+			// set the room items
+			gridView.setRoomItems(items);
 			
 			// set the animations
 			gridView.setAnimations(animations);

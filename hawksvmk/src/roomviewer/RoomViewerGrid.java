@@ -33,6 +33,7 @@ import animations.Animation;
 import animations.StationaryAnimation;
 import astar.AStarCharacter;
 
+import roomobject.RoomItem;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
@@ -113,6 +114,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	boolean startSounds = false; // true to start the sounds
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); // ArrayList of sounds
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
+	
+	HashMap<String,RoomItem> items = new HashMap<String,RoomItem>(); // items in the room
 	
 	ChatBubbles theChatBubbles; // data structure for the chat bubbles
 	
@@ -397,6 +400,18 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				for(Animation anim : animations)
 				{
 					bufferGraphics.drawImage(anim.getNextFrame().getImage(), anim.getX(), anim.getY(), this);
+				}
+				
+				// draw any room items if they exist
+				if(items.size() > 0)
+				{
+					Iterator<RoomItem> it = items.values().iterator();
+					
+					while(it.hasNext())
+					{
+						RoomItem nextItem = it.next();
+						bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+					}
 				}
 				
 				// draw the path to the target tile for each character
@@ -1347,6 +1362,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public String getTileSize()
 	{
 		return tileWidth + "x" + tileHeight;
+	}
+	
+	public void setRoomItems(HashMap<String,RoomItem> items)
+	{
+		this.items = items;
 	}
 }
 

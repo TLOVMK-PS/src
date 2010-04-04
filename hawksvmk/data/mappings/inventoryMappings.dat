@@ -2,6 +2,11 @@
 // FURNITURE
 // ===================
 
+ID: furni_1
+NAME: Ariel's Treasure Chest Cyan
+PATH: img/furniture/beta/furni_1/
+CARD: img/furniture/beta/furni_1/card_1.png
+
 // ===================
 // PINS
 // ===================

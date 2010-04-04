@@ -8,6 +8,8 @@ ANIMATION: anims/gr4/BootHillWindmill.anim
 REPEATING SOUND: sound/GR_BootHill_Music.wav,GR_BootHill_Music,60000
 REPEATING SOUND: sound/GR_BootHill_sfx.wav,GR_BootHill_sfx,0
 
+// Tiles
+
 @8,10,NOGO,@
 @8,11,NOGO,@
 @8,12,NOGO,@
@@ -502,3 +504,6 @@ REPEATING SOUND: sound/GR_BootHill_sfx.wav,GR_BootHill_sfx,0
 @26,12,NOGO,@
 @17,12,NOGO,@
 @34,10,NOGO,@
+
+// Furniture
+FURNITURE: furni_1,20,18,A

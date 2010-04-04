@@ -11,6 +11,7 @@ import java.util.HashMap;
 import animations.Animation;
 import animations.StationaryAnimation;
 
+import roomobject.RoomItem;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowLoading;
@@ -40,4 +41,6 @@ public interface GridViewable
 	
 	public void changeTileSize(int width, int height);
 	public String getTileSize();
+	
+	public void setRoomItems(HashMap<String,RoomItem> items);
 }
