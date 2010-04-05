@@ -4,6 +4,8 @@
 
 package roomobject;
 
+import java.awt.Rectangle;
+
 import javax.swing.ImageIcon;
 
 import util.AppletResourceLoader;
@@ -18,6 +20,8 @@ public class RoomItem
 	private int layer = 0; // layer that the item should be drawn on (can be same as y-coord)
 	private int type = FURNITURE; // type of the room item
 	
+	private int tileHeight = 32; // height of the tiles in the room
+	
 	private String id = ""; // id of the item
 	private String name = ""; // name of the item
 	
@@ -26,6 +30,8 @@ public class RoomItem
 	private ImageIcon image; // image of the item
 	
 	private String rotation = ""; // A, B, C, or D to describe one of four possible rotations
+	
+	private Rectangle boundingBox = new Rectangle(x, y, 0, 0);
 	
 	public RoomItem() {}
 	
@@ -54,6 +60,11 @@ public class RoomItem
 		this.path = directory + id + "_" + rotation + ".png";
 		System.out.println(this.path);
 		image = AppletResourceLoader.getImageFromJar(this.path);
+		
+		boundingBox.x = x;
+		boundingBox.y = y;// + tileHeight - image.getIconHeight();
+		boundingBox.width = image.getIconWidth();
+		boundingBox.height = image.getIconHeight();
 	}
 
 	public int getX() {
@@ -62,6 +73,7 @@ public class RoomItem
 
 	public void setX(int x) {
 		this.x = x;
+		boundingBox.x = x;
 	}
 
 	public int getY() {
@@ -70,6 +82,7 @@ public class RoomItem
 
 	public void setY(int y) {
 		this.y = y;
+		boundingBox.y = y; //+ tileHeight - image.getIconHeight();
 	}
 
 	public int getLayer() {
@@ -124,6 +137,9 @@ public class RoomItem
 		// set the path to the image and the image itself
 		this.path = directory + id + "_" + rotation + ".png";
 		image = AppletResourceLoader.getImageFromJar(this.path);
+		
+		boundingBox.width = image.getIconWidth();
+		boundingBox.height = image.getIconHeight();
 	}
 
 	public String getDirectory() {
@@ -140,5 +156,17 @@ public class RoomItem
 
 	public void setType(int type) {
 		this.type = type;
+	}
+	
+	public void setTileHeight(int tileHeight) {
+		this.tileHeight = tileHeight;
+	}
+	
+	public int getTileHeight() {
+		return tileHeight;
+	}
+	
+	public Rectangle getBoundingBox() {
+		return boundingBox;
 	}
 }

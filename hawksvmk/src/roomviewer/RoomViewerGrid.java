@@ -115,7 +115,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); // ArrayList of sounds
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
+	boolean designMode = true; // false to turn off "Design Mode"
 	HashMap<String,RoomItem> items = new HashMap<String,RoomItem>(); // items in the room
+	RoomItem currentRoomItem = null; // currently selected room item
 	
 	ChatBubbles theChatBubbles; // data structure for the chat bubbles
 	
@@ -262,7 +264,53 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     			}
 	     		}
 	     		
-	     		// check to see if we clicked inside a bounding box
+	     		// check to see if we clicked inside a bounding box (room item)
+	     		if(designMode == true)
+	     		{
+	     			if(currentRoomItem != null)
+	     			{
+	     				if(currentRoomItem.getBoundingBox().contains(mousePoint))
+	     				{
+		     				// current room item is already selected
+		     				System.out.println("Clicked inside currently selected item's bounding box");
+		     				
+		     				// place the selected item
+		     				items.put(gridY + "-" + (gridX / 2), currentRoomItem); 
+	 						currentRoomItem = null;
+	 						
+	 						// save the room items
+	 						saveRoomItems();
+		     				
+		     				convertMouseToGridCoords();
+		     				
+		     				return;
+	     				}
+	     			}
+	     			else
+	     			{
+		     			for(RoomItem r : items.values())
+		     			{
+		     				if(r.getBoundingBox().contains(mousePoint)) // clicked inside somebody's box
+		     				{
+		     					System.out.println("Clicked inside the bounding box for an item");
+		     					
+		     					// make this the current room item if there is none, otherwise release
+		     					// the room item and keep it where it is
+		     					//convertMouseToGridCoords();
+		     					if(currentRoomItem == null)
+		     					{
+		     						currentRoomItem = r;
+		     						items.remove(gridY + "-" + (gridX / 2));
+		     						
+		     						convertMouseToGridCoords();
+		     						return;
+		     					}
+		     				}
+		     			}
+	     			}
+	     		}
+	     		
+	     		// check to see if we clicked inside a bounding box (character)
 	     		for(AStarCharacter c : characters.values())
 	     		{
 	     			if(c.getBoundingBox().contains(mousePoint))
@@ -294,11 +342,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		convertMouseToGridCoords(); // convert the mouse coords back to grid coords
 	     		
 	     		// move the character locally
-	     		moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
-	     		
-	     		// send a "move character" message to the server to update all clients
-	     		uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
-	     		
+	     		if(currentRoomItem == null)
+	     		{
+	     			moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
+	     			// send a "move character" message to the server to update all clients
+	     			uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
+	     		}
 	     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      		}
      	}
@@ -334,6 +383,16 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		}
 	     		
 	     		setCurrentTileType(tileTypeString); // set the current tile type and coords
+	     		
+	     		// move the currently selected room item if it exists
+	     		if(currentTile != null)
+	     		{
+		     		if(currentTile.getType() == Tile.TILE_WALK && currentRoomItem != null)
+		     		{
+		     			currentRoomItem.setX(currentTile.getX());
+		     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
+		     		}
+	     		}
      		}
      	}
      });
@@ -410,8 +469,17 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					while(it.hasNext())
 					{
 						RoomItem nextItem = it.next();
-						bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+						if(nextItem != null)
+						{
+							bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+						}
 					}
+				}
+				
+				// draw the currently selected room item
+				if(currentRoomItem != null)
+				{
+					bufferGraphics.drawImage(currentRoomItem.getImage().getImage(), currentRoomItem.getX(), currentRoomItem.getY(), this);
 				}
 				
 				// draw the path to the target tile for each character
@@ -1222,6 +1290,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// change to another room
 	public void changeRoom(String newRoomID)
 	{
+		// set the current room item in its current position if it exists
+		if(currentRoomItem != null)
+		{
+			items.put(gridY + "-" + (gridX / 2), currentRoomItem);
+			
+			// save the room items
+			saveRoomItems();
+		}
+		
 		String newRoomName = StaticAppletData.getRoomMapping(newRoomID).getRoomName();
 		
 		// show the loading window
@@ -1367,6 +1444,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setRoomItems(HashMap<String,RoomItem> items)
 	{
 		this.items = items;
+	}
+	
+	// TODO: Save the room items to the Guest Room file when this method is called
+	private void saveRoomItems()
+	{
+		
 	}
 }
 
