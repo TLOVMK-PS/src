@@ -389,6 +389,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		{
 		     		if(currentTile.getType() == Tile.TILE_WALK && currentRoomItem != null)
 		     		{
+		     			currentRoomItem.setRow(currentTile.getRow());
+		     			currentRoomItem.setCol(currentTile.getRow());
 		     			currentRoomItem.setX(currentTile.getX());
 		     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
 		     		}
@@ -1437,6 +1439,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public String getTileSize()
 	{
 		return tileWidth + "x" + tileHeight;
+	}
+	
+	public ArrayList<RoomItem> getRoomItems() {
+		return items;
 	}
 	
 	public void setRoomItems(ArrayList<RoomItem> items)

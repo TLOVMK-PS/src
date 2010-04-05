@@ -42,5 +42,6 @@ public interface GridViewable
 	public void changeTileSize(int width, int height);
 	public String getTileSize();
 	
+	public ArrayList<RoomItem> getRoomItems();
 	public void setRoomItems(ArrayList<RoomItem> items);
 }

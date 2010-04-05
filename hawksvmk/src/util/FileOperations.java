@@ -29,6 +29,7 @@ import astar.AStarCharacter;
 
 import roomobject.RoomFurniture;
 import roomobject.RoomItem;
+import roomobject.RoomPoster;
 import sockets.VMKServerPlayerData;
 import sounds.RepeatingSound;
 import sounds.SingleSound;
@@ -41,7 +42,7 @@ public class FileOperations
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
 	
 	// save a file given a filename and a map of tiles
-	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, String tileSize)
+	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, String tileSize)
 	{
 		PrintWriter fileWriter;
 		try
@@ -61,16 +62,19 @@ public class FileOperations
 			
 			// write out the background image location
 			fileWriter.println("// Background image");
+			fileWriter.println();
 			fileWriter.println("IMAGE: " + backgroundImagePath);
 			fileWriter.println();
 			
 			// write out the tile size
 			fileWriter.println("// Size of the tiles (width by height)");
+			fileWriter.println();
 			fileWriter.println("TILES: " + tileSize);
 			fileWriter.println();
 			
 			// write out the animations
 			fileWriter.println("// Animations");
+			fileWriter.println();
 			for(int i = 0; i < animations.size(); i++)
 			{
 				fileWriter.println("ANIMATION: " + animations.get(i).getPath());
@@ -79,6 +83,7 @@ public class FileOperations
 			
 			// write out the sounds
 			fileWriter.println("// Sounds");
+			fileWriter.println();
 			for(int j = 0; j < sounds.size(); j++)
 			{
 				SoundPlayable sound = sounds.get(j);
@@ -97,10 +102,27 @@ public class FileOperations
 			fileWriter.println();
 			
 			fileWriter.println("// Tile map");
+			fileWriter.println();
 			for(Tile t : tiles.values())
 			{
 				// write out a tile to the file
 				fileWriter.println(t.toString());
+			}
+			fileWriter.println();
+			
+			fileWriter.println("// Room items");
+			fileWriter.println();
+			for(RoomItem r : roomItems)
+			{
+				// write out a room item to the file
+				if(r instanceof RoomFurniture)
+				{
+					fileWriter.println("FURNITURE: " + r.toString());
+				}
+				else if(r instanceof RoomPoster)
+				{
+					fileWriter.println("POSTER: " + r.toString());
+				}
 			}
 			
 			fileWriter.close();
@@ -207,7 +229,11 @@ public class FileOperations
 					// add a new piece of furniture
 					Tile furniTile = tiles.get(row + "-" + col);
 					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
-					items.add(new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation));
+					
+					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
+					newItem.setRow(row);
+					newItem.setCol(col);
+					items.add(newItem);
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{

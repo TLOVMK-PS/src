@@ -208,7 +208,7 @@ public class RoomEditorUI extends JFrame
         	    	System.out.println("You chose to save this file: " + filename);
         	       
         	    	// write the file out
-        	    	FileOperations.saveFile(filename, theGridView.getBackgroundImagePath(), theGridView.getTilesMap(), theGridView.getAnimations(), theGridView.getSounds(), theGridView.getTileSize());
+        	    	FileOperations.saveFile(filename, theGridView.getBackgroundImagePath(), theGridView.getTilesMap(), theGridView.getAnimations(), theGridView.getSounds(), theGridView.getRoomItems(), theGridView.getTileSize());
         	    	
         	    	// show a notification that the file has been saved
         	    	JOptionPane.showMessageDialog(myRoomEditorWindow, "The file " + filename + " has been saved", "File Saved", JOptionPane.INFORMATION_MESSAGE);

@@ -20,6 +20,9 @@ public class RoomItem
 	private int layer = 0; // layer that the item should be drawn on (can be same as y-coord)
 	private int type = FURNITURE; // type of the room item
 	
+	private int row = 0;
+	private int col = 0;
+	
 	private int tileHeight = 32; // height of the tiles in the room
 	
 	private String id = ""; // id of the item
@@ -29,7 +32,7 @@ public class RoomItem
 	private String path = ""; // path to the image of the item
 	private ImageIcon image; // image of the item
 	
-	private String rotation = ""; // A, B, C, or D to describe one of four possible rotations
+	private String rotation = "A"; // A, B, C, or D to describe one of four possible rotations
 	
 	private Rectangle boundingBox = new Rectangle(x, y, 0, 0);
 	
@@ -162,11 +165,32 @@ public class RoomItem
 		this.tileHeight = tileHeight;
 	}
 	
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
+	}
+
 	public int getTileHeight() {
 		return tileHeight;
 	}
 	
 	public Rectangle getBoundingBox() {
 		return boundingBox;
+	}
+	
+	public String toString()
+	{
+		return getId() + "," + getRow() + "," + getCol() + "," + getRotation();
 	}
 }

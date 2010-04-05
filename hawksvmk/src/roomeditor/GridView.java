@@ -475,6 +475,10 @@ public class GridView extends JLabel implements GridViewable
 		currentDest = dest;
 	}
 	
+	public ArrayList<RoomItem> getRoomItems() {
+		return items;
+	}
+	
 	public void setRoomItems(ArrayList<RoomItem> items)
 	{
 		this.items = items;
