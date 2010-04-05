@@ -30,6 +30,7 @@ import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSendMailToUser;
+import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.MailMessage;
 
@@ -163,8 +164,11 @@ public class VMKClientThread extends Thread
 						// move character response received from server
 						System.out.println("Move character response received from server for thread: " + this.getName());
 					
-						// move the character in the current room
-						uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
+						// move the character in the current room (if it's not user that issued the instruction)
+						if(!moveMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+						{
+							uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
+						}
 					}
 					else if(outputMessage instanceof MessageAddFriendRequest)
 					{
@@ -244,6 +248,16 @@ public class VMKClientThread extends Thread
 						// get inventory message received from server
 						System.out.println("Player inventory received from server");
 						uiObject.setInventory(getInvMsg.getInventory());
+					}
+					else if(outputMessage instanceof MessageUpdateItemInRoom)
+					{
+						MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)outputMessage;
+						
+						// update item in room message received from server (if it's not from the user that issued it)
+						if(!updateItemMsg.getItem().getOwner().equals(uiObject.getUsername()))
+						{
+							uiObject.updateRoomItem(updateItemMsg.getItem());
+						}
 					}
 			    }
 		    }

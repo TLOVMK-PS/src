@@ -41,6 +41,7 @@ import astar.AStarCharacter;
 import login.LoginModule;
 import mainProgram.VMKClient;
 
+import roomobject.RoomItem;
 import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
@@ -843,5 +844,11 @@ public class RoomViewerUI extends Applet
 		roomID = newRoomID;
 		roomName = newRoomName;
 		theGridView.setRoomInformation(newRoomID, newRoomName);
+	}
+	
+	// update an item in the room
+	public void updateRoomItem(RoomItem item)
+	{
+		theGridView.updateRoomItem(item);
 	}
 }

@@ -31,6 +31,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
+import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.FileOperations;
 import util.FriendsList;
@@ -261,9 +262,9 @@ public class VMKServerThread extends Thread
 							// move character message received from client
 							//System.out.println("Move character message received from client for thread: " + this.getName());
 							
-							// send the message to ALL clients
+							// send the message to ALL clients EXCEPT the client that issued the message
 							MessageMoveCharacter moveMsg = (MessageMoveCharacter)outputMessage;
-							sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomID());
+							sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomID(), this.getName());
 						}
 						else if(outputMessage instanceof MessageAddFriendRequest)
 						{
@@ -342,6 +343,14 @@ public class VMKServerThread extends Thread
 							
 							// save the messages to hard storage
 							FileOperations.saveMailMessages(VMKServerPlayerData.getEmailFromUsername(saveMailMsg.getSender()), saveMailMsg.getMessages());
+						}
+						else if(outputMessage instanceof MessageUpdateItemInRoom)
+						{
+							// update item in room message received from client
+							MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)outputMessage;
+							
+							// send the message to all characters in the given room
+							sendMessageToAllClientsInRoom(updateItemMsg, updateItemMsg.getRoomID());
 						}
 						
 						// sleep to prevent the stream from getting corrupted
@@ -455,6 +464,24 @@ public class VMKServerThread extends Thread
     		{
     		//System.out.println("Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName());
     			serverThreads.get(i).sendMessageToClient(m);
+    		}
+    	}
+    }
+    
+ // send a message to ALL clients in a given room EXCEPT a specified user
+    public synchronized void sendMessageToAllClientsInRoom(Message m, String room, String exemptedUser)
+    {
+    	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
+    	
+    	for(int i = 0; i < serverThreads.size(); i++)
+    	{
+    		if(!serverThreads.get(i).getName().equals(exemptedUser))
+    		{
+	    		if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), room))
+	    		{
+	    		//System.out.println("Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName());
+	    			serverThreads.get(i).sendMessageToClient(m);
+	    		}
     		}
     	}
     }

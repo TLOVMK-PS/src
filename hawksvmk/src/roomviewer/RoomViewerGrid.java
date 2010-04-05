@@ -43,6 +43,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
+import sockets.messages.MessageUpdateItemInRoom;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowAvatarInformation;
@@ -276,11 +277,14 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     				
 		     				// place the selected item
 		     				items.add(currentRoomItem); 
-	 						currentRoomItem = null;
 	 						
 	 						// save the room items
 	 						saveRoomItems();
+	 						
+	 						// send the update message to the server
+	 						uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, currentRoomItem));
 		     				
+	 						currentRoomItem = null;
 		     				convertMouseToGridCoords();
 		     				
 		     				return;
@@ -622,7 +626,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 												}
 												else
 												{
-													uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+													sendUpdateCharacterMessage(character);
 												}
 											}
 										}
@@ -657,7 +661,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											}
 											else
 											{
-												uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+												sendUpdateCharacterMessage(character);
 											}
 										}
 									}
@@ -1386,6 +1390,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	  	uiObject.theGridView.setVisible(true);
 	}
 	
+	// send an "Update Character" message to the server
+	private void sendUpdateCharacterMessage(AStarCharacter character)
+	{
+		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+	}
+	
 	// set the current room name
 	public void setRoomInformation(String roomID, String roomName)
 	{
@@ -1445,9 +1455,21 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		return items;
 	}
 	
-	public void setRoomItems(ArrayList<RoomItem> items)
+	public void setRoomItems(ArrayList<RoomItem> _items)
 	{
-		this.items = items;
+		items = _items;
+		for(int i = 0; i < items.size(); i++)
+		{
+			// set the owner of the item
+			items.get(i).setOwner(myCharacter.getUsername());
+		}
+	}
+	
+	// update a given item in the room
+	public void updateRoomItem(RoomItem item)
+	{
+		items.remove(item);
+		items.add(item);
 	}
 	
 	// TODO: Save the room items to the Guest Room file when this method is called

@@ -5,12 +5,13 @@
 package roomobject;
 
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
 import util.AppletResourceLoader;
 
-public class RoomItem
+public class RoomItem implements Serializable
 {
 	public final static int FURNITURE = 0;
 	public final static int POSTER = 1;
@@ -35,6 +36,7 @@ public class RoomItem
 	private String rotation = "A"; // A, B, C, or D to describe one of four possible rotations
 	
 	private Rectangle boundingBox = new Rectangle(x, y, 0, 0);
+	private String owner = ""; // the owner of the item
 	
 	public RoomItem() {}
 	
@@ -187,6 +189,14 @@ public class RoomItem
 	
 	public Rectangle getBoundingBox() {
 		return boundingBox;
+	}
+	
+	public String getOwner() {
+		return owner;
+	}
+	
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 	
 	public String toString()
