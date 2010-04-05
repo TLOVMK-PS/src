@@ -8,6 +8,26 @@ import java.util.HashMap;
 
 public class StationaryAnimation extends Animation implements Runnable
 {	
+	public StationaryAnimation()
+	{
+		
+	}
+	
+	public StationaryAnimation(String name)
+	{
+		super(name);
+	}
+	
+	public StationaryAnimation(String name, int totalFrames)
+	{
+		super(name, totalFrames);
+	}
+	
+	public StationaryAnimation(String name, int totalFrames, int x, int y)
+	{
+		super(name, totalFrames, x, y);
+	}
+	
 	// start the thread
 	public void start()
 	{

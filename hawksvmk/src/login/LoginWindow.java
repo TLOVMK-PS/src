@@ -90,7 +90,7 @@ public class LoginWindow extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				// check the login credentials
-				if(loginModule.login(emailTextBox.getText(), new String(passwordTextBox.getPassword())))
+				if(loginModule.login("http://www.burbankparanormal.com/vmk/game/login.php", emailTextBox.getText(), new String(passwordTextBox.getPassword())))
 				{
 					// correct credentials and authentication
 					errorLabel.setVisible(false);
