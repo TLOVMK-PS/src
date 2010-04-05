@@ -115,7 +115,7 @@ public class FileOperations
 	{
 		Scanner fileReader;
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
-		HashMap<String,RoomItem> items = new HashMap<String,RoomItem>(); // room items like furniture and posters
+		ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // room items like furniture and posters
 		String backgroundImagePath = "";
 		String[] tileDimensions = null;
 		ArrayList<Animation> animations = new ArrayList<Animation>();
@@ -207,7 +207,7 @@ public class FileOperations
 					// add a new piece of furniture
 					Tile furniTile = tiles.get(row + "-" + col);
 					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
-					items.put(row + "-" + col, new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation));
+					items.add(new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation));
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{

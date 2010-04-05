@@ -81,7 +81,7 @@ public class GridView extends JLabel implements GridViewable
 	
 	ArrayList<Animation> animations = new ArrayList<Animation>();
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
-	HashMap<String,RoomItem> items = new HashMap<String,RoomItem>();
+	ArrayList<RoomItem> items = new ArrayList<RoomItem>();
 	
 	private String currentDest = "";
 	
@@ -475,7 +475,7 @@ public class GridView extends JLabel implements GridViewable
 		currentDest = dest;
 	}
 	
-	public void setRoomItems(HashMap<String,RoomItem> items)
+	public void setRoomItems(ArrayList<RoomItem> items)
 	{
 		this.items = items;
 	}

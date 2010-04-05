@@ -116,7 +116,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
 	boolean designMode = true; // false to turn off "Design Mode"
-	HashMap<String,RoomItem> items = new HashMap<String,RoomItem>(); // items in the room
+	ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // items in the room
 	RoomItem currentRoomItem = null; // currently selected room item
 	
 	ChatBubbles theChatBubbles; // data structure for the chat bubbles
@@ -275,7 +275,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     				System.out.println("Clicked inside currently selected item's bounding box");
 		     				
 		     				// place the selected item
-		     				items.put(gridY + "-" + (gridX / 2), currentRoomItem); 
+		     				items.add(currentRoomItem); 
 	 						currentRoomItem = null;
 	 						
 	 						// save the room items
@@ -288,7 +288,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     			}
 	     			else
 	     			{
-		     			for(RoomItem r : items.values())
+		     			for(RoomItem r : items)
 		     			{
 		     				if(r.getBoundingBox().contains(mousePoint)) // clicked inside somebody's box
 		     				{
@@ -300,7 +300,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     					if(currentRoomItem == null)
 		     					{
 		     						currentRoomItem = r;
-		     						items.remove(gridY + "-" + (gridX / 2));
+		     						items.remove(r);
 		     						
 		     						convertMouseToGridCoords();
 		     						return;
@@ -464,11 +464,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				// draw any room items if they exist
 				if(items.size() > 0)
 				{
-					Iterator<RoomItem> it = items.values().iterator();
-					
-					while(it.hasNext())
+					for(int i = 0; i < items.size(); i++)
 					{
-						RoomItem nextItem = it.next();
+						RoomItem nextItem = items.get(i);
 						if(nextItem != null)
 						{
 							bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
@@ -1293,7 +1291,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		// set the current room item in its current position if it exists
 		if(currentRoomItem != null)
 		{
-			items.put(gridY + "-" + (gridX / 2), currentRoomItem);
+			items.add(currentRoomItem);
 			
 			// save the room items
 			saveRoomItems();
@@ -1441,7 +1439,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		return tileWidth + "x" + tileHeight;
 	}
 	
-	public void setRoomItems(HashMap<String,RoomItem> items)
+	public void setRoomItems(ArrayList<RoomItem> items)
 	{
 		this.items = items;
 	}
