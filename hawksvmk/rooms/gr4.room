@@ -506,4 +506,5 @@ REPEATING SOUND: sound/GR_BootHill_sfx.wav,GR_BootHill_sfx,0
 @34,10,NOGO,@
 
 // Furniture
+
 FURNITURE: furni_1,20,18,A

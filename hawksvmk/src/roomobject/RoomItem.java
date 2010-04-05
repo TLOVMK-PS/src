@@ -199,6 +199,41 @@ public class RoomItem implements Serializable
 		this.owner = owner;
 	}
 	
+	// rotate the item
+	public void rotate()
+	{
+		// figure out the necessary rotation
+		if(rotation.equals("A"))
+		{
+			rotation = "B";
+		}
+		else if(rotation.equals("B"))
+		{
+			rotation = "C";
+		}
+		else if(rotation.equals("C"))
+		{
+			rotation = "D";
+		}
+		else if(rotation.equals("D"))
+		{
+			rotation = "A";
+		}
+		
+		// resolve the image
+		this.path = directory + id + "_" + rotation + ".png";
+		image = AppletResourceLoader.getImageFromJar(this.path);
+		
+		// check to make sure the rotation image exists
+		if(image == null)
+		{
+			// default to the "A" rotation
+			rotation = "A";
+			this.path = directory + id + "_" + rotation + ".png";
+			image = AppletResourceLoader.getImageFromJar(this.path);
+		}
+	}
+	
 	public String toString()
 	{
 		return getId() + "," + getRow() + "," + getCol() + "," + getRotation();

@@ -48,6 +48,7 @@ import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowAvatarInformation;
 import ui.WindowClothing;
+import ui.WindowDesignModeItem;
 import ui.WindowHelp;
 import ui.WindowInventory;
 import ui.WindowMap;
@@ -117,6 +118,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
 	boolean designMode = true; // false to turn off "Design Mode"
+	boolean designMoveMode = false; // true to turn on movement while in "Design Mode"
 	ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // items in the room
 	RoomItem currentRoomItem = null; // currently selected room item
 	
@@ -152,6 +154,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	// avatar information window
 	WindowAvatarInformation avatarInfoWindow;
+	
+	// "Design Mode" room item window
+	WindowDesignModeItem designModeItemWindow;
 	
 	// map window
 	WindowMap mapWindow;
@@ -281,9 +286,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	 						// save the room items
 	 						saveRoomItems();
 	 						
-	 						// send the update message to the server
+	 						// send the update item message to the server
 	 						uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, currentRoomItem));
 		     				
+	 						// turn off "Move Mode" for "Design Mode"
+	 						designMoveMode = false;
+	 						designModeItemWindow.setVisible(false);
+	 						
 	 						currentRoomItem = null;
 		     				convertMouseToGridCoords();
 		     				
@@ -305,6 +314,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     					{
 		     						currentRoomItem = r;
 		     						items.remove(r);
+		     						
+		     						// show the "Design Mode" room item window
+		     						designModeItemWindow.setItemName(currentRoomItem.getName());
+		     						designModeItemWindow.setLocation(currentRoomItem.getX() - (designModeItemWindow.getWidth() / 3), currentRoomItem.getY() - currentRoomItem.getImage().getIconHeight() + currentRoomItem.getTileHeight());
+		     						designModeItemWindow.setVisible(true);
 		     						
 		     						convertMouseToGridCoords();
 		     						return;
@@ -389,7 +403,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		setCurrentTileType(tileTypeString); // set the current tile type and coords
 	     		
 	     		// move the currently selected room item if it exists
-	     		if(currentTile != null)
+	     		if(currentTile != null && designMoveMode == true)
 	     		{
 		     		if(currentTile.getType() == Tile.TILE_WALK && currentRoomItem != null)
 		     		{
@@ -894,6 +908,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 avatarInfoWindow.setGridObject(this);
 		 avatarInfoWindow.setVisible(false);
 		 add(avatarInfoWindow);
+		 
+		 // set up the "Design Mode" room item window
+		 designModeItemWindow = new WindowDesignModeItem(textFont, 100, 100);
+		 designModeItemWindow.setGridObject(this);
+		 designModeItemWindow.setVisible(false);
+		 add(designModeItemWindow);
 		 
 		 // set up the map
 		 mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
@@ -1470,6 +1490,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		items.remove(item);
 		items.add(item);
+	}
+	
+	public RoomItem getSelectedRoomItem() {
+		return currentRoomItem;
+	}
+	
+	// set whether a selected item can be moved
+	public void setDesignMoveMode(boolean designMoveMode) {
+		this.designMoveMode = designMoveMode;
 	}
 	
 	// TODO: Save the room items to the Guest Room file when this method is called
