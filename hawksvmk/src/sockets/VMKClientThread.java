@@ -92,7 +92,7 @@ public class VMKClientThread extends Thread
 						this.setName(loginMessage.getName());
 						
 						// send an "Add To Room" message
-						roomID = "gr4";
+						roomID = "template_gr4";
 						roomName = "Boot Hill Shooting Gallery Guest Room";
 						uiObject.setRoomInformation(roomID, roomName);
 						sendMessageToServer(new MessageAddUserToRoom(loginMessage.getCharacter(), roomID, roomName));

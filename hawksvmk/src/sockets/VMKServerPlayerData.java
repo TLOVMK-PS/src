@@ -69,6 +69,12 @@ public class VMKServerPlayerData
 		rooms = theRooms;
 	}
 	
+	// add a room
+	public static void addRoom(String roomID, VMKRoom room)
+	{
+		rooms.put(roomID, room);
+	}
+	
 	// add a friends list to the HashMap
 	public static void addFriendsList(String username, FriendsList friends)
 	{

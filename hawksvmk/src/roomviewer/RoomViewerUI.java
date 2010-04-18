@@ -64,7 +64,7 @@ public class RoomViewerUI extends Applet
 	
 	private String email = "";
 
-	private String filename = "rooms/gr4.room";
+	private String filename = "rooms/templates/gr4.room";
 	private String username = "VMK Player"; // username of the avatar
 	
 	private JTextField chatTextBox;
@@ -653,7 +653,7 @@ public class RoomViewerUI extends Applet
   	 theGridView.stopAll();
   	
   	 // load the room
-  	 FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
+  	 //FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
      
   	 repaint();
      roomViewerUI = this;

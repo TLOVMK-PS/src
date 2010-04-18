@@ -298,11 +298,80 @@ public class FileOperations
 			
 			fileReader.close();
 			
-			System.out.println("File loaded");
+			System.out.println("Room file loaded");
 		}
 		catch(Exception e)
 		{
 			System.out.println("ERROR IN loadFile(): " + e.getClass().getName() + " - " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	// load a Guest Room from a file
+	public static void loadGuestRoom(String roomPath, GridViewable gridView)
+	{
+		Scanner fileReader;
+		ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // room items like furniture and posters
+		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
+		
+		String filename = roomPath;
+		
+		try
+		{
+			fileReader = new Scanner(filename);
+			
+			while(fileReader.hasNextLine())
+			{
+				String line = fileReader.nextLine();
+				
+				if(line.startsWith("TEMPLATE: "))
+				{
+					// load the template room file
+					line = line.replaceAll("TEMPLATE: ", "");
+					loadFile(AppletResourceLoader.getFileFromJar(line), gridView);
+					
+					// get the tiles back
+					tiles = gridView.getTilesMap();
+				}
+				else if(line.startsWith("FURNITURE: "))
+				{
+					// room furniture
+					line = line.replaceAll("FURNITURE: ", "");
+					
+					// id,row,col,rotation
+					String furniture = line.replaceAll(",", " ");
+					Scanner furnitureScanner = new Scanner(furniture);
+					
+					String id = furnitureScanner.next();
+					int row = Integer.parseInt(furnitureScanner.next());
+					int col = Integer.parseInt(furnitureScanner.next()) / 2;
+					String rotation = furnitureScanner.next();
+					
+					// add a new piece of furniture
+					Tile furniTile = tiles.get(row + "-" + col);
+					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
+					
+					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
+					newItem.setRow(row);
+					newItem.setCol(col);
+					items.add(newItem);
+				}
+				else if(line.startsWith(commentDelimeter) || line.equals(""))
+				{
+					// comment line or blank line, so ignore
+				}
+			}
+			
+			// set the room items
+			gridView.setRoomItems(items);
+			
+			fileReader.close();
+			
+			System.out.println("Guest room loaded");
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadGuestRoom(): " + e.getClass().getName() + " - " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -1149,6 +1218,7 @@ public class FileOperations
 		String roomID = "";
 		String roomName = "";
 		String roomPath = "";
+		String roomOwner = "";
 		
 		try
 		{
@@ -1177,6 +1247,12 @@ public class FileOperations
 						line = line.replaceAll("NAME: ", "");
 						roomName = line;
 					}
+					else if(line.startsWith("OWNER: "))
+					{
+						// get the room owner
+						line = line.replaceAll("OWNER: ", "");
+						roomOwner = line;
+					}
 					else if(line.startsWith("PATH: "))
 					{
 						// get the room path
@@ -1184,7 +1260,9 @@ public class FileOperations
 						roomPath = line;
 						
 						// add the room mapping to the HashMap
-						roomMappings.put(roomID, new VMKRoom(roomID, roomName, roomPath));
+						VMKRoom newRoom = new VMKRoom(roomID, roomName, roomPath);
+						newRoom.setRoomOwner(roomOwner);
+						roomMappings.put(roomID, newRoom);
 					}
 				}
 				

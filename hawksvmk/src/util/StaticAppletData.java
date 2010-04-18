@@ -71,4 +71,10 @@ public class StaticAppletData
 	{
 		return roomMappings.get(roomID);
 	}
+	
+	// add room mapping
+	public static void addRoomMapping(String roomID, VMKRoom room)
+	{
+		roomMappings.put(roomID, room);
+	}
 }

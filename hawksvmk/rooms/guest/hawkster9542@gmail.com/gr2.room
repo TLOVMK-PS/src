@@ -1,0 +1,11 @@
+// Room information
+
+TEMPLATE: rooms/templates/gr4.room
+ID: gr2
+OWNER: ParanormalGuy
+DESCRIPTION: My first Guest Room
+
+// Furniture
+
+FURNITURE: furni_1,20,18,A
+FURNITURE: furni_1,20,13,B

@@ -12,6 +12,8 @@ public class VMKRoom implements Serializable
 	private String roomID = "";
 	private String roomName = "";
 	private String roomPath = ""; // path to the room file
+	
+	private String roomOwner = ""; // owner of the room
 	private HashMap<String, String> characterNames = new HashMap<String, String>();
 	
 	public VMKRoom(String roomID, String roomName, String roomPath)
@@ -43,6 +45,14 @@ public class VMKRoom implements Serializable
 	
 	public void setRoomPath(String roomPath) {
 		this.roomPath = roomPath;
+	}
+	
+	public String getRoomOwner() {
+		return roomOwner;
+	}
+	
+	public void setRoomOwner(String roomOwner) {
+		this.roomOwner = roomOwner;
 	}
 
 	public HashMap<String, String> getCharacterNames() {

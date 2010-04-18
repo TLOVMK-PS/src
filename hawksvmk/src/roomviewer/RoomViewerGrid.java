@@ -68,7 +68,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	private Thread gridThread;
 	private int graphicsDelay = 20; // milliseconds between each frame
 	
-	String backgroundImagePath = "img/ui/loading_room_vmk.png";
+	final String LOADING_BACKGROUND_PATH = "img/ui/loading_room_vmk.png";
+	String backgroundImagePath = LOADING_BACKGROUND_PATH;
+	
 	//String backgroundImagePath = "tiles_img/test_room_image.png";
 	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(backgroundImagePath);
 	
@@ -685,7 +687,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					}
 					
 					// draw the character
-					if(character != null)
+					if(character != null);
 					{
 						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + tileHeight, this);
 					}
@@ -1319,6 +1321,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		{
 			items.add(currentRoomItem);
 			
+			// clear the current room item
+			currentRoomItem = null;
+			
 			// save the room items
 			saveRoomItems();
 		}
@@ -1345,7 +1350,16 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		theChatBubbles.clearAll();
 		
 		// load the room file
-	  	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), this);
+		if(newRoomID.startsWith("gr"))
+		{
+			// load a guest room
+			FileOperations.loadGuestRoom(StaticAppletData.getRoomMapping(newRoomID).getRoomPath(), this);
+		}
+		else
+		{
+			// load a public room
+			FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), this);
+		}
 	  	
 	  	// find an exit tile to start on
 	  	myCharacter.setCurrentTile(null);
