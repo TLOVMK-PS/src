@@ -139,6 +139,8 @@ public class FileOperations
 		Scanner tileScanner;
 		Scanner soundScanner;
 		
+		String roomID = "";
+		
 		try
 		{
 			fileReader = new Scanner(filename);
@@ -150,9 +152,10 @@ public class FileOperations
 				if(line.startsWith("ID: "))
 				{
 					line = line.replaceAll("ID: ", "");
+					roomID = line;
 					
 					// set the room ID if it isn't a guest room
-					if(!line.startsWith("gr"))
+					if(!roomID.startsWith("gr"))
 					{
 						gridView.addRoomInfo("ID", line);
 					}
@@ -162,21 +165,30 @@ public class FileOperations
 					line = line.replaceAll("NAME: ", "");
 					
 					// set the room name
-					gridView.addRoomInfo("NAME", line);
+					if(!roomID.startsWith("gr"))
+					{
+						gridView.addRoomInfo("NAME", line);
+					}
 				}
 				else if(line.startsWith("OWNER: "))
 				{
 					line = line.replaceAll("OWNER: ", "");
 					
 					// set the room owner
-					gridView.addRoomInfo("OWNER", line);
+					if(!roomID.startsWith("gr"))
+					{
+						gridView.addRoomInfo("OWNER", line);
+					}
 				}
 				else if(line.startsWith("DESCRIPTION: "))
 				{
 					line = line.replaceAll("DESCRIPTION: ", "");
 					
 					// set the room description
-					gridView.addRoomInfo("DESCRIPTION", line);
+					if(!roomID.startsWith("gr"))
+					{
+						gridView.addRoomInfo("DESCRIPTION", line);
+					}
 				}
 				else if(line.startsWith("IMAGE: "))
 				{
@@ -360,12 +372,6 @@ public class FileOperations
 					// add the template to the room info
 					gridView.addRoomInfo("TEMPLATE", line);
 				}
-				else if(line.startsWith("ID: "))
-				{
-					// room ID
-					line = line.replaceAll("ID: ", "");
-					gridView.addRoomInfo("ID", line);
-				}
 				else if(line.startsWith("FURNITURE: "))
 				{
 					// room furniture
@@ -397,6 +403,13 @@ public class FileOperations
 			
 			// set the room items
 			gridView.setRoomItems(items);
+			
+			// set the room information
+			HashMap<String,String> roomInfo = getInfoFromRoom(roomPath);
+			gridView.addRoomInfo("ID", roomInfo.get("ID"));
+			gridView.addRoomInfo("NAME", roomInfo.get("NAME"));
+			gridView.addRoomInfo("OWNER", roomInfo.get("OWNER"));
+			gridView.addRoomInfo("DESCRIPTION", roomInfo.get("DESCRIPTION"));
 			
 			fileReader.close();
 			
@@ -1302,7 +1315,7 @@ public class FileOperations
 	}
 	
 	// get a HashMap of room information from a room file
-	private static HashMap<String,String> getInfoFromRoom(String path)
+	private synchronized static HashMap<String,String> getInfoFromRoom(String path)
 	{
 		HashMap<String,String> infoMap = new HashMap<String,String>();
 		Scanner fileReader;
