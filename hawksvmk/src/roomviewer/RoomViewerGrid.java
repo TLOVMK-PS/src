@@ -1535,8 +1535,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		return currentRoomItem;
 	}
 	
-	public void clearSelectedRoomItem() {
-		items.add(currentRoomItem);
+	public void clearSelectedRoomItem(boolean keepItem) {
+		if(keepItem)
+		{
+			items.add(currentRoomItem);
+		}
 		currentRoomItem = null;
 	}
 	

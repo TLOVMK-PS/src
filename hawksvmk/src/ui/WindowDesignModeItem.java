@@ -112,7 +112,7 @@ public class WindowDesignModeItem extends JPanel
 					// take away the item
 					
 					// clear the selected room item
-					gridObject.clearSelectedRoomItem();
+					gridObject.clearSelectedRoomItem(false);
 					
 					// hide the window
 					setVisible(false);
@@ -120,7 +120,7 @@ public class WindowDesignModeItem extends JPanel
 				else if(exitRectangle.contains(e.getPoint()))
 				{
 					// clear the selected room item
-					gridObject.clearSelectedRoomItem();
+					gridObject.clearSelectedRoomItem(true);
 					
 					// close the window
 					setVisible(false);
