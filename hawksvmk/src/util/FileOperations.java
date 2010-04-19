@@ -42,7 +42,7 @@ public class FileOperations
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
 	
 	// save a file given a filename and a map of tiles
-	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, String tileSize)
+	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, String tileSize)
 	{
 		PrintWriter fileWriter;
 		try
@@ -58,6 +58,15 @@ public class FileOperations
 			}
 			fileWriter.println("// " + filename.substring(fileIndex + 1));
 			fileWriter.println("// Created on " + new Date().toString());
+			fileWriter.println();
+			
+			// write out the room information
+			fileWriter.println("// Room information");
+			fileWriter.println();
+			fileWriter.println("ID: " + roomInfo.get("ID"));
+			fileWriter.println("NAME: " + roomInfo.get("NAME"));
+			fileWriter.println("OWNER: " + roomInfo.get("OWNER"));
+			fileWriter.println("DESCRIPTION: " + roomInfo.get("DESCRIPTION"));
 			fileWriter.println();
 			
 			// write out the background image location
@@ -108,22 +117,6 @@ public class FileOperations
 				// write out a tile to the file
 				fileWriter.println(t.toString());
 			}
-			fileWriter.println();
-			
-			fileWriter.println("// Room items");
-			fileWriter.println();
-			for(RoomItem r : roomItems)
-			{
-				// write out a room item to the file
-				if(r instanceof RoomFurniture)
-				{
-					fileWriter.println("FURNITURE: " + r.toString());
-				}
-				else if(r instanceof RoomPoster)
-				{
-					fileWriter.println("POSTER: " + r.toString());
-				}
-			}
 			
 			fileWriter.close();
 		}
@@ -136,6 +129,7 @@ public class FileOperations
 	public static void loadFile(InputStream filename, GridViewable gridView)
 	{
 		Scanner fileReader;
+		HashMap<String,String> roomInfo = new HashMap<String,String>();
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
 		ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // room items like furniture and posters
 		String backgroundImagePath = "";
@@ -154,7 +148,35 @@ public class FileOperations
 			{
 				String line = fileReader.nextLine();
 				
-				if(line.startsWith("IMAGE: "))
+				if(line.startsWith("ID: "))
+				{
+					line = line.replaceAll("ID: ", "");
+					
+					// set the room ID
+					roomInfo.put("ID", line);
+				}
+				else if(line.startsWith("NAME: "))
+				{
+					line = line.replaceAll("NAME: ", "");
+					
+					// set the room name
+					roomInfo.put("NAME", line);
+				}
+				else if(line.startsWith("OWNER: "))
+				{
+					line = line.replaceAll("OWNER: ", "");
+					
+					// set the room owner
+					roomInfo.put("OWNER", line);
+				}
+				else if(line.startsWith("DESCRIPTION: "))
+				{
+					line = line.replaceAll("DESCRIPTION: ", "");
+					
+					// set the room description
+					roomInfo.put("DESCRIPTION", line);
+				}
+				else if(line.startsWith("IMAGE: "))
 				{
 					line = line.replaceAll("IMAGE: ", "");
 					
@@ -281,6 +303,9 @@ public class FileOperations
 			// set the tile size
 			gridView.changeTileSize(Integer.parseInt(tileDimensions[0]), Integer.parseInt(tileDimensions[1]));
 			
+			// set the room information
+			gridView.setRoomInfo(roomInfo);
+			
 			// set the tiles
 			gridView.setTilesMap(tiles);
 			
@@ -318,7 +343,8 @@ public class FileOperations
 		
 		try
 		{
-			fileReader = new Scanner(filename);
+			System.out.println("FILENAME: " + filename);
+			fileReader = new Scanner(AppletResourceLoader.getFileFromJar(filename));
 			
 			while(fileReader.hasNextLine())
 			{
@@ -328,6 +354,7 @@ public class FileOperations
 				{
 					// load the template room file
 					line = line.replaceAll("TEMPLATE: ", "");
+					System.out.println("TEMPLATE: " + line);
 					loadFile(AppletResourceLoader.getFileFromJar(line), gridView);
 					
 					// get the tiles back
@@ -1207,6 +1234,72 @@ public class FileOperations
 		return inventoryItems;
 	}
 	
+	// get a HashMap of room information from a room file
+	private static HashMap<String,String> getInfoFromRoom(String path)
+	{
+		HashMap<String,String> infoMap = new HashMap<String,String>();
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(path);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("ID: "))
+					{
+						// get the room ID
+						line = line.replaceAll("ID: ", "");
+						infoMap.put("ID", line);
+					}
+					else if(line.startsWith("NAME: "))
+					{
+						// get the room name
+						line = line.replaceAll("NAME: ", "");
+						infoMap.put("NAME", line);
+					}
+					else if(line.startsWith("OWNER: "))
+					{
+						// get the room owner
+						line = line.replaceAll("OWNER: ", "");
+						infoMap.put("OWNER", line);
+					}
+					else if(line.startsWith("DESCRIPTION: "))
+					{
+						// get the room description
+						line = line.replaceAll("DESCRIPTION: ", "");
+						infoMap.put("DESCRIPTION", line);
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default empty mappings list
+				return infoMap;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN getInfoFromRoom(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new information map from the file data
+		return infoMap;
+	}
+	
 	// load the room mappings
 	public static HashMap<String,VMKRoom> loadRoomMappings()
 	{
@@ -1219,6 +1312,7 @@ public class FileOperations
 		String roomName = "";
 		String roomPath = "";
 		String roomOwner = "";
+		String roomDescription = "";
 		
 		try
 		{
@@ -1241,27 +1335,24 @@ public class FileOperations
 						line = line.replaceAll("ID: ", "");
 						roomID = line;
 					}
-					else if(line.startsWith("NAME: "))
-					{
-						// get the room name
-						line = line.replaceAll("NAME: ", "");
-						roomName = line;
-					}
-					else if(line.startsWith("OWNER: "))
-					{
-						// get the room owner
-						line = line.replaceAll("OWNER: ", "");
-						roomOwner = line;
-					}
 					else if(line.startsWith("PATH: "))
 					{
 						// get the room path
 						line = line.replaceAll("PATH: ", "");
 						roomPath = line;
 						
+						// get the information map from the room
+						HashMap<String,String> infoMap = getInfoFromRoom(roomPath);
+						
+						// get each element of room information
+						roomName = infoMap.get("NAME");
+						roomOwner = infoMap.get("OWNER");
+						roomDescription = infoMap.get("DESCRIPTION");
+						
 						// add the room mapping to the HashMap
 						VMKRoom newRoom = new VMKRoom(roomID, roomName, roomPath);
 						newRoom.setRoomOwner(roomOwner);
+						newRoom.setRoomDescription(roomDescription);
 						roomMappings.put(roomID, newRoom);
 					}
 				}

@@ -49,6 +49,7 @@ import tiles.Tile;
 import ui.WindowAvatarInformation;
 import ui.WindowClothing;
 import ui.WindowDesignModeItem;
+import ui.WindowGuestRooms;
 import ui.WindowHelp;
 import ui.WindowInventory;
 import ui.WindowMap;
@@ -163,10 +164,14 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// map window
 	WindowMap mapWindow;
 	
+	// "Guest Rooms" window
+	WindowGuestRooms guestRoomsWindow;
+	
 	// Pathfinding stuff
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
 	
+	HashMap<String,String> roomInfo = new HashMap<String,String>();
 	String roomID = ""; // ID of the current room
 	String roomName = ""; // name of the current room
 	boolean roomLoading = false;
@@ -206,6 +211,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			catch(Exception e) {}
 		}
 	}
+	
+	public AStarCharacter getMyCharacter() {return myCharacter;}
 	
 	private void convertMouseToGridCoords()
 	{
@@ -917,6 +924,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 designModeItemWindow.setVisible(false);
 		 add(designModeItemWindow);
 		 
+		 // set up the "Guest Rooms" window
+		 guestRoomsWindow = new WindowGuestRooms(textFont, textFontBold, 200, 50);
+		 guestRoomsWindow.setGridObject(this);
+		 guestRoomsWindow.setVisible(false);
+		 add(guestRoomsWindow);
+		 
 		 // set up the map
 		 mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
 		 mapWindow.setGridObject(this);
@@ -1313,6 +1326,18 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		mapWindow.setVisible(true);
 	}
 	
+	// hide the map
+	public void hideMap()
+	{
+		mapWindow.setVisible(false);
+	}
+	
+	// toggle the "Guest Rooms" window
+	public void toggleGuestRoomsWindow()
+	{
+		guestRoomsWindow.setVisible(!guestRoomsWindow.isVisible());
+	}
+	
 	// change to another room
 	public void changeRoom(String newRoomID)
 	{
@@ -1510,6 +1535,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		return currentRoomItem;
 	}
 	
+	public void clearSelectedRoomItem() {
+		items.add(currentRoomItem);
+		currentRoomItem = null;
+	}
+	
 	// set whether a selected item can be moved
 	public void setDesignMoveMode(boolean designMoveMode) {
 		this.designMoveMode = designMoveMode;
@@ -1519,6 +1549,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	private void saveRoomItems()
 	{
 		
+	}
+	
+	public void setRoomInfo(HashMap<String,String> roomInfo)
+	{
+		this.roomInfo = roomInfo;
+	}
+	
+	public HashMap<String,String> getRoomInfo() {
+		return roomInfo;
 	}
 }
 

@@ -3,8 +3,23 @@
 // Name: VMK Gallery
 // Land: New Orleans Square
 
+// Room information
+ID: nos1
+NAME: VMK Gallery
+OWNER: HVMK
+DESCRIPTION: VMK Gallery room
+
+// Background image
 IMAGE: img/rooms/nos1/nos1.jpg
+
+// Size of the tiles (width by height)
 TILES: 64x32
+
+// Animations
+
+// Sounds
+
+// Tile map
 @8,10,NOGO,@
 @8,11,NOGO,@
 @16,11,WALK,@

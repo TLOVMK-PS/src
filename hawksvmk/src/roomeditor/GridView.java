@@ -87,6 +87,8 @@ public class GridView extends JLabel implements GridViewable
 	
 	private boolean loading = false; // true if some kind of loading operation is taking place
 	
+	private HashMap<String,String> roomInfo = new HashMap<String,String>();
+	
 	public void loadGridView()
 	{
 		this.addMouseListener(new MouseAdapter()
@@ -482,6 +484,15 @@ public class GridView extends JLabel implements GridViewable
 	public void setRoomItems(ArrayList<RoomItem> items)
 	{
 		this.items = items;
+	}
+	
+	public void setRoomInfo(HashMap<String,String> roomInfo)
+	{
+		this.roomInfo = roomInfo;
+	}
+	
+	public HashMap<String,String> getRoomInfo() {
+		return roomInfo;
 	}
 }
 

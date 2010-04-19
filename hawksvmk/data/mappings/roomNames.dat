@@ -5,45 +5,29 @@
 // Main Street
 
 ID: ms1
-NAME: Castle Forecourt
-OWNER: HVMK
 PATH: rooms/ms1.room
 
 ID: ms2
-NAME: Central Plaza
-OWNER: HVMK
 PATH: rooms/ms2.room
 
 ID: ms5
-NAME: VMK Central
-OWNER: HVMK
 PATH: rooms/ms5.room
 
 ID: ms6
-NAME: Main Street
-OWNER: HVMK
 PATH: rooms/ms6.room
 
 ID: ms8
-NAME: Town Square
-OWNER: HVMK
 PATH: rooms/ms8.room
 
 ID: ms10
-NAME: Emporium
-OWNER: HVMK
 PATH: rooms/ms10.room
 
 ID: ms11
-NAME: Esplanade
-OWNER: HVMK
 PATH: rooms/ms11.room
 
 // New Orleans Square
 
 ID: nos1
-NAME: VMK Gallery
-OWNER: HVMK
 PATH: rooms/nos1.room
 
 // ====================
@@ -51,8 +35,6 @@ PATH: rooms/nos1.room
 // ====================
 
 ID: template_gr4
-NAME: Boot Hill Shooting Gallery Guest Room
-OWNER: HVMK
 PATH: rooms/templates/gr4.room
 
 // ====================
@@ -60,16 +42,10 @@ PATH: rooms/templates/gr4.room
 // ====================
 
 ID: gr1
-NAME: Boot Hill Shooting Gallery Guest Room
-OWNER: HOST_Hawk
 PATH: rooms/guest/mattf@burbankparanormal.com/gr1.room
 
 ID: gr2
-NAME: Boot Hill Shooting Gallery Guest Room
-OWNER: ParanormalGuy
 PATH: rooms/guest/hawkster9542@gmail.com/gr2.room
 
 ID: gr3
-NAME: Boot Hill Shooting Gallery Guest Room
-OWNER: VMK Player
 PATH: rooms/guest/default/gr3.room

@@ -44,4 +44,7 @@ public interface GridViewable
 	
 	public ArrayList<RoomItem> getRoomItems();
 	public void setRoomItems(ArrayList<RoomItem> items);
+	
+	public void setRoomInfo(HashMap<String,String> roomInfo);
+	public HashMap<String,String> getRoomInfo();
 }

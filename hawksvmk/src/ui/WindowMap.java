@@ -292,7 +292,8 @@ public class WindowMap extends JPanel
 				}
 				else if(guestRoomsButtonRectangle.contains(e.getPoint()))
 				{
-					// show the "Guest Rooms" window
+					// show/hide the "Guest Rooms" window
+					gridObject.toggleGuestRoomsWindow();
 				}
 			}
 			public void mouseEntered(MouseEvent e) {}

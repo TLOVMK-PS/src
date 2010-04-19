@@ -1,6 +1,12 @@
 // ms8.room
 // Created on Thu Apr 01 18:08:38 PDT 2010
 
+// Room information
+ID: ms8
+NAME: Town Square
+OWNER: HVMK
+DESCRIPTION: Town Square room
+
 // Background image
 IMAGE: img/rooms/ms8/ms8.jpg
 

@@ -1,6 +1,12 @@
 // ms1.room
 // Created on Wed Mar 31 20:35:40 PDT 2010
 
+// Room information
+ID: ms1
+NAME: Castle Forecourt
+OWNER: HVMK
+DESCRIPTION: Castle Forecourt room
+
 // Background image
 IMAGE: img/rooms/ms1/ms1.jpg
 

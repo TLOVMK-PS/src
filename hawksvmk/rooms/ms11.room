@@ -1,6 +1,12 @@
 // ms11.room
 // Created on Wed Mar 31 21:25:35 PDT 2010
 
+// Room information
+ID: ms11
+NAME: Esplanade
+OWNER: HVMK
+DESCRIPTION: Esplanade room
+
 // Background image
 IMAGE: img/rooms/ms11/ms11.jpg
 

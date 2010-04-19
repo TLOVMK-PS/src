@@ -1,6 +1,12 @@
 // ms5.room
 // Created on Wed Mar 31 20:09:34 PDT 2010
 
+// Room information
+ID: ms5
+NAME: VMK Central
+OWNER: HVMK
+DESCRIPTION: VMK Central room
+
 // Background image
 IMAGE: img/rooms/ms5/ms5.jpg
 

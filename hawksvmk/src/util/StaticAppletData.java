@@ -1,7 +1,9 @@
 package util;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class StaticAppletData
 {
@@ -76,5 +78,40 @@ public class StaticAppletData
 	public static void addRoomMapping(String roomID, VMKRoom room)
 	{
 		roomMappings.put(roomID, room);
+	}
+	
+	// get all room mappings that are owned by the given owner, optionally requesting only occupied rooms
+	public static ArrayList<VMKRoom> getRoomMappingsForOwner(String owner, boolean occupied)
+	{
+		ArrayList<VMKRoom> theRooms = new ArrayList<VMKRoom>();
+		
+		// get the iterator for the values
+		Iterator<VMKRoom> roomIt = roomMappings.values().iterator();
+		
+		// get the room mappings
+		while(roomIt.hasNext())
+		{
+			VMKRoom theRoom = roomIt.next();
+			
+			if(theRoom.getRoomOwner().equals(owner))
+			{
+				// this room is owned by the requested owner
+				if(occupied)
+				{
+					// room needs to be occupied
+					if(theRoom.getCharacterNames().size() > 0)
+					{
+						theRooms.add(theRoom);
+					}
+				}
+				else
+				{
+					// room doesn't need to be occupied
+					theRooms.add(theRoom);
+				}
+			}
+		}
+		
+		return theRooms;
 	}
 }

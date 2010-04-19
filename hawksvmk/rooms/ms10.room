@@ -1,6 +1,12 @@
 // ms10.room
 // Created on Thu Apr 01 18:07:25 PDT 2010
 
+// Room information
+ID: ms10
+NAME: Emporium
+OWNER: HVMK
+DESCRIPTION: Emporium room
+
 // Background image
 IMAGE: img/rooms/ms10/ms10.jpg
 

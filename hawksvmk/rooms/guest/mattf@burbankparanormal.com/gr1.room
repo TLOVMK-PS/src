@@ -2,6 +2,7 @@
 
 TEMPLATE: rooms/templates/gr4.room
 ID: gr1
+NAME: Boot Hill Shooting Gallery Guest Room
 OWNER: HOST_Hawk
 DESCRIPTION: My first Guest Room
 

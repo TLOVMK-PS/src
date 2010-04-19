@@ -2,6 +2,12 @@
 // ID: gr4
 // Name: Boot Hill Shooting Gallery Guest Room
 
+// Room information
+ID: gr4
+NAME: Boot Hill Shooting Gallery Guest Room (template)
+OWNER: HVMK
+DESCRIPTION: Boot Hill Shooting Gallery Guest Room (template)
+
 IMAGE: img/rooms/gr4/gr4.jpg
 TILES: 64x32
 ANIMATION: anims/gr4/BootHillWindmill.anim

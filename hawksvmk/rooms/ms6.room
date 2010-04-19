@@ -1,6 +1,12 @@
 // ms6.room
 // Created on Wed Mar 31 20:14:20 PDT 2010
 
+// Room information
+ID: ms6
+NAME: Main Street
+OWNER: HVMK
+DESCRIPTION: Main Street room
+
 // Background image
 IMAGE: img/rooms/ms6/ms6.jpg
 
