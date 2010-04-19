@@ -494,6 +494,12 @@ public class GridView extends JLabel implements GridViewable
 	public HashMap<String,String> getRoomInfo() {
 		return roomInfo;
 	}
+	
+	// add information to the Room Info map
+	public void addRoomInfo(String key, String value)
+	{
+		roomInfo.put(key, value);
+	}
 }
 
 class GridViewMovementImageObserver implements ImageObserver

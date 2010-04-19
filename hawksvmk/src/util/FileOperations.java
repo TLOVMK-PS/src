@@ -129,7 +129,6 @@ public class FileOperations
 	public static void loadFile(InputStream filename, GridViewable gridView)
 	{
 		Scanner fileReader;
-		HashMap<String,String> roomInfo = new HashMap<String,String>();
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
 		ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // room items like furniture and posters
 		String backgroundImagePath = "";
@@ -152,29 +151,32 @@ public class FileOperations
 				{
 					line = line.replaceAll("ID: ", "");
 					
-					// set the room ID
-					roomInfo.put("ID", line);
+					// set the room ID if it isn't a guest room
+					if(!line.startsWith("gr"))
+					{
+						gridView.addRoomInfo("ID", line);
+					}
 				}
 				else if(line.startsWith("NAME: "))
 				{
 					line = line.replaceAll("NAME: ", "");
 					
 					// set the room name
-					roomInfo.put("NAME", line);
+					gridView.addRoomInfo("NAME", line);
 				}
 				else if(line.startsWith("OWNER: "))
 				{
 					line = line.replaceAll("OWNER: ", "");
 					
 					// set the room owner
-					roomInfo.put("OWNER", line);
+					gridView.addRoomInfo("OWNER", line);
 				}
 				else if(line.startsWith("DESCRIPTION: "))
 				{
 					line = line.replaceAll("DESCRIPTION: ", "");
 					
 					// set the room description
-					roomInfo.put("DESCRIPTION", line);
+					gridView.addRoomInfo("DESCRIPTION", line);
 				}
 				else if(line.startsWith("IMAGE: "))
 				{
@@ -303,9 +305,6 @@ public class FileOperations
 			// set the tile size
 			gridView.changeTileSize(Integer.parseInt(tileDimensions[0]), Integer.parseInt(tileDimensions[1]));
 			
-			// set the room information
-			gridView.setRoomInfo(roomInfo);
-			
 			// set the tiles
 			gridView.setTilesMap(tiles);
 			
@@ -333,7 +332,7 @@ public class FileOperations
 	}
 	
 	// load a Guest Room from a file
-	public static void loadGuestRoom(String roomPath, GridViewable gridView)
+	public static synchronized void loadGuestRoom(String roomPath, GridViewable gridView)
 	{
 		Scanner fileReader;
 		ArrayList<RoomItem> items = new ArrayList<RoomItem>(); // room items like furniture and posters
@@ -343,7 +342,6 @@ public class FileOperations
 		
 		try
 		{
-			System.out.println("FILENAME: " + filename);
 			fileReader = new Scanner(AppletResourceLoader.getFileFromJar(filename));
 			
 			while(fileReader.hasNextLine())
@@ -354,11 +352,19 @@ public class FileOperations
 				{
 					// load the template room file
 					line = line.replaceAll("TEMPLATE: ", "");
-					System.out.println("TEMPLATE: " + line);
 					loadFile(AppletResourceLoader.getFileFromJar(line), gridView);
 					
 					// get the tiles back
 					tiles = gridView.getTilesMap();
+					
+					// add the template to the room info
+					gridView.addRoomInfo("TEMPLATE", line);
+				}
+				else if(line.startsWith("ID: "))
+				{
+					// room ID
+					line = line.replaceAll("ID: ", "");
+					gridView.addRoomInfo("ID", line);
 				}
 				else if(line.startsWith("FURNITURE: "))
 				{
@@ -399,6 +405,67 @@ public class FileOperations
 		catch(Exception e)
 		{
 			System.out.println("ERROR IN loadGuestRoom(): " + e.getClass().getName() + " - " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	// save a guest room file
+	public static synchronized void saveGuestRoom(String email, HashMap<String,String> roomInfo, ArrayList<RoomItem> items)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// use the email specified
+			filename = "rooms/guest/" + email + "/" + roomInfo.get("ID") + ".room";
+		}
+		else
+		{
+			// no email, so use the default account
+			filename = "rooms/guest/default/" + roomInfo.get("ID") + ".room";
+		}
+		
+		PrintWriter fileWriter;
+		try
+		{
+			fileWriter = new PrintWriter(filename);
+			
+			// print out the room information
+			fileWriter.println("// Room information");
+			fileWriter.println();
+			fileWriter.println("TEMPLATE: " + roomInfo.get("TEMPLATE"));
+			fileWriter.println("ID: " + roomInfo.get("ID"));
+			fileWriter.println("NAME: " + roomInfo.get("NAME"));
+			fileWriter.println("OWNER: " + roomInfo.get("OWNER"));
+			fileWriter.println("DESCRIPTION: " + roomInfo.get("DESCRIPTION"));
+			fileWriter.println();
+			
+			// print out the furniture information
+			fileWriter.println("// Furniture");
+			fileWriter.println();
+			
+			for(int i = 0; i < items.size(); i++)
+			{
+				// get the next item
+				RoomItem r = items.get(i);
+				
+				if(r instanceof RoomFurniture)
+				{
+					// regular furniture
+					fileWriter.println("FURNITURE: " + r.toString());
+				}
+				else if(r instanceof RoomPoster)
+				{
+					// poster
+					fileWriter.println("POSTER: " + r.toString());
+				}
+			}
+			
+			fileWriter.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error in saveGuestRoom()");
 			e.printStackTrace();
 		}
 	}

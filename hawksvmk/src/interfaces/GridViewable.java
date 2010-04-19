@@ -47,4 +47,5 @@ public interface GridViewable
 	
 	public void setRoomInfo(HashMap<String,String> roomInfo);
 	public HashMap<String,String> getRoomInfo();
+	public void addRoomInfo(String key, String value);
 }

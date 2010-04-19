@@ -1548,10 +1548,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		this.designMoveMode = designMoveMode;
 	}
 	
-	// TODO: Save the room items to the Guest Room file when this method is called
+	// save the room items to the Guest Room file
 	private void saveRoomItems()
 	{
-		
+		FileOperations.saveGuestRoom(uiObject.getEmail(), roomInfo, items);
 	}
 	
 	public void setRoomInfo(HashMap<String,String> roomInfo)
@@ -1561,6 +1561,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	public HashMap<String,String> getRoomInfo() {
 		return roomInfo;
+	}
+	
+	// add information to the Room Info map
+	public void addRoomInfo(String key, String value)
+	{
+		roomInfo.put(key, value);
 	}
 }
 
