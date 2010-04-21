@@ -1196,7 +1196,9 @@ public class FileOperations
 						// get the inventory tiles
 						line = line.replaceAll("TILES: ", "");
 						invTiles = Integer.parseInt(line);
-						
+					}
+					else if(line.startsWith("@END@"))
+					{
 						// add the inventory mapping to the HashMap
 						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invTiles));
 					}
