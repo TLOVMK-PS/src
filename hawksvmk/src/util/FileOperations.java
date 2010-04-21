@@ -248,29 +248,6 @@ public class FileOperations
 						animations.add(loadAnimation(line));
 					}
 				}
-				else if(line.startsWith("FURNITURE: "))
-				{
-					// room furniture
-					line = line.replaceAll("FURNITURE: ", "");
-					
-					// id,row,col,rotation
-					String furniture = line.replaceAll(",", " ");
-					Scanner furnitureScanner = new Scanner(furniture);
-					
-					String id = furnitureScanner.next();
-					int row = Integer.parseInt(furnitureScanner.next());
-					int col = Integer.parseInt(furnitureScanner.next()) / 2;
-					String rotation = furnitureScanner.next();
-					
-					// add a new piece of furniture
-					Tile furniTile = tiles.get(row + "-" + col);
-					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
-					
-					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
-					newItem.setRow(row);
-					newItem.setCol(col);
-					items.add(newItem);
-				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
@@ -333,6 +310,7 @@ public class FileOperations
 			gridView.setupChatBubbles();
 			
 			fileReader.close();
+			filename.close();
 			
 			System.out.println("Room file loaded");
 		}
@@ -354,7 +332,7 @@ public class FileOperations
 		
 		try
 		{
-			fileReader = new Scanner(AppletResourceLoader.getFileFromJar(filename));
+			fileReader = new Scanner(AppletResourceLoader.getCharacterFromJar(filename));
 			
 			while(fileReader.hasNextLine())
 			{
@@ -364,7 +342,7 @@ public class FileOperations
 				{
 					// load the template room file
 					line = line.replaceAll("TEMPLATE: ", "");
-					loadFile(AppletResourceLoader.getFileFromJar(line), gridView);
+					loadFile(AppletResourceLoader.getCharacterFromJar(line), gridView);
 					
 					// get the tiles back
 					tiles = gridView.getTilesMap();
@@ -386,11 +364,13 @@ public class FileOperations
 					int col = Integer.parseInt(furnitureScanner.next()) / 2;
 					String rotation = furnitureScanner.next();
 					
+					furnitureScanner.close();
+					
 					// add a new piece of furniture
 					Tile furniTile = tiles.get(row + "-" + col);
 					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
 					
-					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
+					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), furniInfo.getTiles(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
 					newItem.setRow(row);
 					newItem.setCol(col);
 					items.add(newItem);
@@ -1170,6 +1150,7 @@ public class FileOperations
 		String invName = "";
 		String invPath = "";
 		String invCardPath = "";
+		int invTiles = 0;
 		
 		try
 		{
@@ -1209,9 +1190,15 @@ public class FileOperations
 						// get the inventory card path
 						line = line.replaceAll("CARD: ", "");
 						invCardPath = line;
+					}
+					else if(line.startsWith("TILES: "))
+					{
+						// get the inventory tiles
+						line = line.replaceAll("TILES: ", "");
+						invTiles = Integer.parseInt(line);
 						
 						// add the inventory mapping to the HashMap
-						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath));
+						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invTiles));
 					}
 				}
 				

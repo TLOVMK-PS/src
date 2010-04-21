@@ -9,15 +9,20 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import util.AppletResourceLoader;
 
-public class WindowRoomDescription implements ImageObserver
+public class WindowRoomDescription extends JPanel
 {
+	private String roomID = "";
 	private String roomName;
 	private String roomDescription;
 	private Font textFont;
@@ -26,13 +31,18 @@ public class WindowRoomDescription implements ImageObserver
 	private int x = 0;
 	private int y = 0;
 	
-	private int roomTitleX = 125; // x-position of the roomName text
+	private int width = 323;
+	private int height = 148;
 	
 	private Rectangle exitButtonRect = new Rectangle(301, 5, 16, 18); // bounds of the "X" button relative to the image
-	
-	private Graphics windowGraphics;
-	private BufferedImage drawingSurface;
 	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/room_description_window.png");
+	private ImageIcon windowImageGr = AppletResourceLoader.getImageFromJar("img/ui/room_description_window_gr.png");
+	
+	private JLabel roomNameLabel = new JLabel("");
+	private JLabel descriptionLabel = new JLabel("");
+	private JLabel instanceLabel = new JLabel("North");
+	private JLabel ownerLabel = new JLabel("");
+	private JLabel backgroundLabel = new JLabel(windowImage);
 	
 	boolean visible = false;
 	
@@ -46,87 +56,84 @@ public class WindowRoomDescription implements ImageObserver
 		
 		this.x = x;
 		this.y = y;
+		
+		loadRoomDescriptionWindow();
 	}
 	
-	// set the drawing surface with a blank image and turn it into a BufferedImage
-	// that can handle alpha transparency
-	public void setDrawingSurface(Image drawingSurface)
+	private void loadRoomDescriptionWindow()
 	{
-		this.drawingSurface = new BufferedImage(drawingSurface.getWidth(this), drawingSurface.getHeight(this), BufferedImage.TYPE_INT_ARGB);
-	}
-	
-	public Image getImage()
-	{
-		if(drawingSurface != null)
+		setDoubleBuffered(false);
+		setOpaque(false);
+		
+		setLayout(null);
+		
+		// room name label
+		roomNameLabel.setBounds(31, 5, 261, 15);
+		roomNameLabel.setFont(textFontBold);
+		roomNameLabel.setForeground(Color.white);
+		roomNameLabel.setHorizontalAlignment(JLabel.CENTER);
+		roomNameLabel.setVerticalAlignment(JLabel.CENTER);
+		roomNameLabel.setText(roomName);
+		add(roomNameLabel);
+		
+		// instance label
+		instanceLabel.setBounds(73, 27, 222, 15);
+		instanceLabel.setFont(textFont);
+		instanceLabel.setForeground(Color.white);
+		instanceLabel.setHorizontalAlignment(JLabel.LEFT);
+		instanceLabel.setVerticalAlignment(JLabel.CENTER);
+		add(instanceLabel);
+		
+		// owner label
+		ownerLabel.setBounds(58, 27, 222, 15);
+		ownerLabel.setFont(textFont);
+		ownerLabel.setForeground(Color.white);
+		ownerLabel.setHorizontalAlignment(JLabel.LEFT);
+		ownerLabel.setVerticalAlignment(JLabel.CENTER);
+		ownerLabel.setVisible(false);
+		add(ownerLabel);
+		
+		// description label
+		descriptionLabel.setBounds(7, 46, 309, 98);
+		descriptionLabel.setFont(textFont);
+		descriptionLabel.setForeground(Color.white);
+		descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
+		descriptionLabel.setVerticalAlignment(JLabel.TOP);
+		descriptionLabel.setText("<html>" + roomDescription + "</html>");
+		add(descriptionLabel);
+		
+		this.addMouseListener(new MouseListener()
 		{
-			windowGraphics = drawingSurface.getGraphics();
-			
-			// draw the base window image
-			windowGraphics.drawImage(windowImage.getImage(), 0, 0, this);
-			
-			// draw the room name on the image
-			windowGraphics.setFont(textFontBold);
-			windowGraphics.setColor(Color.WHITE);
-			windowGraphics.drawString(roomName, roomTitleX, 18);
-			
-			// draw the guide oval to find the x and y of the "X" button
-			//windowGraphics.drawOval(299, 5, 18, 18);
-			
-			// draw the room description on the image
-			windowGraphics.setFont(textFont);
-			// check to see if there are newline characters
-			if(roomDescription.contains("\n"))
+			public void mouseExited(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
 			{
-				String[] lines = roomDescription.split("\\n");
-				for(int i = 0; i < lines.length; i++)
+				repaint();
+				
+				if(exitButtonRect.contains(e.getPoint()))
 				{
-					if(i == 0)
-					{
-						// draw the first line
-						windowGraphics.drawString(lines[i], 6, 60);
-					}
-					else
-					{
-						// draw the n-th line with a (5 * i) space after the previous line
-						windowGraphics.drawString(lines[i], 6, 60 + (10 * i) + (5 * i));
-					}
+					// close the window
+					setVisible(false);
 				}
 			}
-			else
+			public void mouseEntered(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
 			{
-				// no newline characters, so just draw the string
-				windowGraphics.drawString(roomDescription, 6, 60);
+				System.out.println("X: " + e.getX() + "; Y: " + e.getY());
 			}
-		}
+		});
 		
-		return drawingSurface;
+		// background image
+		backgroundLabel.setBounds(0, 0, width, height);
+		add(backgroundLabel);
+		
+		this.setBounds(x, y, width, height);
 	}
 
-	public void setVisible(boolean visible)
-	{
-		this.visible = visible;
-	}
-	
-	public boolean isVisible() {return visible;}
-	
 	// toggle the visibility of this window
 	public void toggleVisibility()
 	{
 		setVisible(!isVisible());
-	}
-	
-	// get the "X" button rectangle relative to the image
-	public Rectangle getExitButtonRectRelative()
-	{
-		return exitButtonRect;
-	}
-	
-	// get the "X" button rectangle as absolute coordinates
-	public Rectangle getExitButtonRectAbsolute()
-	{
-		Rectangle exitButtonAbsolute = new Rectangle(x + (int)exitButtonRect.getX(), y + (int)exitButtonRect.getY(), (int)exitButtonRect.getWidth(), (int)exitButtonRect.getHeight());
-
-		return exitButtonAbsolute;
 	}
 
 	public String getRoomName() {
@@ -135,6 +142,7 @@ public class WindowRoomDescription implements ImageObserver
 
 	public void setRoomName(String roomName) {
 		this.roomName = roomName;
+		roomNameLabel.setText(roomName);
 	}
 
 	public String getRoomDescription() {
@@ -143,6 +151,7 @@ public class WindowRoomDescription implements ImageObserver
 
 	public void setRoomDescription(String roomDescription) {
 		this.roomDescription = roomDescription;
+		descriptionLabel.setText("<html>" + roomDescription + "</html>");
 	}
 
 	public int getX() {
@@ -153,10 +162,6 @@ public class WindowRoomDescription implements ImageObserver
 		this.x = x;
 	}
 	
-	public void setRoomTitleX(int roomTitleX) {
-		this.roomTitleX = roomTitleX;
-	}
-
 	public int getY() {
 		return y;
 	}
@@ -165,10 +170,28 @@ public class WindowRoomDescription implements ImageObserver
 		this.y = y;
 	}
 	
-	public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h)
+	public void setRoomID(String roomID)
 	{
-		//System.out.println("Image updated");
-		//theWindow.repaint();
-	    return true;
+		this.roomID = roomID;
+		
+		if(roomID.startsWith("gr"))
+		{
+			// guest room
+			backgroundLabel.setIcon(windowImageGr);
+			instanceLabel.setVisible(false);
+			ownerLabel.setVisible(true);
+		}
+		else
+		{
+			// regular room
+			backgroundLabel.setIcon(windowImage);
+			instanceLabel.setVisible(true);
+			ownerLabel.setVisible(false);
+		}
+	}
+	
+	public void setRoomOwner(String roomOwner)
+	{
+		ownerLabel.setText(roomOwner);
 	}
 }

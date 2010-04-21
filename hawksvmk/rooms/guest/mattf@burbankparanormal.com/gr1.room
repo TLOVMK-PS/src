@@ -2,11 +2,12 @@
 
 TEMPLATE: rooms/templates/gr4.room
 ID: gr1
-NAME: Boot Hill Shooting Gallery Guest Room
+NAME: Crash Hide-Out
 OWNER: HOST_Hawk
-DESCRIPTION: My first Guest Room
+DESCRIPTION: A nice place to crash... or hide out.
 
 // Furniture
 
 FURNITURE: furni_1,20,18,A
-FURNITURE: furni_1,20,13,B
+FURNITURE: furni_0,21,14,B
+FURNITURE: furni_22,18,12,A

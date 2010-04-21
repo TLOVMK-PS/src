@@ -28,6 +28,7 @@ import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
+import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
@@ -351,6 +352,14 @@ public class VMKServerThread extends Thread
 							
 							// send the message to all characters in the given room
 							sendMessageToAllClientsInRoom(updateItemMsg, updateItemMsg.getRoomID());
+						}
+						else if(outputMessage instanceof MessageSaveGuestRoom)
+						{
+							// save guest room message received from client
+							MessageSaveGuestRoom saveRoomMsg = (MessageSaveGuestRoom)outputMessage;
+							
+							// save the guest room
+							FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(saveRoomMsg.getRoomInfo().get("OWNER")), saveRoomMsg.getRoomInfo(), saveRoomMsg.getRoomItems());
 						}
 						
 						// sleep to prevent the stream from getting corrupted

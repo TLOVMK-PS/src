@@ -24,8 +24,8 @@ public class RoomFurniture extends RoomItem
 		setType(RoomItem.FURNITURE);
 	}
 	
-	public RoomFurniture(int x, int y, String id, String name, String directory, String rotation)
+	public RoomFurniture(int x, int y, int tiles, String id, String name, String directory, String rotation)
 	{
-		super(x,y,id,name,directory,rotation,RoomItem.FURNITURE);
+		super(x,y,tiles,id,name,directory,rotation,RoomItem.FURNITURE);
 	}
 }

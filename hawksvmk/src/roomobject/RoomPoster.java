@@ -24,8 +24,8 @@ public class RoomPoster extends RoomItem
 		setType(RoomItem.POSTER);
 	}
 	
-	public RoomPoster(int x, int y, String id, String name, String directory, String rotation)
+	public RoomPoster(int x, int y, int tiles, String id, String name, String directory, String rotation)
 	{
-		super(x,y,id,name,directory,rotation,RoomItem.POSTER);
+		super(x,y,tiles,id,name,directory,rotation,RoomItem.POSTER);
 	}
 }

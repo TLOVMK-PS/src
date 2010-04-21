@@ -2,9 +2,9 @@
 
 TEMPLATE: rooms/templates/gr4.room
 ID: gr2
-NAME: Boot Hill Shooting Gallery Guest Room
+NAME: Ghost Hunter's Lair
 OWNER: ParanormalGuy
-DESCRIPTION: My first Guest Room
+DESCRIPTION: A lair in which you may find me.
 
 // Furniture
 

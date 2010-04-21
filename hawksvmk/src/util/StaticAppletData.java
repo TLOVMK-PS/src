@@ -41,9 +41,9 @@ public class StaticAppletData
 	}
 	
 	// add an inventory mapping
-	public static void addInvMapping(String invID, String invName, String invPath, String invCardPath)
+	public static void addInvMapping(String invID, String invName, String invPath, String invCardPath, int tiles)
 	{
-		invMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath));
+		invMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, tiles));
 	}
 	
 	// remove an inventory mapping
@@ -64,7 +64,7 @@ public class StaticAppletData
 		else
 		{
 			// return blank inventory info
-			return new InventoryInfo("", "", "", "");
+			return new InventoryInfo("", "", "", "", 0);
 		}
 	}
 	

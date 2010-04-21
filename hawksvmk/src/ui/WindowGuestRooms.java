@@ -41,6 +41,7 @@ public class WindowGuestRooms extends JPanel
 	private ImageIcon ownRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_own.png");
 	private ImageIcon friendsRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_friends.png");
 	private ImageIcon popularRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_popular.png");
+	private ImageIcon enterRoomLitImage = AppletResourceLoader.getImageFromJar("img/ui/enter_room_lit.png");
 	
 	private JLabel backgroundLabel = new JLabel(popularRoomsImage);
 	
@@ -50,6 +51,7 @@ public class WindowGuestRooms extends JPanel
 	
 	private JLabel ownerLabel = new JLabel();
 	private JLabel descriptionLabel = new JLabel();
+	private JLabel enterRoomLabel = new JLabel(enterRoomLitImage);
 	
 	private Rectangle ownRoomsRectangle = new Rectangle(277, 46, 76, 22);
 	private Rectangle friendsRoomsRectangle = new Rectangle(173, 47, 95, 21);
@@ -109,6 +111,11 @@ public class WindowGuestRooms extends JPanel
 		descriptionLabel.setVerticalAlignment(JLabel.TOP);
 		add(descriptionLabel);
 		
+		// Enter Room label (lit)
+		enterRoomLabel.setBounds(36, 437, 123, 20);
+		enterRoomLabel.setVisible(false);
+		add(enterRoomLabel);
+		
 		// JPanel for "Own Rooms" section
 		ownRoomsPanel.setBounds(29, 138, 390, 139);
 		ownRoomsPanel.setBackground(new Color(0, 31, 86));
@@ -129,10 +136,20 @@ public class WindowGuestRooms extends JPanel
 				
 				if(exitRectangle.contains(e.getPoint()))
 				{
+					if(activeGuestRoom != null)
+					{
+						// de-activate the selected room
+						ownerLabel.setText("");
+						descriptionLabel.setText("");
+						activeGuestRoom.deactivate();
+						activeGuestRoom = null;
+						enterRoomLabel.setVisible(false);
+					}
+					
 					// close the window
 					setVisible(false);
 				}
-				else if(enterRoomRectangle.contains(e.getPoint()))
+				else if(enterRoomRectangle.contains(e.getPoint()) && enterRoomLabel.isVisible())
 				{
 					// check if there is a selected room
 					if(activeGuestRoom != null)
@@ -143,7 +160,16 @@ public class WindowGuestRooms extends JPanel
 						// a room exists, so change to the new room
 						setVisible(false);
 						gridObject.changeRoom(activeGuestRoom.getID());
+						
+						// de-activate the selected room
+						ownerLabel.setText("");
+						descriptionLabel.setText("");
+						activeGuestRoom.deactivate();
+						activeGuestRoom = null;
+						enterRoomLabel.setVisible(false);
 					}
+					
+					System.out.println("Hey dickhead, you clicked Enter Room.");
 				}
 				else if(ownRoomsRectangle.contains(e.getPoint()))
 				{
@@ -158,6 +184,7 @@ public class WindowGuestRooms extends JPanel
 					ownRoomsPanel.setVisible(true);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
+					enterRoomLabel.setVisible(false);
 				}
 				else if(friendsRoomsRectangle.contains(e.getPoint()))
 				{
@@ -169,6 +196,7 @@ public class WindowGuestRooms extends JPanel
 					ownRoomsPanel.setVisible(false);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
+					enterRoomLabel.setVisible(false);
 				}
 				else if(popularRoomsRectangle.contains(e.getPoint()))
 				{
@@ -180,6 +208,7 @@ public class WindowGuestRooms extends JPanel
 					ownRoomsPanel.setVisible(false);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
+					enterRoomLabel.setVisible(false);
 				}
 			}
 			public void mouseEntered(MouseEvent e) {}
@@ -245,6 +274,9 @@ public class WindowGuestRooms extends JPanel
 					
 					// set the description label text
 					descriptionLabel.setText("<html>" + gl.getDescription() + "</html>");
+					
+					// make the Enter Room button active
+					enterRoomLabel.setVisible(true);
 				}
 				public void mouseEntered(MouseEvent e) {}
 				public void mousePressed(MouseEvent e) {}

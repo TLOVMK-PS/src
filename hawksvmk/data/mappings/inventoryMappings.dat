@@ -2,10 +2,23 @@
 // FURNITURE
 // ===================
 
+ID: furni_0
+NAME: Aladdin Carpet Chair Blue
+PATH: img/furniture/beta/furni_0/
+CARD: img/furniture/beta/furni_0/card_0.png
+TILES: 1
+
 ID: furni_1
 NAME: Ariel's Treasure Chest Cyan
 PATH: img/furniture/beta/furni_1/
 CARD: img/furniture/beta/furni_1/card_1.png
+TILES: 2
+
+ID: furni_22
+NAME: Spaceship Couch Cyan
+PATH: img/furniture/beta/furni_22/
+CARD: img/furniture/beta/furni_22/card_22.png
+TILES: 4
 
 // ===================
 // PINS

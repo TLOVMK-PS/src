@@ -13,6 +13,8 @@ import util.AppletResourceLoader;
 
 public class RoomItem implements Serializable
 {
+	// TODO: Align items to a grid tile based upon how many tiles they take up when placed
+	
 	public final static int FURNITURE = 0;
 	public final static int POSTER = 1;
 	
@@ -35,6 +37,7 @@ public class RoomItem implements Serializable
 	
 	private String rotation = "A"; // A, B, C, or D to describe one of four possible rotations
 	
+	private int tiles = 0; // how many tiles the item takes up when placed
 	private Rectangle boundingBox = new Rectangle(x, y, 0, 0);
 	private String owner = ""; // the owner of the item
 	
@@ -52,9 +55,10 @@ public class RoomItem implements Serializable
 		this.layer = layer;
 	}
 	
-	public RoomItem(int x, int y, String id, String name, String directory, String rotation, int type)
+	public RoomItem(int x, int y, int tiles, String id, String name, String directory, String rotation, int type)
 	{
 		this(x,y);
+		this.tiles = tiles;
 		this.id = id;
 		this.name = name;
 		this.directory = directory;
@@ -63,11 +67,14 @@ public class RoomItem implements Serializable
 		
 		// set the path to the image and the image itself
 		this.path = directory + id + "_" + rotation + ".png";
-		System.out.println(this.path);
 		image = AppletResourceLoader.getImageFromJar(this.path);
 		
+		alignItemToTile(); // correct the alignment of the item based upon how many tiles it takes up
+		
+		this.y = y - image.getIconHeight() + tileHeight; // place the BOTTOM of the item on the tile
+		
 		boundingBox.x = x;
-		boundingBox.y = y;// + tileHeight - image.getIconHeight();
+		boundingBox.y = y + tileHeight - image.getIconHeight();
 		boundingBox.width = image.getIconWidth();
 		boundingBox.height = image.getIconHeight();
 	}
@@ -79,6 +86,8 @@ public class RoomItem implements Serializable
 	public void setX(int x) {
 		this.x = x;
 		boundingBox.x = x;
+		
+		alignItemToTile();
 	}
 
 	public int getY() {
@@ -88,6 +97,20 @@ public class RoomItem implements Serializable
 	public void setY(int y) {
 		this.y = y;
 		boundingBox.y = y; //+ tileHeight - image.getIconHeight();
+	}
+	
+	private void alignItemToTile()
+	{
+		// figure out how many tiles this should take up
+		if(tiles == 1)
+		{
+			// place the item's center on the tile
+			this.x -= (image.getIconWidth() / 4);
+		}
+		else if(tiles >= 2)
+		{
+			// do nothing since it's optimized for two tiles
+		}
 	}
 
 	public int getLayer() {
@@ -236,6 +259,6 @@ public class RoomItem implements Serializable
 	
 	public String toString()
 	{
-		return getId() + "," + getRow() + "," + getCol() + "," + getRotation();
+		return getId() + "," + getRow() + "," + (getCol() * 2) + "," + getRotation();
 	}
 }

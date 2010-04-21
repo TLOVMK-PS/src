@@ -310,8 +310,9 @@ public class VMKClientThread extends Thread
     	{
     		System.out.println("Sending message (" + m.getType() + ") to server...");
     		out.writeUnshared(m);
+    		//out.reset();
+    		out.flush();
     		out.reset();
-    		//out.flush();
     	}
     	catch(IOException e)
     	{

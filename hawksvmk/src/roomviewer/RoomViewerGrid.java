@@ -40,6 +40,7 @@ import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
+import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
@@ -264,49 +265,31 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		
 	     		Point mousePoint = new Point(mouseX, mouseY);
 	     		
-	     		if(roomDescriptionWindow != null)
-	     		{
-	     			if(roomDescriptionWindow.isVisible())
-	     			{	
-	     				// check to see if the user clicked on the "X"
-	     				if(roomDescriptionWindow.getExitButtonRectAbsolute().contains(mousePoint))
-	     				{
-	     					// hide the Room Description window
-	     					roomDescriptionWindow.toggleVisibility();
-	     					
-	     					return;
-	     				}
-	     			}
-	     		}
-	     		
 	     		// check to see if we clicked inside a bounding box (room item)
 	     		if(designMode == true)
 	     		{
 	     			if(currentRoomItem != null)
 	     			{
-	     				if(currentRoomItem.getBoundingBox().contains(mousePoint))
-	     				{
-		     				// current room item is already selected
-		     				System.out.println("Clicked inside currently selected item's bounding box");
-		     				
-		     				// place the selected item
-		     				items.add(currentRoomItem); 
-	 						
-	 						// save the room items
-	 						saveRoomItems();
-	 						
-	 						// send the update item message to the server
-	 						uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, currentRoomItem));
-		     				
-	 						// turn off "Move Mode" for "Design Mode"
-	 						designMoveMode = false;
-	 						designModeItemWindow.setVisible(false);
-	 						
-	 						currentRoomItem = null;
-		     				convertMouseToGridCoords();
-		     				
-		     				return;
-	     				}
+	     				// current room item is already selected
+	     				//System.out.println("Clicked inside currently selected item's bounding box");
+
+	     				// place the selected item
+	     				items.add(currentRoomItem); 
+
+	     				// send the update item message to the server
+	     				uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, currentRoomItem));
+
+	     				// save the room items
+	     				saveRoomItems();
+
+	     				// turn off "Move Mode" for "Design Mode"
+	     				designMoveMode = false;
+	     				designModeItemWindow.setVisible(false);
+
+	     				currentRoomItem = null;
+	     				convertMouseToGridCoords();
+
+	     				return;
 	     			}
 	     			else
 	     			{
@@ -417,7 +400,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     		if(currentTile.getType() == Tile.TILE_WALK && currentRoomItem != null)
 		     		{
 		     			currentRoomItem.setRow(currentTile.getRow());
-		     			currentRoomItem.setCol(currentTile.getRow());
+		     			currentRoomItem.setCol(currentTile.getColumn());
 		     			currentRoomItem.setX(currentTile.getX());
 		     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
 		     		}
@@ -723,15 +706,6 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				}
 				// draw a test text bubble
 				//drawTextBubble("HOST_Hawk", "Haha, I made this shit work.  Take THAT, bitches!", 100, 100);
-				
-				// draw the room description window
-				if(roomDescriptionWindow != null)
-				{
-					if(roomDescriptionWindow.isVisible())
-					{
-						bufferGraphics.drawImage(roomDescriptionWindow.getImage(), roomDescriptionWindow.getX(), roomDescriptionWindow.getY(), this);
-					}
-				}
 			}
 			
 			// draw the offscreen image to the screen like a normal image.
@@ -870,10 +844,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	private void setupInternalUI()
 	{		
 		 // set up the room description window
-	     roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room.  You can try out the\nfeatures of the game, including chat and walking.\nPlease feel free to wander around.\n\n- Hawk's VMK: Development Team", 0, 424);
-		 roomDescriptionWindow.setRoomTitleX(125);
-		 roomDescriptionWindow.setDrawingSurface(createImage(323,148));
+	     roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room. You can try out the features of the game, including chat and walking. Please feel free to wander around.<br><br>- Hawk's VMK: Development Team", 0, 424);
 		 roomDescriptionWindow.setVisible(false);
+		 add(roomDescriptionWindow);
 		 
 		 // set up the messages window
 		 messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
@@ -1446,6 +1419,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	  	// hide the loading window
 	  	uiObject.showLoadingWindow(false, false);
 	  	
+	  	// set the room information window data
+	  	roomDescriptionWindow.setRoomID(roomInfo.get("ID"));
+	  	roomDescriptionWindow.setRoomOwner(roomInfo.get("OWNER"));
+	  	roomDescriptionWindow.setRoomName(roomInfo.get("NAME"));
+	  	roomDescriptionWindow.setRoomDescription(roomInfo.get("DESCRIPTION"));
+	  	
 	  	uiObject.theGridView.setVisible(true);
 	}
 	
@@ -1551,7 +1530,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// save the room items to the Guest Room file
 	private void saveRoomItems()
 	{
-		FileOperations.saveGuestRoom(uiObject.getEmail(), roomInfo, items);
+		// send the save message to the server
+		uiObject.sendMessageToServer(new MessageSaveGuestRoom(items, roomInfo));
 	}
 	
 	public void setRoomInfo(HashMap<String,String> roomInfo)
