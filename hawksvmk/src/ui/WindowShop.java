@@ -47,6 +47,9 @@ public class WindowShop extends JPanel
 	private Rectangle exitRectangle = new Rectangle(529, 14, 16, 14);
 	
 	private JPanel roomCreatedWindow = new JPanel();
+	private JLabel roomCreatedName = new JLabel("");
+	private JLabel roomCreatedOwner = new JLabel("");
+	private JLabel roomCreatedDescription = new JLabel("");
 	private JLabel roomCreatedWindowBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/room_created_window.png"));
 	private Rectangle continueRectangle = new Rectangle(12, 288, 128, 20);
 	private Rectangle enterRoomRectangle = new Rectangle(145, 288, 128, 19);
@@ -106,8 +109,33 @@ public class WindowShop extends JPanel
 		roomCreatedWindow.setLayout(null);
 		roomCreatedWindow.setBounds(150, 40, 283, 323);
 		
+		roomCreatedName.setBounds(53, 105, 222, 33);
+		roomCreatedName.setForeground(Color.white);
+		roomCreatedName.setBackground(new Color(0, 32, 83));
+		roomCreatedName.setFont(textFont);
+		roomCreatedName.setHorizontalAlignment(JLabel.LEFT);
+		roomCreatedName.setVerticalAlignment(JLabel.TOP);
+		roomCreatedWindow.add(roomCreatedName);
+		
+		roomCreatedOwner.setBounds(58, 138, 218, 16);
+		roomCreatedOwner.setForeground(Color.white);
+		roomCreatedOwner.setBackground(new Color(0, 32, 83));
+		roomCreatedOwner.setFont(textFont);
+		roomCreatedOwner.setHorizontalAlignment(JLabel.LEFT);
+		roomCreatedOwner.setVerticalAlignment(JLabel.TOP);
+		roomCreatedWindow.add(roomCreatedOwner);
+		
+		roomCreatedDescription.setBounds(94, 161, 182, 117);
+		roomCreatedDescription.setForeground(Color.white);
+		roomCreatedDescription.setBackground(new Color(0, 32, 83));
+		roomCreatedDescription.setFont(textFont);
+		roomCreatedDescription.setHorizontalAlignment(JLabel.LEFT);
+		roomCreatedDescription.setVerticalAlignment(JLabel.TOP);
+		roomCreatedWindow.add(roomCreatedDescription);
+		
 		roomCreatedWindowBackground.setBounds(0,0,283,323);
 		roomCreatedWindow.add(roomCreatedWindowBackground);
+		
 		roomCreatedWindow.addMouseListener(new MouseListener()
 		{
 			public void mouseExited(MouseEvent e) {}
@@ -230,9 +258,8 @@ public class WindowShop extends JPanel
 						myCreditsLabel.setText("" + gridObject.getMyCredits());
 						
 						// pop-up the notification
+						changeRoomCreatedInfo(roomInfo.get("NAME"), roomInfo.get("OWNER"), roomInfo.get("DESCRIPTION"));
 						roomCreatedWindow.setVisible(true);
-						
-						// TODO: Display some notification that the player just bought something awesome
 					}
 					else
 					{
@@ -325,5 +352,12 @@ public class WindowShop extends JPanel
 	public void addRoomInfo(String key, String value)
 	{
 		roomInfo.put(key, value);
+	}
+	
+	private void changeRoomCreatedInfo(String name, String owner, String description)
+	{
+		roomCreatedName.setText("<html>" + name + "</html>");
+		roomCreatedOwner.setText(owner);
+		roomCreatedDescription.setText("<html>" + description + "</html>");
 	}
 }
