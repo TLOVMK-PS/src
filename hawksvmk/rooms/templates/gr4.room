@@ -4,9 +4,11 @@
 
 // Room information
 ID: gr4
-NAME: Boot Hill Shooting Gallery Guest Room (template)
+NAME: Boot Hill Shooting Gallery Guest Room
 OWNER: HVMK
-DESCRIPTION: Boot Hill Shooting Gallery Guest Room (template)
+DESCRIPTION: The wildest place you can be laid to rest!
+COST: 500
+TIMESTAMP: 1272237681
 
 IMAGE: img/rooms/gr4/gr4.jpg
 TILES: 64x32

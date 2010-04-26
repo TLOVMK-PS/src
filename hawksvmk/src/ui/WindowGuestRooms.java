@@ -14,11 +14,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import comparators.RoomDateCreatedComparator;
 
 import roomviewer.RoomViewerGrid;
 
@@ -120,6 +123,7 @@ public class WindowGuestRooms extends JPanel
 		ownRoomsPanel.setBounds(29, 138, 390, 139);
 		ownRoomsPanel.setBackground(new Color(0, 31, 86));
 		ownRoomsPanel.setLayout(null);
+		ownRoomsPanel.setVisible(false);
 		add(ownRoomsPanel);
 		
 		backgroundLabel.setBounds(0,0,width,height);
@@ -168,8 +172,6 @@ public class WindowGuestRooms extends JPanel
 						activeGuestRoom = null;
 						enterRoomLabel.setVisible(false);
 					}
-					
-					System.out.println("Hey dickhead, you clicked Enter Room.");
 				}
 				else if(ownRoomsRectangle.contains(e.getPoint()))
 				{
@@ -248,6 +250,7 @@ public class WindowGuestRooms extends JPanel
 		
 		// load up all rooms owned by the current player
 		ownRoomsList = StaticAppletData.getRoomMappingsForOwner(gridObject.getMyCharacter().getUsername(), false);
+		Collections.sort(ownRoomsList, new RoomDateCreatedComparator()); // sort the rooms by creation date
 		
 		// add the listings to the necessary panel
 		for(int i = 0; i < ownRoomsList.size(); i++)
@@ -290,6 +293,13 @@ public class WindowGuestRooms extends JPanel
 	public void toggleVisibility()
 	{
 		setVisible(!isVisible());
+		
+		// check if the window is visible
+		if(isVisible())
+		{
+			// update the "Own Rooms" tab
+			setOwnRoomsList();
+		}
 	}
 	
 	public void setGridObject(RoomViewerGrid gridObject)

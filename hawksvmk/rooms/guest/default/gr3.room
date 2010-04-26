@@ -5,9 +5,10 @@ ID: gr3
 NAME: Boot Hill Shooting Gallery Guest Room
 OWNER: VMK Player
 DESCRIPTION: This is tits.
+TIMESTAMP: 1272237681
 
 // Furniture
 
+FURNITURE: furni_22,18,12,A
 FURNITURE: furni_1,24,18,B
 FURNITURE: furni_0,28,10,A
-FURNITURE: furni_22,18,12,A

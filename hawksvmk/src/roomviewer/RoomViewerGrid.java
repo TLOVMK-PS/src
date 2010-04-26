@@ -37,6 +37,7 @@ import roomobject.RoomItem;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
+import sockets.messages.MessageCreateGuestRoom;
 import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
@@ -245,7 +246,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	public void loadGridView()
-	{	 
+	{	
+		// turn off the double-buffering for the grid
+		this.setDoubleBuffered(false);
+		
 		this.addMouseListener(new MouseAdapter()
      {
      	public void mouseReleased(MouseEvent e)
@@ -1308,7 +1312,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// toggle the "Guest Rooms" window
 	public void toggleGuestRoomsWindow()
 	{
-		guestRoomsWindow.setVisible(!guestRoomsWindow.isVisible());
+		guestRoomsWindow.toggleVisibility();
 	}
 	
 	// change to another room
@@ -1534,6 +1538,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		uiObject.sendMessageToServer(new MessageSaveGuestRoom(items, roomInfo));
 	}
 	
+	// send a "Create Guest Room" message to the server
+	public void sendCreateGuestRoomMessage(HashMap<String,String> info)
+	{
+		uiObject.sendMessageToServer(new MessageCreateGuestRoom(info));
+	}
+	
 	public void setRoomInfo(HashMap<String,String> roomInfo)
 	{
 		this.roomInfo = roomInfo;
@@ -1547,6 +1557,18 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void addRoomInfo(String key, String value)
 	{
 		roomInfo.put(key, value);
+	}
+	
+	// get the credits for my character
+	public long getMyCredits()
+	{
+		return myCharacter.getCredits();
+	}
+	
+	// set the credits for my character
+	public void setMyCredits(long credits)
+	{
+		myCharacter.setCredits(credits);
 	}
 }
 

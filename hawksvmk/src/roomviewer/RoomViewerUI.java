@@ -851,4 +851,10 @@ public class RoomViewerUI extends Applet
 	{
 		theGridView.updateRoomItem(item);
 	}
+	
+	// set the ID of the newly-created Guest Room
+	public void setNewlyCreatedRoomID(String roomID)
+	{
+		theGridView.shopWindow.addRoomInfo("ID", roomID);
+	}
 }

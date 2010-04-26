@@ -131,6 +131,12 @@ public class VMKProtocol
         	theOutput = (MessageSaveGuestRoom)theInput;
         	theOutput.setType("MessageSaveGuestRoom");
         }
+        else if(theInput instanceof MessageCreateGuestRoom)
+        {
+        	// pass back the request
+        	theOutput = (MessageCreateGuestRoom)theInput;
+        	theOutput.setType("MessageCreateGuestRoom");
+        }
 
         return theOutput;
     }

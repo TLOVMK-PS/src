@@ -15,6 +15,8 @@ public class VMKRoom implements Serializable, Comparable<VMKRoom>
 	
 	private String roomOwner = ""; // owner of the room
 	private String roomDescription = ""; // description of the room
+	private long roomCost = 0; // cost of the room
+	private long timestamp = 0; // timestamp when this room was created
 	private HashMap<String, String> characterNames = new HashMap<String, String>();
 	
 	public VMKRoom(String roomID, String roomName, String roomPath)
@@ -63,6 +65,22 @@ public class VMKRoom implements Serializable, Comparable<VMKRoom>
 	public void setRoomDescription(String roomDescription)
 	{
 		this.roomDescription = roomDescription;
+	}
+	
+	public void setRoomCost(long roomCost) {
+		this.roomCost = roomCost;
+	}
+	
+	public long getRoomCost() {
+		return roomCost;
+	}
+	
+	public void setRoomTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public long getRoomTimestamp() {
+		return timestamp;
 	}
 
 	public HashMap<String, String> getCharacterNames() {

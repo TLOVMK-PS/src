@@ -10,7 +10,8 @@ public class StaticAppletData
 	private static String codebase = "";
 	private static URL codebaseURL;
 	
-	private static HashMap<String, VMKRoom> roomMappings = new HashMap<String, VMKRoom>(); 
+	private static HashMap<String, VMKRoom> roomMappings = new HashMap<String, VMKRoom>();
+	private static ArrayList<String> guestRoomTemplates = new ArrayList<String>();
 	
 	public static final int MAX_DISPLAYABLE_BADGES = 4; // maximum number of displayable badges
 	public static final int MAX_DISPLAYABLE_PINS = 8; // maximum number of displayable pins
@@ -38,6 +39,18 @@ public class StaticAppletData
 		roomMappings = FileOperations.loadRoomMappings();
 		
 		System.out.println("Created room mappings");
+	}
+	
+	// add a guest room template
+	public static void addGuestRoomTemplate(String templateID)
+	{
+		guestRoomTemplates.add(templateID);
+	}
+	
+	// get the guest room templates
+	public static ArrayList<String> getGuestRoomTemplates()
+	{
+		return guestRoomTemplates;
 	}
 	
 	// add an inventory mapping

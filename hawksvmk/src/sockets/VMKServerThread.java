@@ -7,18 +7,21 @@ package sockets;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
 import astar.AStarCharacter;
 
+import roomobject.RoomItem;
 import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
+import sockets.messages.MessageCreateGuestRoom;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetInventory;
@@ -36,6 +39,8 @@ import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.FileOperations;
 import util.FriendsList;
+import util.StaticAppletData;
+import util.VMKRoom;
 
 public class VMKServerThread extends Thread
 {
@@ -359,7 +364,32 @@ public class VMKServerThread extends Thread
 							MessageSaveGuestRoom saveRoomMsg = (MessageSaveGuestRoom)outputMessage;
 							
 							// save the guest room
-							FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(saveRoomMsg.getRoomInfo().get("OWNER")), saveRoomMsg.getRoomInfo(), saveRoomMsg.getRoomItems());
+							FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(saveRoomMsg.getRoomInfo().get("OWNER")), saveRoomMsg.getRoomInfo(), saveRoomMsg.getRoomItems(), false);
+						}
+						else if(outputMessage instanceof MessageCreateGuestRoom)
+						{
+							// create guest room message received from client
+							MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)outputMessage;
+							
+							// figure out the room ID
+							VMKServerPlayerData.incrementGuestRoomCount();
+							createRoomMsg.addRoomInfo("ID", "gr" + VMKServerPlayerData.getGuestRoomCount());
+							
+							// create the guest room
+							String savedPath = FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(createRoomMsg.getRoomInfo().get("OWNER")), createRoomMsg.getRoomInfo(), new ArrayList<RoomItem>(), true);
+							
+							// add the saved room path to the message
+							createRoomMsg.addRoomInfo("PATH", savedPath);
+							
+							// add the new room to the VMKServerPlayerData class
+							VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
+							room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
+							room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
+							room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
+							VMKServerPlayerData.addRoom(createRoomMsg.getRoomInfo().get("ID"), room);
+							
+							// pass the message along to the player to affect the listing client-side as well
+							sendMessageToClient(createRoomMsg.getRoomInfo().get("OWNER"), createRoomMsg);
 						}
 						
 						// sleep to prevent the stream from getting corrupted
@@ -390,6 +420,27 @@ public class VMKServerThread extends Thread
 	    		serverThreads.remove(this);
 	    		
 				// set an offline status alteration message to this user's friends
+				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
+	    		
+	    		// remove the character from the room
+				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
+	    		
+	    		this.interrupt(); // stop this server thread
+	    	}
+	    	catch(StreamCorruptedException sce)
+	    	{
+	    		// somehow the stream got corrupted; shut down the thread gracefully so the server doesn't hang
+	    		System.out.println("Stream corrupted on client (" + this.getName() + ")");
+	    		
+	    		// save the character to file
+	    		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
+	    		
+	    		System.out.println("Saved character (" + this.getName() + ") to file");
+	    		
+	    		// remove the character's server thread
+	    		serverThreads.remove(this);
+	    		
+	    		// set an offline status alteration message to this user's friends
 				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
 	    		
 	    		// remove the character from the room

@@ -53,6 +53,7 @@ public class AStarCharacter implements Serializable
 	
 	private Rectangle boundingBox = new Rectangle(x, y, characterImage.getIconWidth(), characterImage.getIconHeight());
 	
+	private long credits = 1000;
 	private String signature = "";
 	
 	// displayed badges/pins
@@ -247,6 +248,9 @@ public class AStarCharacter implements Serializable
 	public AStarPathfinder getPathfinder() {return pathfinder;}
 	
 	public Rectangle getBoundingBox() {return boundingBox;}
+	
+	public void setCredits(long credits) {this.credits = credits;}
+	public long getCredits() {return credits;}
 	
 	public void setSignature(String signature) {this.signature = signature;}
 	public String getSignature() {return signature;}

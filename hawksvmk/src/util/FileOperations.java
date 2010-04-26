@@ -252,7 +252,7 @@ public class FileOperations
 				{
 					// comment line or blank line, so ignore
 				}
-				else
+				else if(line.startsWith("@"))
 				{
 					// row,col,TILE_TYPE
 					// remove the commas and turn them into spaces
@@ -332,6 +332,7 @@ public class FileOperations
 		
 		try
 		{
+			System.out.println("Guest room filename: " + filename);
 			fileReader = new Scanner(AppletResourceLoader.getCharacterFromJar(filename));
 			
 			while(fileReader.hasNextLine())
@@ -403,7 +404,7 @@ public class FileOperations
 	}
 	
 	// save a guest room file
-	public static synchronized void saveGuestRoom(String email, HashMap<String,String> roomInfo, ArrayList<RoomItem> items)
+	public static synchronized String saveGuestRoom(String email, HashMap<String,String> roomInfo, ArrayList<RoomItem> items, boolean newRoom)
 	{
 		String filename = "";
 		
@@ -431,6 +432,7 @@ public class FileOperations
 			fileWriter.println("NAME: " + roomInfo.get("NAME"));
 			fileWriter.println("OWNER: " + roomInfo.get("OWNER"));
 			fileWriter.println("DESCRIPTION: " + roomInfo.get("DESCRIPTION"));
+			fileWriter.println("TIMESTAMP: " + roomInfo.get("TIMESTAMP"));
 			fileWriter.println();
 			
 			// print out the furniture information
@@ -455,12 +457,21 @@ public class FileOperations
 			}
 			
 			fileWriter.close();
+			
+			// check if we created a new room
+			if(newRoom)
+			{
+				// append a new entry to the room mappings file
+				addRoomMapping(filename, roomInfo.get("ID"));
+			}
 		}
 		catch(Exception e)
 		{
 			System.out.println("Error in saveGuestRoom()");
 			e.printStackTrace();
 		}
+		
+		return filename; // return the saved path
 	}
 	
 	// load and return an animation from a file
@@ -596,12 +607,15 @@ public class FileOperations
 		PrintWriter fileWriter = null;
 		String filename = "";
 		
+		long credits = 1000; // default amount of credits to give a new player
+		
 		try
 		{
 			// character file
 			filename = "data/characters/" + email + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("USERNAME: " + username);
+			fileWriter.println("CREDITS: " + credits);
 			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
 			fileWriter.println("BADGE: badge_2"); // give the user a "Here From Day One" badge
 			
@@ -663,6 +677,7 @@ public class FileOperations
 		
 		Scanner fileReader;
 		
+		long credits = 1000;
 		String signature = "";
 		
 		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
@@ -685,6 +700,11 @@ public class FileOperations
 					{
 						line = line.replaceAll("USERNAME: ", "");
 						username = line;
+					}
+					else if(line.startsWith("CREDITS: ")) // credits
+					{
+						line = line.replaceAll("CREDITS: ", "");
+						credits = Long.parseLong(line);
 					}
 					else if(line.startsWith("SIGNATURE: ")) // signature
 					{
@@ -717,6 +737,7 @@ public class FileOperations
 				// create a new character and don't worry about it
 				AStarCharacter newCharacter = new AStarCharacter(username, 15, 7);
 				newCharacter.setEmail(email);
+				newCharacter.setCredits(credits);
 				newCharacter.setSignature(signature);
 				
 				// create blank badges
@@ -744,6 +765,7 @@ public class FileOperations
 		// create a new character from the file data
 		AStarCharacter newCharacter = new AStarCharacter(username, 15, 7);
 		newCharacter.setEmail(email);
+		newCharacter.setCredits(credits);
 		newCharacter.setSignature(signature);
 		newCharacter.setDisplayedBadges(displayedBadges);
 		newCharacter.setDisplayedPins(displayedPins);
@@ -773,6 +795,9 @@ public class FileOperations
 			
 			// write out the username
 			fileWriter.println("USERNAME: " + character.getUsername());
+			
+			// write out the credits
+			fileWriter.println("CREDITS: " + character.getCredits());
 			
 			// write out the signature
 			fileWriter.println("SIGNATURE: " + character.getSignature());
@@ -1348,6 +1373,18 @@ public class FileOperations
 						line = line.replaceAll("DESCRIPTION: ", "");
 						infoMap.put("DESCRIPTION", line);
 					}
+					else if(line.startsWith("COST: "))
+					{
+						// get the room cost (guest rooms only)
+						line = line.replaceAll("COST: ", "");
+						infoMap.put("COST", line);
+					}
+					else if(line.startsWith("TIMESTAMP: "))
+					{
+						// get the room timestamp (guest rooms only)
+						line = line.replaceAll("TIMESTAMP: ", "");
+						infoMap.put("TIMESTAMP", line);
+					}
 				}
 				
 				fileReader.close();
@@ -1366,6 +1403,7 @@ public class FileOperations
 		}
 
 		// create a new information map from the file data
+		infoMap.put("PATH", path);
 		return infoMap;
 	}
 	
@@ -1403,6 +1441,21 @@ public class FileOperations
 						// get the room ID
 						line = line.replaceAll("ID: ", "");
 						roomID = line;
+						
+						// check if it's a guest room template
+						if(roomID.startsWith("template_"))
+						{
+							// get the ID of the template
+							String templateID = roomID.replaceAll("template_", "");
+							
+							// add the template ID to the list of templates
+							StaticAppletData.addGuestRoomTemplate(templateID);
+						}
+						else if(roomID.startsWith("gr"))
+						{
+							// it's an actual guest room
+							VMKServerPlayerData.incrementGuestRoomCount(); // increment the number of guest rooms
+						}
 					}
 					else if(line.startsWith("PATH: "))
 					{
@@ -1422,6 +1475,14 @@ public class FileOperations
 						VMKRoom newRoom = new VMKRoom(roomID, roomName, roomPath);
 						newRoom.setRoomOwner(roomOwner);
 						newRoom.setRoomDescription(roomDescription);
+						
+						// check if there is a given cost for the room (guest rooms only)
+						if(infoMap.containsKey("COST"))
+						{
+							// add the cost to the room definition as well
+							newRoom.setRoomCost(Long.parseLong(infoMap.get("COST")));
+						}
+						
 						roomMappings.put(roomID, newRoom);
 					}
 				}
@@ -1443,6 +1504,31 @@ public class FileOperations
 
 		// create a new mappings list from the file data
 		return roomMappings;
+	}
+	
+	// append a room mapping to the file
+	private static void addRoomMapping(String path, String id)
+	{
+		String filename = "data/mappings/roomNames.dat";
+		
+		try
+		{	
+			// open the file for appending
+			FileOutputStream appendedFile = new FileOutputStream(filename, true);
+			PrintWriter writer = new PrintWriter(appendedFile);
+			
+			// write the mapping to the file
+			writer.println();
+			writer.println("ID: " + id);
+			writer.println("PATH: " + path);
+			writer.flush();
+			writer.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN saveUsernameEmailMappings()");
+			e.printStackTrace();
+		}
 	}
 	
 	// load the tile destinations for the Room Editor

@@ -11,6 +11,7 @@ import java.net.URL;
 import java.applet.Applet;
 import java.applet.AudioClip;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class AppletResourceLoader implements Serializable

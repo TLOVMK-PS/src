@@ -16,6 +16,7 @@ public class VMKServerPlayerData
 	private static HashMap<String, AStarCharacter> characters = new HashMap<String, AStarCharacter>(); // character HashMap
 	
 	private static HashMap<String, VMKRoom> rooms = new HashMap<String, VMKRoom>(); // HashMap of VMK rooms
+	private static int numGuestRooms = 0; // the current number of guest rooms
 	
 	private static HashMap<String, FriendsList> friendsLists = new HashMap<String, FriendsList>();
 	private static HashMap<String, String> usernameToEmail = new HashMap<String, String>();
@@ -74,6 +75,11 @@ public class VMKServerPlayerData
 	{
 		rooms.put(roomID, room);
 	}
+	
+	// increment the number of guest rooms that exist
+	public static void incrementGuestRoomCount() {numGuestRooms++;}
+	
+	public static int getGuestRoomCount() {return numGuestRooms;}
 	
 	// add a friends list to the HashMap
 	public static void addFriendsList(String username, FriendsList friends)

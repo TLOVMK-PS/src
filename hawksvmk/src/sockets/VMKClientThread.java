@@ -20,6 +20,7 @@ import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
+import sockets.messages.MessageCreateGuestRoom;
 import sockets.messages.MessageGetCharactersInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetInventory;
@@ -33,6 +34,8 @@ import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.MailMessage;
+import util.StaticAppletData;
+import util.VMKRoom;
 
 public class VMKClientThread extends Thread
 {
@@ -258,6 +261,20 @@ public class VMKClientThread extends Thread
 						{
 							uiObject.updateRoomItem(updateItemMsg.getItem());
 						}
+					}
+					else if(outputMessage instanceof MessageCreateGuestRoom)
+					{
+						MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)outputMessage;
+						
+						// add the room mapping to the list for this user
+						VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
+						room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
+						room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
+						room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
+						StaticAppletData.addRoomMapping(createRoomMsg.getRoomInfo().get("ID"), room);
+						
+						// set the newly-created room ID client-side
+						uiObject.setNewlyCreatedRoomID(createRoomMsg.getRoomInfo().get("ID"));
 					}
 			    }
 		    }
