@@ -5,6 +5,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -67,10 +68,15 @@ public class WindowInventory extends JPanel
 	private final int PIN_INV_OFFSET_LEFT = 24;
 	private final int PIN_INV_OFFSET_TOP = 98;
 	
+	private JLabel creditsLabel = new JLabel("");
+	private ImageIcon creditsWindowImage = AppletResourceLoader.getImageFromJar("img/ui/credits.png");
+	
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	
 	private WindowInventory messagesWindow;
 	private Rectangle titleRectangle = new Rectangle(52, 10, 366, 35);
+	private Rectangle tabPinsRectangle = new Rectangle(173, 46, 38, 22);
+	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
 	
 	public WindowInventory(Font textFont, Font textFontBold, int x, int y)
@@ -103,6 +109,10 @@ public class WindowInventory extends JPanel
 		
 		this.setLayout(null);
 		
+		// ==========================================
+		// PINS TAB
+		// ==========================================
+		
 		// add the inventory name bar
 		inventoryNameLabel.setBounds(45, 72, 345, 16);
 		inventoryNameLabel.setBackground(new Color(40, 84, 146));
@@ -127,6 +137,20 @@ public class WindowInventory extends JPanel
 		inventoryPinsScrollPane.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH + 18, 175);
 		add(inventoryPinsScrollPane);
 		
+		// ==========================================
+		// CREDIT TAB
+		// ==========================================
+		
+		// credits label for the "Credit" tab
+		creditsLabel.setBounds(175, 90, 107, 16);
+		creditsLabel.setBackground(new Color(40, 84, 146));
+		creditsLabel.setForeground(Color.white);
+		creditsLabel.setFont(textFontBold);
+		creditsLabel.setVerticalAlignment(JLabel.CENTER);
+		creditsLabel.setHorizontalAlignment(JLabel.CENTER);
+		creditsLabel.setVisible(false);
+		add(creditsLabel);
+		
 		backgroundLabel.setBounds(0,0,width,height);
 		add(backgroundLabel);
 		
@@ -139,7 +163,17 @@ public class WindowInventory extends JPanel
 			{
 				repaint();
 				
-				if(exitRectangle.contains(e.getPoint()))
+				if(tabPinsRectangle.contains(e.getPoint()))
+				{
+					// change the tab to the "Pins" tab
+					changeTab("pins");
+				}
+				else if(tabCreditRectangle.contains(e.getPoint()))
+				{
+					// change the tab to the "Credit" tab
+					changeTab("credits");
+				}
+				else if(exitRectangle.contains(e.getPoint()))
 				{
 					// close the window
 					setVisible(false);
@@ -172,6 +206,43 @@ public class WindowInventory extends JPanel
 		});
 		
 		messagesWindow = this;
+	}
+	
+	// change the tab of the Inventory window to something, well... else
+	private void changeTab(String tab)
+	{
+		// hide all the components in the window
+		hideComponents();
+		
+		if(tab.equals("pins"))
+		{
+			// change it to the "Pins" tab
+			inventoryNameLabel.setVisible(true);
+			inventoryCardDisplayLabel.setVisible(true);
+			inventoryPinsPanel.setVisible(true);
+			inventoryPinsScrollPane.setVisible(true);
+			backgroundLabel.setIcon(windowImage);
+		}
+		else if(tab.equals("credits"))
+		{
+			// change it to the "Credit" tab
+			creditsLabel.setVisible(true);
+			creditsLabel.setText("" + gridObject.getMyCharacter().getCredits());
+			backgroundLabel.setIcon(creditsWindowImage);
+		}
+		
+		// set the window size and show it again
+		backgroundLabel.setSize(backgroundLabel.getIcon().getIconWidth(), backgroundLabel.getIcon().getIconHeight());
+		backgroundLabel.setVisible(true);
+	}
+	
+	// hide all of the components in the window
+	private void hideComponents()
+	{
+		for(Component c : this.getComponents())
+		{
+			c.setVisible(false);
+		}
 	}
 	
 	// set a player's inventory
