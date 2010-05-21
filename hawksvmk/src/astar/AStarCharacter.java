@@ -4,6 +4,8 @@
 
 package astar;
 
+import interfaces.ContentRateable;
+
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.Serializable;
@@ -15,9 +17,10 @@ import javax.swing.ImageIcon;
 import tiles.Tile;
 import util.AppletResourceLoader;
 import util.InventoryInfo;
+import util.RatingSystem;
 import util.StaticAppletData;
 
-public class AStarCharacter implements Serializable
+public class AStarCharacter implements Serializable, ContentRateable
 {
 	private String username = "";
 	private String email = "";
@@ -55,6 +58,7 @@ public class AStarCharacter implements Serializable
 	
 	private long credits = 1000;
 	private String signature = "";
+	private int contentRatingIndex = 0; // 0: G, 1: PG, 2: PG-13, 3: M
 	
 	// displayed badges/pins
 	private InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
@@ -254,6 +258,19 @@ public class AStarCharacter implements Serializable
 	
 	public void setSignature(String signature) {this.signature = signature;}
 	public String getSignature() {return signature;}
+	
+	public void setContentRating(String contentRating)
+	{
+		contentRatingIndex = RatingSystem.getContentRatingIndex(contentRating);
+	}
+	public int getContentRatingIndex()
+	{
+		return contentRatingIndex;
+	}
+	public String getContentRatingAsString()
+	{
+		return RatingSystem.getContentRating(contentRatingIndex);
+	}
 	
 	public void setDisplayedBadges(InventoryInfo[] displayedBadges) {this.displayedBadges = displayedBadges;}
 	public InventoryInfo[] getDisplayedBadges() {return displayedBadges;}

@@ -617,6 +617,7 @@ public class FileOperations
 			fileWriter.println("USERNAME: " + username);
 			fileWriter.println("CREDITS: " + credits);
 			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
+			fileWriter.println("RATING: G"); // assign a default content rating of General
 			fileWriter.println("BADGE: badge_2"); // give the user a "Here From Day One" badge
 			
 			// print out empty badge entries
@@ -679,6 +680,7 @@ public class FileOperations
 		
 		long credits = 1000;
 		String signature = "";
+		String contentRating = "";
 		
 		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
 		InventoryInfo displayedPins[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
@@ -710,6 +712,11 @@ public class FileOperations
 					{
 						line = line.replaceAll("SIGNATURE: ", "");
 						signature = line;
+					}
+					else if(line.startsWith("RATING: ")) // content rating
+					{
+						line = line.replaceAll("RATING: ", "");
+						contentRating = line;
 					}
 					else if(line.startsWith("BADGE: ")) // badge
 					{
@@ -767,6 +774,7 @@ public class FileOperations
 		newCharacter.setEmail(email);
 		newCharacter.setCredits(credits);
 		newCharacter.setSignature(signature);
+		newCharacter.setContentRating(contentRating);
 		newCharacter.setDisplayedBadges(displayedBadges);
 		newCharacter.setDisplayedPins(displayedPins);
 		return newCharacter;
@@ -801,6 +809,9 @@ public class FileOperations
 			
 			// write out the signature
 			fileWriter.println("SIGNATURE: " + character.getSignature());
+			
+			// write out the content rating
+			fileWriter.println("RATING: " + character.getContentRatingAsString());
 			
 			// write out the badges
 			InventoryInfo[] displayedBadges = character.getDisplayedBadges();

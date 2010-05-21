@@ -1082,6 +1082,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				System.out.println("Character (" + uiObject.getUsername() + ") already exists in room");
 				myCharacter = character;
 				myCharacter.setUsername(uiObject.getUsername());
+				settingsWindow.setSelectedRating(myCharacter.getContentRatingAsString());
 				
 				// if this is the first time the room is loaded...
 				if(!uiObject.theGridView.isVisible() || roomLoading == true)
@@ -1433,7 +1434,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// send an "Update Character" message to the server
-	private void sendUpdateCharacterMessage(AStarCharacter character)
+	public void sendUpdateCharacterMessage(AStarCharacter character)
 	{
 		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
 	}
