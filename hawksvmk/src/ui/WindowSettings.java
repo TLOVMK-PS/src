@@ -236,6 +236,7 @@ public class WindowSettings extends JPanel implements ActionListener
 		selectedRating = e.getActionCommand();
 	}
 	
+	// figure out which radio button to select given a String rating
 	public void setSelectedRating(String rating)
 	{
 		for(Component c : getComponents())
@@ -245,7 +246,6 @@ public class WindowSettings extends JPanel implements ActionListener
 				JRadioButton btn = (JRadioButton)c;
 				if(btn.getActionCommand().equals(rating))
 				{
-					System.out.println("FUCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCK: " + btn.getActionCommand());
 					btn.setSelected(true);
 				}
 			}
