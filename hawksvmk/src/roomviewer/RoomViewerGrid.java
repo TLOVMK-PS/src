@@ -64,6 +64,7 @@ import util.FileOperations;
 import util.FriendsList;
 import util.InventoryItem;
 import util.MailMessage;
+import util.RatingSystem;
 import util.StaticAppletData;
 
 public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
@@ -485,7 +486,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 						RoomItem nextItem = items.get(i);
 						if(nextItem != null)
 						{
-							bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+							// make sure the content rating for this item is fine before we draw it to the grid
+							if(RatingSystem.isContentAllowed(nextItem.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
+							{
+								bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+							}
 						}
 					}
 				}

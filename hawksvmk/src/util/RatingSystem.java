@@ -32,9 +32,9 @@ public class RatingSystem
 	}
 	
 	// return whether given content is allowed for a player based upon the content and player ratings
-	public static boolean isContentAllowed(int contentRating, int playerRating)
+	public static boolean isContentAllowed(int contentRatingIndex, int playerRatingIndex)
 	{
-		if(contentRating <= playerRating) {return true;}
+		if(contentRatingIndex <= playerRatingIndex) {return true;}
 		return false;
 	}
 }

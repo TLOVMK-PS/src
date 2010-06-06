@@ -4,14 +4,17 @@
 
 package roomobject;
 
+import interfaces.ContentRateable;
+
 import java.awt.Rectangle;
 import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
 import util.AppletResourceLoader;
+import util.RatingSystem;
 
-public class RoomItem implements Serializable
+public class RoomItem implements Serializable, ContentRateable
 {
 	// TODO: Align items to a grid tile based upon how many tiles they take up when placed
 	
@@ -40,6 +43,8 @@ public class RoomItem implements Serializable
 	private int tiles = 0; // how many tiles the item takes up when placed
 	private Rectangle boundingBox = new Rectangle(x, y, 0, 0);
 	private String owner = ""; // the owner of the item
+	
+	private int contentRatingIndex = 0; // the content rating of this item
 	
 	public RoomItem() {}
 	
@@ -255,6 +260,20 @@ public class RoomItem implements Serializable
 			this.path = directory + id + "_" + rotation + ".png";
 			image = AppletResourceLoader.getImageFromJar(this.path);
 		}
+	}
+	
+	// content rating shit
+	public void setContentRating(String contentRating)
+	{
+		contentRatingIndex = RatingSystem.getContentRatingIndex(contentRating);
+	}
+	public int getContentRatingIndex()
+	{
+		return contentRatingIndex;
+	}
+	public String getContentRatingAsString()
+	{
+		return RatingSystem.getContentRating(contentRatingIndex);
 	}
 	
 	public String toString()
