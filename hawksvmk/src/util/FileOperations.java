@@ -374,6 +374,7 @@ public class FileOperations
 					RoomFurniture newItem = new RoomFurniture(furniTile.getX(), furniTile.getY(), furniInfo.getTiles(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
 					newItem.setRow(row);
 					newItem.setCol(col);
+					newItem.setContentRating(RatingSystem.getContentRating(furniInfo.getRatingIndex()));
 					items.add(newItem);
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
@@ -1186,6 +1187,7 @@ public class FileOperations
 		String invName = "";
 		String invPath = "";
 		String invCardPath = "";
+		int invRatingIndex = 0;
 		int invTiles = 0;
 		
 		try
@@ -1233,10 +1235,16 @@ public class FileOperations
 						line = line.replaceAll("TILES: ", "");
 						invTiles = Integer.parseInt(line);
 					}
+					else if(line.startsWith("RATING: "))
+					{
+						// get the content rating
+						line = line.replaceAll("RATING: ", "");
+						invRatingIndex = RatingSystem.getContentRatingIndex(line);
+					}
 					else if(line.startsWith("@END@"))
 					{
 						// add the inventory mapping to the HashMap
-						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invTiles));
+						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invTiles, invRatingIndex));
 					}
 				}
 				
