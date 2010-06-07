@@ -20,6 +20,7 @@ import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
 import util.InventoryInfo;
+import util.RatingSystem;
 import util.StaticAppletData;
 
 public class WindowAvatarInformation extends JPanel
@@ -294,9 +295,13 @@ public class WindowAvatarInformation extends JPanel
 		
 		for(int i = 0; i < badges.length; i++)
 		{
-			this.badges[i].setPinName(badges[i].getName());
-			this.badges[i].setImage(badges[i].getPath());
-			this.badges[i].setIcon(this.badges[i].getImage());
+			// make sure the badge content is allowed to be displayed
+			if(RatingSystem.isContentAllowed(badges[i].getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
+			{
+				this.badges[i].setPinName(badges[i].getName());
+				this.badges[i].setImage(badges[i].getPath());
+				this.badges[i].setIcon(this.badges[i].getImage());
+			}
 		}
 	}
 	
@@ -307,9 +312,13 @@ public class WindowAvatarInformation extends JPanel
 		
 		for(int i = 0; i < pins.length; i++)
 		{
-			this.pins[i].setPinName(pins[i].getName());
-			this.pins[i].setImage(pins[i].getPath());
-			this.pins[i].setIcon(this.pins[i].getImage());
+			// make sure the pin content is allowed to be displayed
+			if(RatingSystem.isContentAllowed(pins[i].getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
+			{
+				this.pins[i].setPinName(pins[i].getName());
+				this.pins[i].setImage(pins[i].getPath());
+				this.pins[i].setIcon(this.pins[i].getImage());
+			}
 		}
 	}
 	
