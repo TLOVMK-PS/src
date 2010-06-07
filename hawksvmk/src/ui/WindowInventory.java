@@ -30,6 +30,7 @@ import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
 import util.InventoryItem;
+import util.RatingSystem;
 import util.StaticAppletData;
 
 public class WindowInventory extends JPanel
@@ -269,72 +270,76 @@ public class WindowInventory extends JPanel
 			// get the inventory item
 			InventoryItem invItem = inventoryItems.get(i);
 			
-			if(invItem.getType() == InventoryItem.FURNITURE)
+			// check and make sure this content is allowable first
+			if(RatingSystem.isContentAllowed(StaticAppletData.getInvInfo(invItem.getId()).getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
 			{
-				col = furnitureCount % ITEMS_PER_ROW; // figure out the column
-				row = (int)(furnitureCount / ITEMS_PER_ROW); // figure out the row
-				
-				// add a furniture item
-				
-				// increase the furniture count
-				furnitureCount++;
-			}
-			else if(invItem.getType() == InventoryItem.PIN)
-			{
-				col = pinCount % ITEMS_PER_ROW; // figure out the column
-				row = (int)(pinCount / ITEMS_PER_ROW); // figure out the row
-				
-				// add a pin
-				InventoryPinSquare invPin = new InventoryPinSquare(row, col, invItem.getId());
-				invPin.setIcon(invPin.getImage());
-				invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
-				invPin.setHorizontalAlignment(JLabel.CENTER);
-				invPin.addMouseListener(new MouseListener()
+				if(invItem.getType() == InventoryItem.FURNITURE)
 				{
-					public void mouseExited(MouseEvent e) {}
-					public void mouseReleased(MouseEvent e)
+					col = furnitureCount % ITEMS_PER_ROW; // figure out the column
+					row = (int)(furnitureCount / ITEMS_PER_ROW); // figure out the row
+					
+					// add a furniture item
+					
+					// increase the furniture count
+					furnitureCount++;
+				}
+				else if(invItem.getType() == InventoryItem.PIN)
+				{
+					col = pinCount % ITEMS_PER_ROW; // figure out the column
+					row = (int)(pinCount / ITEMS_PER_ROW); // figure out the row
+					
+					// add a pin
+					InventoryPinSquare invPin = new InventoryPinSquare(row, col, invItem.getId());
+					invPin.setIcon(invPin.getImage());
+					invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+					invPin.setHorizontalAlignment(JLabel.CENTER);
+					invPin.addMouseListener(new MouseListener()
 					{
-					}
-					public void mouseEntered(MouseEvent e) {}
-					public void mousePressed(MouseEvent e) {}
-					public void mouseClicked(MouseEvent e)
-					{
-						// move the inventory highlight square here
-						inventorySquareHighlightLabel.setVisible(true);
-						inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
-						
-						InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
-						
-						// update the inventory name bar
-						inventoryNameLabel.setText(invSquare.getPinName());
-						
-						// update the card display label
-						inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
-					}
-				});
-				inventoryPinsPanel.add(invPin);
-	
-				// add the pin backing
-				JLabel invSquare = new JLabel(inventorySquare);
-				invSquare.setHorizontalAlignment(JLabel.CENTER);
-				invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
-				inventoryPinsPanel.add(invSquare);
-				
-				// figure out the pin panel height
-				pinPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
-				
-				// increase the pin count
-				pinCount++;
-			}
-			else if(invItem.getType() == InventoryItem.POSTER)
-			{
-				col = posterCount % ITEMS_PER_ROW; // figure out the column
-				row = (int)(posterCount / ITEMS_PER_ROW); // figure out the row
-				
-				// add a poster item
-				
-				// increase the poster count
-				posterCount++;
+						public void mouseExited(MouseEvent e) {}
+						public void mouseReleased(MouseEvent e)
+						{
+						}
+						public void mouseEntered(MouseEvent e) {}
+						public void mousePressed(MouseEvent e) {}
+						public void mouseClicked(MouseEvent e)
+						{
+							// move the inventory highlight square here
+							inventorySquareHighlightLabel.setVisible(true);
+							inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
+							
+							InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
+							
+							// update the inventory name bar
+							inventoryNameLabel.setText(invSquare.getPinName());
+							
+							// update the card display label
+							inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
+						}
+					});
+					inventoryPinsPanel.add(invPin);
+		
+					// add the pin backing
+					JLabel invSquare = new JLabel(inventorySquare);
+					invSquare.setHorizontalAlignment(JLabel.CENTER);
+					invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+					inventoryPinsPanel.add(invSquare);
+					
+					// figure out the pin panel height
+					pinPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
+					
+					// increase the pin count
+					pinCount++;
+				}
+				else if(invItem.getType() == InventoryItem.POSTER)
+				{
+					col = posterCount % ITEMS_PER_ROW; // figure out the column
+					row = (int)(posterCount / ITEMS_PER_ROW); // figure out the row
+					
+					// add a poster item
+					
+					// increase the poster count
+					posterCount++;
+				}
 			}
 		}
 		
