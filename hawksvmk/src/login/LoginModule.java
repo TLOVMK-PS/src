@@ -27,7 +27,7 @@ public class LoginModule
 		{
 			// set up the URL and open up a stream to the file
 			loginURL = new URL(url + "?e=" + email + "&p=" + password);
-			System.out.println("LOGIN: " + loginURL.toString());
+			System.out.println("Logging in...");
 			loginStream = loginURL.openStream();
 			
 			// set up a scanner for the input stream
@@ -38,7 +38,6 @@ public class LoginModule
 			while(loginScanner.hasNextLine())
 			{
 				line = loginScanner.nextLine();
-				System.out.println("LINE: " + line);
 				
 				if(line.startsWith("USERNAME: "))
 				{
