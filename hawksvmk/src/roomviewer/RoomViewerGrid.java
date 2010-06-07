@@ -300,26 +300,30 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     			{
 		     			for(RoomItem r : items)
 		     			{
-		     				if(r.getBoundingBox().contains(mousePoint)) // clicked inside somebody's box
+		     				// make sure this content is allowed based upon the content rating indices
+		     				if(RatingSystem.isContentAllowed(r.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
 		     				{
-		     					System.out.println("Clicked inside the bounding box for an item");
-		     					
-		     					// make this the current room item if there is none, otherwise release
-		     					// the room item and keep it where it is
-		     					//convertMouseToGridCoords();
-		     					if(currentRoomItem == null)
-		     					{
-		     						currentRoomItem = r;
-		     						items.remove(r);
-		     						
-		     						// show the "Design Mode" room item window
-		     						designModeItemWindow.setItemName(currentRoomItem.getName());
-		     						designModeItemWindow.setLocation(currentRoomItem.getX() - (designModeItemWindow.getWidth() / 3), currentRoomItem.getY() - currentRoomItem.getImage().getIconHeight() + currentRoomItem.getTileHeight());
-		     						designModeItemWindow.setVisible(true);
-		     						
-		     						convertMouseToGridCoords();
-		     						return;
-		     					}
+			     				if(r.getBoundingBox().contains(mousePoint)) // clicked inside somebody's box
+			     				{
+			     					System.out.println("Clicked inside the bounding box for an item");
+			     					
+			     					// make this the current room item if there is none, otherwise release
+			     					// the room item and keep it where it is
+			     					//convertMouseToGridCoords();
+			     					if(currentRoomItem == null)
+			     					{
+			     						currentRoomItem = r;
+			     						items.remove(r);
+			     						
+			     						// show the "Design Mode" room item window
+			     						designModeItemWindow.setItemName(currentRoomItem.getName());
+			     						designModeItemWindow.setLocation(currentRoomItem.getX() - (designModeItemWindow.getWidth() / 3), currentRoomItem.getY() - currentRoomItem.getImage().getIconHeight() + currentRoomItem.getTileHeight());
+			     						designModeItemWindow.setVisible(true);
+			     						
+			     						convertMouseToGridCoords();
+			     						return;
+			     					}
+			     				}
 		     				}
 		     			}
 	     			}
@@ -498,7 +502,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				// draw the currently selected room item
 				if(currentRoomItem != null)
 				{
-					bufferGraphics.drawImage(currentRoomItem.getImage().getImage(), currentRoomItem.getX(), currentRoomItem.getY(), this);
+					// make sure the content rating for this item is fine before we draw it to the grid
+					if(RatingSystem.isContentAllowed(currentRoomItem.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
+					{
+						bufferGraphics.drawImage(currentRoomItem.getImage().getImage(), currentRoomItem.getX(), currentRoomItem.getY(), this);
+					}
 				}
 				
 				// draw the path to the target tile for each character
