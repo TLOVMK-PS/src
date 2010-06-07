@@ -5,12 +5,15 @@
 package sockets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import astar.AStarCharacter;
 
@@ -138,6 +141,9 @@ public class VMKServerThread extends Thread
 							
 							// send the login message back to the client
 							sendMessageToClient(loginMessage);
+							
+							// update the player's status in the database (online)
+					    	updatePlayerStatusInDatabase(this.getName(), "online");
 	
 							// load up the friends list in the VMKServerPlayerData class
 							VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
@@ -451,6 +457,9 @@ public class VMKServerThread extends Thread
 	    	
 	    	System.out.println("VMKServerThread - Shutting down client socket...");
 	    	
+	    	// update the player's status in the database (offline)
+	    	updatePlayerStatusInDatabase(this.getName(), "offline");
+	    	
 	    	// close down the socket if it's still connected
 	    	if(socket.isConnected())
 	    	{
@@ -543,6 +552,36 @@ public class VMKServerThread extends Thread
 	    			serverThreads.get(i).sendMessageToClient(m);
 	    		}
     		}
+    	}
+    }
+    
+    // update a player's status in the server-side database
+    private void updatePlayerStatusInDatabase(String player, String status)
+    {
+    	String command = "";
+    	
+    	// figure out the command to issue
+    	if(status.toLowerCase().equals("offline"))
+    	{
+    		command = "playerOffline";
+    	}
+    	else if(status.toLowerCase().equals("online"))
+    	{
+    		command = "playerOnline";
+    	}
+    	
+    	// issue the command
+    	try
+    	{
+    		Scanner s = new Scanner(new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=" + command + "&player=" + player).openStream());
+    		while(s.hasNextLine())
+    		{
+    			System.out.println(s.nextLine());
+    		}
+    	}
+    	catch(Exception e)
+    	{
+    		System.out.println("Could not update player status in database: " + e.getClass().getSimpleName() + " - " + e.getMessage());
     	}
     }
 }
