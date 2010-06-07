@@ -60,6 +60,29 @@ public class WindowAvatarInformation extends JPanel
 	private Rectangle ignoreRectangle = new Rectangle(19, 245, 67, 14);
 	private Rectangle bootRectangle = new Rectangle(97, 246, 65, 13);
 	
+	private ImageIcon askFriendImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ask_active.png");
+	private ImageIcon askFriendImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ask_inactive.png");
+	private ImageIcon tradeImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_trade_active.png");
+	private ImageIcon tradeImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_trade_inactive.png");
+	private ImageIcon reportImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_report_active.png");
+	private ImageIcon reportImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_report_inactive.png");
+	private ImageIcon ignoreImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ignore_active.png");
+	private ImageIcon ignoreImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ignore_inactive.png");
+	private ImageIcon bootImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_boot_active.png");
+	private ImageIcon bootImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_boot_inactive.png");
+	
+	private JLabel askFriendLabel = new JLabel(askFriendImageActive);
+	private JLabel tradeLabel = new JLabel(tradeImageActive);
+	private JLabel reportLabel = new JLabel(reportImageActive);
+	private JLabel ignoreLabel = new JLabel(ignoreImageActive);
+	private JLabel bootLabel = new JLabel(bootImageActive);
+	
+	private boolean canRequestFriends = true; // can ask to be a friend?
+	private boolean canTrade = true; // can trade this user?
+	private boolean canReport = true; // can report this user?
+	private boolean canIgnore = true; // can ignore this user?
+	private boolean canBoot = false; // can boot this user?
+	
 	public WindowAvatarInformation(Font textFont, Font textFontBold, int x, int y)
 	{
 		this.textFont = textFont;
@@ -87,11 +110,25 @@ public class WindowAvatarInformation extends JPanel
 		
 		if(inactive)
 		{
+			// hide all the button images
+			askFriendLabel.setVisible(false);
+			tradeLabel.setVisible(false);
+			reportLabel.setVisible(false);
+			ignoreLabel.setVisible(false);
+			bootLabel.setVisible(false);
+			
 			backgroundLabel.setIcon(windowImageInactive);
 			repaint();
 		}
 		else
 		{
+			// show all the button images
+			askFriendLabel.setVisible(true);
+			tradeLabel.setVisible(true);
+			reportLabel.setVisible(true);
+			ignoreLabel.setVisible(true);
+			bootLabel.setVisible(true);
+			
 			backgroundLabel.setIcon(windowImage);
 			repaint();
 		}
@@ -202,6 +239,21 @@ public class WindowAvatarInformation extends JPanel
 		pinDescriptionLabel.setVisible(false);
 		add(pinDescriptionLabel);
 		
+		askFriendLabel.setBounds(16, 196, 150, 21);
+		add(askFriendLabel);
+		
+		tradeLabel.setBounds(16, 219, 74, 20);
+		add(tradeLabel);
+		
+		reportLabel.setBounds(92, 219, 74, 20);
+		add(reportLabel);
+		
+		ignoreLabel.setBounds(15, 242, 75, 21);
+		add(ignoreLabel);
+		
+		bootLabel.setBounds(93, 243, 73, 20);
+		add(bootLabel);
+		
 		backgroundLabel.setBounds(0,0,width,height);
 		add(backgroundLabel);
 		
@@ -221,7 +273,7 @@ public class WindowAvatarInformation extends JPanel
 					// close the window
 					setVisible(false);
 				}
-				else if(!inactive && askFriendRectangle.contains(e.getPoint()))
+				else if(!inactive && askFriendRectangle.contains(e.getPoint()) && canRequestFriends)
 				{
 					// clicked inside "Add To Friends List" rectangle
 					
@@ -231,19 +283,19 @@ public class WindowAvatarInformation extends JPanel
 					// close the window
 					setVisible(false);
 				}
-				else if(!inactive && tradeRectangle.contains(e.getPoint()))
+				else if(!inactive && tradeRectangle.contains(e.getPoint()) && canTrade)
 				{
 					// clicked inside the "Trade" rectangle
 				}
-				else if(!inactive && reportRectangle.contains(e.getPoint()))
+				else if(!inactive && reportRectangle.contains(e.getPoint()) && canReport)
 				{
 					// clicked inside the "Report" rectangle
 				}
-				else if(!inactive && ignoreRectangle.contains(e.getPoint()))
+				else if(!inactive && ignoreRectangle.contains(e.getPoint()) && canIgnore)
 				{
 					// clicked inside the "Ignore" rectangle
 				}
-				else if(!inactive && bootRectangle.contains(e.getPoint()))
+				else if(!inactive && bootRectangle.contains(e.getPoint()) && canBoot)
 				{
 					// clicked inside the "Boot" rectangle
 				}
@@ -281,6 +333,14 @@ public class WindowAvatarInformation extends JPanel
 		this.username = username;
 		usernameLabel.setText(username);
 		//usernameLabel.setLocation(usernameX + (int)(0.75 * usernameLabel.getText().length()), usernameLabel.getY());
+		
+		// TODO: Grey-out the Ask to Be a Friend button if myCharacter is friends with that character
+		// TODO: Check the Friends List component on the Messages window to do that
+		if(gridObject.isFriendsWith(username) && !inactive)
+		{
+			canRequestFriends = false;
+			askFriendLabel.setIcon(askFriendImageInactive);
+		}
 	}
 	
 	public void setSignature(String signature)
@@ -330,6 +390,66 @@ public class WindowAvatarInformation extends JPanel
 			squares[i].setPinName("");
 			squares[i].setImage("");
 			squares[i].setIcon(null);
+		}
+	}
+	
+	// set how the player can interact with this user
+	public void setPermissions(boolean canRequestFriends, boolean canTrade, boolean canReport, boolean canIgnore, boolean canBoot)
+	{
+		this.canRequestFriends = canRequestFriends;
+		this.canTrade = canTrade;
+		this.canReport = canReport;
+		this.canIgnore = canIgnore;
+		this.canBoot = canBoot;
+		
+		// can request friends?
+		if(canRequestFriends)
+		{
+			askFriendLabel.setIcon(askFriendImageActive);
+		}
+		else
+		{
+			askFriendLabel.setIcon(askFriendImageInactive);
+		}
+		
+		// can trade?
+		if(canTrade)
+		{
+			tradeLabel.setIcon(tradeImageActive);
+		}
+		else
+		{
+			tradeLabel.setIcon(tradeImageInactive);
+		}
+		
+		// can report?
+		if(canReport)
+		{
+			reportLabel.setIcon(reportImageActive);
+		}
+		else
+		{
+			reportLabel.setIcon(reportImageInactive);
+		}
+		
+		// can ignore?
+		if(canIgnore)
+		{
+			ignoreLabel.setIcon(ignoreImageActive);
+		}
+		else
+		{
+			ignoreLabel.setIcon(ignoreImageInactive);
+		}
+		
+		// can boot?
+		if(canBoot)
+		{
+			bootLabel.setIcon(bootImageActive);
+		}
+		else
+		{
+			bootLabel.setIcon(bootImageInactive);
 		}
 	}
 	

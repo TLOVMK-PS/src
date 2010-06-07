@@ -344,6 +344,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     					avatarInfoWindow.setInactive(false);
 	     				}
 	     				
+	     				// set the permissions for the Avatar Info window
+	     				avatarInfoWindow.setPermissions(true, true, true, true, false);
+	     				
 	     				avatarInfoWindow.setUsername(c.getUsername());
 	     				avatarInfoWindow.setSignature(c.getSignature());
 	     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
@@ -1243,6 +1246,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void addFriendToList(String friend)
 	{
 		messagesWindow.addFriendToList(friend);
+	}
+	
+	// check if myCharacter is friends with another character
+	public boolean isFriendsWith(String username)
+	{
+		return messagesWindow.friendsListContains(username);
 	}
 	
 	// remove a friend from the Messages window

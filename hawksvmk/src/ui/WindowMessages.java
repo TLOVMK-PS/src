@@ -874,6 +874,12 @@ public class WindowMessages extends JPanel
 		}
 	}
 	
+	// check to see if the Friends List contains a certain username
+	public boolean friendsListContains(String username)
+	{
+		return friendsItems.contains(username);
+	}
+	
 	public void setGridObject(RoomViewerGrid gridObject)
 	{
 		this.gridObject = gridObject;
