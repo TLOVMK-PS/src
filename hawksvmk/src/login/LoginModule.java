@@ -9,10 +9,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 public class LoginModule
 {
 	private String username = "";
 	private String staffType = "";
+	private String errorMessage = "";
 	
 	public LoginModule() {}
 	
@@ -60,15 +63,51 @@ public class LoginModule
 		}
 		catch(Exception e)
 		{
+			errorMessage = "* Invalid username / password combination *";
 			System.out.println("Trouble logging in: " + e.getClass().getName() + "-" + e.getMessage());
 			return false;
 		}
 		
+		// check to see if this user has been banned
+		try
+		{
+			// check first to see if there's an actual username returned from the web service
+			if(!username.equals(""))
+			{
+				String bannedURL = "http://www.burbankparanormal.com/vmk/game/playerControl.php";
+				loginURL = new URL(bannedURL + "?command=getBannedUntil" + "&username=" + username);
+				System.out.println("Checking if " + username + " has been banned...");
+				loginStream = loginURL.openStream();
+				
+				// set up a scanner for the input stream
+				loginScanner = new Scanner(loginStream);
+				
+				// get all the data from the connection
+				String line;
+				if(loginScanner.hasNextLine())
+				{
+					line = loginScanner.nextLine();
+					
+					// there's output from the web service, so the user has been banned
+					//JOptionPane.showMessageDialog(null, "You have been banned until\n" + line, "You Have Been Banned", JOptionPane.ERROR_MESSAGE);
+					
+					// prevent a login since the user has been banned
+					errorMessage = "* You have been banned until " + line + " *";
+					return false;
+				}
+			}
+		}
+		catch(Exception e) {}
+		
 		if(username.equals(""))
 		{
 			// no authentication, so return false
+			errorMessage = "* Invalid username / password combination *";
 			return false;
 		}
+		
+		// correct login, so no error message is created
+		errorMessage = "";
 		
 		return true; // positive authentication, so return true
 	}
@@ -81,5 +120,9 @@ public class LoginModule
 	// return the staff type
 	public String getStaffType() {
 		return staffType;
+	}
+	
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 }

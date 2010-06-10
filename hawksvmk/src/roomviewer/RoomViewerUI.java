@@ -300,6 +300,7 @@ public class RoomViewerUI extends Applet
 				else
 				{
 					// incorrect credentials
+					errorLabel.setText(loginModule.getErrorMessage());
 					errorLabel.setVisible(true);
 					
 					loginButton.setEnabled(true);
