@@ -38,7 +38,7 @@ import tiles.Tile;
 public class FileOperations
 {
 	private static String commentDelimeter = "//"; // pattern to search for comment lines in files
-	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.";
+	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.<br><br>You've been given 1000 Credits, a Dancing Inferno Magic Pin, a Here From Day One Badge, and an HVMK Virtual Pin.";
 	
 	// save a file given a filename and a map of tiles
 	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, String tileSize)
@@ -609,6 +609,8 @@ public class FileOperations
 		
 		long credits = 1000; // default amount of credits to give a new player
 		
+		int defaultBadges = 1; // how many badges to put on the new user
+		
 		try
 		{
 			// character file
@@ -618,10 +620,17 @@ public class FileOperations
 			fileWriter.println("CREDITS: " + credits);
 			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
 			fileWriter.println("RATING: G"); // assign a default content rating of General
+			
+			if(username.startsWith("QA_") || username.startsWith("HOST_") || username.startsWith("VMK_"))
+			{
+				defaultBadges++; // staff get one extra badge when they create their account
+				fileWriter.println("BADGE: badge_0"); // HVMK Staff badge
+			}
+			
 			fileWriter.println("BADGE: badge_2"); // give the user a "Here From Day One" badge
 			
 			// print out empty badge entries
-			for(int i = 0; i < StaticAppletData.MAX_DISPLAYABLE_BADGES - 1; i++)
+			for(int i = 0; i < StaticAppletData.MAX_DISPLAYABLE_BADGES - defaultBadges; i++)
 			{
 				fileWriter.println("BADGE: ");
 			}
@@ -631,6 +640,19 @@ public class FileOperations
 			{
 				fileWriter.println("PIN: ");
 			}
+			fileWriter.close();
+			
+			// inventory file
+			filename = "data/inventory/" + email + ".dat";
+			fileWriter = new PrintWriter(filename);
+			fileWriter.println("// Furniture");
+			fileWriter.println();
+			fileWriter.println("// Pins");
+			fileWriter.println();
+			fileWriter.println("PIN: misc_pin_0"); // give the user an HVMK Virtual Pin
+			fileWriter.println("PIN: magic_pin_0"); // give the user a Dancing Inferno Magic Pin
+			fileWriter.println();
+			fileWriter.println("// Posters");
 			fileWriter.close();
 			
 			// friends file

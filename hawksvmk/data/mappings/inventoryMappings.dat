@@ -33,7 +33,7 @@ RATING: G
 // Badges
 
 ID: badge_0
-NAME: VMK Staff
+NAME: HVMK Staff
 PATH: img/badges/staff_badge.png
 CARD: 
 RATING: G
@@ -111,6 +111,15 @@ NAME: Johnnie Walker Black
 PATH: img/pins/pin_whiskey_johnnie_walker_black.png
 CARD: img/pins/cards/card_whiskey_johnnie_walker_black.png
 RATING: M
+@END@
+
+// Miscellaneous pins
+
+ID: misc_pin_0
+NAME: Hawk's VMK
+PATH: img/pins/pin_hvmk.png
+CARD: img/pins/cards/card_hvmk.png
+RATING: G
 @END@
 
 // ===================

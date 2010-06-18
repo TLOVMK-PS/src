@@ -269,10 +269,10 @@ public class WindowInventory extends JPanel
 		{
 			// get the inventory item
 			InventoryItem invItem = inventoryItems.get(i);
-			
+
 			// check and make sure this content is allowable first
-			if(RatingSystem.isContentAllowed(StaticAppletData.getInvInfo(invItem.getId()).getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
-			{
+			//if(RatingSystem.isContentAllowed(StaticAppletData.getInvInfo(invItem.getId()).getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
+			//{
 				if(invItem.getType() == InventoryItem.FURNITURE)
 				{
 					col = furnitureCount % ITEMS_PER_ROW; // figure out the column
@@ -340,7 +340,7 @@ public class WindowInventory extends JPanel
 					// increase the poster count
 					posterCount++;
 				}
-			}
+			//}
 		}
 		
 		// set the size of the pins panel
