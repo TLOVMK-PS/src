@@ -60,6 +60,7 @@ import ui.WindowRoomDescription;
 import ui.WindowSettings;
 import ui.WindowShop;
 import util.AppletResourceLoader;
+import util.Dictionary;
 import util.FileOperations;
 import util.FriendsList;
 import util.InventoryItem;
@@ -748,6 +749,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		int textX = x;
 		AStarCharacter character = characters.get(username); // get the specific character
+		
+		// check to see if this chat contains any inappropriate text
+		text = Dictionary.cleanInappropriateText(myCharacter, text);
 		
 		if(character != null)
 		{

@@ -52,6 +52,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import ui.WindowLoading;
 import ui.WindowMap;
 import ui.WindowRoomDescription;
+import util.Dictionary;
 import util.FileOperations;
 import util.AppletResourceLoader;
 import util.FriendsList;
@@ -345,6 +346,9 @@ public class RoomViewerUI extends Applet
      
      // create the room mappings
      StaticAppletData.createRoomMappings();
+     
+     // create the dictionaries
+     Dictionary.createDictionaries();
      
      // set up the fonts
 	 setupFonts();

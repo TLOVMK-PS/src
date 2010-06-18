@@ -1612,4 +1612,52 @@ public class FileOperations
 		destinationArray = new String[destinations.size()];
 		return destinations.toArray(destinationArray);
 	}
+	
+	// load a dictionary given a content rating (G, PG, PG13)
+	public static ArrayList<String> loadDictionary(String contentRating)
+	{
+		String filename = "data/mappings/" + contentRating.toLowerCase().replace("-", "") + "Dictionary.dat";
+		ArrayList<String> dictionary = new ArrayList<String>();
+		
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else
+					{
+						dictionary.add(line);
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default dictionary
+				return dictionary;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadDictionary(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new dictionary from the file data
+		return dictionary;
+	}
 }
