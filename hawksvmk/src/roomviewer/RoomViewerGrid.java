@@ -63,6 +63,7 @@ import util.AppletResourceLoader;
 import util.Dictionary;
 import util.FileOperations;
 import util.FriendsList;
+import util.InventoryInfo;
 import util.InventoryItem;
 import util.MailMessage;
 import util.RatingSystem;
@@ -351,7 +352,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     				avatarInfoWindow.setUsername(c.getUsername());
 	     				avatarInfoWindow.setSignature(c.getSignature());
 	     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
-	     				avatarInfoWindow.setPins(c.getDisplayedPins());
+	     				
+	     				if(c.getUsername().equals(uiObject.getUsername()))
+	     				{
+	     					avatarInfoWindow.setPins(myCharacter.getDisplayedPins());
+	     				}
+	     				else
+	     				{
+	     					avatarInfoWindow.setPins(c.getDisplayedPins());
+	     				}
 	     				avatarInfoWindow.setVisible(true);
 	     				
 	     				System.out.println("Clicked bounding box for character: " + c.getUsername());
@@ -1100,6 +1109,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			if(character.getEmail().equals(uiObject.getEmail()))
 			{
 				System.out.println("Character (" + uiObject.getUsername() + ") already exists in room");
+				
 				myCharacter = character;
 				myCharacter.setUsername(uiObject.getUsername());
 				settingsWindow.setSelectedRating(myCharacter.getContentRatingAsString());
@@ -1596,6 +1606,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setMyCredits(long credits)
 	{
 		myCharacter.setCredits(credits);
+	}
+	
+	public void setInventoryPinsWorn(InventoryInfo wornPins[])
+	{
+		inventoryWindow.setPinsWorn(wornPins);
 	}
 }
 

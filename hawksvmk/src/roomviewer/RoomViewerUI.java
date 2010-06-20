@@ -703,6 +703,13 @@ public class RoomViewerUI extends Applet
 	// add a character to the grid
 	public void addCharacterToRoom(AStarCharacter character)
 	{
+		// make sure the current character hasn't been created on the grid yet
+		if(character.getUsername().equals(getUsername()) && !theGridView.getMyCharacter().getEmail().equals(getEmail()))
+		{
+			// it's the current player's character, so set their displayed pins
+			theGridView.setInventoryPinsWorn(character.getDisplayedPins());
+		}
+		
 		theGridView.addCharacterToRoom(character);
 	}
 	

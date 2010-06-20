@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.InventoryInfo;
 import util.InventoryItem;
 import util.RatingSystem;
 import util.StaticAppletData;
@@ -62,12 +64,21 @@ public class WindowInventory extends JPanel
 	private JLabel inventoryCardDisplayLabel = new JLabel(inventoryCardImage);
 	private JScrollPane inventoryPinsScrollPane;
 	
+	private JPanel pinsWornPanel = new JPanel();
+	private JLabel pinsWornHighlightLabel = new JLabel(inventorySquareHighlight);
+	private InventoryInfo pinsWorn[];
+	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
 	private final int ITEMS_PER_ROW = 6;
 	private final int INVENTORY_SQUARE_SPACING = 2;
 	private final int PIN_INV_OFFSET_LEFT = 24;
 	private final int PIN_INV_OFFSET_TOP = 98;
+	
+	private final int MAX_WORN_PINS = 8;
+	private int originalPinRows[] = new int[MAX_WORN_PINS];
+	private int originalPinCols[] = new int[MAX_WORN_PINS];
+	private int originalPinIndices[] = new int[MAX_WORN_PINS];
 	
 	private JLabel creditsLabel = new JLabel("");
 	private ImageIcon creditsWindowImage = AppletResourceLoader.getImageFromJar("img/ui/credits.png");
@@ -79,6 +90,9 @@ public class WindowInventory extends JPanel
 	private Rectangle tabPinsRectangle = new Rectangle(173, 46, 38, 22);
 	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
+	
+	private int clicksInInventoryPinsPanel = 0;
+	private int clicksInPinsWornPanel = 0;
 	
 	public WindowInventory(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -137,6 +151,12 @@ public class WindowInventory extends JPanel
 		inventoryPinsScrollPane.setBorder(null);
 		inventoryPinsScrollPane.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH + 18, 175);
 		add(inventoryPinsScrollPane);
+		
+		// panel that holds the Pins Worn section
+		pinsWornPanel.setLayout(null);
+		pinsWornPanel.setBackground(new Color(0, 28, 86));
+		pinsWornPanel.setBounds(42, 304, 365, 48);
+		add(pinsWornPanel);
 		
 		// ==========================================
 		// CREDIT TAB
@@ -222,6 +242,7 @@ public class WindowInventory extends JPanel
 			inventoryCardDisplayLabel.setVisible(true);
 			inventoryPinsPanel.setVisible(true);
 			inventoryPinsScrollPane.setVisible(true);
+			pinsWornPanel.setVisible(true);
 			backgroundLabel.setIcon(windowImage);
 		}
 		else if(tab.equals("credits"))
@@ -288,41 +309,8 @@ public class WindowInventory extends JPanel
 					col = pinCount % ITEMS_PER_ROW; // figure out the column
 					row = (int)(pinCount / ITEMS_PER_ROW); // figure out the row
 					
-					// add a pin
-					InventoryPinSquare invPin = new InventoryPinSquare(row, col, invItem.getId());
-					invPin.setIcon(invPin.getImage());
-					invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
-					invPin.setHorizontalAlignment(JLabel.CENTER);
-					invPin.addMouseListener(new MouseListener()
-					{
-						public void mouseExited(MouseEvent e) {}
-						public void mouseReleased(MouseEvent e)
-						{
-						}
-						public void mouseEntered(MouseEvent e) {}
-						public void mousePressed(MouseEvent e) {}
-						public void mouseClicked(MouseEvent e)
-						{
-							// move the inventory highlight square here
-							inventorySquareHighlightLabel.setVisible(true);
-							inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
-							
-							InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
-							
-							// update the inventory name bar
-							inventoryNameLabel.setText(invSquare.getPinName());
-							
-							// update the card display label
-							inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
-						}
-					});
-					inventoryPinsPanel.add(invPin);
-		
-					// add the pin backing
-					JLabel invSquare = new JLabel(inventorySquare);
-					invSquare.setHorizontalAlignment(JLabel.CENTER);
-					invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
-					inventoryPinsPanel.add(invSquare);
+					// add the pin and its backing to the panel
+					addPinToInventoryPanel(row, col, invItem.getId());
 					
 					// figure out the pin panel height
 					pinPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
@@ -347,6 +335,260 @@ public class WindowInventory extends JPanel
 		inventoryPinsPanel.setPreferredSize(new Dimension(INVENTORY_PANEL_WIDTH, pinPanelHeight));
 		inventoryPinsPanel.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH, pinPanelHeight);
 		repaint();
+	}
+	
+	// add a pin to the Inventory pins section
+	private void addPinToInventoryPanel(int row, int col, String id)
+	{	
+		// add a pin
+		final InventoryPinSquare invPin = new InventoryPinSquare(row, col, id);
+		invPin.setName(id);
+		invPin.setIcon(invPin.getImage());
+		invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		invPin.setHorizontalAlignment(JLabel.CENTER);
+		invPin.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e)
+			{
+				clicksInInventoryPinsPanel = 0;
+			}
+			public void mouseReleased(MouseEvent e)
+			{
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
+			{
+				// move the inventory highlight square here
+				pinsWornHighlightLabel.setVisible(false);
+				inventorySquareHighlightLabel.setVisible(true);
+				inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
+				
+				InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
+				
+				// update the inventory name bar
+				inventoryNameLabel.setText(invSquare.getPinName());
+				
+				// update the card display label
+				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
+				
+				// check for two clicks on this panel
+				if(clicksInInventoryPinsPanel == 1)
+				{
+					// clicked twice, so move this pin to the Pins Worn section
+					movePinInventoryToWorn(invPin);
+					clicksInInventoryPinsPanel = 0;
+				}
+				else
+				{
+					clicksInInventoryPinsPanel++;
+				}
+			}
+		});
+		inventoryPinsPanel.add(invPin);
+		
+		// add the pin backing
+		JLabel invSquare = new JLabel(inventorySquare);
+		invSquare.setHorizontalAlignment(JLabel.CENTER);
+		invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		inventoryPinsPanel.add(invSquare);
+	}
+	
+	// add a pin to the Pins Worn section of the Inventory window
+	private void addPinToWornPinsPanel(int row, int col, int wornPinNum, String id)
+	{
+		final InventoryPinSquare wornPin = new InventoryPinSquare(row, col, id);
+		wornPin.setIcon(wornPin.getImage());
+		wornPin.setBounds((INVENTORY_SQUARE_SPACING * wornPinNum) + (42 * wornPinNum), 0, 42, 42);
+		wornPin.setHorizontalAlignment(JLabel.CENTER);
+		wornPin.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e)
+			{
+				clicksInPinsWornPanel = 0;
+			}
+			public void mouseReleased(MouseEvent e)
+			{
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
+			{
+				// move the inventory highlight square here
+				pinsWornHighlightLabel.setVisible(true);
+				inventorySquareHighlightLabel.setVisible(false);
+				pinsWornHighlightLabel.setLocation(e.getComponent().getLocation());
+				
+				InventoryPinSquare wornSquare = (InventoryPinSquare)e.getComponent();
+				
+				// update the inventory name bar
+				inventoryNameLabel.setText(wornSquare.getPinName());
+				
+				// update the card display label
+				inventoryCardDisplayLabel.setIcon(wornSquare.getCardImage());
+				
+				if(clicksInPinsWornPanel == 1)
+				{
+					moveWornToPinInventory(wornPin);
+					clicksInPinsWornPanel = 0;
+				}
+				else
+				{
+					clicksInPinsWornPanel++;
+				}
+			}
+		});
+		pinsWornPanel.add(wornPin);
+	}
+	
+	// set the Pins Worn pins
+	public void setPinsWorn(InventoryInfo pinsWorn[])
+	{
+		this.pinsWorn = pinsWorn;
+		
+		InventoryInfo tempPins[] = Arrays.copyOf(pinsWorn, pinsWorn.length);
+		int nullPins = 0;
+		
+		// check all the components in the Inventory Pins panel and pop out those that are worn
+		for(int k = 0; k < inventoryPinsPanel.getComponentCount(); k++)
+		{
+			Component c = inventoryPinsPanel.getComponent(k);
+			for(int i = 0; i < tempPins.length; i++)
+			{
+				if(tempPins[i] != null && c.getName() != null)
+				{
+					if(c.getName().equals(tempPins[i].getID()))
+					{
+						InventoryPinSquare ips = (InventoryPinSquare)c;
+						
+						originalPinRows[i] = ips.getRow();
+						originalPinCols[i] = ips.getCol();
+						originalPinIndices[i] = k;
+						
+						inventoryPinsPanel.remove(c);
+						tempPins[i] = null;
+						nullPins++;
+					}
+				}
+			}
+			
+			if(nullPins == tempPins.length - 1)
+			{
+				// no more worn pins to check since we found them all, so leave the loop
+				break;
+			}
+		}
+		
+		displayPinsWorn();
+	}
+	
+	// create the pins in the Pins Worn section (called after player is added to room)
+	private void displayPinsWorn()
+	{	
+		// remove all the components in the Pins Worn panel
+		pinsWornPanel.removeAll();
+		
+		pinsWornHighlightLabel.setBounds(0,0,42,42);
+		pinsWornHighlightLabel.setVisible(false);
+		pinsWornPanel.add(pinsWornHighlightLabel);
+		
+		for(int i = 0; i < pinsWorn.length; i++)
+		{
+			// make sure an actual pin exists in this slot
+			if(pinsWorn[i] != null)
+			{
+				addPinToWornPinsPanel(originalPinRows[i], originalPinCols[i], i, pinsWorn[i].getID());
+			}
+		}
+		
+		// add the pin backings for the Pins Worn section
+		for(int i = 0; i < MAX_WORN_PINS; i++)
+		{
+			JLabel invSquare = new JLabel(inventorySquare);
+			invSquare.setHorizontalAlignment(JLabel.CENTER);
+			invSquare.setBounds((INVENTORY_SQUARE_SPACING * i) + (42 * i), 0, 42, 42);
+			pinsWornPanel.add(invSquare);
+		}
+		
+		// set the current player's displayed pins
+		gridObject.getMyCharacter().setDisplayedPins(pinsWorn);
+		gridObject.sendUpdateCharacterMessage(gridObject.getMyCharacter());
+	}
+	
+	// move a pin from the Inventory section to the Pins Worn section
+	private void movePinInventoryToWorn(InventoryPinSquare pinSquare)
+	{
+		boolean foundOpenSlot = false;
+		
+		// find an empty slot for the pin
+		for(int i = 0; i < pinsWorn.length; i++)
+		{
+			if(pinsWorn[i] == null || pinsWorn[i].getID().equals(""))
+			{
+				foundOpenSlot = true;
+				pinsWorn[i] = StaticAppletData.getInvInfo(pinSquare.getPinID());
+				
+				originalPinRows[i] = pinSquare.getRow();
+				originalPinCols[i] = pinSquare.getCol();
+				
+				// break out of the loop
+				break;
+			}
+		}
+		
+		if(foundOpenSlot == true)
+		{
+			// remove it from the Inventory section
+			inventoryPinsPanel.remove(pinSquare);
+			
+			// update the inventory name bar
+			inventoryNameLabel.setText("");
+			
+			// update the card display label
+			inventoryCardDisplayLabel.setIcon(null);
+			
+			inventorySquareHighlightLabel.setVisible(false);
+			
+			// an open slot was found, so re-create the worn pins
+			displayPinsWorn();
+		}
+	}
+	
+	// move a pin from the Pins Worn section to the Inventory section
+	private void moveWornToPinInventory(InventoryPinSquare pinSquare)
+	{
+		int x = (INVENTORY_SQUARE_SPACING * pinSquare.getCol()) + (42 * pinSquare.getCol());
+		int y = (INVENTORY_SQUARE_SPACING * pinSquare.getRow()) + (42 * pinSquare.getRow());
+		
+		// get the pin backing component at the desired location
+		Component c = inventoryPinsPanel.getComponentAt(x,y);
+		
+		// remove the pin backing
+		inventoryPinsPanel.remove(c);
+		
+		// make sure it's actually gone and that there isn't something else behind it
+		if(inventoryPinsPanel.getComponentAt(x,y) != null)
+		{
+			inventoryPinsPanel.remove(inventoryPinsPanel.getComponentAt(x,y));
+		}
+		
+		// re-add the once-worn pin to the Inventory panel
+		addPinToInventoryPanel(pinSquare.getRow(), pinSquare.getCol(), pinSquare.getPinID());
+		
+		// figure out the worn pin's index so we can remove it
+		int index = pinSquare.getBounds().x / 42;
+		pinsWorn[index] = new InventoryInfo("","","","",0,0);
+		pinsWornPanel.remove(index);
+		
+		// update the inventory name bar
+		inventoryNameLabel.setText("");
+		
+		// update the card display label
+		inventoryCardDisplayLabel.setIcon(null);
+		
+		pinsWornHighlightLabel.setVisible(false);
+		
+		displayPinsWorn();
 	}
 	
 	// toggle the visibility of this window
@@ -398,6 +640,7 @@ class InventoryPinSquare extends JLabel
 	private String pinName = "";
 	private ImageIcon image = null;
 	private ImageIcon cardImage = null;
+	private String pinID = "";
 	
 	public InventoryPinSquare()
 	{
@@ -410,6 +653,7 @@ class InventoryPinSquare extends JLabel
 		
 		this.row = row;
 		this.col = col;
+		this.pinID = pinID;
 		
 		// get the pin information
 		if(!StaticAppletData.getInvInfo(pinID).getID().equals(""))
@@ -446,6 +690,10 @@ class InventoryPinSquare extends JLabel
 	
 	public ImageIcon getCardImage() {
 		return cardImage;
+	}
+	
+	public String getPinID() {
+		return pinID;
 	}
 	
 	public int getRow() {
