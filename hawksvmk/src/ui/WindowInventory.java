@@ -51,6 +51,10 @@ public class WindowInventory extends JPanel
 	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar("img/ui/inventory_square.png");
 	private ImageIcon inventorySquareHighlight = AppletResourceLoader.getImageFromJar("img/ui/inventory_square_highlight.png");
 	private ImageIcon inventoryCardImage = AppletResourceLoader.getImageFromJar("img/furniture/card_template.png");
+	private ImageIcon wearImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_wear_off.png");
+	private ImageIcon wearImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_wear_on.png");
+	private ImageIcon takeOffImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_off.png");
+	private ImageIcon takeOffImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_on.png");
 	
 	// structure to hold a player's inventory items
 	private ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
@@ -67,6 +71,11 @@ public class WindowInventory extends JPanel
 	private JPanel pinsWornPanel = new JPanel();
 	private JLabel pinsWornHighlightLabel = new JLabel(inventorySquareHighlight);
 	private InventoryInfo pinsWorn[];
+	
+	private JLabel wearPinButton = new JLabel(wearImageOff);
+	private JLabel takeOffButton = new JLabel(takeOffImageOff);
+	
+	private InventoryPinSquare selectedPin = null;
 	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
@@ -151,6 +160,14 @@ public class WindowInventory extends JPanel
 		inventoryPinsScrollPane.setBorder(null);
 		inventoryPinsScrollPane.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH + 18, 175);
 		add(inventoryPinsScrollPane);
+		
+		// button that says "Wear"
+		wearPinButton.setBounds(362, 233, 51, 19);
+		add(wearPinButton);
+		
+		// button that says "Take Off"
+		takeOffButton.setBounds(288, 352, 105, 19);
+		add(takeOffButton);
 		
 		// panel that holds the Pins Worn section
 		pinsWornPanel.setLayout(null);
@@ -242,6 +259,8 @@ public class WindowInventory extends JPanel
 			inventoryCardDisplayLabel.setVisible(true);
 			inventoryPinsPanel.setVisible(true);
 			inventoryPinsScrollPane.setVisible(true);
+			wearPinButton.setVisible(true);
+			takeOffButton.setVisible(true);
 			pinsWornPanel.setVisible(true);
 			backgroundLabel.setIcon(windowImage);
 		}
@@ -372,6 +391,11 @@ public class WindowInventory extends JPanel
 				// update the card display label
 				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
 				
+				// highlight the "Wear" button
+				wearPinButton.setIcon(wearImageOn);
+				takeOffButton.setIcon(takeOffImageOff);
+				selectedPin = invSquare;
+				
 				// check for double-click on this panel
 				if(firstClick > 0)
 				{
@@ -429,6 +453,11 @@ public class WindowInventory extends JPanel
 				
 				// update the card display label
 				inventoryCardDisplayLabel.setIcon(wornSquare.getCardImage());
+				
+				// highlight the "Take Off" button
+				wearPinButton.setIcon(wearImageOff);
+				takeOffButton.setIcon(takeOffImageOn);
+				selectedPin = wornSquare;
 				
 				// check for double-click on this panel
 				if(firstClick > 0)
