@@ -91,8 +91,8 @@ public class WindowInventory extends JPanel
 	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
 	
-	private int clicksInInventoryPinsPanel = 0;
-	private int clicksInPinsWornPanel = 0;
+	private long firstClick = 0; // first click in milliseconds
+	private final long DOUBLE_CLICK_TIME = 500; // time in milliseconds for a double-click
 	
 	public WindowInventory(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -350,7 +350,7 @@ public class WindowInventory extends JPanel
 		{
 			public void mouseExited(MouseEvent e)
 			{
-				clicksInInventoryPinsPanel = 0;
+				firstClick = 0;
 			}
 			public void mouseReleased(MouseEvent e)
 			{
@@ -372,16 +372,19 @@ public class WindowInventory extends JPanel
 				// update the card display label
 				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
 				
-				// check for two clicks on this panel
-				if(clicksInInventoryPinsPanel == 1)
+				// check for double-click on this panel
+				if(firstClick > 0)
 				{
-					// clicked twice, so move this pin to the Pins Worn section
-					movePinInventoryToWorn(invPin);
-					clicksInInventoryPinsPanel = 0;
+					// double-click, so move this pin to the Pins Worn section
+					if((System.currentTimeMillis() - firstClick) <= DOUBLE_CLICK_TIME)
+					{
+						movePinInventoryToWorn(invPin);
+					}
+					firstClick = 0;
 				}
 				else
 				{
-					clicksInInventoryPinsPanel++;
+					firstClick = System.currentTimeMillis();
 				}
 			}
 		});
@@ -405,7 +408,7 @@ public class WindowInventory extends JPanel
 		{
 			public void mouseExited(MouseEvent e)
 			{
-				clicksInPinsWornPanel = 0;
+				firstClick = 0;
 			}
 			public void mouseReleased(MouseEvent e)
 			{
@@ -427,14 +430,19 @@ public class WindowInventory extends JPanel
 				// update the card display label
 				inventoryCardDisplayLabel.setIcon(wornSquare.getCardImage());
 				
-				if(clicksInPinsWornPanel == 1)
+				// check for double-click on this panel
+				if(firstClick > 0)
 				{
-					moveWornToPinInventory(wornPin);
-					clicksInPinsWornPanel = 0;
+					// double-click, so move this pin to the Pins Worn section
+					if((System.currentTimeMillis() - firstClick) <= DOUBLE_CLICK_TIME)
+					{
+						moveWornToPinInventory(wornPin);
+					}
+					firstClick = 0;
 				}
 				else
 				{
-					clicksInPinsWornPanel++;
+					firstClick = System.currentTimeMillis();
 				}
 			}
 		});
