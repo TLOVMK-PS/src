@@ -55,6 +55,8 @@ public class WindowInventory extends JPanel
 	private ImageIcon wearImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_wear_on.png");
 	private ImageIcon takeOffImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_off.png");
 	private ImageIcon takeOffImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_on.png");
+	private ImageIcon sellImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_off.png");
+	private ImageIcon sellImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_on.png");
 	
 	// structure to hold a player's inventory items
 	private ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
@@ -74,6 +76,7 @@ public class WindowInventory extends JPanel
 	
 	private JLabel wearPinButton = new JLabel(wearImageOff);
 	private JLabel takeOffButton = new JLabel(takeOffImageOff);
+	private JLabel sellButton = new JLabel(sellImageOff);
 	
 	private InventoryPinSquare selectedPin = null;
 	
@@ -99,6 +102,10 @@ public class WindowInventory extends JPanel
 	private Rectangle tabPinsRectangle = new Rectangle(173, 46, 38, 22);
 	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
+	
+	private Rectangle wearPinRectangle = new Rectangle(362, 233, 51, 19);
+	private Rectangle takeOffRectangle = new Rectangle(288, 352, 105, 19);
+	private Rectangle sellRectangle = new Rectangle(309, 232, 51, 20);
 	
 	private long firstClick = 0; // first click in milliseconds
 	private final long DOUBLE_CLICK_TIME = 500; // time in milliseconds for a double-click
@@ -169,6 +176,10 @@ public class WindowInventory extends JPanel
 		takeOffButton.setBounds(288, 352, 105, 19);
 		add(takeOffButton);
 		
+		// button that says "Sell"
+		sellButton.setBounds(sellRectangle);
+		add(sellButton);
+		
 		// panel that holds the Pins Worn section
 		pinsWornPanel.setLayout(null);
 		pinsWornPanel.setBackground(new Color(0, 28, 86));
@@ -215,6 +226,22 @@ public class WindowInventory extends JPanel
 				{
 					// close the window
 					setVisible(false);
+				}
+				else if(wearPinRectangle.contains(e.getPoint()) && wearPinButton.getIcon().equals(wearImageOn))
+				{
+					// wear the currently selected pin
+					movePinInventoryToWorn(selectedPin);
+					wearPinButton.setIcon(wearImageOff);
+				}
+				else if(takeOffRectangle.contains(e.getPoint()) && takeOffButton.getIcon().equals(takeOffImageOn))
+				{
+					// take off the currently selected pin
+					moveWornToPinInventory(selectedPin);
+					takeOffButton.setIcon(takeOffImageOff);
+				}
+				else if(sellRectangle.contains(e.getPoint()) && sellButton.getIcon().equals(sellImageOn))
+				{
+					// TODO: Sell the pin
 				}
 			}
 			public void mouseEntered(MouseEvent e) {}
