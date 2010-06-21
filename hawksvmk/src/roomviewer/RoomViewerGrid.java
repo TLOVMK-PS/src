@@ -350,7 +350,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     				avatarInfoWindow.setPermissions(true, true, true, true, false);
 	     				
 	     				avatarInfoWindow.setUsername(c.getUsername());
-	     				avatarInfoWindow.setSignature(c.getSignature());
+	     				
+	     				// make sure the avatar's signature is cleaned so it doesn't contain inappropriate text
+	     				avatarInfoWindow.setSignature(Dictionary.cleanInappropriateText(myCharacter, c.getSignature()));
+	     				
 	     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
 	     				
 	     				if(c.getUsername().equals(uiObject.getUsername()))

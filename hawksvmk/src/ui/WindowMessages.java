@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.Dictionary;
 import util.FriendsList;
 import util.MailMessage;
 
@@ -732,8 +733,13 @@ public class WindowMessages extends JPanel
 	}
 	
 	// add a mail message to the ArrayList
-	public void addMailMessage(MailMessage message)
+	public void addMailMessage(MailMessage theMessage)
 	{
+		MailMessage message = theMessage;
+		
+		// clean the message and remove inappropriate text based on the player's content level
+		message.setMessage(Dictionary.cleanInappropriateText(gridObject.getMyCharacter(), message.getMessage()));
+		
 		messages.add(message);
 		
 		// show the most recent message in the window
