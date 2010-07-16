@@ -30,6 +30,9 @@ PATH: rooms/ms11.room
 ID: nos1
 PATH: rooms/nos1.room
 
+ID: hm2
+PATH: rooms/hm2.room
+
 // ====================
 // GUEST ROOM TEMPLATES
 // ====================

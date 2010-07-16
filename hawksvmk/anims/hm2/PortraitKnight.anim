@@ -1,0 +1,27 @@
+TYPE: stationary
+ANIMATION NAME: portrait_knight
+TOTAL FRAMES: 22
+X-COORD: 603
+Y-COORD: 30
+@img/rooms/hm2/portrait4_0.jpg,100@
+@img/rooms/hm2/portrait4_1.jpg,100@
+@img/rooms/hm2/portrait4_2.jpg,100@
+@img/rooms/hm2/portrait4_3.jpg,100@
+@img/rooms/hm2/portrait4_4.jpg,100@
+@img/rooms/hm2/portrait4_5.jpg,100@
+@img/rooms/hm2/portrait4_6.jpg,100@
+@img/rooms/hm2/portrait4_7.jpg,100@
+@img/rooms/hm2/portrait4_8.jpg,100@
+@img/rooms/hm2/portrait4_9.jpg,100@
+@img/rooms/hm2/portrait4_10.jpg,100@
+@img/rooms/hm2/portrait4_10.jpg,3000@
+@img/rooms/hm2/portrait4_9.jpg,100@
+@img/rooms/hm2/portrait4_8.jpg,100@
+@img/rooms/hm2/portrait4_7.jpg,100@
+@img/rooms/hm2/portrait4_6.jpg,100@
+@img/rooms/hm2/portrait4_5.jpg,100@
+@img/rooms/hm2/portrait4_4.jpg,100@
+@img/rooms/hm2/portrait4_3.jpg,100@
+@img/rooms/hm2/portrait4_2.jpg,100@
+@img/rooms/hm2/portrait4_1.jpg,100@
+@img/rooms/hm2/portrait4_0.jpg,3000@

@@ -122,6 +122,153 @@ CARD: img/pins/cards/card_hvmk.png
 RATING: G
 @END@
 
+ID: misc_pin_1
+NAME: Aladdin
+PATH: img/pins/pin_aladdin.png
+CARD: img/pins/cards/card_aladdin.png
+RATING: G
+@END@
+
+ID: misc_pin_2
+NAME: Alice in Wonderland
+PATH: img/pins/pin_alice.png
+CARD: img/pins/cards/card_alice.png
+RATING: G
+@END@
+
+ID: misc_pin_3
+NAME: Autopia
+PATH: img/pins/pin_autopia.png
+CARD: img/pins/cards/card_autopia.png
+RATING: G
+@END@
+
+ID: misc_pin_4
+NAME: Cinderella
+PATH: img/pins/pin_cinderella.png
+CARD: img/pins/cards/card_cinderella.png
+RATING: G
+@END@
+
+ID: misc_pin_5
+NAME: Dumbo
+PATH: img/pins/pin_dumbo.png
+CARD: img/pins/cards/card_dumbo.png
+RATING: G
+@END@
+
+ID: misc_pin_6
+NAME: Disney's Animal Kingdom
+PATH: img/pins/pin_animal_kingdom.png
+CARD: img/pins/cards/card_animal_kingdom.png
+RATING: G
+@END@
+
+ID: misc_pin_7
+NAME: Disney's California Adventure
+PATH: img/pins/pin_california_adventure.png
+CARD: img/pins/cards/card_california_adventure.png
+RATING: G
+@END@
+
+ID: misc_pin_8
+NAME: Disney-MGM Studios
+PATH: img/pins/pin_mgm_studios.png
+CARD: img/pins/cards/card_mgm_studios.png
+RATING: G
+@END@
+
+ID: misc_pin_9
+NAME: Epcot
+PATH: img/pins/pin_epcot.png
+CARD: img/pins/cards/card_epcot.png
+RATING: G
+@END@
+
+ID: misc_pin_10
+NAME: Hong Kong Fantasyland
+PATH: img/pins/pin_hk_fantasyland.png
+CARD: img/pins/cards/card_hk_fantasyland.png
+RATING: G
+@END@
+
+ID: misc_pin_11
+NAME: Hong Kong Main Street USA
+PATH: img/pins/pin_hk_main_street_usa.png
+CARD: img/pins/cards/card_hk_main_street_usa.png
+RATING: G
+@END@
+
+ID: misc_pin_12
+NAME: Nightmare Before Christmas
+PATH: img/pins/pin_nightmare.png
+CARD: img/pins/cards/card_nightmare.png
+RATING: G
+@END@
+
+ID: misc_pin_13
+NAME: Rocketship
+PATH: img/pins/pin_rocketship.png
+CARD: img/pins/cards/card_rocketship.png
+RATING: G
+@END@
+
+ID: misc_pin_14
+NAME: Snow White
+PATH: img/pins/pin_snow_white.png
+CARD: img/pins/cards/card_snow_white.png
+RATING: G
+@END@
+
+ID: misc_pin_15
+NAME: 50th Celebration
+PATH: img/pins/pin_50th_celebration.png
+CARD: img/pins/cards/card_50th_celebration.png
+RATING: G
+@END@
+
+ID: misc_pin_16
+NAME: Adventureland Retro
+PATH: img/pins/pin_adv_retro.png
+CARD: img/pins/cards/card_adv_retro.png
+RATING: G
+@END@
+
+ID: misc_pin_17
+NAME: Disneyland (5/9)
+PATH: img/pins/pin_dl_5_9.png
+CARD: img/pins/cards/card_dl_5_9.png
+RATING: G
+@END@
+
+ID: misc_pin_18
+NAME: Fantasyland Castle Retro
+PATH: img/pins/pin_fl_castle_retro.png
+CARD: img/pins/cards/card_fl_castle_retro.png
+RATING: G
+@END@
+
+ID: misc_pin_19
+NAME: Happiest Celebration on Earth
+PATH: img/pins/pin_happiest_celebration.png
+CARD: img/pins/cards/card_happiest_celebration.png
+RATING: G
+@END@
+
+ID: misc_pin_20
+NAME: Thrill Seekers
+PATH: img/pins/pin_thrill_seekers.png
+CARD: img/pins/cards/card_thrill_seekers.png
+RATING: G
+@END@
+
+ID: misc_pin_21
+NAME: The Haunted Mansion (1/9)
+PATH: img/pins/pin_mansion_1_9.png
+CARD: img/pins/cards/card_mansion_1_9.png
+RATING: G
+@END@
+
 // ===================
 // POSTERS
 // ===================

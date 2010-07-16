@@ -1,0 +1,27 @@
+TYPE: stationary
+ANIMATION NAME: portrait_medusa
+TOTAL FRAMES: 22
+X-COORD: 101
+Y-COORD: 57
+@img/rooms/hm2/portrait1_0.jpg,100@
+@img/rooms/hm2/portrait1_1.jpg,100@
+@img/rooms/hm2/portrait1_2.jpg,100@
+@img/rooms/hm2/portrait1_3.jpg,100@
+@img/rooms/hm2/portrait1_4.jpg,100@
+@img/rooms/hm2/portrait1_5.jpg,100@
+@img/rooms/hm2/portrait1_6.jpg,100@
+@img/rooms/hm2/portrait1_7.jpg,100@
+@img/rooms/hm2/portrait1_8.jpg,100@
+@img/rooms/hm2/portrait1_9.jpg,100@
+@img/rooms/hm2/portrait1_10.jpg,100@
+@img/rooms/hm2/portrait1_10.jpg,3000@
+@img/rooms/hm2/portrait1_9.jpg,100@
+@img/rooms/hm2/portrait1_8.jpg,100@
+@img/rooms/hm2/portrait1_7.jpg,100@
+@img/rooms/hm2/portrait1_6.jpg,100@
+@img/rooms/hm2/portrait1_5.jpg,100@
+@img/rooms/hm2/portrait1_4.jpg,100@
+@img/rooms/hm2/portrait1_3.jpg,100@
+@img/rooms/hm2/portrait1_2.jpg,100@
+@img/rooms/hm2/portrait1_1.jpg,100@
+@img/rooms/hm2/portrait1_0.jpg,3000@

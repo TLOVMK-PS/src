@@ -1,0 +1,27 @@
+TYPE: stationary
+ANIMATION NAME: portrait_ship
+TOTAL FRAMES: 22
+X-COORD: 225
+Y-COORD: 70
+@img/rooms/hm2/portrait2_0.jpg,100@
+@img/rooms/hm2/portrait2_1.jpg,100@
+@img/rooms/hm2/portrait2_2.jpg,100@
+@img/rooms/hm2/portrait2_3.jpg,100@
+@img/rooms/hm2/portrait2_4.jpg,100@
+@img/rooms/hm2/portrait2_5.jpg,100@
+@img/rooms/hm2/portrait2_6.jpg,100@
+@img/rooms/hm2/portrait2_7.jpg,100@
+@img/rooms/hm2/portrait2_8.jpg,100@
+@img/rooms/hm2/portrait2_9.jpg,100@
+@img/rooms/hm2/portrait2_10.jpg,100@
+@img/rooms/hm2/portrait2_10.jpg,3000@
+@img/rooms/hm2/portrait2_9.jpg,100@
+@img/rooms/hm2/portrait2_8.jpg,100@
+@img/rooms/hm2/portrait2_7.jpg,100@
+@img/rooms/hm2/portrait2_6.jpg,100@
+@img/rooms/hm2/portrait2_5.jpg,100@
+@img/rooms/hm2/portrait2_4.jpg,100@
+@img/rooms/hm2/portrait2_3.jpg,100@
+@img/rooms/hm2/portrait2_2.jpg,100@
+@img/rooms/hm2/portrait2_1.jpg,100@
+@img/rooms/hm2/portrait2_0.jpg,3000@
