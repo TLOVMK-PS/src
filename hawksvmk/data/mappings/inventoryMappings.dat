@@ -6,6 +6,7 @@ ID: furni_0
 NAME: Aladdin Carpet Chair Blue
 PATH: img/furniture/beta/furni_0/
 CARD: img/furniture/beta/furni_0/card_0.png
+ICON: img/furniture/beta/furni_0/icon_0.jpg
 TILES: 1
 RATING: G
 @END@
@@ -14,6 +15,7 @@ ID: furni_1
 NAME: Ariel's Treasure Chest Cyan
 PATH: img/furniture/beta/furni_1/
 CARD: img/furniture/beta/furni_1/card_1.png
+ICON: img/furniture/beta/furni_1/icon_1.jpg
 TILES: 2
 RATING: G
 @END@
@@ -22,6 +24,7 @@ ID: furni_22
 NAME: Spaceship Couch Cyan
 PATH: img/furniture/beta/furni_22/
 CARD: img/furniture/beta/furni_22/card_22.png
+ICON: img/furniture/beta/furni_22/icon_22.jpg
 TILES: 4
 RATING: G
 @END@

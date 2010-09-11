@@ -1208,6 +1208,7 @@ public class FileOperations
 		String invName = "";
 		String invPath = "";
 		String invCardPath = "";
+		String invIconPath = "";
 		int invRatingIndex = 0;
 		int invTiles = 0;
 		
@@ -1250,6 +1251,12 @@ public class FileOperations
 						line = line.replaceAll("CARD: ", "");
 						invCardPath = line;
 					}
+					else if(line.startsWith("ICON: "))
+					{
+						// get the inventory icon path (used in the Inventory window)
+						line = line.replaceAll("ICON: ", "");
+						invIconPath = line;
+					}
 					else if(line.startsWith("TILES: "))
 					{
 						// get the inventory tiles
@@ -1265,7 +1272,7 @@ public class FileOperations
 					else if(line.startsWith("@END@"))
 					{
 						// add the inventory mapping to the HashMap
-						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invTiles, invRatingIndex));
+						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invIconPath, invTiles, invRatingIndex));
 					}
 				}
 				

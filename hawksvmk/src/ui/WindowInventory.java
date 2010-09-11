@@ -80,6 +80,10 @@ public class WindowInventory extends JPanel
 	
 	private InventoryPinSquare selectedPin = null;
 	
+	private JPanel inventoryFurniturePanel = new JPanel();
+	private JScrollPane inventoryFurnitureScrollPane;
+	private ImageIcon furnitureWindowImage = AppletResourceLoader.getImageFromJar("img/ui/furniture.png");
+	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
 	private final int ITEMS_PER_ROW = 6;
@@ -100,6 +104,7 @@ public class WindowInventory extends JPanel
 	private WindowInventory messagesWindow;
 	private Rectangle titleRectangle = new Rectangle(52, 10, 366, 35);
 	private Rectangle tabPinsRectangle = new Rectangle(173, 46, 38, 22);
+	private Rectangle tabFurnitureRectangle = new Rectangle(86, 46, 78, 21);
 	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
 	
@@ -187,6 +192,22 @@ public class WindowInventory extends JPanel
 		add(pinsWornPanel);
 		
 		// ==========================================
+		// FURNITURE TAB
+		// ==========================================
+		
+		// panel that holds the pin inventory
+		inventoryFurniturePanel.setLayout(null);
+		inventoryFurniturePanel.setBackground(new Color(40, 84, 146));
+		
+		// add the panel to the scroll pane
+		inventoryFurnitureScrollPane = new JScrollPane(inventoryFurniturePanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		inventoryFurnitureScrollPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
+		inventoryFurnitureScrollPane.setBorder(null);
+		inventoryFurnitureScrollPane.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH + 18, 175);
+		inventoryFurnitureScrollPane.setVisible(false);
+		add(inventoryFurnitureScrollPane);
+		
+		// ==========================================
 		// CREDIT TAB
 		// ==========================================
 		
@@ -216,6 +237,11 @@ public class WindowInventory extends JPanel
 				{
 					// change the tab to the "Pins" tab
 					changeTab("pins");
+				}
+				else if(tabFurnitureRectangle.contains(e.getPoint()))
+				{
+					// change the tab to the "Furniture" tab
+					changeTab("furniture");
 				}
 				else if(tabCreditRectangle.contains(e.getPoint()))
 				{
@@ -291,6 +317,15 @@ public class WindowInventory extends JPanel
 			pinsWornPanel.setVisible(true);
 			backgroundLabel.setIcon(windowImage);
 		}
+		else if(tab.equals("furniture"))
+		{
+			// change it to the "Furniture" tab
+			inventoryNameLabel.setVisible(true);
+			inventoryCardDisplayLabel.setVisible(true);
+			inventoryFurniturePanel.setVisible(true);
+			inventoryFurnitureScrollPane.setVisible(true);
+			backgroundLabel.setIcon(furnitureWindowImage);
+		}
 		else if(tab.equals("credits"))
 		{
 			// change it to the "Credit" tab
@@ -325,6 +360,7 @@ public class WindowInventory extends JPanel
 		int col = 0;
 		
 		int pinPanelHeight = 0;
+		int furniPanelHeight = 0;
 		
 		// add the highlight square
 		inventorySquareHighlightLabel.setBounds(0, 0, 42, 42);
@@ -346,6 +382,10 @@ public class WindowInventory extends JPanel
 					row = (int)(furnitureCount / ITEMS_PER_ROW); // figure out the row
 					
 					// add a furniture item
+					addFurnitureToInventoryPanel(row, col, invItem.getId());
+					
+					// figure out the furniture panel height
+					furniPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
 					
 					// increase the furniture count
 					furnitureCount++;
@@ -380,7 +420,77 @@ public class WindowInventory extends JPanel
 		// set the size of the pins panel
 		inventoryPinsPanel.setPreferredSize(new Dimension(INVENTORY_PANEL_WIDTH, pinPanelHeight));
 		inventoryPinsPanel.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH, pinPanelHeight);
+		
+		// set the size of the furniture panel
+		inventoryFurniturePanel.setPreferredSize(new Dimension(INVENTORY_PANEL_WIDTH, furniPanelHeight));
+		inventoryFurniturePanel.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH, furniPanelHeight);
+		
+		// repaint the window
 		repaint();
+	}
+	
+	// add a furniture item to the Inventory furniture section
+	private void addFurnitureToInventoryPanel(int row, int col, String id)
+	{	
+		// add a pin
+		final InventoryPinSquare invPin = new InventoryPinSquare(row, col, id);
+		invPin.setName(id);
+		invPin.setIcon(invPin.getIconImage());
+		invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		invPin.setHorizontalAlignment(JLabel.CENTER);
+		invPin.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e)
+			{
+				firstClick = 0;
+			}
+			public void mouseReleased(MouseEvent e)
+			{
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
+			{
+				// move the inventory highlight square here
+				//inventorySquareHighlightLabel.setVisible(true);
+				//inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
+				
+				InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
+				
+				// update the inventory name bar
+				inventoryNameLabel.setText(invSquare.getPinName());
+				
+				// update the card display label
+				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
+				
+				// highlight the "Wear" button
+				//wearPinButton.setIcon(wearImageOn);
+				//takeOffButton.setIcon(takeOffImageOff);
+				//selectedPin = invSquare;
+				
+				// check for double-click on this panel
+				if(firstClick > 0)
+				{
+					// double-click, so move this pin to the Pins Worn section
+					if((System.currentTimeMillis() - firstClick) <= DOUBLE_CLICK_TIME)
+					{
+						//movePinInventoryToWorn(invPin);
+					}
+					firstClick = 0;
+				}
+				else
+				{
+					firstClick = System.currentTimeMillis();
+				}
+			}
+		});
+		inventoryFurniturePanel.add(invPin);
+		
+		// add the furniture backing
+		JLabel invSquare = new JLabel(inventorySquare);
+		invSquare.setHorizontalAlignment(JLabel.CENTER);
+		invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		inventoryFurniturePanel.add(invSquare);
 	}
 	
 	// add a pin to the Inventory pins section
@@ -641,7 +751,7 @@ public class WindowInventory extends JPanel
 		
 		// figure out the worn pin's index so we can remove it
 		int index = pinSquare.getBounds().x / 42;
-		pinsWorn[index] = new InventoryInfo("","","","",0,0);
+		pinsWorn[index] = new InventoryInfo("","","","","",0,0);
 		pinsWornPanel.remove(index);
 		
 		// update the inventory name bar
@@ -704,6 +814,7 @@ class InventoryPinSquare extends JLabel
 	private String pinName = "";
 	private ImageIcon image = null;
 	private ImageIcon cardImage = null;
+	private ImageIcon iconImage = null;
 	private String pinID = "";
 	
 	public InventoryPinSquare()
@@ -725,6 +836,7 @@ class InventoryPinSquare extends JLabel
 			this.pinName = StaticAppletData.getInvInfo(pinID).getName();
 			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getPath());
 			this.cardImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getCardPath());
+			this.iconImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getIconPath());
 		}
 	}
 	
@@ -754,6 +866,10 @@ class InventoryPinSquare extends JLabel
 	
 	public ImageIcon getCardImage() {
 		return cardImage;
+	}
+	
+	public ImageIcon getIconImage() {
+		return iconImage;
 	}
 	
 	public String getPinID() {
