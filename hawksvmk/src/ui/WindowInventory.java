@@ -61,6 +61,8 @@ public class WindowInventory extends JPanel
 	
 	private ImageIcon placeFurnitureImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_off.png");
 	private ImageIcon placeFurnitureImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_on.png");
+	private ImageIcon sellFurnitureImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_furni_sell_off.png");
+	private ImageIcon sellFurnitureImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_furni_sell_on.png");
 	
 	// structure to hold a player's inventory items
 	private ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
@@ -92,6 +94,7 @@ public class WindowInventory extends JPanel
 	private ImageIcon furnitureWindowImage = AppletResourceLoader.getImageFromJar("img/ui/furniture.png");
 	private JLabel furnitureSquareHighlightLabel = new JLabel(inventorySquareHighlight);
 	private JLabel placeFurnitureButton = new JLabel(placeFurnitureImageOff);
+	private JLabel sellFurnitureButton = new JLabel(sellFurnitureImageOff);
 	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
@@ -122,6 +125,7 @@ public class WindowInventory extends JPanel
 	private Rectangle sellRectangle = new Rectangle(309, 232, 51, 20);
 	
 	private Rectangle placeFurnitureRectangle = new Rectangle(306, 252, 106, 20);
+	private Rectangle sellFurnitureRectangle = new Rectangle(306, 231, 106, 20);
 	
 	private long firstClick = 0; // first click in milliseconds
 	private final long DOUBLE_CLICK_TIME = 500; // time in milliseconds for a double-click
@@ -219,7 +223,12 @@ public class WindowInventory extends JPanel
 		add(inventoryFurnitureScrollPane);
 		
 		placeFurnitureButton.setBounds(306, 252, 106, 20);
+		placeFurnitureButton.setVisible(false);
 		add(placeFurnitureButton);
+		
+		sellFurnitureButton.setBounds(306, 231, 106, 20);
+		sellFurnitureButton.setVisible(false);
+		add(sellFurnitureButton);
 		
 		// ==========================================
 		// CREDIT TAB
@@ -383,6 +392,7 @@ public class WindowInventory extends JPanel
 			inventoryFurniturePanel.setVisible(true);
 			inventoryFurnitureScrollPane.setVisible(true);
 			placeFurnitureButton.setVisible(true);
+			sellFurnitureButton.setVisible(true);
 			backgroundLabel.setIcon(furnitureWindowImage);
 			
 			// check to see if an item is already selected
