@@ -108,9 +108,7 @@ public class WindowDesignModeItem extends JPanel
 					gridObject.setDesignMoveMode(true);
 				}
 				else if(takeAwayRectangle.contains(e.getPoint()))
-				{
-					// take away the item
-					
+				{	
 					// clear the selected room item
 					gridObject.clearSelectedRoomItem(false);
 					

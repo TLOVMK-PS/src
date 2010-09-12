@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
+import roomobject.RoomFurniture;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
@@ -58,6 +59,9 @@ public class WindowInventory extends JPanel
 	private ImageIcon sellImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_off.png");
 	private ImageIcon sellImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_on.png");
 	
+	private ImageIcon placeFurnitureImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_off.png");
+	private ImageIcon placeFurnitureImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_on.png");
+	
 	// structure to hold a player's inventory items
 	private ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
 	private int furnitureCount = 0;
@@ -70,6 +74,7 @@ public class WindowInventory extends JPanel
 	private JLabel inventoryCardDisplayLabel = new JLabel(inventoryCardImage);
 	private JScrollPane inventoryPinsScrollPane;
 	
+	private int pinPanelHeight = 0;
 	private JPanel pinsWornPanel = new JPanel();
 	private JLabel pinsWornHighlightLabel = new JLabel(inventorySquareHighlight);
 	private InventoryInfo pinsWorn[];
@@ -79,10 +84,14 @@ public class WindowInventory extends JPanel
 	private JLabel sellButton = new JLabel(sellImageOff);
 	
 	private InventoryPinSquare selectedPin = null;
+	private InventoryPinSquare selectedFurniture = null;
 	
+	private int furniPanelHeight = 0;
 	private JPanel inventoryFurniturePanel = new JPanel();
 	private JScrollPane inventoryFurnitureScrollPane;
 	private ImageIcon furnitureWindowImage = AppletResourceLoader.getImageFromJar("img/ui/furniture.png");
+	private JLabel furnitureSquareHighlightLabel = new JLabel(inventorySquareHighlight);
+	private JLabel placeFurnitureButton = new JLabel(placeFurnitureImageOff);
 	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
@@ -111,6 +120,8 @@ public class WindowInventory extends JPanel
 	private Rectangle wearPinRectangle = new Rectangle(362, 233, 51, 19);
 	private Rectangle takeOffRectangle = new Rectangle(288, 352, 105, 19);
 	private Rectangle sellRectangle = new Rectangle(309, 232, 51, 20);
+	
+	private Rectangle placeFurnitureRectangle = new Rectangle(306, 252, 106, 20);
 	
 	private long firstClick = 0; // first click in milliseconds
 	private final long DOUBLE_CLICK_TIME = 500; // time in milliseconds for a double-click
@@ -207,6 +218,9 @@ public class WindowInventory extends JPanel
 		inventoryFurnitureScrollPane.setVisible(false);
 		add(inventoryFurnitureScrollPane);
 		
+		placeFurnitureButton.setBounds(306, 252, 106, 20);
+		add(placeFurnitureButton);
+		
 		// ==========================================
 		// CREDIT TAB
 		// ==========================================
@@ -269,6 +283,38 @@ public class WindowInventory extends JPanel
 				{
 					// TODO: Sell the pin
 				}
+				else if(placeFurnitureRectangle.contains(e.getPoint()) && placeFurnitureButton.isVisible() && placeFurnitureButton.getIcon().equals(placeFurnitureImageOn))
+				{
+					// get the information for the selected item
+					InventoryInfo info = StaticAppletData.getInvInfo(selectedFurniture.getPinID());
+					
+					// check to make sure the item was added properly
+					if(gridObject.addRoomItem(new RoomFurniture(gridObject.getMyCharacter().getX(), gridObject.getMyCharacter().getY(), info.getTiles(), selectedFurniture.getPinID(), info.getName(), info.getPath(), "A")))
+					{
+						// remove the item from the player's inventory
+						InventoryItem it = new InventoryItem(info.getName(), info.getID(), InventoryItem.FURNITURE);
+						for(int i = 0; i < inventoryItems.size(); i++)
+						{
+							if(inventoryItems.get(i).getId().equals(it.getId()))
+							{
+								inventoryItems.remove(i);
+								gridObject.sendUpdateInventoryMessage(inventoryItems);
+								break;
+							}
+						}
+						
+						// clear the name display label and the card display label
+						inventoryNameLabel.setText("");
+						inventoryCardDisplayLabel.setIcon(inventoryCardImage);
+						placeFurnitureButton.setIcon(placeFurnitureImageOff);
+						
+						// remove the inventory item in the Furniture tab
+						inventoryFurniturePanel.remove(inventoryFurniturePanel.getComponentAt(selectedFurniture.getLocation()));
+						
+						// clear the currently selected furniture item
+						selectedFurniture = null;
+					}
+				}
 			}
 			public void mouseEntered(MouseEvent e) {}
 			public void mousePressed(MouseEvent e) {}
@@ -316,6 +362,18 @@ public class WindowInventory extends JPanel
 			takeOffButton.setVisible(true);
 			pinsWornPanel.setVisible(true);
 			backgroundLabel.setIcon(windowImage);
+			
+			// check to see if an item is already selected
+			if(selectedPin != null)
+			{
+				inventoryNameLabel.setText(selectedPin.getPinName());
+				inventoryCardDisplayLabel.setIcon(selectedPin.getCardImage());
+			}
+			else
+			{
+				inventoryNameLabel.setText("");
+				inventoryCardDisplayLabel.setIcon(inventoryCardImage);
+			}
 		}
 		else if(tab.equals("furniture"))
 		{
@@ -324,7 +382,20 @@ public class WindowInventory extends JPanel
 			inventoryCardDisplayLabel.setVisible(true);
 			inventoryFurniturePanel.setVisible(true);
 			inventoryFurnitureScrollPane.setVisible(true);
+			placeFurnitureButton.setVisible(true);
 			backgroundLabel.setIcon(furnitureWindowImage);
+			
+			// check to see if an item is already selected
+			if(selectedFurniture != null)
+			{
+				inventoryNameLabel.setText(selectedFurniture.getPinName());
+				inventoryCardDisplayLabel.setIcon(selectedFurniture.getCardImage());
+			}
+			else
+			{
+				inventoryNameLabel.setText("");
+				inventoryCardDisplayLabel.setIcon(inventoryCardImage);
+			}
 		}
 		else if(tab.equals("credits"))
 		{
@@ -348,24 +419,81 @@ public class WindowInventory extends JPanel
 		}
 	}
 	
+	// add an item to the player's inventory
+	public void addInventory(InventoryItem item)
+	{	
+		inventoryItems.add(item);
+		gridObject.sendUpdateInventoryMessage(inventoryItems);
+		
+		// add the item to one of the panels
+		addItemToInventoryPanel(item);
+	}
+	
+	// figure out where to add an inventory item to the panel
+	private void addItemToInventoryPanel(InventoryItem item)
+	{
+		int row = 0;
+		int col = 0;
+		
+		if(item.getType() == InventoryItem.FURNITURE)
+		{
+			col = furnitureCount % ITEMS_PER_ROW; // figure out the column
+			row = (int)(furnitureCount / ITEMS_PER_ROW); // figure out the row
+			
+			// add a furniture item
+			addFurnitureToInventoryPanel(row, col, item.getId());
+			
+			// figure out the furniture panel height
+			furniPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
+			
+			// increase the furniture count
+			furnitureCount++;
+		}
+		else if(item.getType() == InventoryItem.PIN)
+		{
+			col = pinCount % ITEMS_PER_ROW; // figure out the column
+			row = (int)(pinCount / ITEMS_PER_ROW); // figure out the row
+			
+			// add the pin and its backing to the panel
+			addPinToInventoryPanel(row, col, item.getId());
+			
+			// figure out the pin panel height
+			pinPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
+			
+			// increase the pin count
+			pinCount++;
+		}
+		else if(item.getType() == InventoryItem.POSTER)
+		{
+			col = posterCount % ITEMS_PER_ROW; // figure out the column
+			row = (int)(posterCount / ITEMS_PER_ROW); // figure out the row
+			
+			// add a poster item
+			
+			// increase the poster count
+			posterCount++;
+		}
+	}
+	
 	// set a player's inventory
 	public void setInventory(ArrayList<InventoryItem> inventoryItems)
 	{
+		inventoryFurniturePanel.removeAll();
+		inventoryPinsPanel.removeAll();
+		
 		furnitureCount = 0;
 		pinCount = 0;
 		posterCount = 0;
 		this.inventoryItems = inventoryItems;
-		
-		int row = 0;
-		int col = 0;
-		
-		int pinPanelHeight = 0;
-		int furniPanelHeight = 0;
-		
+
 		// add the highlight square
 		inventorySquareHighlightLabel.setBounds(0, 0, 42, 42);
 		inventorySquareHighlightLabel.setVisible(false);
 		inventoryPinsPanel.add(inventorySquareHighlightLabel);
+		
+		furnitureSquareHighlightLabel.setBounds(0,0,42,42);
+		furnitureSquareHighlightLabel.setVisible(false);
+		inventoryFurniturePanel.add(furnitureSquareHighlightLabel);
 		
 		// add the inventory squares
 		for(int i = 0; i < inventoryItems.size(); i++)
@@ -373,48 +501,8 @@ public class WindowInventory extends JPanel
 			// get the inventory item
 			InventoryItem invItem = inventoryItems.get(i);
 
-			// check and make sure this content is allowable first
-			//if(RatingSystem.isContentAllowed(StaticAppletData.getInvInfo(invItem.getId()).getRatingIndex(), gridObject.getMyCharacter().getContentRatingIndex()))
-			//{
-				if(invItem.getType() == InventoryItem.FURNITURE)
-				{
-					col = furnitureCount % ITEMS_PER_ROW; // figure out the column
-					row = (int)(furnitureCount / ITEMS_PER_ROW); // figure out the row
-					
-					// add a furniture item
-					addFurnitureToInventoryPanel(row, col, invItem.getId());
-					
-					// figure out the furniture panel height
-					furniPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
-					
-					// increase the furniture count
-					furnitureCount++;
-				}
-				else if(invItem.getType() == InventoryItem.PIN)
-				{
-					col = pinCount % ITEMS_PER_ROW; // figure out the column
-					row = (int)(pinCount / ITEMS_PER_ROW); // figure out the row
-					
-					// add the pin and its backing to the panel
-					addPinToInventoryPanel(row, col, invItem.getId());
-					
-					// figure out the pin panel height
-					pinPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
-					
-					// increase the pin count
-					pinCount++;
-				}
-				else if(invItem.getType() == InventoryItem.POSTER)
-				{
-					col = posterCount % ITEMS_PER_ROW; // figure out the column
-					row = (int)(posterCount / ITEMS_PER_ROW); // figure out the row
-					
-					// add a poster item
-					
-					// increase the poster count
-					posterCount++;
-				}
-			//}
+			// figure out which panel needs to have the item added
+			addItemToInventoryPanel(invItem);
 		}
 		
 		// set the size of the pins panel
@@ -432,7 +520,7 @@ public class WindowInventory extends JPanel
 	// add a furniture item to the Inventory furniture section
 	private void addFurnitureToInventoryPanel(int row, int col, String id)
 	{	
-		// add a pin
+		// add a furniture item
 		final InventoryPinSquare invPin = new InventoryPinSquare(row, col, id);
 		invPin.setName(id);
 		invPin.setIcon(invPin.getIconImage());
@@ -452,8 +540,8 @@ public class WindowInventory extends JPanel
 			public void mouseClicked(MouseEvent e)
 			{
 				// move the inventory highlight square here
-				//inventorySquareHighlightLabel.setVisible(true);
-				//inventorySquareHighlightLabel.setLocation(e.getComponent().getLocation());
+				furnitureSquareHighlightLabel.setVisible(true);
+				furnitureSquareHighlightLabel.setLocation(e.getComponent().getLocation());
 				
 				InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
 				
@@ -463,10 +551,9 @@ public class WindowInventory extends JPanel
 				// update the card display label
 				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
 				
-				// highlight the "Wear" button
-				//wearPinButton.setIcon(wearImageOn);
-				//takeOffButton.setIcon(takeOffImageOff);
-				//selectedPin = invSquare;
+				// highlight the "Place" button
+				placeFurnitureButton.setIcon(placeFurnitureImageOn);
+				selectedFurniture = invSquare;
 				
 				// check for double-click on this panel
 				if(firstClick > 0)

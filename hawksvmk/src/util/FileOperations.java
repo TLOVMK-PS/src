@@ -330,7 +330,7 @@ public class FileOperations
 		String filename = roomPath;
 		
 		try
-		{
+		{	
 			System.out.println("Guest room filename: " + filename);
 			fileReader = new Scanner(AppletResourceLoader.getCharacterFromJar(filename));
 			
@@ -382,15 +382,15 @@ public class FileOperations
 				}
 			}
 			
-			// set the room items
-			gridView.setRoomItems(items);
-			
-			// set the room information
+			// set the room information first
 			HashMap<String,String> roomInfo = getInfoFromRoom(roomPath);
 			gridView.addRoomInfo("ID", roomInfo.get("ID"));
 			gridView.addRoomInfo("NAME", roomInfo.get("NAME"));
 			gridView.addRoomInfo("OWNER", roomInfo.get("OWNER"));
 			gridView.addRoomInfo("DESCRIPTION", roomInfo.get("DESCRIPTION"));
+			
+			// set the room items
+			gridView.setRoomItems(items);
 			
 			fileReader.close();
 			
@@ -1373,6 +1373,58 @@ public class FileOperations
 		// create a new sorted inventory list from the file data
 		Collections.sort(inventoryItems);
 		return inventoryItems;
+	}
+	
+	// save a player's inventory
+	public static synchronized void saveInventory(String email, ArrayList<InventoryItem> items)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// save the inventory file
+			filename = "data/inventory/" + email + ".dat";
+		}
+		else
+		{
+			// save the default inventory file
+			filename = "data/inventory/default.dat";
+		}
+		
+		PrintWriter fileWriter;
+		try
+		{
+			fileWriter = new PrintWriter(filename);
+			
+			for(int i = 0; i < items.size(); i++)
+			{
+				// get the next item
+				InventoryItem r = items.get(i);
+				
+				if(r.getType() == InventoryItem.FURNITURE)
+				{
+					// regular furniture
+					fileWriter.println("FURNITURE: " + r.getId());
+				}
+				else if(r.getType() == InventoryItem.PIN)
+				{
+					// pin
+					fileWriter.println("PIN: " + r.getId());
+				}
+				else if(r.getType() == InventoryItem.POSTER)
+				{
+					// poster
+					fileWriter.println("POSTER: " + r.getId());
+				}
+			}
+			
+			fileWriter.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error in saveInventory()");
+			e.printStackTrace();
+		}
 	}
 	
 	// get a HashMap of room information from a room file

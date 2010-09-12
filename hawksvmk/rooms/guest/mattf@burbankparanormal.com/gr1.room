@@ -5,10 +5,12 @@ ID: gr1
 NAME: Crash Hide-Out
 OWNER: HOST_Hawk
 DESCRIPTION: A nice place to crash... or hide out.
-TIMESTAMP: 1272237681
+TIMESTAMP: null
 
 // Furniture
 
 FURNITURE: furni_22,22,14,A
 FURNITURE: furni_0,30,14,A
 FURNITURE: furni_1,24,22,A
+FURNITURE: furni_1,28,10,A
+FURNITURE: furni_1,19,10,A

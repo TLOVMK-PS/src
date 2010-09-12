@@ -45,6 +45,7 @@ import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
+import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
 import sounds.SoundPlayable;
 import tiles.Tile;
@@ -1537,13 +1538,36 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		return items;
 	}
 	
+	// add an item to the room
+	public boolean addRoomItem(RoomItem item)
+	{
+		if(roomInfo.get("OWNER").equals(myCharacter.getUsername()))
+		{
+			item.setRow(myCharacter.getRow());
+			item.setCol(myCharacter.getCol());
+			item.setOwner(myCharacter.getUsername());
+			items.add(item);
+			
+			// save the room items
+			saveRoomItems();
+			
+			// update the creation of this new item for everyone in the room
+			uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, item));
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public void setRoomItems(ArrayList<RoomItem> _items)
 	{
+		String roomOwner = roomInfo.get("OWNER");
 		items = _items;
 		for(int i = 0; i < items.size(); i++)
 		{
 			// set the owner of the item
-			items.get(i).setOwner(myCharacter.getUsername());
+			items.get(i).setOwner(roomOwner);
 		}
 	}
 	
@@ -1561,10 +1585,21 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void clearSelectedRoomItem(boolean keepItem) {
 		if(keepItem)
 		{
+			// keep the item in the room
 			items.add(currentRoomItem);
+		}
+		else
+		{
+			// move the item back to the player's inventory
+			inventoryWindow.addInventory(new InventoryItem(currentRoomItem.getName(), currentRoomItem.getId(), currentRoomItem.getType()));
+			
+			// save the guest room items
+			saveRoomItems();
 		}
 		currentRoomItem = null;
 	}
+	
+	
 	
 	// set whether a selected item can be moved
 	public void setDesignMoveMode(boolean designMoveMode) {
@@ -1614,6 +1649,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setInventoryPinsWorn(InventoryInfo wornPins[])
 	{
 		inventoryWindow.setPinsWorn(wornPins);
+	}
+	
+	// send an Update Inventory message to the server
+	public void sendUpdateInventoryMessage(ArrayList<InventoryItem> inventory)
+	{
+		uiObject.sendMessageToServer(new MessageUpdateInventory(myCharacter.getUsername(), inventory));
 	}
 }
 

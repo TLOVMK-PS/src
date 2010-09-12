@@ -38,6 +38,7 @@ import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
+import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.FileOperations;
@@ -396,6 +397,17 @@ public class VMKServerThread extends Thread
 							
 							// pass the message along to the player to affect the listing client-side as well
 							sendMessageToClient(createRoomMsg.getRoomInfo().get("OWNER"), createRoomMsg);
+						}
+						else if(outputMessage instanceof MessageUpdateInventory)
+						{
+							// update inventory message received from client
+							MessageUpdateInventory updateInvMsg = (MessageUpdateInventory)outputMessage;
+							
+							// resolve the player's email address
+							String email = VMKServerPlayerData.getEmailFromUsername(updateInvMsg.getUsername());
+							
+							// update the player's inventory file
+							FileOperations.saveInventory(email, updateInvMsg.getInventory());
 						}
 						
 						// sleep to prevent the stream from getting corrupted

@@ -19,7 +19,7 @@ public class RoomItem implements Serializable, ContentRateable
 	// TODO: Align items to a grid tile based upon how many tiles they take up when placed
 	
 	public final static int FURNITURE = 0;
-	public final static int POSTER = 1;
+	public final static int POSTER = 2;
 	
 	private int x = 0; // x-coordinate
 	private int y = 0; // y-coordinate
