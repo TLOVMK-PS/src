@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 import chat.ChatBubble;
 import chat.ChatBubbles;
@@ -423,13 +424,19 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		// move the currently selected room item if it exists
 	     		if(currentTile != null && designMoveMode == true)
 	     		{
-		     		if(currentTile.getType() == Tile.TILE_WALK && currentRoomItem != null)
-		     		{
-		     			currentRoomItem.setRow(currentTile.getRow());
-		     			currentRoomItem.setCol(currentTile.getColumn());
-		     			currentRoomItem.setX(currentTile.getX());
-		     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
-		     		}
+	     			if(currentRoomItem != null)
+	     			{
+	     				// Only two possible conditions for the current tile can facilitate the movement of the current room item:
+	     				// 1) WALK tile and either a furniture item or a poster item
+	     				// 2) NOGO tile and a poster item
+			     		if((currentTile.getType() == Tile.TILE_WALK && (currentRoomItem.getType() == RoomItem.FURNITURE || currentRoomItem.getType() == RoomItem.POSTER)) || (currentTile.getType() == Tile.TILE_NOGO && currentRoomItem.getType() == RoomItem.POSTER))
+			     		{
+			     			currentRoomItem.setRow(currentTile.getRow());
+			     			currentRoomItem.setCol(currentTile.getColumn());
+			     			currentRoomItem.setX(currentTile.getX());
+			     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
+			     		}
+	     			}
 	     		}
      		}
      	}
@@ -1474,9 +1481,17 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// send an "Update Character" message to the server
-	public void sendUpdateCharacterMessage(AStarCharacter character)
+	public void sendUpdateCharacterMessage(AStarCharacter character2)
 	{
-		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+		final AStarCharacter character = character2;
+		
+		new Thread() {
+			@Override
+			public void run()
+			{
+				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+			}
+		}.start();
 	}
 	
 	// set the current room name
@@ -1587,6 +1602,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		{
 			// keep the item in the room
 			items.add(currentRoomItem);
+			
+			// send the update item message to the server
+			uiObject.sendMessageToServer(new MessageUpdateItemInRoom(roomID, currentRoomItem));
+			
+			// save the guest room items
+			saveRoomItems();
 		}
 		else
 		{

@@ -230,22 +230,36 @@ public class RoomItem implements Serializable, ContentRateable
 	// rotate the item
 	public void rotate()
 	{
-		// figure out the necessary rotation
-		if(rotation.equals("A"))
+		// figure out the necessary rotation for the item
+		if(type == FURNITURE)
 		{
-			rotation = "B";
+			if(rotation.equals("A"))
+			{
+				rotation = "B";
+			}
+			else if(rotation.equals("B"))
+			{
+				rotation = "C";
+			}
+			else if(rotation.equals("C"))
+			{
+				rotation = "D";
+			}
+			else if(rotation.equals("D"))
+			{
+				rotation = "A";
+			}
 		}
-		else if(rotation.equals("B"))
+		else if(type == POSTER)
 		{
-			rotation = "C";
-		}
-		else if(rotation.equals("C"))
-		{
-			rotation = "D";
-		}
-		else if(rotation.equals("D"))
-		{
-			rotation = "A";
+			if(rotation.equals("A"))
+			{
+				rotation = "B";
+			}
+			else if(rotation.equals("B"))
+			{
+				rotation = "A";
+			}
 		}
 		
 		// resolve the image

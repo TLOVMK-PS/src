@@ -275,3 +275,12 @@ RATING: G
 // ===================
 // POSTERS
 // ===================
+
+ID: poster_0
+NAME: Jolly Roger Fridge Magnet
+PATH: img/posters/beta/poster_0/
+CARD: img/posters/beta/poster_0/card_0.jpg
+ICON: img/posters/beta/poster_0/icon_0.jpg
+TILES: 1
+RATING: G
+@END@

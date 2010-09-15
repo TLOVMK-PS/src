@@ -376,6 +376,32 @@ public class FileOperations
 					newItem.setContentRating(RatingSystem.getContentRating(furniInfo.getRatingIndex()));
 					items.add(newItem);
 				}
+				else if(line.startsWith("POSTER: "))
+				{
+					// room poster
+					line = line.replaceAll("POSTER: ", "");
+					
+					// id,row,col,rotation
+					String poster = line.replaceAll(",", " ");
+					Scanner posterScanner = new Scanner(poster);
+					
+					String id = posterScanner.next();
+					int row = Integer.parseInt(posterScanner.next());
+					int col = Integer.parseInt(posterScanner.next()) / 2;
+					String rotation = posterScanner.next();
+					
+					posterScanner.close();
+					
+					// add a new poster
+					Tile furniTile = tiles.get(row + "-" + col);
+					InventoryInfo furniInfo = StaticAppletData.getInvInfo(id);
+					
+					RoomPoster newItem = new RoomPoster(furniTile.getX(), furniTile.getY(), furniInfo.getTiles(), id, furniInfo.getName(), furniInfo.getPath(), rotation);
+					newItem.setRow(row);
+					newItem.setCol(col);
+					newItem.setContentRating(RatingSystem.getContentRating(furniInfo.getRatingIndex()));
+					items.add(newItem);
+				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
