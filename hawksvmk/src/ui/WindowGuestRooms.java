@@ -17,14 +17,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import comparators.RoomDateCreatedComparator;
 
 import roomviewer.RoomViewerGrid;
 
+import ui.WindowInventory.MyScrollBarUI;
 import util.AppletResourceLoader;
 import util.StaticAppletData;
 import util.VMKRoom;
@@ -65,6 +70,10 @@ public class WindowGuestRooms extends JPanel
 	
 	private GuestRoomLabel activeGuestRoom = null;
 	private JPanel ownRoomsPanel = new JPanel();
+	private JScrollPane ownRoomsScrollPane;
+	private final int OWN_ROOMS_PANEL_X = 29;
+	private final int OWN_ROOMS_PANEL_Y = 138;
+	private final int OWN_ROOMS_PANEL_WIDTH = 390;
 	
 	public WindowGuestRooms(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -120,11 +129,19 @@ public class WindowGuestRooms extends JPanel
 		add(enterRoomLabel);
 		
 		// JPanel for "Own Rooms" section
-		ownRoomsPanel.setBounds(29, 138, 390, 139);
+		ownRoomsPanel.setBounds(OWN_ROOMS_PANEL_X, OWN_ROOMS_PANEL_Y, OWN_ROOMS_PANEL_WIDTH, 139);
+		ownRoomsPanel.setPreferredSize(new Dimension(OWN_ROOMS_PANEL_WIDTH, 139));
 		ownRoomsPanel.setBackground(new Color(0, 31, 86));
 		ownRoomsPanel.setLayout(null);
-		ownRoomsPanel.setVisible(false);
-		add(ownRoomsPanel);
+		
+		// JScrollPane for "Own Rooms" section
+		ownRoomsScrollPane = new JScrollPane(ownRoomsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		ownRoomsScrollPane.setBorder(null);
+		ownRoomsScrollPane.setBackground(new Color(0, 31, 86));
+		ownRoomsScrollPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
+		ownRoomsScrollPane.setBounds(OWN_ROOMS_PANEL_X, OWN_ROOMS_PANEL_Y, OWN_ROOMS_PANEL_WIDTH, 139);
+		ownRoomsScrollPane.setVisible(false);
+		add(ownRoomsScrollPane);
 		
 		backgroundLabel.setBounds(0,0,width,height);
 		add(backgroundLabel);
@@ -183,7 +200,7 @@ public class WindowGuestRooms extends JPanel
 					
 					// set panel visibility
 					activeGuestRoom = null;
-					ownRoomsPanel.setVisible(true);
+					ownRoomsScrollPane.setVisible(true);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
 					enterRoomLabel.setVisible(false);
@@ -195,7 +212,7 @@ public class WindowGuestRooms extends JPanel
 					
 					// set panel visibility
 					activeGuestRoom = null;
-					ownRoomsPanel.setVisible(false);
+					ownRoomsScrollPane.setVisible(false);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
 					enterRoomLabel.setVisible(false);
@@ -207,7 +224,7 @@ public class WindowGuestRooms extends JPanel
 					
 					// set panel visibility
 					activeGuestRoom = null;
-					ownRoomsPanel.setVisible(false);
+					ownRoomsScrollPane.setVisible(false);
 					ownerLabel.setText("");
 					descriptionLabel.setText("");
 					enterRoomLabel.setVisible(false);
@@ -245,6 +262,8 @@ public class WindowGuestRooms extends JPanel
 	// load a list of all rooms owned by the current player
 	private void setOwnRoomsList()
 	{
+		int ownRoomsPanelHeight = 0;
+		
 		// remove all the current room listings
 		ownRoomsPanel.removeAll();
 		
@@ -286,7 +305,12 @@ public class WindowGuestRooms extends JPanel
 				public void mouseClicked(MouseEvent e) {}
 			});
 			ownRoomsPanel.add(gl);
+			ownRoomsPanelHeight += gl.getHeight();
 		}
+		
+		// set the height of the Own Rooms panel
+		ownRoomsPanel.setBounds(0, 0, OWN_ROOMS_PANEL_WIDTH, ownRoomsPanelHeight);
+		repaint();
 	}
 	
 	// toggle the visibility of this window
@@ -305,6 +329,35 @@ public class WindowGuestRooms extends JPanel
 	public void setGridObject(RoomViewerGrid gridObject)
 	{
 		this.gridObject = gridObject;
+	}
+	
+	class MyScrollBarUI extends BasicScrollBarUI
+	{
+		protected void configureScrollBarColors()
+		{
+			thumbColor = new Color(153, 204, 255);//Color.lightGray;
+			//thumbDarkShadowColor = Color.darkGray;
+			//thumbHighlightColor = Color.white;
+			//thumbLightShadowColor = Color.lightGray;
+			trackColor = new Color(0, 153, 204);//Color.gray;
+			//trackHighlightColor = Color.gray;
+		}
+
+		protected JButton createDecreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
+
+		protected JButton createIncreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
 	}
 }
 
