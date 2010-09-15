@@ -414,6 +414,7 @@ public class FileOperations
 			gridView.addRoomInfo("NAME", roomInfo.get("NAME"));
 			gridView.addRoomInfo("OWNER", roomInfo.get("OWNER"));
 			gridView.addRoomInfo("DESCRIPTION", roomInfo.get("DESCRIPTION"));
+			gridView.addRoomInfo("TIMESTAMP", roomInfo.get("TIMESTAMP"));
 			
 			// set the room items
 			gridView.setRoomItems(items);
