@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -30,6 +31,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import roomviewer.RoomViewerGrid;
 
@@ -214,15 +217,16 @@ public class WindowMessages extends JPanel
 		add(messageReplyText);
 		
 		// friends list
-		friendsListBox.setBounds(23, 111, 269, 169);
+		friendsListBox.setBounds(23, 111, 289, 169);
 		friendsListBox.setBackground(new Color(6, 33, 86));
 		friendsListBox.setForeground(Color.WHITE);
 		friendsListBox.setFont(textFont);
 		friendsListBox.setCellRenderer(new FriendsListBoxRenderer());
 		friendsListBox.setListData(friendsItems.toArray());
-		friendsScrollPane = new JScrollPane(friendsListBox);
+		friendsScrollPane = new JScrollPane(friendsListBox, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		friendsScrollPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
 		friendsScrollPane.setBorder(null);
-		friendsScrollPane.setBounds(31, 114, 269, 169);
+		friendsScrollPane.setBounds(31, 114, 289, 169);
 		friendsScrollPane.setVisible(false);
 		add(friendsScrollPane);
 		
@@ -889,6 +893,35 @@ public class WindowMessages extends JPanel
 	public void setGridObject(RoomViewerGrid gridObject)
 	{
 		this.gridObject = gridObject;
+	}
+	
+	class MyScrollBarUI extends BasicScrollBarUI
+	{
+		protected void configureScrollBarColors()
+		{
+			thumbColor = new Color(153, 204, 255);//Color.lightGray;
+			//thumbDarkShadowColor = Color.darkGray;
+			//thumbHighlightColor = Color.white;
+			//thumbLightShadowColor = Color.lightGray;
+			trackColor = new Color(0, 153, 204);//Color.gray;
+			//trackHighlightColor = Color.gray;
+		}
+
+		protected JButton createDecreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
+
+		protected JButton createIncreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
 	}
 	
 	// inner class for the rendering of the Friends List
