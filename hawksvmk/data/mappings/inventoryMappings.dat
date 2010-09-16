@@ -284,3 +284,57 @@ ICON: img/posters/beta/poster_0/icon_0.jpg
 TILES: 1
 RATING: G
 @END@
+
+ID: poster_1
+NAME: 20,000 Leagues
+PATH: img/posters/beta/poster_1/
+CARD: img/posters/beta/poster_1/card_1.jpg
+ICON: img/posters/beta/poster_1/icon_1.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_2
+NAME: Buried Treasure Map
+PATH: img/posters/beta/poster_2/
+CARD: img/posters/beta/poster_2/card_2.jpg
+ICON: img/posters/beta/poster_2/icon_2.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_3
+NAME: Crocodile Jungle Cruise Photo Safari
+PATH: img/posters/beta/poster_3/
+CARD: img/posters/beta/poster_3/card_3.jpg
+ICON: img/posters/beta/poster_3/icon_3.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_4
+NAME: Cow Skull Souvenir
+PATH: img/posters/beta/poster_4/
+CARD: img/posters/beta/poster_4/card_4.jpg
+ICON: img/posters/beta/poster_4/icon_4.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_5
+NAME: Critter Country Hunting Trophy
+PATH: img/posters/beta/poster_5/
+CARD: img/posters/beta/poster_5/card_5.jpg
+ICON: img/posters/beta/poster_5/icon_5.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_6
+NAME: Disney's California Adventure
+PATH: img/posters/beta/poster_6/
+CARD: img/posters/beta/poster_6/card_6.jpg
+ICON: img/posters/beta/poster_6/icon_6.jpg
+TILES: 1
+RATING: G
+@END@
