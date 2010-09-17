@@ -338,3 +338,165 @@ ICON: img/posters/beta/poster_6/icon_6.jpg
 TILES: 1
 RATING: G
 @END@
+
+ID: poster_7
+NAME: Flying Saucer
+PATH: img/posters/beta/poster_7/
+CARD: img/posters/beta/poster_7/card_7.jpg
+ICON: img/posters/beta/poster_7/icon_7.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_8
+NAME: Happiest Celebration on Earth
+PATH: img/posters/beta/poster_8/
+CARD: img/posters/beta/poster_8/card_8.jpg
+ICON: img/posters/beta/poster_8/icon_8.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_9
+NAME: Jolly Roger Flag
+PATH: img/posters/beta/poster_9/
+CARD: img/posters/beta/poster_9/card_9.jpg
+ICON: img/posters/beta/poster_9/icon_9.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_10
+NAME: Jungle River
+PATH: img/posters/beta/poster_10/
+CARD: img/posters/beta/poster_10/card_10.jpg
+ICON: img/posters/beta/poster_10/icon_10.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_11
+NAME: Lady and the Tramp Bumper Sticker
+PATH: img/posters/beta/poster_11/
+CARD: img/posters/beta/poster_11/card_11.jpg
+ICON: img/posters/beta/poster_11/icon_11.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_12
+NAME: Lion Jungle Cruise Photo Safari
+PATH: img/posters/beta/poster_12/
+CARD: img/posters/beta/poster_12/card_12.jpg
+ICON: img/posters/beta/poster_12/icon_12.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_13
+NAME: Magic Mirror
+PATH: img/posters/beta/poster_13/
+CARD: img/posters/beta/poster_13/card_13.jpg
+ICON: img/posters/beta/poster_13/icon_13.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_14
+NAME: Make Your Own Shooting Gallery Target
+PATH: img/posters/beta/poster_14/
+CARD: img/posters/beta/poster_14/card_14.jpg
+ICON: img/posters/beta/poster_14/icon_14.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_15
+NAME: Maleficent's Wall Lamp
+PATH: img/posters/beta/poster_15/
+CARD: img/posters/beta/poster_15/card_15.jpg
+ICON: img/posters/beta/poster_15/icon_15.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_16
+NAME: Monorail
+PATH: img/posters/beta/poster_16/
+CARD: img/posters/beta/poster_16/card_16.jpg
+ICON: img/posters/beta/poster_16/icon_16.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_17
+NAME: Prince Phillip's Coat Hook
+PATH: img/posters/beta/poster_17/
+CARD: img/posters/beta/poster_17/card_17.jpg
+ICON: img/posters/beta/poster_17/icon_17.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_18
+NAME: Rhino Jungle Cruise Photo Safari
+PATH: img/posters/beta/poster_18/
+CARD: img/posters/beta/poster_18/card_18.jpg
+ICON: img/posters/beta/poster_18/icon_18.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_19
+NAME: Safari Lifestyle Collection
+PATH: img/posters/beta/poster_19/
+CARD: img/posters/beta/poster_19/card_19.jpg
+ICON: img/posters/beta/poster_19/icon_19.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_20
+NAME: Sitting Duck Vulture
+PATH: img/posters/beta/poster_20/
+CARD: img/posters/beta/poster_20/card_20.jpg
+ICON: img/posters/beta/poster_20/icon_20.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_21
+NAME: Space Mountain
+PATH: img/posters/beta/poster_21/
+CARD: img/posters/beta/poster_21/card_21.jpg
+ICON: img/posters/beta/poster_21/icon_21.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_22
+NAME: Storybookland
+PATH: img/posters/beta/poster_22/
+CARD: img/posters/beta/poster_22/card_22.jpg
+ICON: img/posters/beta/poster_22/icon_22.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_23
+NAME: Toucan Jungle Cruise Photo Safari
+PATH: img/posters/beta/poster_23/
+CARD: img/posters/beta/poster_23/card_23.jpg
+ICON: img/posters/beta/poster_23/icon_23.jpg
+TILES: 1
+RATING: G
+@END@
+
+ID: poster_24
+NAME: Treehouse
+PATH: img/posters/beta/poster_24/
+CARD: img/posters/beta/poster_24/card_24.jpg
+ICON: img/posters/beta/poster_24/icon_24.jpg
+TILES: 1
+RATING: G
+@END@
