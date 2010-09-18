@@ -1,6 +1,6 @@
 // FileOperations.java by Matt Fritz
 // November 7, 2009
-// Handles the saving and loading of the room files
+// Handles the saving and loading of the game's data files
 
 // TODO: Include functionality for reading in STATIONARY room objects
 
@@ -1223,6 +1223,125 @@ public class FileOperations
 		}
 	}
 	
+	// load the item mappings for a given shop
+	public static HashMap<String,ArrayList<InventoryItem>> loadShopMappings(String shopName)
+	{
+		String filename = "data/shops/" + shopName + ".dat";
+		
+		HashMap<String, ArrayList<InventoryItem>> items = new HashMap<String, ArrayList<InventoryItem>>();
+		ArrayList<InventoryItem> furniture = new ArrayList<InventoryItem>();
+		ArrayList<InventoryItem> clothing = new ArrayList<InventoryItem>();
+		ArrayList<InventoryItem> pins = new ArrayList<InventoryItem>();
+		ArrayList<InventoryItem> posters = new ArrayList<InventoryItem>();
+		ArrayList<InventoryItem> specials = new ArrayList<InventoryItem>();
+		
+		Scanner fileReader;
+		
+		String invID = "";
+		int invType = 0;
+		boolean invSpecial = false;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("ID: "))
+					{
+						// inventory ID
+						line = line.replaceAll("ID: ", "");
+						invID = line;
+					}
+					else if(line.startsWith("TYPE: "))
+					{
+						// inventory type
+						line = line.replaceAll("TYPE: ", "");
+						if(line.equals("FURNITURE"))
+						{
+							invType = InventoryItem.FURNITURE;
+						}
+						else if(line.equals("PIN"))
+						{
+							invType = InventoryItem.PIN;
+						}
+						else if(line.equals("POSTER"))
+						{
+							invType = InventoryItem.POSTER;
+						}
+					}
+					else if(line.startsWith("SPECIAL: "))
+					{
+						// whether it's a special
+						line = line.replaceAll("SPECIAL: ", "");
+						if(line.equals("YES"))
+						{
+							invSpecial = true;
+						}
+						else
+						{
+							invSpecial = false;
+						}
+					}
+					else if(line.startsWith("@END@"))
+					{
+						// ending delimeter, so create and add the item
+						InventoryInfo info = StaticAppletData.getInvInfo(invID);
+						InventoryItem theItem = new InventoryItem(info.getName(), invID, invType);
+						
+						// figure out which type of structure the item should be stored in
+						if(invSpecial)
+						{
+							// should be a Special
+							specials.add(theItem);
+						}
+						else
+						{
+							// regular item
+							if(invType == InventoryItem.FURNITURE)
+							{
+								// furniture
+								furniture.add(theItem);
+							}
+							else if(invType == InventoryItem.PIN)
+							{
+								// pin
+								pins.add(theItem);
+							}
+							else if(invType == InventoryItem.POSTER)
+							{
+								// poster
+								posters.add(theItem);
+							}
+						}
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadShopMappings() [" + shopName + "]: " + e.getClass().getName() + " - " + e.getMessage());
+		}
+		
+		// add all the mappings to the final HashMap
+		items.put("furniture", furniture);
+		items.put("clothing", clothing);
+		items.put("pins", pins);
+		items.put("posters", posters);
+		items.put("specials", specials);
+		
+		return items;
+	}
+	
 	// load the pin and badge mappings
 	public static HashMap<String,InventoryInfo> loadInventoryMappings()
 	{
@@ -1237,6 +1356,7 @@ public class FileOperations
 		String invCardPath = "";
 		String invIconPath = "";
 		int invRatingIndex = 0;
+		int invPrice = -1;
 		int invTiles = 0;
 		
 		try
@@ -1290,6 +1410,12 @@ public class FileOperations
 						line = line.replaceAll("TILES: ", "");
 						invTiles = Integer.parseInt(line);
 					}
+					else if(line.startsWith("PRICE: "))
+					{
+						// get the inventory price
+						line = line.replaceAll("PRICE: ", "");
+						invPrice = Integer.parseInt(line);
+					}
 					else if(line.startsWith("RATING: "))
 					{
 						// get the content rating
@@ -1299,7 +1425,7 @@ public class FileOperations
 					else if(line.startsWith("@END@"))
 					{
 						// add the inventory mapping to the HashMap
-						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invIconPath, invTiles, invRatingIndex));
+						inventoryMappings.put(invID, new InventoryInfo(invID, invName, invPath, invCardPath, invIconPath, invTiles, invPrice, invRatingIndex));
 					}
 				}
 				

@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,6 +30,8 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.FileOperations;
+import util.InventoryItem;
 import util.StaticAppletData;
 
 public class WindowShop extends JPanel
@@ -46,6 +49,8 @@ public class WindowShop extends JPanel
 	private ImageIcon tabRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_rooms.png");
 	private ImageIcon windowImage = tabRoomsImage;
 	
+	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar("img/ui/inventory_square.png");
+	private ImageIcon shopSquareHighlight = AppletResourceLoader.getImageFromJar("img/ui/inventory_square_highlight.png");
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	
 	private WindowShop shopWindow;
@@ -105,6 +110,7 @@ public class WindowShop extends JPanel
 	private ImageIcon shopCardImage = AppletResourceLoader.getImageFromJar("img/furniture/card_template.png");
 	private JLabel shopCardLabel = new JLabel(shopCardImage);
 	
+	private JLabel shopSquareHighlightLabel = new JLabel(shopSquareHighlight);
 	private JPanel shopItemsPanel = new JPanel();
 	private JScrollPane shopItemsScrollPane;
 	
@@ -122,6 +128,13 @@ public class WindowShop extends JPanel
 	private ImageIcon shopItemBuyImageLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_buy_button_on.png");
 	
 	private JLabel shopItemBuyBtn = new JLabel(shopItemBuyImage);
+	
+	private String selectedShop = "Emporium";
+	private String selectedTab = "furniture";
+	private ShopItemSquare selectedItem = null;
+	
+	// structure containing the shops and their items
+	private HashMap<String, HashMap<String, ArrayList<InventoryItem>>> shops = new HashMap<String, HashMap<String, ArrayList<InventoryItem>>>();
 	
 	public WindowShop(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -144,8 +157,30 @@ public class WindowShop extends JPanel
 		paintComponent(g);
 	}
 	
+	// create the mappings for all the shops
+	private void createShops()
+	{
+		// Emporium
+		shops.put("Emporium", FileOperations.loadShopMappings("Emporium"));
+		
+		// Shrunken Ned's Shop
+		shops.put("ShrunkenNedsShop", FileOperations.loadShopMappings("ShrunkenNedsShop"));
+		
+		// Inner-Space Shop
+		shops.put("InnerSpaceShop", FileOperations.loadShopMappings("InnerSpaceShop"));
+		
+		// "it's a small world" Imports
+		shops.put("SmallWorldImports", FileOperations.loadShopMappings("SmallWorldImports"));
+		
+		// Golden Horseshoe Mercantile
+		shops.put("GoldenHorseshoe", FileOperations.loadShopMappings("GoldenHorseshoe"));
+	}
+	
 	private void loadWindowShop()
 	{
+		// create the shop data structures
+		createShops();
+		
 		// turn off double-buffering and set the opacity to "false"
 		// required for image transparency on the window
 		setDoubleBuffered(false);
@@ -284,6 +319,10 @@ public class WindowShop extends JPanel
 				
 				// set the land
 				shopItemsLand.setIcon(shopFantasylandItems);
+				
+				// create the items panel
+				selectedShop = "SmallWorldImports";
+				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
 		});
@@ -307,6 +346,10 @@ public class WindowShop extends JPanel
 				
 				// set the land
 				shopItemsLand.setIcon(shopMainStreetItems);
+				
+				// create the items panel
+				selectedShop = "Emporium";
+				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
 		});
@@ -330,6 +373,10 @@ public class WindowShop extends JPanel
 				
 				// set the land
 				shopItemsLand.setIcon(shopFrontierlandItems);
+				
+				// create the items panel
+				selectedShop = "GoldenHorseshoe";
+				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
 		});
@@ -353,6 +400,10 @@ public class WindowShop extends JPanel
 				
 				// set the land
 				shopItemsLand.setIcon(shopTomorrowlandItems);
+				
+				// create the items panel
+				selectedShop = "InnerSpaceShop";
+				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
 		});
@@ -376,6 +427,10 @@ public class WindowShop extends JPanel
 				
 				// set the land
 				shopItemsLand.setIcon(shopAdventurelandItems);
+				
+				// create the items panel
+				selectedShop = "ShrunkenNedsShop";
+				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
 		});
@@ -392,6 +447,7 @@ public class WindowShop extends JPanel
 		shopItemsPanel.setBounds(0,0,132,190);
 		shopItemsPanel.setPreferredSize(new Dimension(132, 190));
 		shopItemsPanel.setBackground(new Color(0, 29, 85));
+		shopItemsPanel.setLayout(null);
 		shopItemsScrollPane = new JScrollPane(shopItemsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		shopItemsScrollPane.setBackground(new Color(0, 29, 85));
 		shopItemsScrollPane.setBorder(null);
@@ -559,6 +615,10 @@ public class WindowShop extends JPanel
 			showShopSelectors();
 			myCreditsLabel.setLocation(415, 365);
 			myCreditsLabel.setVisible(true);
+			
+			// create the items panel
+			selectedTab = "furniture";
+			createItemsPanel(selectedShop,selectedTab);
 		}
 		else if(tab.equals("pins"))
 		{
@@ -567,6 +627,10 @@ public class WindowShop extends JPanel
 			showShopSelectors();
 			myCreditsLabel.setLocation(415, 365);
 			myCreditsLabel.setVisible(true);
+			
+			// create the items panel
+			selectedTab = "pins";
+			createItemsPanel(selectedShop,selectedTab);
 		}
 		else if(tab.equals("clothing"))
 		{
@@ -575,6 +639,10 @@ public class WindowShop extends JPanel
 			showShopSelectors();
 			myCreditsLabel.setLocation(415, 365);
 			myCreditsLabel.setVisible(true);
+			
+			// create the items panel
+			selectedTab = "clothing";
+			createItemsPanel(selectedShop,selectedTab);
 		}
 		else if(tab.equals("posters"))
 		{
@@ -583,6 +651,10 @@ public class WindowShop extends JPanel
 			showShopSelectors();
 			myCreditsLabel.setLocation(415, 365);
 			myCreditsLabel.setVisible(true);
+			
+			// create the items panel
+			selectedTab = "posters";
+			createItemsPanel(selectedShop,selectedTab);
 		}
 		else if(tab.equals("specials"))
 		{
@@ -591,6 +663,10 @@ public class WindowShop extends JPanel
 			showShopSelectors();
 			myCreditsLabel.setLocation(415, 365);
 			myCreditsLabel.setVisible(true);
+			
+			// create the items panel
+			selectedTab = "specials";
+			createItemsPanel(selectedShop,selectedTab);
 		}
 		else if(tab.equals("rooms"))
 		{
@@ -633,6 +709,90 @@ public class WindowShop extends JPanel
 		shopShrunkenNed.setIcon(shopShrunkenNedImg);
 		shopStarTraders.setIcon(shopStarTradersImg);
 		shopGoldenHorseshoe.setIcon(shopGoldenHorseshoeImg);
+	}
+	
+	// apply the shop items to the item panel
+	private void createItemsPanel(String shop, String type)
+	{
+		// clear the items panel
+		shopItemsPanel.removeAll();
+		
+		// clear the selected item
+		selectedItem = null;
+		shopItemName.setText("");
+		shopItemPrice.setText("");
+		shopCardLabel.setIcon(shopCardImage);
+		shopItemBuyBtn.setIcon(shopItemBuyImage);
+		
+		// get the shop items
+		ArrayList<InventoryItem> shopItems = shops.get(shop).get(type);
+		
+		// add the highlight square
+		shopSquareHighlightLabel.setBounds(0, 0, 42, 42);
+		shopSquareHighlightLabel.setVisible(false);
+		shopItemsPanel.add(shopSquareHighlightLabel);
+		
+		final int ITEMS_PER_ROW = 3;
+		final int ITEMS_PER_COLUMN = 3;
+		final int ITEM_SPACING = 2;
+		final int ITEM_HEIGHT = 42;
+		final int ITEM_WIDTH = 42;
+		int itemsPanelHeight = 0;
+		int itemCount = 0;
+		int itemRow = 0;
+		int itemCol = 0;
+		
+		for(int i = 0; i < shopItems.size(); i++)
+		{
+			itemRow = itemCount / ITEMS_PER_ROW;
+			itemCol = itemCount % ITEMS_PER_COLUMN;
+			
+			// add the item square
+			final ShopItemSquare square = new ShopItemSquare(itemRow, itemCol, shopItems.get(i).getId());
+			square.setIcon(square.getIconImage());
+			square.setVerticalAlignment(JLabel.CENTER);
+			square.setHorizontalAlignment(JLabel.CENTER);
+			square.setBounds((ITEM_SPACING * itemCol) + (ITEM_WIDTH * itemCol), (ITEM_SPACING * itemRow) + (ITEM_HEIGHT * itemRow), ITEM_WIDTH, ITEM_HEIGHT);
+			square.addMouseListener(new MouseListener()
+			{
+				public void mouseExited(MouseEvent e) {}
+				public void mouseReleased(MouseEvent e)
+				{
+				}
+				public void mouseEntered(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseClicked(MouseEvent e)
+				{
+					// move the highlight square here
+					shopSquareHighlightLabel.setLocation(square.getLocation());
+					shopSquareHighlightLabel.setVisible(true);
+					
+					// show the item's information
+					shopItemName.setText(square.getItemName());
+					shopCardLabel.setIcon(square.getCardImage());
+					shopItemPrice.setText(square.getPrice() + " Credit");
+					
+					// set this as the selected item
+					selectedItem = square;
+					
+					// light up the Buy button
+					shopItemBuyBtn.setIcon(shopItemBuyImageLit);
+				}
+			});
+			shopItemsPanel.add(square);
+			
+			// add the item backing square
+			JLabel invSquare = new JLabel(inventorySquare);
+			invSquare.setHorizontalAlignment(JLabel.CENTER);
+			invSquare.setBounds((ITEM_SPACING * itemCol) + (ITEM_WIDTH * itemCol), (ITEM_SPACING * itemRow) + (ITEM_HEIGHT * itemRow), ITEM_WIDTH, ITEM_HEIGHT);
+			shopItemsPanel.add(invSquare);
+			
+			itemCount++;
+		}
+		
+		itemsPanelHeight = (itemRow + 1) * 42;
+		
+		shopItemsPanel.setPreferredSize(new Dimension(132,itemsPanelHeight));
 	}
 	
 	// hide all components
@@ -736,5 +896,90 @@ public class WindowShop extends JPanel
 			button.setForeground(new Color(40, 88, 136));
 			return button;
 		}
+	}
+}
+
+// internal class that handles displaying the inventory items
+class ShopItemSquare extends JLabel
+{
+	private int row = 0;
+	private int col = 0;
+	private String itemName = "";
+	private int itemPrice = -1;
+	private ImageIcon image = null;
+	private ImageIcon cardImage = null;
+	private ImageIcon iconImage = null;
+	private String itemID = "";
+	
+	public ShopItemSquare()
+	{
+		super();
+	}
+	
+	public ShopItemSquare(int row, int col, String itemID)
+	{
+		super();
+		
+		this.row = row;
+		this.col = col;
+		this.itemID = itemID;
+		
+		// get the pin information
+		if(!StaticAppletData.getInvInfo(itemID).getID().equals(""))
+		{
+			this.itemName = StaticAppletData.getInvInfo(itemID).getName();
+			this.itemPrice = StaticAppletData.getInvInfo(itemID).getPrice();
+			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getPath());
+			this.cardImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getCardPath());
+			this.iconImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getIconPath());
+		}
+	}
+	
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
+	
+	public String getItemName() {
+		return itemName;
+	}
+	
+	public void setImage(String path)
+	{
+		if(!path.equals(""))
+		{
+			this.image = AppletResourceLoader.getImageFromJar(path);
+		}
+		else
+		{
+			this.image = null;
+		}
+	}
+	
+	public ImageIcon getImage() {
+		return image;
+	}
+	
+	public ImageIcon getCardImage() {
+		return cardImage;
+	}
+	
+	public ImageIcon getIconImage() {
+		return iconImage;
+	}
+	
+	public String getItemID() {
+		return itemID;
+	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getCol() {
+		return col;
+	}
+	
+	public int getPrice() {
+		return itemPrice;
 	}
 }

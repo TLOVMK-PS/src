@@ -1021,7 +1021,7 @@ public class WindowInventory extends JPanel
 		
 		// figure out the worn pin's index so we can remove it
 		int index = pinSquare.getBounds().x / 42;
-		pinsWorn[index] = new InventoryInfo("","","","","",0,0);
+		pinsWorn[index] = new InventoryInfo("","","","","",0,-1,0);
 		pinsWornPanel.remove(index);
 		
 		// update the inventory name bar
@@ -1082,6 +1082,7 @@ class InventoryPinSquare extends JLabel
 	private int row = 0;
 	private int col = 0;
 	private String pinName = "";
+	private int price = -1;
 	private ImageIcon image = null;
 	private ImageIcon cardImage = null;
 	private ImageIcon iconImage = null;
@@ -1104,6 +1105,7 @@ class InventoryPinSquare extends JLabel
 		if(!StaticAppletData.getInvInfo(pinID).getID().equals(""))
 		{
 			this.pinName = StaticAppletData.getInvInfo(pinID).getName();
+			this.price = StaticAppletData.getInvInfo(pinID).getPrice();
 			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getPath());
 			this.cardImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getCardPath());
 			this.iconImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getIconPath());
@@ -1152,5 +1154,9 @@ class InventoryPinSquare extends JLabel
 	
 	public int getCol() {
 		return col;
+	}
+	
+	public int getPrice() {
+		return price;
 	}
 }

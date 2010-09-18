@@ -1,0 +1,24 @@
+// ===============================
+// "it's a small world" IMPORTS
+// ===============================
+
+// Furniture
+
+ID: furni_0
+TYPE: FURNITURE
+SPECIAL: NO
+@END@
+
+ID: furni_1
+TYPE: FURNITURE
+SPECIAL: NO
+@END@
+
+// Pins
+
+ID: misc_pin_1
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+// Posters

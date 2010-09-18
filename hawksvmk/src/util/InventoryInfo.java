@@ -14,9 +14,10 @@ public class InventoryInfo implements Serializable
 	private String cardPath = "";
 	private String iconPath = "";
 	private int tiles = 0;
+	private int price = -1;
 	private int ratingIndex = 0;
 	
-	public InventoryInfo(String id, String name, String path, String cardPath, String iconPath, int tiles, int ratingIndex)
+	public InventoryInfo(String id, String name, String path, String cardPath, String iconPath, int tiles, int price, int ratingIndex)
 	{
 		this.id = id;
 		this.name = name;
@@ -24,6 +25,7 @@ public class InventoryInfo implements Serializable
 		this.cardPath = cardPath;
 		this.iconPath = iconPath;
 		this.tiles = tiles;
+		this.price = price;
 		this.ratingIndex = ratingIndex;
 	}
 	
@@ -33,6 +35,7 @@ public class InventoryInfo implements Serializable
 	public String getCardPath() {return cardPath;}
 	public String getIconPath() {return iconPath;}
 	public int getTiles() {return tiles;}
+	public int getPrice() {return price;}
 	public int getRatingIndex() {return ratingIndex;}
 	
 	public void setID(String id) {this.id = id;}
@@ -40,5 +43,6 @@ public class InventoryInfo implements Serializable
 	public void setPath(String path) {this.path = path;}
 	public void setCardPath(String cardPath) {this.cardPath = cardPath;}
 	public void setIconPath(String iconPath) {this.iconPath = iconPath;}
+	public void setPrice(int price) {this.price = price;}
 	public void setRatingIndex(int ratingIndex) {this.ratingIndex = ratingIndex;}
 }

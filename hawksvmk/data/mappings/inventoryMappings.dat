@@ -7,6 +7,7 @@ NAME: Aladdin Carpet Chair Blue
 PATH: img/furniture/beta/furni_0/
 CARD: img/furniture/beta/furni_0/card_0.png
 ICON: img/furniture/beta/furni_0/icon_0.jpg
+PRICE: 150
 TILES: 1
 RATING: G
 @END@
@@ -16,6 +17,7 @@ NAME: Ariel's Treasure Chest Cyan
 PATH: img/furniture/beta/furni_1/
 CARD: img/furniture/beta/furni_1/card_1.png
 ICON: img/furniture/beta/furni_1/icon_1.jpg
+PRICE: 200
 TILES: 2
 RATING: G
 @END@
@@ -25,6 +27,7 @@ NAME: Spaceship Couch Cyan
 PATH: img/furniture/beta/furni_22/
 CARD: img/furniture/beta/furni_22/card_22.png
 ICON: img/furniture/beta/furni_22/icon_22.jpg
+PRICE: 500
 TILES: 4
 RATING: G
 @END@
@@ -76,6 +79,8 @@ ID: magic_pin_0
 NAME: Dancing Inferno Magic Pin
 PATH: img/pins/magic_pin_dancing_inferno.png
 CARD: img/pins/cards/card_magic_pin_dancing_inferno.png
+ICON: img/pins/magic_pin_dancing_inferno.png
+PRICE: 2000
 RATING: G
 @END@
 
@@ -85,6 +90,8 @@ ID: pin_whiskey_0
 NAME: Jack Daniel's Whiskey
 PATH: img/pins/pin_whiskey_jack_daniels.png
 CARD: img/pins/cards/card_whiskey_jack_daniels.png
+ICON: img/pins/pin_whiskey_jack_daniels.png
+PRICE: 500
 RATING: M
 @END@
 
@@ -92,6 +99,8 @@ ID: pin_whiskey_1
 NAME: Jim Beam Black Bourbon
 PATH: img/pins/pin_whiskey_jim_beam_black.png
 CARD: img/pins/cards/card_whiskey_jim_beam_black.png
+ICON: img/pins/pin_whiskey_jim_beam_black.png
+PRICE: 500
 RATING: M
 @END@
 
@@ -99,6 +108,8 @@ ID: pin_whiskey_2
 NAME: Jim Beam White Bourbon
 PATH: img/pins/pin_whiskey_jim_beam_white.png
 CARD: img/pins/cards/card_whiskey_jim_beam_white.png
+ICON: img/pins/pin_whiskey_jim_beam_white.png
+PRICE: 500
 RATING: M
 @END@
 
@@ -106,6 +117,8 @@ ID: pin_whiskey_3
 NAME: Southern Comfort Liqueur
 PATH: img/pins/pin_whiskey_southern_comfort.png
 CARD: img/pins/cards/card_whiskey_southern_comfort.png
+ICON: img/pins/pin_whiskey_southern_comfort.png
+PRICE: 500
 RATING: M
 @END@
 
@@ -113,6 +126,8 @@ ID: pin_whiskey_4
 NAME: Johnnie Walker Black
 PATH: img/pins/pin_whiskey_johnnie_walker_black.png
 CARD: img/pins/cards/card_whiskey_johnnie_walker_black.png
+ICON: img/pins/pin_whiskey_johnnie_walker_black.png
+PRICE: 500
 RATING: M
 @END@
 
@@ -122,6 +137,8 @@ ID: misc_pin_0
 NAME: Hawk's VMK
 PATH: img/pins/pin_hvmk.png
 CARD: img/pins/cards/card_hvmk.png
+ICON: img/pins/pin_hvmk.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -129,6 +146,8 @@ ID: misc_pin_1
 NAME: Aladdin
 PATH: img/pins/pin_aladdin.png
 CARD: img/pins/cards/card_aladdin.png
+ICON: img/pins/pin_aladdin.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -136,6 +155,8 @@ ID: misc_pin_2
 NAME: Alice in Wonderland
 PATH: img/pins/pin_alice.png
 CARD: img/pins/cards/card_alice.png
+ICON: img/pins/pin_alice.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -143,6 +164,8 @@ ID: misc_pin_3
 NAME: Autopia
 PATH: img/pins/pin_autopia.png
 CARD: img/pins/cards/card_autopia.png
+ICON: img/pins/pin_autopia.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -150,6 +173,8 @@ ID: misc_pin_4
 NAME: Cinderella
 PATH: img/pins/pin_cinderella.png
 CARD: img/pins/cards/card_cinderella.png
+ICON: img/pins/pin_cinderella.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -157,6 +182,8 @@ ID: misc_pin_5
 NAME: Dumbo
 PATH: img/pins/pin_dumbo.png
 CARD: img/pins/cards/card_dumbo.png
+ICON: img/pins/pin_dumbo.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -164,6 +191,8 @@ ID: misc_pin_6
 NAME: Disney's Animal Kingdom
 PATH: img/pins/pin_animal_kingdom.png
 CARD: img/pins/cards/card_animal_kingdom.png
+ICON: img/pins/pin_animal_kingdom.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -171,6 +200,8 @@ ID: misc_pin_7
 NAME: Disney's California Adventure
 PATH: img/pins/pin_california_adventure.png
 CARD: img/pins/cards/card_california_adventure.png
+ICON: img/pins/pin_california_adventure.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -178,6 +209,8 @@ ID: misc_pin_8
 NAME: Disney-MGM Studios
 PATH: img/pins/pin_mgm_studios.png
 CARD: img/pins/cards/card_mgm_studios.png
+ICON: img/pins/pin_mgm_studios.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -185,6 +218,8 @@ ID: misc_pin_9
 NAME: Epcot
 PATH: img/pins/pin_epcot.png
 CARD: img/pins/cards/card_epcot.png
+ICON: img/pins/pin_epcot.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -192,6 +227,8 @@ ID: misc_pin_10
 NAME: Hong Kong Fantasyland
 PATH: img/pins/pin_hk_fantasyland.png
 CARD: img/pins/cards/card_hk_fantasyland.png
+ICON: img/pins/pin_hk_fantasyland.png
+PRICE: 250
 RATING: G
 @END@
 
@@ -199,6 +236,8 @@ ID: misc_pin_11
 NAME: Hong Kong Main Street USA
 PATH: img/pins/pin_hk_main_street_usa.png
 CARD: img/pins/cards/card_hk_main_street_usa.png
+ICON: img/pins/pin_hk_main_street_usa.png
+PRICE: 250
 RATING: G
 @END@
 
@@ -206,6 +245,8 @@ ID: misc_pin_12
 NAME: Nightmare Before Christmas
 PATH: img/pins/pin_nightmare.png
 CARD: img/pins/cards/card_nightmare.png
+ICON: img/pins/pin_nightmare.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -213,6 +254,8 @@ ID: misc_pin_13
 NAME: Rocketship
 PATH: img/pins/pin_rocketship.png
 CARD: img/pins/cards/card_rocketship.png
+ICON: img/pins/pin_rocketship.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -220,6 +263,8 @@ ID: misc_pin_14
 NAME: Snow White
 PATH: img/pins/pin_snow_white.png
 CARD: img/pins/cards/card_snow_white.png
+ICON: img/pins/pin_snow_white.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -227,6 +272,8 @@ ID: misc_pin_15
 NAME: 50th Celebration
 PATH: img/pins/pin_50th_celebration.png
 CARD: img/pins/cards/card_50th_celebration.png
+ICON: img/pins/pin_50th_celebration.png
+PRICE: 500
 RATING: G
 @END@
 
@@ -234,6 +281,8 @@ ID: misc_pin_16
 NAME: Adventureland Retro
 PATH: img/pins/pin_adv_retro.png
 CARD: img/pins/cards/card_adv_retro.png
+ICON: img/pins/pin_adv_retro.png
+PRICE: 500
 RATING: G
 @END@
 
@@ -241,6 +290,8 @@ ID: misc_pin_17
 NAME: Disneyland (5/9)
 PATH: img/pins/pin_dl_5_9.png
 CARD: img/pins/cards/card_dl_5_9.png
+ICON: img/pins/pin_dl_5_9.png
+PRICE: 500
 RATING: G
 @END@
 
@@ -248,6 +299,8 @@ ID: misc_pin_18
 NAME: Fantasyland Castle Retro
 PATH: img/pins/pin_fl_castle_retro.png
 CARD: img/pins/cards/card_fl_castle_retro.png
+ICON: img/pins/pin_fl_castle_retro.png
+PRICE: 250
 RATING: G
 @END@
 
@@ -255,6 +308,8 @@ ID: misc_pin_19
 NAME: Happiest Celebration on Earth
 PATH: img/pins/pin_happiest_celebration.png
 CARD: img/pins/cards/card_happiest_celebration.png
+ICON: img/pins/pin_happiest_celebration.png
+PRICE: 500
 RATING: G
 @END@
 
@@ -262,6 +317,8 @@ ID: misc_pin_20
 NAME: Thrill Seekers
 PATH: img/pins/pin_thrill_seekers.png
 CARD: img/pins/cards/card_thrill_seekers.png
+ICON: img/pins/pin_thrill_seekers.png
+PRICE: 500
 RATING: G
 @END@
 
@@ -269,6 +326,8 @@ ID: misc_pin_21
 NAME: The Haunted Mansion (1/9)
 PATH: img/pins/pin_mansion_1_9.png
 CARD: img/pins/cards/card_mansion_1_9.png
+ICON: img/pins/pin_mansion_1_9.png
+PRICE: 25
 RATING: G
 @END@
 
@@ -282,6 +341,7 @@ PATH: img/posters/beta/poster_0/
 CARD: img/posters/beta/poster_0/card_0.jpg
 ICON: img/posters/beta/poster_0/icon_0.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -291,6 +351,7 @@ PATH: img/posters/beta/poster_1/
 CARD: img/posters/beta/poster_1/card_1.jpg
 ICON: img/posters/beta/poster_1/icon_1.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -300,6 +361,7 @@ PATH: img/posters/beta/poster_2/
 CARD: img/posters/beta/poster_2/card_2.jpg
 ICON: img/posters/beta/poster_2/icon_2.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -309,6 +371,7 @@ PATH: img/posters/beta/poster_3/
 CARD: img/posters/beta/poster_3/card_3.jpg
 ICON: img/posters/beta/poster_3/icon_3.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -318,6 +381,7 @@ PATH: img/posters/beta/poster_4/
 CARD: img/posters/beta/poster_4/card_4.jpg
 ICON: img/posters/beta/poster_4/icon_4.jpg
 TILES: 1
+PRICE: 1000
 RATING: G
 @END@
 
@@ -327,6 +391,7 @@ PATH: img/posters/beta/poster_5/
 CARD: img/posters/beta/poster_5/card_5.jpg
 ICON: img/posters/beta/poster_5/icon_5.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -336,6 +401,7 @@ PATH: img/posters/beta/poster_6/
 CARD: img/posters/beta/poster_6/card_6.jpg
 ICON: img/posters/beta/poster_6/icon_6.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -345,6 +411,7 @@ PATH: img/posters/beta/poster_7/
 CARD: img/posters/beta/poster_7/card_7.jpg
 ICON: img/posters/beta/poster_7/icon_7.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -354,6 +421,7 @@ PATH: img/posters/beta/poster_8/
 CARD: img/posters/beta/poster_8/card_8.jpg
 ICON: img/posters/beta/poster_8/icon_8.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -363,6 +431,7 @@ PATH: img/posters/beta/poster_9/
 CARD: img/posters/beta/poster_9/card_9.jpg
 ICON: img/posters/beta/poster_9/icon_9.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -372,6 +441,7 @@ PATH: img/posters/beta/poster_10/
 CARD: img/posters/beta/poster_10/card_10.jpg
 ICON: img/posters/beta/poster_10/icon_10.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -381,6 +451,7 @@ PATH: img/posters/beta/poster_11/
 CARD: img/posters/beta/poster_11/card_11.jpg
 ICON: img/posters/beta/poster_11/icon_11.jpg
 TILES: 1
+PRICE: 1000
 RATING: G
 @END@
 
@@ -390,6 +461,7 @@ PATH: img/posters/beta/poster_12/
 CARD: img/posters/beta/poster_12/card_12.jpg
 ICON: img/posters/beta/poster_12/icon_12.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -399,6 +471,7 @@ PATH: img/posters/beta/poster_13/
 CARD: img/posters/beta/poster_13/card_13.jpg
 ICON: img/posters/beta/poster_13/icon_13.jpg
 TILES: 1
+PRICE: 100
 RATING: G
 @END@
 
@@ -408,6 +481,7 @@ PATH: img/posters/beta/poster_14/
 CARD: img/posters/beta/poster_14/card_14.jpg
 ICON: img/posters/beta/poster_14/icon_14.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -417,6 +491,7 @@ PATH: img/posters/beta/poster_15/
 CARD: img/posters/beta/poster_15/card_15.jpg
 ICON: img/posters/beta/poster_15/icon_15.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -426,6 +501,7 @@ PATH: img/posters/beta/poster_16/
 CARD: img/posters/beta/poster_16/card_16.jpg
 ICON: img/posters/beta/poster_16/icon_16.jpg
 TILES: 1
+PRICE: 1000
 RATING: G
 @END@
 
@@ -435,6 +511,7 @@ PATH: img/posters/beta/poster_17/
 CARD: img/posters/beta/poster_17/card_17.jpg
 ICON: img/posters/beta/poster_17/icon_17.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -444,6 +521,7 @@ PATH: img/posters/beta/poster_18/
 CARD: img/posters/beta/poster_18/card_18.jpg
 ICON: img/posters/beta/poster_18/icon_18.jpg
 TILES: 1
+PRICE: 1000
 RATING: G
 @END@
 
@@ -453,6 +531,7 @@ PATH: img/posters/beta/poster_19/
 CARD: img/posters/beta/poster_19/card_19.jpg
 ICON: img/posters/beta/poster_19/icon_19.jpg
 TILES: 1
+PRICE: 200
 RATING: G
 @END@
 
@@ -462,6 +541,7 @@ PATH: img/posters/beta/poster_20/
 CARD: img/posters/beta/poster_20/card_20.jpg
 ICON: img/posters/beta/poster_20/icon_20.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -471,6 +551,7 @@ PATH: img/posters/beta/poster_21/
 CARD: img/posters/beta/poster_21/card_21.jpg
 ICON: img/posters/beta/poster_21/icon_21.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -480,6 +561,7 @@ PATH: img/posters/beta/poster_22/
 CARD: img/posters/beta/poster_22/card_22.jpg
 ICON: img/posters/beta/poster_22/icon_22.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -489,6 +571,7 @@ PATH: img/posters/beta/poster_23/
 CARD: img/posters/beta/poster_23/card_23.jpg
 ICON: img/posters/beta/poster_23/icon_23.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
 
@@ -498,5 +581,6 @@ PATH: img/posters/beta/poster_24/
 CARD: img/posters/beta/poster_24/card_24.jpg
 ICON: img/posters/beta/poster_24/icon_24.jpg
 TILES: 1
+PRICE: 40
 RATING: G
 @END@
