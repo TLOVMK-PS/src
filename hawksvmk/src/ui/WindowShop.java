@@ -5,6 +5,8 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -16,9 +18,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import roomviewer.RoomViewerGrid;
 
@@ -67,11 +73,55 @@ public class WindowShop extends JPanel
 	private JLabel roomCostLabel = new JLabel();
 	private JLabel myCreditsLabel = new JLabel();
 	
+	private ImageIcon tabFurnishingsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_furnishings.png");
+	private ImageIcon tabPinsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_pins.png");
+	private ImageIcon tabClothingImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_clothing.png");
+	private ImageIcon tabPostersImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_posters.png");
+	private ImageIcon tabSpecialsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_specials.png");
+	
 	private Rectangle tabFurnishings = new Rectangle(99, 46, 75, 21);
 	private Rectangle tabPins = new Rectangle(190, 46, 33, 21);
 	private Rectangle tabClothing = new Rectangle(239, 46, 57, 21);
 	private Rectangle tabPosters = new Rectangle(311, 47, 50, 22);
 	private Rectangle tabSpecials = new Rectangle(377, 46, 54, 20);
+	
+	private ImageIcon shopSmallWorldImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_small_world.jpg");
+	private ImageIcon shopEmporiumImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_emporium.jpg");
+	private ImageIcon shopShrunkenNedImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_shrunken_ned.jpg");
+	private ImageIcon shopGoldenHorseshoeImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_golden_horseshoe.jpg");
+	private ImageIcon shopStarTradersImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_inner_space.jpg");
+	private ImageIcon shopSmallWorldImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_small_world_lit.jpg");
+	private ImageIcon shopEmporiumImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_emporium_lit.jpg");
+	private ImageIcon shopShrunkenNedImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_shrunken_ned_lit.jpg");
+	private ImageIcon shopGoldenHorseshoeImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_golden_horseshoe_lit.jpg");
+	private ImageIcon shopStarTradersImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_inner_space_lit.jpg");
+	
+	private JLabel shopSmallWorld = new JLabel(shopSmallWorldImg);
+	private JLabel shopEmporium = new JLabel(shopEmporiumImgLit);
+	private JLabel shopShrunkenNed = new JLabel(shopShrunkenNedImg);
+	private JLabel shopGoldenHorseshoe = new JLabel(shopGoldenHorseshoeImg);
+	private JLabel shopStarTraders = new JLabel(shopStarTradersImg);
+	
+	private ImageIcon shopCardImage = AppletResourceLoader.getImageFromJar("img/furniture/card_template.png");
+	private JLabel shopCardLabel = new JLabel(shopCardImage);
+	
+	private JPanel shopItemsPanel = new JPanel();
+	private JScrollPane shopItemsScrollPane;
+	
+	private ImageIcon shopAdventurelandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_adventureland_items.jpg");
+	private ImageIcon shopFantasylandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_fantasyland_items.jpg");
+	private ImageIcon shopFrontierlandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_frontierland_items.jpg");
+	private ImageIcon shopMainStreetItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_main_street_items.jpg");
+	private ImageIcon shopTomorrowlandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_tomorrowland_items.jpg");
+	private JLabel shopItemsLand = new JLabel(shopMainStreetItems);
+	
+	private JLabel shopItemName = new JLabel();
+	private JLabel shopItemPrice = new JLabel();
+	
+	private ImageIcon shopItemBuyImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_buy_button_off.png");
+	private ImageIcon shopItemBuyImageLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_buy_button_on.png");
+	
+	private JLabel shopItemBuyBtn = new JLabel(shopItemBuyImage);
 	
 	public WindowShop(Font textFont, Font textFontBold, int x, int y)
 	{
@@ -162,6 +212,10 @@ public class WindowShop extends JPanel
 		roomCreatedWindow.setVisible(false);
 		add(roomCreatedWindow);
 		
+		// ================================
+		// ROOMS TAB
+		// ================================
+		
 		// get the list of template IDs for the guest rooms
 		roomTemplates = StaticAppletData.getGuestRoomTemplates();
 		
@@ -207,6 +261,171 @@ public class WindowShop extends JPanel
 		
 		// get the room preview at index 0
 		traverseRoomTemplates("next");
+		
+		// ==================================
+		// GENERAL SHOP SELECTORS
+		// ==================================
+		
+		// "it's a small world" Imports
+		shopSmallWorld.setBounds(30, 85, 187, 21);
+		shopSmallWorld.setVisible(false);
+		shopSmallWorld.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// dim the shop selectors
+				dimShopSelectors();
+				
+				// highlight this selector
+				shopSmallWorld.setIcon(shopSmallWorldImgLit);
+				
+				// set the land
+				shopItemsLand.setIcon(shopFantasylandItems);
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(shopSmallWorld);
+		
+		// Emporium
+		shopEmporium.setBounds(30, 106, 187, 21);
+		shopEmporium.setVisible(false);
+		shopEmporium.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// dim the shop selectors
+				dimShopSelectors();
+				
+				// highlight this selector
+				shopEmporium.setIcon(shopEmporiumImgLit);
+				
+				// set the land
+				shopItemsLand.setIcon(shopMainStreetItems);
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(shopEmporium);
+		
+		// Golden Horseshoe Mercantile
+		shopGoldenHorseshoe.setBounds(30, 127, 187, 21);
+		shopGoldenHorseshoe.setVisible(false);
+		shopGoldenHorseshoe.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// dim the shop selectors
+				dimShopSelectors();
+				
+				// highlight this selector
+				shopGoldenHorseshoe.setIcon(shopGoldenHorseshoeImgLit);
+				
+				// set the land
+				shopItemsLand.setIcon(shopFrontierlandItems);
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(shopGoldenHorseshoe);
+		
+		// Inner-Space Shop
+		shopStarTraders.setBounds(30, 148, 187, 21);
+		shopStarTraders.setVisible(false);
+		shopStarTraders.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// dim the shop selectors
+				dimShopSelectors();
+				
+				// highlight this selector
+				shopStarTraders.setIcon(shopStarTradersImgLit);
+				
+				// set the land
+				shopItemsLand.setIcon(shopTomorrowlandItems);
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(shopStarTraders);
+		
+		// Shrunken Ned's Shop
+		shopShrunkenNed.setBounds(30, 169, 187, 21);
+		shopShrunkenNed.setVisible(false);
+		shopShrunkenNed.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// dim the shop selectors
+				dimShopSelectors();
+				
+				// highlight this selector
+				shopShrunkenNed.setIcon(shopShrunkenNedImgLit);
+				
+				// set the land
+				shopItemsLand.setIcon(shopAdventurelandItems);
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
+		add(shopShrunkenNed);
+		
+		// ==================================
+		// GENERAL SHOP INTERFACE CONTROLS
+		// ==================================
+		
+		shopCardLabel.setBounds(256, 148, 109, 133);
+		shopCardLabel.setVisible(false);
+		add(shopCardLabel);
+		
+		shopItemsPanel.setBounds(0,0,132,190);
+		shopItemsPanel.setPreferredSize(new Dimension(132, 190));
+		shopItemsPanel.setBackground(new Color(0, 29, 85));
+		shopItemsScrollPane = new JScrollPane(shopItemsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		shopItemsScrollPane.setBackground(new Color(0, 29, 85));
+		shopItemsScrollPane.setBorder(null);
+		shopItemsScrollPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
+		shopItemsScrollPane.setBounds(389, 148, 147, 190);
+		shopItemsScrollPane.setVisible(false);
+		add(shopItemsScrollPane);
+		
+		shopItemsLand.setBounds(311, 85, 165, 33);
+		shopItemsLand.setVisible(false);
+		add(shopItemsLand);
+		
+		// item name
+		shopItemName.setBounds(245, 120, 282, 20);
+		shopItemName.setText("");
+		shopItemName.setFont(textFont);
+		shopItemName.setForeground(Color.WHITE);
+		shopItemName.setHorizontalAlignment(JLabel.CENTER);
+		shopItemName.setVisible(false);
+		add(shopItemName);
+		
+		// item price
+		shopItemPrice.setBounds(254, 341, 119, 15);
+		shopItemPrice.setBackground(new Color(51, 140, 196));
+		shopItemPrice.setText("");
+		shopItemPrice.setFont(textFont);
+		shopItemPrice.setForeground(Color.WHITE);
+		shopItemPrice.setHorizontalAlignment(JLabel.CENTER);
+		shopItemPrice.setVisible(false);
+		add(shopItemPrice);
+		
+		shopItemBuyBtn.setBounds(248, 364, 131, 21);
+		shopItemBuyBtn.setVisible(false);
+		add(shopItemBuyBtn);
 
 		backgroundLabel.setBounds(0,0,width,height);
 		add(backgroundLabel);
@@ -225,17 +444,17 @@ public class WindowShop extends JPanel
 					// close the window
 					setVisible(false);
 				}
-				else if(nextRoom.contains(e.getPoint()))
+				else if(nextRoom.contains(e.getPoint()) && backgroundLabel.getIcon().equals(tabRoomsImage))
 				{
 					// display the next room
 					traverseRoomTemplates("next");
 				}
-				else if(prevRoom.contains(e.getPoint()))
+				else if(prevRoom.contains(e.getPoint()) && backgroundLabel.getIcon().equals(tabRoomsImage))
 				{
 					// display the previous room
 					traverseRoomTemplates("prev");
 				}
-				else if(btnBuyRoom.contains(e.getPoint()))
+				else if(btnBuyRoom.contains(e.getPoint()) && backgroundLabel.getIcon().equals(tabRoomsImage))
 				{
 					// check to make sure the player can afford the room
 					if(gridObject.getMyCredits() >= Long.parseLong(roomCostLabel.getText()))
@@ -266,6 +485,36 @@ public class WindowShop extends JPanel
 						// TODO: Display some notification that the player is poor as cat shit
 					}
 				}
+				else if(tabRooms.contains(e.getPoint()))
+				{
+					// change to the Rooms tab
+					changeTab("rooms");
+				}
+				else if(tabFurnishings.contains(e.getPoint()))
+				{
+					// change to the Furnishings tab
+					changeTab("furnishings");
+				}
+				else if(tabPins.contains(e.getPoint()))
+				{
+					// change to the Pins tab
+					changeTab("pins");
+				}
+				else if(tabClothing.contains(e.getPoint()))
+				{
+					// change to the Clothing tab
+					changeTab("clothing");
+				}
+				else if(tabPosters.contains(e.getPoint()))
+				{
+					// change to the Posters tab
+					changeTab("posters");
+				}
+				else if(tabSpecials.contains(e.getPoint()))
+				{
+					// change to the Specials tab
+					changeTab("specials");
+				}
 			}
 			public void mouseEntered(MouseEvent e) {}
 			public void mousePressed(MouseEvent e) {}
@@ -294,6 +543,105 @@ public class WindowShop extends JPanel
 		});
 		
 		shopWindow = this;
+	}
+	
+	// change the visible tab in the window
+	private void changeTab(String tab)
+	{
+		// hide all the components
+		hideComponents();
+		
+		// figure out which tab to show
+		if(tab.equals("furnishings"))
+		{
+			// show the Furnishings panel
+			backgroundLabel.setIcon(tabFurnishingsImage);
+			showShopSelectors();
+			myCreditsLabel.setLocation(415, 365);
+			myCreditsLabel.setVisible(true);
+		}
+		else if(tab.equals("pins"))
+		{
+			// show the Pins panel
+			backgroundLabel.setIcon(tabPinsImage);
+			showShopSelectors();
+			myCreditsLabel.setLocation(415, 365);
+			myCreditsLabel.setVisible(true);
+		}
+		else if(tab.equals("clothing"))
+		{
+			// show the Clothing panel
+			backgroundLabel.setIcon(tabClothingImage);
+			showShopSelectors();
+			myCreditsLabel.setLocation(415, 365);
+			myCreditsLabel.setVisible(true);
+		}
+		else if(tab.equals("posters"))
+		{
+			// show the Posters panel
+			backgroundLabel.setIcon(tabPostersImage);
+			showShopSelectors();
+			myCreditsLabel.setLocation(415, 365);
+			myCreditsLabel.setVisible(true);
+		}
+		else if(tab.equals("specials"))
+		{
+			// show the Specials panel
+			backgroundLabel.setIcon(tabSpecialsImage);
+			showShopSelectors();
+			myCreditsLabel.setLocation(415, 365);
+			myCreditsLabel.setVisible(true);
+		}
+		else if(tab.equals("rooms"))
+		{
+			// show the Rooms panel
+			backgroundLabel.setIcon(tabRoomsImage);
+			roomPreviewLabel.setVisible(true);
+			roomNameLabel.setVisible(true);
+			roomDescriptionLabel.setVisible(true);
+			roomCostLabel.setVisible(true);
+			myCreditsLabel.setLocation(252, 367);
+			myCreditsLabel.setVisible(true);
+		}
+		
+		// show the background
+		backgroundLabel.setVisible(true);
+	}
+	
+	// show the shop selectors and related components
+	private void showShopSelectors()
+	{
+		shopSmallWorld.setVisible(true);
+		shopEmporium.setVisible(true);
+		shopShrunkenNed.setVisible(true);
+		shopStarTraders.setVisible(true);
+		shopGoldenHorseshoe.setVisible(true);
+		
+		shopCardLabel.setVisible(true);
+		shopItemsScrollPane.setVisible(true);
+		shopItemsLand.setVisible(true);
+		shopItemName.setVisible(true);
+		shopItemPrice.setVisible(true);
+		shopItemBuyBtn.setVisible(true);
+	}
+	
+	// dim the shop selector highlights
+	private void dimShopSelectors()
+	{
+		shopSmallWorld.setIcon(shopSmallWorldImg);
+		shopEmporium.setIcon(shopEmporiumImg);
+		shopShrunkenNed.setIcon(shopShrunkenNedImg);
+		shopStarTraders.setIcon(shopStarTradersImg);
+		shopGoldenHorseshoe.setIcon(shopGoldenHorseshoeImg);
+	}
+	
+	// hide all components
+	private void hideComponents()
+	{
+		for(Component c : getComponents())
+		{
+			c.setVisible(false);
+		}
 	}
 	
 	// change the displayed room preview given a direction to traverse
@@ -359,5 +707,34 @@ public class WindowShop extends JPanel
 		roomCreatedName.setText("<html>" + name + "</html>");
 		roomCreatedOwner.setText(owner);
 		roomCreatedDescription.setText("<html>" + description + "</html>");
+	}
+	
+	class MyScrollBarUI extends BasicScrollBarUI
+	{
+		protected void configureScrollBarColors()
+		{
+			thumbColor = new Color(153, 204, 255);//Color.lightGray;
+			//thumbDarkShadowColor = Color.darkGray;
+			//thumbHighlightColor = Color.white;
+			//thumbLightShadowColor = Color.lightGray;
+			trackColor = new Color(0, 153, 204);//Color.gray;
+			//trackHighlightColor = Color.gray;
+		}
+
+		protected JButton createDecreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
+
+		protected JButton createIncreaseButton(int orientation)
+		{
+			JButton button = new BasicArrowButton(orientation);
+			button.setBackground(new Color(153, 204, 255));
+			button.setForeground(new Color(40, 88, 136));
+			return button;
+		}
 	}
 }
