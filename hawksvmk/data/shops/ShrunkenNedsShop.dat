@@ -8,7 +8,42 @@
 
 // Posters
 
+ID: poster_2
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_3
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_9
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
 ID: poster_0
 TYPE: POSTER
-SPECIAL: YES
+SPECIAL: NO
+@END@
+
+ID: poster_10
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_12
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_23
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_24
+TYPE: POSTER
+SPECIAL: NO
 @END@

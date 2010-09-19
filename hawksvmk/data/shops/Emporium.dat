@@ -6,4 +6,69 @@
 
 // Pins
 
+ID: misc_pin_0
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_6
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_7
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_8
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_9
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_11
+TYPE: PIN
+SPECIAL: YES
+@END@
+
+ID: misc_pin_12
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_15
+TYPE: PIN
+SPECIAL: YES
+@END@
+
+ID: misc_pin_17
+TYPE: PIN
+SPECIAL: YES
+@END@
+
+ID: misc_pin_19
+TYPE: PIN
+SPECIAL: YES
+@END@
+
+ID: misc_pin_20
+TYPE: PIN
+SPECIAL: YES
+@END@
+
 // Posters
+
+ID: poster_6
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_8
+TYPE: POSTER
+SPECIAL: NO
+@END@

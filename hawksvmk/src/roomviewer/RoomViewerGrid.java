@@ -37,6 +37,7 @@ import astar.AStarCharacter;
 import roomobject.RoomItem;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
+import sockets.messages.MessageAddInventory;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageCreateGuestRoom;
 import sockets.messages.MessageMoveCharacter;
@@ -1676,6 +1677,16 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void sendUpdateInventoryMessage(ArrayList<InventoryItem> inventory)
 	{
 		uiObject.sendMessageToServer(new MessageUpdateInventory(myCharacter.getUsername(), inventory));
+	}
+	
+	// send an Add Inventory message to the server
+	public void sendAddInventoryMessage(InventoryItem item)
+	{
+		// add the newly purchased item to the Inventory window
+		inventoryWindow.addPurchasedItem(item);
+		
+		// send the message to the server
+		uiObject.sendMessageToServer(new MessageAddInventory(myCharacter.getUsername(), item));
 	}
 }
 

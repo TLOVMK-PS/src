@@ -22,6 +22,7 @@ import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageAddFriendConfirmation;
 import sockets.messages.MessageAddFriendRequest;
+import sockets.messages.MessageAddInventory;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageCreateGuestRoom;
@@ -408,6 +409,17 @@ public class VMKServerThread extends Thread
 							
 							// update the player's inventory file
 							FileOperations.saveInventory(email, updateInvMsg.getInventory());
+						}
+						else if(outputMessage instanceof MessageAddInventory)
+						{
+							// add inventory message received from client
+							MessageAddInventory addInvMsg = (MessageAddInventory)outputMessage;
+							
+							// resolve the player's email address
+							String email = VMKServerPlayerData.getEmailFromUsername(addInvMsg.getUsername());
+							
+							// update the player's inventory file
+							FileOperations.appendInventory(email, addInvMsg.getItem());
 						}
 						
 						// sleep to prevent the stream from getting corrupted

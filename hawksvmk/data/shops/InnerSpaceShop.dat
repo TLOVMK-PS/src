@@ -11,5 +11,34 @@ SPECIAL: YES
 
 // Pins
 
+ID: misc_pin_3
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_13
+TYPE: PIN
+SPECIAL: NO
+@END@
 
 // Posters
+
+ID: poster_1
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_7
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_16
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_21
+TYPE: POSTER
+SPECIAL: NO
+@END@

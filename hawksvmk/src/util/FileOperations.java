@@ -1580,6 +1580,53 @@ public class FileOperations
 		}
 	}
 	
+	// append an inventory item to the player's file
+	public static void appendInventory(String email, InventoryItem item)
+	{
+		String filename = "";
+		
+		if(!email.equals(""))
+		{
+			// save the inventory file
+			filename = "data/inventory/" + email + ".dat";
+		}
+		else
+		{
+			// save the default inventory file
+			filename = "data/inventory/default.dat";
+		}
+		
+		try
+		{	
+			// open the file for appending
+			FileOutputStream appendedFile = new FileOutputStream(filename, true);
+			PrintWriter writer = new PrintWriter(appendedFile);
+			
+			// write the mapping to the file
+			if(item.getType() == InventoryItem.FURNITURE)
+			{
+				writer.println("FURNITURE: " + item.getId());
+			}
+			else if(item.getType() == InventoryItem.PIN)
+			{
+				writer.println("PIN: " + item.getId());
+			}
+			else if(item.getType() == InventoryItem.POSTER)
+			{
+				writer.println("POSTER: " + item.getId());
+			}
+			
+			// flush the stream and close it
+			writer.flush();
+			writer.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN appendInventory()");
+			e.printStackTrace();
+		}
+	}
+	
 	// get a HashMap of room information from a room file
 	private synchronized static HashMap<String,String> getInfoFromRoom(String path)
 	{

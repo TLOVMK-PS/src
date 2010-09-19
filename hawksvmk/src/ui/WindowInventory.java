@@ -536,6 +536,16 @@ public class WindowInventory extends JPanel
 		addItemToInventoryPanel(item);
 	}
 	
+	// add a NEWLY PURCHASED item to the player's inventory
+	public void addPurchasedItem(InventoryItem item)
+	{
+		// add the item to the inventory
+		inventoryItems.add(item);
+		
+		// add the item to one of the panels
+		addItemToInventoryPanel(item);
+	}
+	
 	// figure out where to add an inventory item to the panel
 	private void addItemToInventoryPanel(InventoryItem item)
 	{

@@ -6,12 +6,12 @@
 
 ID: furni_0
 TYPE: FURNITURE
-SPECIAL: NO
+SPECIAL: YES
 @END@
 
 ID: furni_1
 TYPE: FURNITURE
-SPECIAL: NO
+SPECIAL: YES
 @END@
 
 // Pins
@@ -21,4 +21,59 @@ TYPE: PIN
 SPECIAL: NO
 @END@
 
+ID: misc_pin_2
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_4
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_5
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_10
+TYPE: PIN
+SPECIAL: YES
+@END@
+
+ID: misc_pin_14
+TYPE: PIN
+SPECIAL: NO
+@END@
+
+ID: misc_pin_18
+TYPE: PIN
+SPECIAL: YES
+@END@
+
 // Posters
+
+ID: poster_11
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_13
+TYPE: POSTER
+SPECIAL: YES
+@END@
+
+ID: poster_15
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_17
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_22
+TYPE: POSTER
+SPECIAL: NO
+@END@

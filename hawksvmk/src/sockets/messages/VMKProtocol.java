@@ -125,6 +125,12 @@ public class VMKProtocol
         	theOutput = (MessageUpdateInventory)theInput;
         	theOutput.setType("MessageUpdateInventory");
         }
+        else if(theInput instanceof MessageAddInventory)
+        {
+        	// pass back the request
+        	theOutput = (MessageAddInventory)theInput;
+        	theOutput.setType("MessageAddInventory");
+        }
         else if(theInput instanceof MessageUpdateItemInRoom)
         {
         	// pass back the request

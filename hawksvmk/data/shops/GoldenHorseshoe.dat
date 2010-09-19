@@ -6,4 +6,29 @@
 
 // Pins
 
+ID: misc_pin_21
+TYPE: PIN
+SPECIAL: NO
+@END@
+
 // Posters
+
+ID: poster_4
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_5
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_14
+TYPE: POSTER
+SPECIAL: NO
+@END@
+
+ID: poster_20
+TYPE: POSTER
+SPECIAL: NO
+@END@

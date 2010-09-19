@@ -36,6 +36,8 @@ import util.StaticAppletData;
 
 public class WindowShop extends JPanel
 {
+	// TODO: Hide items in the Specials tab until the player is in the proper public room to view them
+	
 	Font textFont;
 	Font textFontBold;
 	
@@ -481,6 +483,43 @@ public class WindowShop extends JPanel
 		
 		shopItemBuyBtn.setBounds(248, 364, 131, 21);
 		shopItemBuyBtn.setVisible(false);
+		shopItemBuyBtn.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e)
+			{
+				// make sure the Buy button is lit
+				if(shopItemBuyBtn.getIcon().equals(shopItemBuyImageLit))
+				{
+					// parse out the item price
+					long itemPrice = Long.parseLong(shopItemPrice.getText().replaceAll(" Credit", ""));
+					
+					// check to make sure the player can afford the item
+					if(gridObject.getMyCredits() >= itemPrice)
+					{
+						// create the new item
+						InventoryItem item = new InventoryItem(selectedItem.getItemName(), selectedItem.getItemID(), selectedItem.getItemType());
+						
+						// send the message to the server
+						gridObject.sendAddInventoryMessage(item);
+						
+						// subtract the cost of the room from the player's credits
+						gridObject.setMyCredits(gridObject.getMyCredits() - itemPrice);
+						myCreditsLabel.setText("" + gridObject.getMyCredits());
+						
+						// update the character file
+						gridObject.sendUpdateCharacterMessage(gridObject.getMyCharacter());
+					}
+					else
+					{
+						// TODO: Display some notification that the player is poor as cat shit
+					}
+				}
+			}
+			public void mousePressed(MouseEvent e) {}
+		});
 		add(shopItemBuyBtn);
 
 		backgroundLabel.setBounds(0,0,width,height);
@@ -748,7 +787,7 @@ public class WindowShop extends JPanel
 			itemCol = itemCount % ITEMS_PER_COLUMN;
 			
 			// add the item square
-			final ShopItemSquare square = new ShopItemSquare(itemRow, itemCol, shopItems.get(i).getId());
+			final ShopItemSquare square = new ShopItemSquare(itemRow, itemCol, shopItems.get(i).getId(), shopItems.get(i).getType());
 			square.setIcon(square.getIconImage());
 			square.setVerticalAlignment(JLabel.CENTER);
 			square.setHorizontalAlignment(JLabel.CENTER);
@@ -910,19 +949,21 @@ class ShopItemSquare extends JLabel
 	private ImageIcon cardImage = null;
 	private ImageIcon iconImage = null;
 	private String itemID = "";
+	private int itemType = 0;
 	
 	public ShopItemSquare()
 	{
 		super();
 	}
 	
-	public ShopItemSquare(int row, int col, String itemID)
+	public ShopItemSquare(int row, int col, String itemID, int itemType)
 	{
 		super();
 		
 		this.row = row;
 		this.col = col;
 		this.itemID = itemID;
+		this.itemType = itemType;
 		
 		// get the pin information
 		if(!StaticAppletData.getInvInfo(itemID).getID().equals(""))
@@ -981,5 +1022,9 @@ class ShopItemSquare extends JLabel
 	
 	public int getPrice() {
 		return itemPrice;
+	}
+	
+	public int getItemType() {
+		return itemType;
 	}
 }
