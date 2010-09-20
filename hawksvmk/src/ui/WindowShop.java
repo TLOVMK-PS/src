@@ -36,8 +36,6 @@ import util.StaticAppletData;
 
 public class WindowShop extends JPanel
 {
-	// TODO: Hide items in the Specials tab until the player is in the proper public room to view them
-	
 	Font textFont;
 	Font textFontBold;
 	
@@ -104,7 +102,7 @@ public class WindowShop extends JPanel
 	private ImageIcon shopStarTradersImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_inner_space_lit.jpg");
 	
 	private JLabel shopSmallWorld = new JLabel(shopSmallWorldImg);
-	private JLabel shopEmporium = new JLabel(shopEmporiumImgLit);
+	private JLabel shopEmporium = new JLabel(shopEmporiumImg);
 	private JLabel shopShrunkenNed = new JLabel(shopShrunkenNedImg);
 	private JLabel shopGoldenHorseshoe = new JLabel(shopGoldenHorseshoeImg);
 	private JLabel shopStarTraders = new JLabel(shopStarTradersImg);
@@ -131,9 +129,24 @@ public class WindowShop extends JPanel
 	
 	private JLabel shopItemBuyBtn = new JLabel(shopItemBuyImage);
 	
-	private String selectedShop = "Emporium";
+	// the respective shop IDs to be used with the creation of the items lists and shop mappings
+	private String emporiumID = "Emporium";
+	private String smallWorldID = "SmallWorldImports";
+	private String shrunkenNedID = "ShrunkenNedsShop";
+	private String goldenHorseshoeID = "GoldenHorseshoe";
+	private String innerSpaceID = "InnerSpaceShop";
+	
+	private String selectedShop = emporiumID;
 	private String selectedTab = "furniture";
 	private ShopItemSquare selectedItem = null;
+	
+	// TODO: Add the proper room IDs for the existing blank Strings
+	// the room IDs of the respective shops (for usage in conjunction with the Specials tab)
+	private String emporiumRoomID = "ms10";
+	private String smallWorldRoomID = "";
+	private String shrunkenNedRoomID = "";
+	private String goldenHorseshoeRoomID = "";
+	private String innerSpaceRoomID = "";
 	
 	// structure containing the shops and their items
 	private HashMap<String, HashMap<String, ArrayList<InventoryItem>>> shops = new HashMap<String, HashMap<String, ArrayList<InventoryItem>>>();
@@ -163,19 +176,19 @@ public class WindowShop extends JPanel
 	private void createShops()
 	{
 		// Emporium
-		shops.put("Emporium", FileOperations.loadShopMappings("Emporium"));
+		shops.put(emporiumID, FileOperations.loadShopMappings(emporiumID));
 		
 		// Shrunken Ned's Shop
-		shops.put("ShrunkenNedsShop", FileOperations.loadShopMappings("ShrunkenNedsShop"));
+		shops.put(shrunkenNedID, FileOperations.loadShopMappings(shrunkenNedID));
 		
 		// Inner-Space Shop
-		shops.put("InnerSpaceShop", FileOperations.loadShopMappings("InnerSpaceShop"));
+		shops.put(innerSpaceID, FileOperations.loadShopMappings(innerSpaceID));
 		
 		// "it's a small world" Imports
-		shops.put("SmallWorldImports", FileOperations.loadShopMappings("SmallWorldImports"));
+		shops.put(smallWorldID, FileOperations.loadShopMappings(smallWorldID));
 		
 		// Golden Horseshoe Mercantile
-		shops.put("GoldenHorseshoe", FileOperations.loadShopMappings("GoldenHorseshoe"));
+		shops.put(goldenHorseshoeID, FileOperations.loadShopMappings(goldenHorseshoeID));
 	}
 	
 	private void loadWindowShop()
@@ -323,7 +336,7 @@ public class WindowShop extends JPanel
 				shopItemsLand.setIcon(shopFantasylandItems);
 				
 				// create the items panel
-				selectedShop = "SmallWorldImports";
+				selectedShop = smallWorldID;
 				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
@@ -350,7 +363,7 @@ public class WindowShop extends JPanel
 				shopItemsLand.setIcon(shopMainStreetItems);
 				
 				// create the items panel
-				selectedShop = "Emporium";
+				selectedShop = emporiumID;
 				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
@@ -377,7 +390,7 @@ public class WindowShop extends JPanel
 				shopItemsLand.setIcon(shopFrontierlandItems);
 				
 				// create the items panel
-				selectedShop = "GoldenHorseshoe";
+				selectedShop = goldenHorseshoeID;
 				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
@@ -404,7 +417,7 @@ public class WindowShop extends JPanel
 				shopItemsLand.setIcon(shopTomorrowlandItems);
 				
 				// create the items panel
-				selectedShop = "InnerSpaceShop";
+				selectedShop = innerSpaceID;
 				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
@@ -431,7 +444,7 @@ public class WindowShop extends JPanel
 				shopItemsLand.setIcon(shopAdventurelandItems);
 				
 				// create the items panel
-				selectedShop = "ShrunkenNedsShop";
+				selectedShop = shrunkenNedID;
 				createItemsPanel(selectedShop,selectedTab);
 			}
 			public void mousePressed(MouseEvent e) {}
@@ -753,6 +766,9 @@ public class WindowShop extends JPanel
 	// apply the shop items to the item panel
 	private void createItemsPanel(String shop, String type)
 	{
+		// get the current room ID
+		String currentRoomID = gridObject.getRoomInfo().get("ID");
+		
 		// clear the items panel
 		shopItemsPanel.removeAll();
 		
@@ -762,6 +778,17 @@ public class WindowShop extends JPanel
 		shopItemPrice.setText("");
 		shopCardLabel.setIcon(shopCardImage);
 		shopItemBuyBtn.setIcon(shopItemBuyImage);
+		
+		// check to see if it's the Specials tab first
+		if(type.equals("specials"))
+		{
+			// check to see if we need to prevent the creation of the items list
+			if(shop.equals(emporiumID) && !currentRoomID.equals(emporiumRoomID)) {return;}
+			if(shop.equals(smallWorldID) && !currentRoomID.equals(smallWorldRoomID)) {return;}
+			if(shop.equals(shrunkenNedID) && !currentRoomID.equals(shrunkenNedRoomID)) {return;}
+			if(shop.equals(goldenHorseshoeID) && !currentRoomID.equals(goldenHorseshoeRoomID)) {return;}
+			if(shop.equals(innerSpaceID) && !currentRoomID.equals(innerSpaceRoomID)) {return;}
+		}
 		
 		// get the shop items
 		ArrayList<InventoryItem> shopItems = shops.get(shop).get(type);
