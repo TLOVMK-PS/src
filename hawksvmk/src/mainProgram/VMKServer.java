@@ -74,7 +74,7 @@ public class VMKServer
         	
         	// send the IP address to the web service database
         	System.out.println("Sending server IP to web service...");
-        	new URL("http://vmk.burbankparanormal.com/game/configServer.php?setIP=" + address.getHostAddress());
+        	new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=setGameServerIP&serverIP=" + address.getHostAddress()).openStream();
         	System.out.println("Server IP set");
         	System.out.println();
         }
