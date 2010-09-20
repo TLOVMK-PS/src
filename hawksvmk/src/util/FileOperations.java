@@ -696,6 +696,9 @@ public class FileOperations
 			fileWriter.println("BODY: " + newPlayerMessage);
 			fileWriter.println();
 			fileWriter.close();
+			
+			// create the new user's Guest Rooms folder
+			new File("rooms/guest/" + email).mkdir();
 		}
 		catch(Exception e)
 		{
