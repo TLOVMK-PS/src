@@ -608,7 +608,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Shrunken Ned's Shop room
-				changeRoom("Shrunken Ned's Shop");
+				changeRoom("al5");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -964,7 +964,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the It's a Small World Imports room
-				changeRoom("It's a Small World Imports");
+				changeRoom("fl8");
 			}
 			public void mouseEntered(MouseEvent e)
 			{

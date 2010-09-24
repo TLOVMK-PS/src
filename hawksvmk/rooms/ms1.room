@@ -1,47 +1,53 @@
 // ms1.room
-// Created on Wed Mar 31 20:35:40 PDT 2010
+// Created on Fri Sep 24 10:40:35 PDT 2010
 
 // Room information
+
 ID: ms1
 NAME: Castle Forecourt
 OWNER: HVMK
 DESCRIPTION: Castle Forecourt room
 
 // Background image
+
 IMAGE: img/rooms/ms1/ms1.jpg
 
 // Size of the tiles (width by height)
+
 TILES: 48x24
 
 // Animations
 
+
 // Sounds
 
+
 // Tile map
+
 @16,15,NOGO,@
 @16,16,NOGO,@
-@16,13,NOGO,@
+@16,13,EXIT,fl8@
 @16,14,NOGO,@
 @16,11,NOGO,@
-@16,12,NOGO,@
+@16,12,EXIT,fl8@
 @16,10,NOGO,@
 @27,8,NOGO,@
 @27,9,NOGO,@
 @35,16,NOGO,@
 @27,3,NOGO,@
 @35,12,WALK,@
-@27,2,NOGO,@
 @35,13,WALK,@
-@27,1,NOGO,@
-@21,1,NOGO,@
+@27,2,NOGO,@
 @35,14,WALK,@
-@21,0,NOGO,@
-@27,0,NOGO,@
+@21,1,NOGO,@
+@27,1,NOGO,@
 @35,15,WALK,@
-@27,7,WALK,@
+@27,0,NOGO,@
+@21,0,NOGO,@
 @21,3,NOGO,@
-@27,6,WALK,@
+@27,7,WALK,@
 @21,2,NOGO,@
+@27,6,WALK,@
 @27,5,NOGO,@
 @21,5,WALK,@
 @35,10,WALK,@
@@ -58,13 +64,13 @@ TILES: 48x24
 @45,4,NOGO,@
 @45,7,WALK,@
 @45,6,WALK,@
-@45,1,EXIT,@
+@45,1,EXIT,fr6@
 @40,13,WALK,@
 @45,0,NOGO,@
 @40,12,WALK,@
 @45,3,NOGO,@
 @40,11,WALK,@
-@45,2,EXIT,@
+@45,2,EXIT,fr6@
 @40,10,NOGO,@
 @40,16,NOGO,@
 @40,15,WALK,@
@@ -98,16 +104,16 @@ TILES: 48x24
 @12,9,NOGO,@
 @12,8,NOGO,@
 @46,16,EXIT,ms2@
-@18,6,NOGO,@
-@16,0,NOGO,@
 @42,10,WALK,@
-@18,7,NOGO,@
-@16,1,NOGO,@
+@16,0,NOGO,@
+@18,6,NOGO,@
 @42,11,WALK,@
-@16,2,NOGO,@
+@16,1,NOGO,@
+@18,7,NOGO,@
 @18,8,NOGO,@
-@16,3,NOGO,@
+@16,2,NOGO,@
 @18,9,NOGO,@
+@16,3,NOGO,@
 @16,4,NOGO,@
 @16,5,NOGO,@
 @16,6,NOGO,@
@@ -211,8 +217,8 @@ TILES: 48x24
 @32,8,WALK,@
 @32,7,WALK,@
 @5,2,NOGO,@
-@32,6,WALK,@
 @5,3,NOGO,@
+@32,6,WALK,@
 @32,5,WALK,@
 @32,4,NOGO,@
 @32,3,NOGO,@
@@ -248,8 +254,8 @@ TILES: 48x24
 @38,11,WALK,@
 @38,14,WALK,@
 @38,13,WALK,@
-@38,16,NOGO,@
 @41,10,WALK,@
+@38,16,NOGO,@
 @38,15,WALK,@
 @38,10,WALK,@
 @12,13,NOGO,@
@@ -259,7 +265,7 @@ TILES: 48x24
 @12,10,NOGO,@
 @12,16,NOGO,@
 @12,15,NOGO,@
-@15,12,NOGO,@
+@15,12,EXIT,fl8@
 @15,13,NOGO,@
 @15,10,NOGO,@
 @15,11,NOGO,@
@@ -267,12 +273,12 @@ TILES: 48x24
 @15,14,NOGO,@
 @15,15,NOGO,@
 @37,5,WALK,@
-@37,6,WALK,@
 @35,0,NOGO,@
-@37,7,WALK,@
+@37,6,WALK,@
 @35,1,NOGO,@
-@35,2,NOGO,@
+@37,7,WALK,@
 @37,8,WALK,@
+@35,2,NOGO,@
 @37,1,NOGO,@
 @37,2,NOGO,@
 @37,3,WALK,@
@@ -289,23 +295,23 @@ TILES: 48x24
 @28,11,WALK,@
 @28,10,NOGO,@
 @5,10,NOGO,@
-@5,11,NOGO,@
-@28,15,WALK,@
 @13,16,NOGO,@
-@5,12,NOGO,@
+@28,15,WALK,@
+@5,11,NOGO,@
 @28,14,WALK,@
-@5,13,NOGO,@
+@5,12,NOGO,@
 @28,13,WALK,@
-@28,12,WALK,@
+@5,13,NOGO,@
 @5,14,NOGO,@
+@28,12,WALK,@
 @5,15,NOGO,@
 @5,16,NOGO,@
 @28,16,NOGO,@
 @19,16,NOGO,@
-@13,11,NOGO,@
 @19,14,NOGO,@
-@13,10,NOGO,@
+@13,11,NOGO,@
 @19,15,NOGO,@
+@13,10,NOGO,@
 @13,13,NOGO,@
 @13,12,NOGO,@
 @13,15,NOGO,@
@@ -340,14 +346,14 @@ TILES: 48x24
 @0,0,NOGO,@
 @8,9,NOGO,@
 @0,9,NOGO,@
-@0,6,NOGO,@
 @8,5,NOGO,@
-@8,6,NOGO,@
+@0,6,NOGO,@
 @0,5,NOGO,@
-@0,8,NOGO,@
+@8,6,NOGO,@
 @8,7,NOGO,@
-@8,8,NOGO,@
+@0,8,NOGO,@
 @0,7,NOGO,@
+@8,8,NOGO,@
 @6,16,NOGO,@
 @6,15,NOGO,@
 @6,14,NOGO,@
@@ -355,29 +361,29 @@ TILES: 48x24
 @6,12,NOGO,@
 @6,11,NOGO,@
 @6,10,NOGO,@
-@44,3,EXIT,@
+@44,3,EXIT,fr6@
 @44,4,NOGO,@
 @44,1,NOGO,@
-@44,2,EXIT,@
+@44,2,EXIT,fr6@
 @44,0,NOGO,@
 @39,6,WALK,@
 @39,5,WALK,@
-@39,4,NOGO,@
 @44,9,WALK,@
+@39,4,NOGO,@
 @39,3,WALK,@
-@44,7,WALK,@
 @39,2,WALK,@
-@39,1,NOGO,@
+@44,7,WALK,@
 @44,8,WALK,@
-@44,5,NOGO,@
+@39,1,NOGO,@
 @39,0,NOGO,@
+@44,5,NOGO,@
 @44,6,WALK,@
 @39,9,WALK,@
 @42,9,WALK,@
-@39,7,WALK,@
 @42,8,WALK,@
-@42,7,WALK,@
+@39,7,WALK,@
 @39,8,WALK,@
+@42,7,WALK,@
 @42,6,WALK,@
 @42,5,WALK,@
 @42,4,WALK,@
@@ -400,8 +406,8 @@ TILES: 48x24
 @30,10,WALK,@
 @30,12,WALK,@
 @30,11,WALK,@
-@17,11,WALK,@
 @30,14,WALK,@
+@17,11,WALK,@
 @17,10,NOGO,@
 @30,13,WALK,@
 @30,16,WALK,@
@@ -417,7 +423,7 @@ TILES: 48x24
 @34,13,WALK,@
 @17,13,NOGO,@
 @26,14,WALK,@
-@17,12,NOGO,@
+@17,12,EXIT,fl8@
 @26,15,WALK,@
 @26,16,NOGO,@
 @34,10,WALK,@
@@ -648,8 +654,8 @@ TILES: 48x24
 @33,9,WALK,@
 @46,0,NOGO,@
 @46,1,NOGO,@
-@46,2,EXIT,@
-@46,3,EXIT,@
+@46,2,EXIT,fr6@
+@46,3,EXIT,fr6@
 @46,4,NOGO,@
 @46,5,NOGO,@
 @46,6,NOGO,@
@@ -695,7 +701,7 @@ TILES: 48x24
 @18,15,NOGO,@
 @18,16,NOGO,@
 @1,16,NOGO,@
-@18,13,NOGO,@
+@18,13,WALK,@
 @18,14,NOGO,@
 @18,11,NOGO,@
 @18,12,WALK,@
@@ -788,7 +794,7 @@ TILES: 48x24
 @43,1,NOGO,@
 @43,4,NOGO,@
 @43,5,WALK,@
-@43,2,EXIT,@
+@43,2,EXIT,fr6@
 @43,3,WALK,@
 @41,3,WALK,@
 @41,2,WALK,@

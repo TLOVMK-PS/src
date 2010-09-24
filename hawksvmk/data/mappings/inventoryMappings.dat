@@ -584,3 +584,43 @@ TILES: 1
 PRICE: 40
 RATING: G
 @END@
+
+ID: poster_25
+NAME: Peoplemover
+PATH: img/posters/beta/poster_25/
+CARD: img/posters/beta/poster_25/card_25.jpg
+ICON: img/posters/beta/poster_25/icon_25.jpg
+TILES: 1
+PRICE: 1000
+RATING: G
+@END@
+
+ID: poster_26
+NAME: Haunted Mansion
+PATH: img/posters/beta/poster_26/
+CARD: img/posters/beta/poster_26/card_26.jpg
+ICON: img/posters/beta/poster_26/icon_26.jpg
+TILES: 1
+PRICE: 500
+RATING: G
+@END@
+
+ID: poster_27
+NAME: HVMK Since 2009
+PATH: img/posters/beta/poster_27/
+CARD: img/posters/beta/poster_27/card_27.jpg
+ICON: img/posters/beta/poster_27/icon_27.jpg
+TILES: 1
+PRICE: 100
+RATING: G
+@END@
+
+ID: poster_28
+NAME: Skyway
+PATH: img/posters/beta/poster_28/
+CARD: img/posters/beta/poster_28/card_28.jpg
+ICON: img/posters/beta/poster_28/icon_28.jpg
+TILES: 1
+PRICE: 500
+RATING: G
+@END@

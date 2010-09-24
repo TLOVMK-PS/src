@@ -1,26 +1,32 @@
 // ms2.room
-// Created on Wed Mar 31 20:55:10 PDT 2010
+// Created on Fri Sep 24 10:42:48 PDT 2010
 
 // Room information
+
 ID: ms2
 NAME: Central Plaza
 OWNER: HVMK
 DESCRIPTION: Central Plaza room
 
 // Background image
+
 IMAGE: img/rooms/ms2/ms2.jpg
 
 // Size of the tiles (width by height)
+
 TILES: 48x24
 
 // Animations
+
 ANIMATION: anims/ms2/Donald.anim
 ANIMATION: anims/ms2/MagicShop.anim
 ANIMATION: anims/ms2/Tomorrowland.anim
 
 // Sounds
 
+
 // Tile map
+
 @16,15,WALK,@
 @16,16,NOGO,@
 @16,13,WALK,@
@@ -33,18 +39,18 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @35,16,NOGO,@
 @27,3,WALK,@
 @35,12,WALK,@
-@35,13,WALK,@
 @27,2,WALK,@
-@35,14,WALK,@
-@21,1,WALK,@
+@35,13,WALK,@
 @27,1,WALK,@
-@35,15,WALK,@
-@27,0,WALK,@
+@21,1,WALK,@
+@35,14,WALK,@
 @21,0,WALK,@
-@21,3,WALK,@
+@27,0,WALK,@
+@35,15,WALK,@
 @27,7,NOGO,@
-@21,2,WALK,@
+@21,3,WALK,@
 @27,6,WALK,@
+@21,2,WALK,@
 @27,5,WALK,@
 @21,5,WALK,@
 @35,10,WALK,@
@@ -91,7 +97,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @14,0,NOGO,@
 @14,1,NOGO,@
 @12,3,WALK,@
-@12,2,EXIT,@
+@12,2,EXIT,tl14@
 @12,1,NOGO,@
 @12,0,NOGO,@
 @12,7,NOGO,@
@@ -101,16 +107,16 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @12,9,NOGO,@
 @12,8,WALK,@
 @46,16,NOGO,@
-@42,10,WALK,@
-@16,0,NOGO,@
 @18,6,WALK,@
-@42,11,WALK,@
-@16,1,NOGO,@
+@16,0,NOGO,@
+@42,10,WALK,@
 @18,7,WALK,@
-@18,8,WALK,@
+@16,1,NOGO,@
+@42,11,WALK,@
 @16,2,WALK,@
-@18,9,WALK,@
+@18,8,WALK,@
 @16,3,WALK,@
+@18,9,WALK,@
 @16,4,WALK,@
 @16,5,WALK,@
 @16,6,WALK,@
@@ -136,8 +142,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @2,15,NOGO,@
 @46,11,WALK,@
 @46,10,WALK,@
-@46,15,EXIT,@
-@46,14,EXIT,@
+@46,15,EXIT,al5@
+@46,14,EXIT,al5@
 @46,13,NOGO,@
 @46,12,WALK,@
 @3,1,NOGO,@
@@ -214,8 +220,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @32,8,WALK,@
 @32,7,WALK,@
 @5,2,NOGO,@
-@5,3,NOGO,@
 @32,6,WALK,@
+@5,3,NOGO,@
 @32,5,WALK,@
 @32,4,NOGO,@
 @32,3,NOGO,@
@@ -251,8 +257,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @38,11,WALK,@
 @38,14,WALK,@
 @38,13,WALK,@
-@41,10,WALK,@
 @38,16,WALK,@
+@41,10,WALK,@
 @38,15,WALK,@
 @38,10,WALK,@
 @12,13,WALK,@
@@ -270,12 +276,12 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @15,14,WALK,@
 @15,15,NOGO,@
 @37,5,WALK,@
-@35,0,WALK,@
 @37,6,WALK,@
-@35,1,WALK,@
+@35,0,WALK,@
 @37,7,WALK,@
-@37,8,WALK,@
+@35,1,WALK,@
 @35,2,NOGO,@
+@37,8,WALK,@
 @37,1,WALK,@
 @37,2,WALK,@
 @37,3,WALK,@
@@ -292,23 +298,23 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @28,11,WALK,@
 @28,10,WALK,@
 @5,10,NOGO,@
-@13,16,NOGO,@
-@28,15,WALK,@
 @5,11,NOGO,@
-@28,14,WALK,@
+@28,15,WALK,@
+@13,16,NOGO,@
 @5,12,NOGO,@
-@28,13,WALK,@
+@28,14,WALK,@
 @5,13,NOGO,@
-@5,14,NOGO,@
+@28,13,WALK,@
 @28,12,WALK,@
+@5,14,NOGO,@
 @5,15,NOGO,@
 @5,16,NOGO,@
 @28,16,NOGO,@
 @19,16,NOGO,@
-@19,14,WALK,@
 @13,11,NOGO,@
-@19,15,NOGO,@
+@19,14,WALK,@
 @13,10,EXIT,@
+@19,15,NOGO,@
 @13,13,WALK,@
 @13,12,WALK,@
 @13,15,NOGO,@
@@ -320,7 +326,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @45,10,WALK,@
 @45,12,NOGO,@
 @45,11,WALK,@
-@45,14,EXIT,@
+@45,14,EXIT,al5@
 @45,13,WALK,@
 @43,12,WALK,@
 @43,11,WALK,@
@@ -332,7 +338,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @45,15,NOGO,@
 @45,16,NOGO,@
 @8,4,NOGO,@
-@8,3,NOGO,@
+@8,3,EXIT,tl14@
 @8,2,NOGO,@
 @8,1,NOGO,@
 @8,0,NOGO,@
@@ -343,14 +349,14 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @0,0,NOGO,@
 @8,9,NOGO,@
 @0,9,NOGO,@
-@8,5,NOGO,@
 @0,6,NOGO,@
-@0,5,NOGO,@
+@8,5,NOGO,@
 @8,6,WALK,@
-@8,7,NOGO,@
+@0,5,NOGO,@
 @0,8,NOGO,@
-@0,7,NOGO,@
+@8,7,NOGO,@
 @8,8,NOGO,@
+@0,7,NOGO,@
 @6,16,NOGO,@
 @6,15,NOGO,@
 @6,14,NOGO,@
@@ -365,22 +371,22 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @44,0,EXIT,ms1@
 @39,6,WALK,@
 @39,5,WALK,@
-@44,9,WALK,@
 @39,4,WALK,@
+@44,9,WALK,@
 @39,3,WALK,@
-@39,2,WALK,@
 @44,7,WALK,@
-@44,8,WALK,@
+@39,2,WALK,@
 @39,1,WALK,@
-@39,0,WALK,@
+@44,8,WALK,@
 @44,5,WALK,@
+@39,0,WALK,@
 @44,6,WALK,@
 @39,9,WALK,@
 @42,9,WALK,@
-@42,8,WALK,@
 @39,7,WALK,@
-@39,8,WALK,@
+@42,8,WALK,@
 @42,7,WALK,@
+@39,8,WALK,@
 @42,6,WALK,@
 @42,5,WALK,@
 @42,4,WALK,@
@@ -403,8 +409,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @30,10,WALK,@
 @30,12,WALK,@
 @30,11,WALK,@
-@30,14,WALK,@
 @17,11,WALK,@
+@30,14,WALK,@
 @17,10,WALK,@
 @30,13,WALK,@
 @30,16,WALK,@
@@ -486,7 +492,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @14,13,WALK,@
 @11,3,WALK,@
 @14,14,WALK,@
-@11,2,EXIT,@
+@11,2,EXIT,tl14@
 @14,15,WALK,@
 @11,1,NOGO,@
 @14,16,NOGO,@
@@ -719,7 +725,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @44,16,NOGO,@
 @1,13,NOGO,@
 @1,12,NOGO,@
-@44,15,EXIT,@
+@44,15,EXIT,al5@
 @1,11,NOGO,@
 @44,14,WALK,@
 @38,8,WALK,@
@@ -749,9 +755,9 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @7,10,NOGO,@
 @7,11,NOGO,@
 @7,12,NOGO,@
-@10,2,NOGO,@
+@10,2,EXIT,tl14@
 @11,12,NOGO,@
-@10,3,EXIT,@
+@10,3,EXIT,tl14@
 @11,13,WALK,@
 @10,4,WALK,@
 @11,10,NOGO,@
@@ -773,8 +779,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @11,16,NOGO,@
 @11,15,EXIT,ms6@
 @11,14,EXIT,ms6@
-@9,3,EXIT,@
-@9,2,NOGO,@
+@9,3,EXIT,tl14@
+@9,2,EXIT,tl14@
 @9,1,NOGO,@
 @9,0,NOGO,@
 @9,4,NOGO,@

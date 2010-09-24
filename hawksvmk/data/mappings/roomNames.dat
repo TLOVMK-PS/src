@@ -2,6 +2,21 @@
 // PUBLIC ROOMS
 // ===================
 
+// Adventureland
+
+ID: al5
+PATH: rooms/al5.room
+
+// Fantasyland
+
+ID: fl8
+PATH: rooms/fl8.room
+
+// Frontierland
+
+ID: fr6
+PATH: rooms/fr6.room
+
 // Main Street
 
 ID: ms1
@@ -32,6 +47,11 @@ PATH: rooms/nos1.room
 
 ID: hm2
 PATH: rooms/hm2.room
+
+// Tomorrowland
+
+ID: tl14
+PATH: rooms/tl14.room
 
 // ====================
 // GUEST ROOM TEMPLATES
