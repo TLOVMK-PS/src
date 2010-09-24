@@ -498,14 +498,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 						}
 					}
 				}
-				
-				bufferGraphics.drawImage(reticleTile.getImage(), mouseX - (tileWidth / 2), mouseY - (tileHeight / 2), new GridViewMovementImageObserver(this));
 			
 				// draw the animations
 				for(Animation anim : animations)
 				{
 					bufferGraphics.drawImage(anim.getNextFrame().getImage(), anim.getX(), anim.getY(), this);
 				}
+				
+				// draw the tile reticle for the current tile type
+				bufferGraphics.drawImage(reticleTile.getImage(), mouseX - (tileWidth / 2), mouseY - (tileHeight / 2), new GridViewMovementImageObserver(this));
 				
 				// draw any room items if they exist
 				if(items.size() > 0)
