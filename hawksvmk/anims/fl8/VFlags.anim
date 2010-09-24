@@ -1,0 +1,10 @@
+TYPE: stationary
+ANIMATION NAME: v_flags
+TOTAL FRAMES: 5
+X-COORD: 0
+Y-COORD: 0
+@img/rooms/fl8/v_flags_0.jpg,200@
+@img/rooms/fl8/v_flags_1.jpg,200@
+@img/rooms/fl8/v_flags_2.jpg,200@
+@img/rooms/fl8/v_flags_3.jpg,200@
+@img/rooms/fl8/v_flags_4.jpg,200@

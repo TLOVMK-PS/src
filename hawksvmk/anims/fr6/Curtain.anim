@@ -1,0 +1,16 @@
+TYPE: stationary
+ANIMATION NAME: curtain
+TOTAL FRAMES: 11
+X-COORD: 659
+Y-COORD: 250
+@img/rooms/fr6/curtain_0.jpg,200@
+@img/rooms/fr6/curtain_1.jpg,200@
+@img/rooms/fr6/curtain_2.jpg,200@
+@img/rooms/fr6/curtain_3.jpg,200@
+@img/rooms/fr6/curtain_4.jpg,200@
+@img/rooms/fr6/curtain_5.jpg,200@
+@img/rooms/fr6/curtain_6.jpg,200@
+@img/rooms/fr6/curtain_7.jpg,200@
+@img/rooms/fr6/curtain_8.jpg,200@
+@img/rooms/fr6/curtain_9.jpg,200@
+@img/rooms/fr6/curtain_0.jpg,10000@

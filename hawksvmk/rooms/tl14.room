@@ -14,6 +14,8 @@ IMAGE: img/rooms/tl14/tl14.jpg
 TILES: 48x24
 
 // Animations
+ANIMATION: anims/tl14/Conveyor.anim
+ANIMATION: anims/tl14/Robot.anim
 
 // Sounds
 

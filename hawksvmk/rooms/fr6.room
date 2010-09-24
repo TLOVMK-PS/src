@@ -14,6 +14,8 @@ IMAGE: img/rooms/fr6/fr6.jpg
 TILES: 48x24
 
 // Animations
+ANIMATION: anims/fr6/Curtain.anim
+ANIMATION: anims/fr6/Mice.anim
 
 // Sounds
 

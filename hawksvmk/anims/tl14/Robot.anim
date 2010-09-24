@@ -1,0 +1,26 @@
+TYPE: moving
+ANIMATION NAME: robot
+TOTAL FRAMES: 21
+X-COORD: 599
+Y-COORD: 109
+@img/rooms/tl14/robot_0.png,599,109,300@
+@img/rooms/tl14/robot_0.png,599,107,300@
+@img/rooms/tl14/robot_0.png,599,105,300@
+@img/rooms/tl14/robot_0.png,599,103,300@
+@img/rooms/tl14/robot_0.png,599,101,300@
+@img/rooms/tl14/robot_0.png,599,103,300@
+@img/rooms/tl14/robot_0.png,599,105,300@
+@img/rooms/tl14/robot_0.png,599,107,300@
+@img/rooms/tl14/robot_0.png,599,109,300@
+@img/rooms/tl14/robot_0.png,599,107,300@
+@img/rooms/tl14/robot_0.png,599,105,300@
+@img/rooms/tl14/robot_0.png,599,103,300@
+@img/rooms/tl14/robot_0.png,599,101,300@
+@img/rooms/tl14/robot_0.png,599,103,300@
+@img/rooms/tl14/robot_0.png,599,105,300@
+@img/rooms/tl14/robot_0.png,599,107,300@
+@img/rooms/tl14/robot_0.png,599,109,2000@
+@img/rooms/tl14/robot_1.png,599,104,2000@
+@img/rooms/tl14/robot_0.png,599,109,2000@
+@img/rooms/tl14/robot_1.png,599,104,2000@
+@img/rooms/tl14/robot_0.png,599,109,10000@

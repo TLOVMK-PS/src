@@ -1,0 +1,10 @@
+TYPE: stationary
+ANIMATION NAME: conveyor
+TOTAL FRAMES: 5
+X-COORD: 0
+Y-COORD: 495
+@img/rooms/tl14/conveyor_0.jpg,200@
+@img/rooms/tl14/conveyor_1.jpg,200@
+@img/rooms/tl14/conveyor_2.jpg,200@
+@img/rooms/tl14/conveyor_3.jpg,200@
+@img/rooms/tl14/conveyor_4.jpg,200@

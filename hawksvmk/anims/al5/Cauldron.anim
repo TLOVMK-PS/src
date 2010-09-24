@@ -1,0 +1,9 @@
+TYPE: stationary
+ANIMATION NAME: cauldron
+TOTAL FRAMES: 4
+X-COORD: 391
+Y-COORD: 404
+@img/rooms/al5/cauldron_0.png,200@
+@img/rooms/al5/cauldron_1.png,200@
+@img/rooms/al5/cauldron_2.png,200@
+@img/rooms/al5/cauldron_3.png,200@

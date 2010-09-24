@@ -14,6 +14,8 @@ IMAGE: img/rooms/fl8/fl8.jpg
 TILES: 48x24
 
 // Animations
+ANIMATION: anims/fl8/VFlags.anim
+ANIMATION: anims/fl8/HFlags.anim
 
 // Sounds
 

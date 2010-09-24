@@ -1,0 +1,18 @@
+TYPE: stationary
+ANIMATION NAME: mice
+TOTAL FRAMES: 13
+X-COORD: 15
+Y-COORD: 11
+@img/rooms/fr6/mice_0.jpg,200@
+@img/rooms/fr6/mice_1.jpg,200@
+@img/rooms/fr6/mice_2.jpg,200@
+@img/rooms/fr6/mice_3.jpg,200@
+@img/rooms/fr6/mice_4.jpg,200@
+@img/rooms/fr6/mice_5.jpg,500@
+@img/rooms/fr6/mice_6.jpg,500@
+@img/rooms/fr6/mice_7.jpg,5000@
+@img/rooms/fr6/mice_8.jpg,200@
+@img/rooms/fr6/mice_9.jpg,200@
+@img/rooms/fr6/mice_10.jpg,200@
+@img/rooms/fr6/mice_11.jpg,200@
+@img/rooms/fr6/mice_0.jpg,10000@
