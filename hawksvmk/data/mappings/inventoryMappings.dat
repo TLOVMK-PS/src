@@ -624,3 +624,33 @@ TILES: 1
 PRICE: 500
 RATING: G
 @END@
+
+ID: poster_29
+NAME: Matterhorn Bobsleds
+PATH: img/posters/beta/poster_29/
+CARD: img/posters/beta/poster_29/card_29.jpg
+ICON: img/posters/beta/poster_29/icon_29.jpg
+TILES: 1
+PRICE: 500
+RATING: G
+@END@
+
+ID: poster_30
+NAME: Submarine Voyage
+PATH: img/posters/beta/poster_30/
+CARD: img/posters/beta/poster_30/card_30.jpg
+ICON: img/posters/beta/poster_30/icon_30.jpg
+TILES: 1
+PRICE: 500
+RATING: G
+@END@
+
+ID: poster_31
+NAME: Autopia Speedway
+PATH: img/posters/beta/poster_31/
+CARD: img/posters/beta/poster_31/card_31.jpg
+ICON: img/posters/beta/poster_31/icon_31.jpg
+TILES: 1
+PRICE: 500
+RATING: G
+@END@

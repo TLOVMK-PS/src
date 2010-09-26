@@ -53,6 +53,10 @@ public class LoginModule
 					staffType = line.replaceAll("STAFF: ", "");
 				}
 			}
+			
+			// close the scanner and the stream
+			loginScanner.close();
+			loginStream.close();
 		}
 		catch(UnknownHostException e)
 		{
@@ -95,6 +99,10 @@ public class LoginModule
 					errorMessage = "* You have been banned until " + line + " *";
 					return false;
 				}
+				
+				// close the scanner and the stream
+				loginScanner.close();
+				loginStream.close();
 			}
 		}
 		catch(Exception e) {}

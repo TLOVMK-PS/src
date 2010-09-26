@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -81,6 +82,41 @@ public class AppletResourceLoader implements Serializable
 			}
 			//return new ImageIcon(StaticAppletData.getCodeBase() + "../" + path.substring(1));
 		//}
+	}
+	
+	// get a BufferedImage from a JAR file
+	public static BufferedImage getBufferedImageFromJar(String path)
+	{
+		// make sure it starts with a forward slash
+		if(!path.startsWith("/")) {path = "/" + path;}
+
+		try
+		{
+			if(StaticAppletData.getCodeBase().contains("/bin"))
+			{
+				// Eclipse development environment
+				return ImageIO.read(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)));
+			}
+			else
+			{
+				// release environment
+				try
+				{
+					// release environment (local machine)
+					return ImageIO.read(new URL("file:///" + System.getProperty("user.dir") + path));
+				}
+				catch(Exception e)
+				{
+					// release environment (web server)
+					return ImageIO.read(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("Invalid BufferedImage URL: " + StaticAppletData.getCodeBase() + "../" + path.substring(1));
+			return null;
+		}
 	}
 	
 	// get an InputStream representing a file from a JAR file

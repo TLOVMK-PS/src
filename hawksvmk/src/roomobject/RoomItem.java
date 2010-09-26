@@ -7,6 +7,7 @@ package roomobject;
 import interfaces.ContentRateable;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 import javax.swing.ImageIcon;
@@ -36,7 +37,7 @@ public class RoomItem implements Serializable, ContentRateable
 	
 	private String directory = ""; // directory where the images for the item are stored
 	private String path = ""; // path to the image of the item
-	private ImageIcon image; // image of the item
+	private transient BufferedImage image; // image of the item ("transient" since it isn't Serializable)
 	
 	private String rotation = "A"; // A, B, C, or D to describe one of four possible rotations
 	
@@ -72,16 +73,16 @@ public class RoomItem implements Serializable, ContentRateable
 		
 		// set the path to the image and the image itself
 		this.path = directory + id + "_" + rotation + ".png";
-		image = AppletResourceLoader.getImageFromJar(this.path);
+		image = AppletResourceLoader.getBufferedImageFromJar(this.path);
 		
-		alignItemToTile(); // correct the alignment of the item based upon how many tiles it takes up
-		
-		this.y = y - image.getIconHeight() + tileHeight; // place the BOTTOM of the item on the tile
+		this.y = y - image.getHeight() + tileHeight; // place the BOTTOM of the item on the tile
 		
 		boundingBox.x = x;
-		boundingBox.y = y + tileHeight - image.getIconHeight();
-		boundingBox.width = image.getIconWidth();
-		boundingBox.height = image.getIconHeight();
+		boundingBox.y = y + tileHeight - image.getHeight();
+		boundingBox.width = image.getWidth();
+		boundingBox.height = image.getHeight();
+		
+		alignItemToTile(); // correct the alignment of the item based upon how many tiles it takes up
 	}
 
 	public int getX() {
@@ -110,7 +111,8 @@ public class RoomItem implements Serializable, ContentRateable
 		if(tiles == 1)
 		{
 			// place the item's center on the tile
-			this.x -= (image.getIconWidth() / 4);
+			this.x -= (image.getWidth() / 4);
+			boundingBox.x -= (image.getWidth() / 4);
 		}
 		else if(tiles >= 2)
 		{
@@ -150,11 +152,11 @@ public class RoomItem implements Serializable, ContentRateable
 		this.path = path;
 	}
 
-	public ImageIcon getImage() {
+	public BufferedImage getImage() {
 		return image;
 	}
 
-	public void setImage(ImageIcon image) {
+	public void setImage(BufferedImage image) {
 		this.image = image;
 	}
 
@@ -169,10 +171,10 @@ public class RoomItem implements Serializable, ContentRateable
 		
 		// set the path to the image and the image itself
 		this.path = directory + id + "_" + rotation + ".png";
-		image = AppletResourceLoader.getImageFromJar(this.path);
+		image = AppletResourceLoader.getBufferedImageFromJar(this.path);
 		
-		boundingBox.width = image.getIconWidth();
-		boundingBox.height = image.getIconHeight();
+		boundingBox.width = image.getWidth();
+		boundingBox.height = image.getHeight();
 	}
 
 	public String getDirectory() {
@@ -264,7 +266,7 @@ public class RoomItem implements Serializable, ContentRateable
 		
 		// resolve the image
 		this.path = directory + id + "_" + rotation + ".png";
-		image = AppletResourceLoader.getImageFromJar(this.path);
+		image = AppletResourceLoader.getBufferedImageFromJar(this.path);
 		
 		// check to make sure the rotation image exists
 		if(image == null)
@@ -272,7 +274,7 @@ public class RoomItem implements Serializable, ContentRateable
 			// default to the "A" rotation
 			rotation = "A";
 			this.path = directory + id + "_" + rotation + ".png";
-			image = AppletResourceLoader.getImageFromJar(this.path);
+			image = AppletResourceLoader.getBufferedImageFromJar(this.path);
 		}
 	}
 	
@@ -288,6 +290,22 @@ public class RoomItem implements Serializable, ContentRateable
 	public String getContentRatingAsString()
 	{
 		return RatingSystem.getContentRating(contentRatingIndex);
+	}
+	
+	// figure out whether the item image is fully transparent at a given X and Y value
+	public boolean isTransparentAt(int x, int y)
+	{
+		int pixel = image.getRGB(x, y);
+		int alpha = (pixel >> 24) & 0x000000FF; // bit shift by 24 and bitwise AND with 0x000000FF for the alpha value
+		
+		// check if the image is of a four-byte ABGR image
+		if(image.getType() == BufferedImage.TYPE_4BYTE_ABGR && alpha == 0)
+		{
+			// fully transparent, so return true
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public String toString()

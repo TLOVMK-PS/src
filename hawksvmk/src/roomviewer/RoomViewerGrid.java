@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Date;
@@ -308,9 +309,10 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		     				// make sure this content is allowed based upon the content rating indices
 		     				if(RatingSystem.isContentAllowed(r.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
 		     				{
-			     				if(r.getBoundingBox().contains(mousePoint)) // clicked inside somebody's box
+		     					// clicked inside an item's bounding box where it's non-transparent?
+			     				if(r.getBoundingBox().contains(mousePoint) && !r.isTransparentAt(mousePoint.x - r.getBoundingBox().x, mousePoint.y - r.getBoundingBox().y))
 			     				{
-			     					System.out.println("Clicked inside the bounding box for an item");
+			     					System.out.println("Clicked inside the non-transparent area of an item");
 			     					
 			     					// make this the current room item if there is none, otherwise release
 			     					// the room item and keep it where it is
@@ -322,7 +324,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			     						
 			     						// show the "Design Mode" room item window
 			     						designModeItemWindow.setItemName(currentRoomItem.getName());
-			     						designModeItemWindow.setLocation(currentRoomItem.getX() - (designModeItemWindow.getWidth() / 3), currentRoomItem.getY() - currentRoomItem.getImage().getIconHeight() + currentRoomItem.getTileHeight());
+			     						designModeItemWindow.setLocation(currentRoomItem.getX() - (designModeItemWindow.getWidth() / 3), currentRoomItem.getY() - currentRoomItem.getImage().getHeight() + currentRoomItem.getTileHeight());
 			     						designModeItemWindow.setVisible(true);
 			     						
 			     						convertMouseToGridCoords();
@@ -435,7 +437,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			     			currentRoomItem.setRow(currentTile.getRow());
 			     			currentRoomItem.setCol(currentTile.getColumn());
 			     			currentRoomItem.setX(currentTile.getX());
-			     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getIconHeight());
+			     			currentRoomItem.setY(currentTile.getY() + tileHeight - currentRoomItem.getImage().getHeight());
 			     		}
 	     			}
 	     		}
@@ -519,7 +521,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 							// make sure the content rating for this item is fine before we draw it to the grid
 							if(RatingSystem.isContentAllowed(nextItem.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
 							{
-								bufferGraphics.drawImage(nextItem.getImage().getImage(), nextItem.getX(), nextItem.getY(), this);
+								bufferGraphics.drawImage(nextItem.getImage(), nextItem.getX(), nextItem.getY(), this);
 							}
 						}
 					}
@@ -531,7 +533,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					// make sure the content rating for this item is fine before we draw it to the grid
 					if(RatingSystem.isContentAllowed(currentRoomItem.getContentRatingIndex(), myCharacter.getContentRatingIndex()))
 					{
-						bufferGraphics.drawImage(currentRoomItem.getImage().getImage(), currentRoomItem.getX(), currentRoomItem.getY(), this);
+						bufferGraphics.drawImage(currentRoomItem.getImage(), currentRoomItem.getX(), currentRoomItem.getY(), this);
 					}
 				}
 				
@@ -1212,6 +1214,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// move a character in the current room
 	public void moveCharacterInRoom(AStarCharacter character, int destGridX, int destGridY)
 	{
+		// make sure it's not a nogo tile
+		if(tilesMap.get(destGridY + "-" + destGridX).getType() == Tile.TILE_NOGO) {return;}
+		
  		// make sure the character is still in the room
  		if(character != null)
  		{
