@@ -8,6 +8,8 @@ import interfaces.ContentRateable;
 
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,18 +45,19 @@ public class AStarCharacter implements Serializable, ContentRateable
 	private Tile currentTile;
 	
 	// avatar images for the eight directions
-	private ImageIcon avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_64.png");
-	private ImageIcon avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_64.png");
-	private ImageIcon avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_64.png");
-	private ImageIcon avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_64.png");
-	private ImageIcon avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_64.png");
-	private ImageIcon avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_64.png");
-	private ImageIcon avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_64.png");
-	private ImageIcon avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_64.png");
+	private AStarCharacterImage avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_64.png"));
+	private AStarCharacterImage avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_64.png"));
+	private AStarCharacterImage avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_64.png"));
+	private AStarCharacterImage avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_64.png"));
+	private AStarCharacterImage avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_64.png"));
+	private AStarCharacterImage avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_64.png"));
+	private AStarCharacterImage avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_64.png"));
+	private AStarCharacterImage avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_64.png"));
 	
-	private ImageIcon characterImage = avatarSouthEast;
+	private AStarCharacterImage characterImage = avatarSouthEast;
+	private String currentDirection = "se"; // the direction the avatar is currently facing
 	
-	private Rectangle boundingBox = new Rectangle(x, y, characterImage.getIconWidth(), characterImage.getIconHeight());
+	private Rectangle boundingBox = new Rectangle(x, y, characterImage.getImage().getWidth(), characterImage.getImage().getHeight());
 	
 	private long credits = 1000;
 	private String signature = "";
@@ -109,7 +112,7 @@ public class AStarCharacter implements Serializable, ContentRateable
 
 	public void setY(int y) {
 		this.y = y;
-		boundingBox.y = y + tileHeight - characterImage.getIconHeight();
+		boundingBox.y = y + tileHeight - characterImage.getImage().getHeight();
 	}
 
 	public int getRow() {
@@ -154,39 +157,47 @@ public class AStarCharacter implements Serializable, ContentRateable
 		if(xSpeed == 0 && ySpeed < 0) // north
 		{
 			characterImage = avatarNorth;
+			currentDirection = "n";
 		}
 		else if(xSpeed < 0 && ySpeed < 0) // north-west
 		{
 			characterImage = avatarNorthWest;
+			currentDirection = "nw";
 		}
 		else if(xSpeed < 0 && ySpeed == 0) // west
 		{
 			characterImage = avatarWest;
+			currentDirection = "w";
 		}
 		else if(xSpeed < 0 && ySpeed > 0) // south-west
 		{
 			characterImage = avatarSouthWest;
+			currentDirection = "sw";
 		}
 		else if(xSpeed == 0 && ySpeed > 0) // south
 		{
 			characterImage = avatarSouth;
+			currentDirection = "s";
 		}
 		else if(xSpeed > 0 && ySpeed > 0) // south-east
 		{
 			characterImage = avatarSouthEast;
+			currentDirection = "se";
 		}
 		else if(xSpeed > 0 && ySpeed == 0) // east
 		{
 			characterImage = avatarEast;
+			currentDirection = "e";
 		}
 		else if(xSpeed > 0 && ySpeed < 0) // north-east
 		{
 			characterImage = avatarNorthEast;
+			currentDirection = "ne";
 		}
 		
 		// change the bounding box width and height
-		boundingBox.width = characterImage.getIconWidth();
-		boundingBox.height = characterImage.getIconHeight();
+		boundingBox.width = characterImage.getImage().getWidth();
+		boundingBox.height = characterImage.getImage().getHeight();
 	}
 	
 	public void setColDiff(int colDiff) {
@@ -209,9 +220,9 @@ public class AStarCharacter implements Serializable, ContentRateable
 		return characterImage.getImage();
 	}
 	
-	public void setImage(ImageIcon characterImage) {
+	/*public void setImage(ImageIcon characterImage) {
 		this.characterImage = characterImage;
-	}
+	}*/
 	
 	public void setCurrentTile(Tile currentTile)
 	{
@@ -286,50 +297,66 @@ public class AStarCharacter implements Serializable, ContentRateable
 		if(tileWidth == 64 && tileHeight == 32)
 		{
 			// 64x32 tile
-			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_64.png");
-			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_64.png");
-			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_64.png");
-			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_64.png");
-			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_64.png");
-			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_64.png");
-			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_64.png");
-			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_64.png");
+			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_64.png"));
+			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_64.png"));
+			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_64.png"));
+			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_64.png"));
+			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_64.png"));
+			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_64.png"));
+			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_64.png"));
+			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_64.png"));
 			
-			// scale the current image for consistency
-			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(56, 127, Image.SCALE_DEFAULT));
+			// figure out what the current avatar image should be
+			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_64.png"));
 		}
 		else if(tileWidth == 48 && tileHeight == 24)
 		{
 			// 48x24 tile
-			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_48.png");
-			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_48.png");
-			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_48.png");
-			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_48.png");
-			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_48.png");
-			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_48.png");
-			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_48.png");
-			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_48.png");
+			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_48.png"));
+			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_48.png"));
+			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_48.png"));
+			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_48.png"));
+			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_48.png"));
+			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_48.png"));
+			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_48.png"));
+			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_48.png"));
 			
-			// scale the current image for consistency
-			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(42, 95, Image.SCALE_DEFAULT));
+			// figure out what the current avatar image should be
+			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_48.png"));
 		}
 		else if(tileWidth == 32 && tileHeight == 16)
 		{
 			// 32x16 tile
-			avatarNorth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_n_32.png");
-			avatarNorthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_nw_32.png");
-			avatarWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_w_32.png");
-			avatarSouthWest = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_sw_32.png");
-			avatarSouth = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_s_32.png");
-			avatarSouthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_se_32.png");
-			avatarEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_e_32.png");
-			avatarNorthEast = AppletResourceLoader.getImageFromJar("img/avatars/male/male_avatar_ne_32.png");
+			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_32.png"));
+			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_32.png"));
+			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_32.png"));
+			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_32.png"));
+			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_32.png"));
+			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_32.png"));
+			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_32.png"));
+			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_32.png"));
 			
-			// scale the current image for consistency
-			characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(28, 63, Image.SCALE_DEFAULT));
+			// figure out what the current avatar image should be
+			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_32.png"));
 		}
 		
 		// set the tile height
 		this.tileHeight = tileHeight;
+	}
+	
+	// figure out whether the character image is fully transparent at a given X and Y value
+	public boolean isTransparentAt(int x, int y)
+	{
+		int pixel = characterImage.getImage().getRGB(x, y);
+		int alpha = (pixel >> 24) & 0x000000FF; // bit shift by 24 and bitwise AND with 0x000000FF for the alpha value
+		
+		// check if the image is of a four-byte ABGR image
+		if(characterImage.getImage().getType() == BufferedImage.TYPE_4BYTE_ABGR && alpha == 0)
+		{
+			// fully transparent, so return true
+			return true;
+		}
+		
+		return false;
 	}
 }

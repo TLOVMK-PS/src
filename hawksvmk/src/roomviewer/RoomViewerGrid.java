@@ -339,7 +339,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		// check to see if we clicked inside a bounding box (character)
 	     		for(AStarCharacter c : characters.values())
 	     		{
-	     			if(c.getBoundingBox().contains(mousePoint))
+	     			if(c.getBoundingBox().contains(mousePoint) && !c.isTransparentAt(mousePoint.x - c.getBoundingBox().x, mousePoint.y - c.getBoundingBox().y))
 	     			{
 	     				// check if it should be inactive
 	     				if(c.getUsername().equals(uiObject.getUsername()))
@@ -371,7 +371,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     				}
 	     				avatarInfoWindow.setVisible(true);
 	     				
-	     				System.out.println("Clicked bounding box for character: " + c.getUsername());
+	     				System.out.println("Clicked non-transparent area for character: " + c.getUsername());
 	     				
 	     				convertMouseToGridCoords(); // convert the mouse coords back to grid coords
 	     				
