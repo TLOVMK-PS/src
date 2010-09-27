@@ -140,13 +140,12 @@ public class WindowShop extends JPanel
 	private String selectedTab = "furniture";
 	private ShopItemSquare selectedItem = null;
 	
-	// TODO: Add the proper room IDs for the existing blank Strings
 	// the room IDs of the respective shops (for usage in conjunction with the Specials tab)
 	private String emporiumRoomID = "ms10";
-	private String smallWorldRoomID = "";
-	private String shrunkenNedRoomID = "";
-	private String goldenHorseshoeRoomID = "";
-	private String innerSpaceRoomID = "";
+	private String smallWorldRoomID = "fl8";
+	private String shrunkenNedRoomID = "al5";
+	private String goldenHorseshoeRoomID = "fr6";
+	private String innerSpaceRoomID = "tl14";
 	
 	// structure containing the shops and their items
 	private HashMap<String, HashMap<String, ArrayList<InventoryItem>>> shops = new HashMap<String, HashMap<String, ArrayList<InventoryItem>>>();
