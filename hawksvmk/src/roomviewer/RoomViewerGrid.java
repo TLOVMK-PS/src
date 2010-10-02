@@ -675,7 +675,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 														changeRoom(destination);
 													}
 												}
-												else
+												
+												if(character.getUsername().equals(myCharacter.getUsername()))
 												{
 													sendUpdateCharacterMessage(character);
 												}
@@ -710,7 +711,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 													changeRoom(destination);
 												}
 											}
-											else
+
+											if(character.getUsername().equals(myCharacter.getUsername()))
 											{
 												sendUpdateCharacterMessage(character);
 											}
