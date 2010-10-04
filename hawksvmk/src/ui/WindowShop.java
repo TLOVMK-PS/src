@@ -136,7 +136,7 @@ public class WindowShop extends JPanel
 	private String goldenHorseshoeID = "GoldenHorseshoe";
 	private String innerSpaceID = "InnerSpaceShop";
 	
-	private String selectedShop = emporiumID;
+	private String selectedShop = null;
 	private String selectedTab = "furniture";
 	private ShopItemSquare selectedItem = null;
 	
@@ -746,7 +746,6 @@ public class WindowShop extends JPanel
 		
 		shopCardLabel.setVisible(true);
 		shopItemsScrollPane.setVisible(true);
-		shopItemsLand.setVisible(true);
 		shopItemName.setVisible(true);
 		shopItemPrice.setVisible(true);
 		shopItemBuyBtn.setVisible(true);
@@ -765,6 +764,10 @@ public class WindowShop extends JPanel
 	// apply the shop items to the item panel
 	private void createItemsPanel(String shop, String type)
 	{
+		// check to make sure a shop has been selected
+		if(shop == null) {return;}
+		if(shop.equals("")) {return;}
+		
 		// get the current room ID
 		String currentRoomID = gridObject.getRoomInfo().get("ID");
 		
@@ -778,9 +781,16 @@ public class WindowShop extends JPanel
 		shopCardLabel.setIcon(shopCardImage);
 		shopItemBuyBtn.setIcon(shopItemBuyImage);
 		
+		// show the "Land" image for the shop
+		shopItemsLand.setVisible(true);
+		
 		// check to see if it's the Specials tab first
 		if(type.equals("specials"))
 		{
+			// make sure we're actually in a room before we start checking
+			if(currentRoomID == null) {return;}
+			if(currentRoomID.equals("")) {return;}
+			
 			// check to see if we need to prevent the creation of the items list
 			if(shop.equals(emporiumID) && !currentRoomID.equals(emporiumRoomID)) {return;}
 			if(shop.equals(smallWorldID) && !currentRoomID.equals(smallWorldRoomID)) {return;}

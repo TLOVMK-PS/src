@@ -2,6 +2,18 @@
 // GOLDEN HORSESHOE
 // ===============================
 
+// Clothing
+
+ID: shoes_0
+TYPE: CLOTHING
+SPECIAL: YES
+@END@
+
+ID: hat_0
+TYPE: CLOTHING
+SPECIAL: YES
+@END@
+
 // Furniture
 
 // Pins

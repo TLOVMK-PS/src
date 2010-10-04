@@ -70,6 +70,7 @@ public class WindowInventory extends JPanel
 	private int furnitureCount = 0;
 	private int pinCount = 0;
 	private int posterCount = 0;
+	private int clothingCount = 0;
 	
 	private JLabel inventoryNameLabel = new JLabel("");
 	private JLabel inventorySquareHighlightLabel = new JLabel(inventorySquareHighlight);
@@ -89,6 +90,7 @@ public class WindowInventory extends JPanel
 	private InventoryPinSquare selectedPin = null;
 	private InventoryPinSquare selectedFurniture = null;
 	private InventoryPinSquare selectedPoster = null;
+	private InventoryPinSquare selectedClothing = null;
 	
 	private int furniPanelHeight = 0;
 	private JPanel inventoryFurniturePanel = new JPanel();
@@ -103,6 +105,12 @@ public class WindowInventory extends JPanel
 	private JScrollPane inventoryPostersScrollPane;
 	private ImageIcon postersWindowImage = AppletResourceLoader.getImageFromJar("img/ui/posters.png");
 	private JLabel postersSquareHighlightLabel = new JLabel(inventorySquareHighlight);
+	
+	private int clothingPanelHeight = 0;
+	private JPanel inventoryClothingPanel = new JPanel();
+	private JScrollPane inventoryClothingScrollPane;
+	private ImageIcon clothingWindowImage = AppletResourceLoader.getImageFromJar("img/ui/clothing.png");
+	private JLabel clothingSquareHighlightLabel = new JLabel(inventorySquareHighlight);
 	
 	private final int INVENTORY_PANEL_WIDTH = 262;
 	
@@ -126,6 +134,7 @@ public class WindowInventory extends JPanel
 	private Rectangle tabPinsRectangle = new Rectangle(173, 46, 38, 22);
 	private Rectangle tabFurnitureRectangle = new Rectangle(86, 46, 78, 21);
 	private Rectangle tabPostersRectangle = new Rectangle(287, 41, 55, 24);
+	private Rectangle tabClothingRectangle = new Rectangle(212, 41, 71, 21);
 	private Rectangle tabCreditRectangle = new Rectangle(35, 45, 47, 21);
 	private Rectangle exitRectangle = new Rectangle(407, 9, 15, 16);
 	
@@ -256,6 +265,22 @@ public class WindowInventory extends JPanel
 		add(inventoryPostersScrollPane);
 		
 		// ==========================================
+		// CLOTHES TAB
+		// ==========================================
+		
+		// panel that holds the clothing inventory
+		inventoryClothingPanel.setLayout(null);
+		inventoryClothingPanel.setBackground(new Color(40, 84, 146));
+		
+		// add the panel to the scroll pane
+		inventoryClothingScrollPane = new JScrollPane(inventoryClothingPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		inventoryClothingScrollPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
+		inventoryClothingScrollPane.setBorder(null);
+		inventoryClothingScrollPane.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH + 18, 175);
+		inventoryClothingScrollPane.setVisible(false);
+		add(inventoryClothingScrollPane);
+		
+		// ==========================================
 		// CREDIT TAB
 		// ==========================================
 		
@@ -295,6 +320,11 @@ public class WindowInventory extends JPanel
 				{
 					// change the tab to the "Posters" tab
 					changeTab("posters");
+				}
+				else if(tabClothingRectangle.contains(e.getPoint()))
+				{
+					// chagne the tab to the "Clothing" tab
+					changeTab("clothing");
 				}
 				else if(tabCreditRectangle.contains(e.getPoint()))
 				{
@@ -481,6 +511,27 @@ public class WindowInventory extends JPanel
 				inventoryCardDisplayLabel.setIcon(inventoryCardImage);
 			}
 		}
+		else if(tab.equals("clothing"))
+		{
+			// change it to the "Clothing" tab
+			inventoryNameLabel.setVisible(true);
+			inventoryCardDisplayLabel.setVisible(true);
+			inventoryClothingPanel.setVisible(true);
+			inventoryClothingScrollPane.setVisible(true);
+			backgroundLabel.setIcon(clothingWindowImage);
+			
+			// check to see if an item is already selected
+			if(selectedClothing != null)
+			{
+				inventoryNameLabel.setText(selectedClothing.getPinName());
+				inventoryCardDisplayLabel.setIcon(selectedClothing.getCardImage());
+			}
+			else
+			{
+				inventoryNameLabel.setText("");
+				inventoryCardDisplayLabel.setIcon(inventoryCardImage);
+			}
+		}
 		else if(tab.equals("posters"))
 		{
 			// change it to the "Posters" tab
@@ -566,6 +617,20 @@ public class WindowInventory extends JPanel
 			// increase the furniture count
 			furnitureCount++;
 		}
+		else if(item.getType() == InventoryItem.CLOTHING)
+		{
+			col = clothingCount % ITEMS_PER_ROW; // figure out the column
+			row = (int)(clothingCount / ITEMS_PER_ROW); // figure out the row
+			
+			// add a clothing item
+			addClothingToInventoryPanel(row, col, item.getId());
+			
+			// figure out the clothing panel height
+			clothingPanelHeight = (INVENTORY_SQUARE_SPACING * row) + (42 * row) + 42;
+			
+			// increase the clothing count
+			clothingCount++;
+		}
 		else if(item.getType() == InventoryItem.PIN)
 		{
 			col = pinCount % ITEMS_PER_ROW; // figure out the column
@@ -602,10 +667,12 @@ public class WindowInventory extends JPanel
 		inventoryFurniturePanel.removeAll();
 		inventoryPinsPanel.removeAll();
 		inventoryPostersPanel.removeAll();
+		inventoryClothingPanel.removeAll();
 		
 		furnitureCount = 0;
 		pinCount = 0;
 		posterCount = 0;
+		clothingCount = 0;
 		this.inventoryItems = inventoryItems;
 
 		// add the highlight square
@@ -620,6 +687,10 @@ public class WindowInventory extends JPanel
 		postersSquareHighlightLabel.setBounds(0,0,42,42);
 		postersSquareHighlightLabel.setVisible(false);
 		inventoryPostersPanel.add(postersSquareHighlightLabel);
+		
+		clothingSquareHighlightLabel.setBounds(0,0,42,42);
+		clothingSquareHighlightLabel.setVisible(false);
+		inventoryClothingPanel.add(clothingSquareHighlightLabel);
 		
 		// add the inventory squares
 		for(int i = 0; i < inventoryItems.size(); i++)
@@ -642,6 +713,10 @@ public class WindowInventory extends JPanel
 		// set the size of the posters panel
 		inventoryPostersPanel.setPreferredSize(new Dimension(INVENTORY_PANEL_WIDTH, posterPanelHeight));
 		inventoryPostersPanel.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH, posterPanelHeight);
+		
+		// set the size of the clothing panel
+		inventoryClothingPanel.setPreferredSize(new Dimension(INVENTORY_PANEL_WIDTH, clothingPanelHeight));
+		inventoryClothingPanel.setBounds(PIN_INV_OFFSET_LEFT, PIN_INV_OFFSET_TOP, INVENTORY_PANEL_WIDTH, clothingPanelHeight);
 		
 		// repaint the window
 		repaint();
@@ -771,6 +846,68 @@ public class WindowInventory extends JPanel
 		invSquare.setHorizontalAlignment(JLabel.CENTER);
 		invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
 		inventoryPostersPanel.add(invSquare);
+	}
+	
+	// add a clothing item to the Inventory clothing section
+	private void addClothingToInventoryPanel(int row, int col, String id)
+	{	
+		// add a clothing item
+		final InventoryPinSquare invPin = new InventoryPinSquare(row, col, id);
+		invPin.setName(id);
+		invPin.setIcon(invPin.getIconImage());
+		invPin.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		invPin.setHorizontalAlignment(JLabel.CENTER);
+		invPin.addMouseListener(new MouseListener()
+		{
+			public void mouseExited(MouseEvent e)
+			{
+				firstClick = 0;
+			}
+			public void mouseReleased(MouseEvent e)
+			{
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e)
+			{
+				// move the inventory highlight square here
+				clothingSquareHighlightLabel.setVisible(true);
+				clothingSquareHighlightLabel.setLocation(e.getComponent().getLocation());
+				
+				InventoryPinSquare invSquare = (InventoryPinSquare)e.getComponent();
+				
+				// update the inventory name bar
+				inventoryNameLabel.setText(invSquare.getPinName());
+				
+				// update the card display label
+				inventoryCardDisplayLabel.setIcon(invSquare.getCardImage());
+				
+				// set the currently-selected clothing item
+				selectedClothing = invSquare;
+				
+				// check for double-click on this panel
+				if(firstClick > 0)
+				{
+					// double-click, so move this pin to the Pins Worn section
+					if((System.currentTimeMillis() - firstClick) <= DOUBLE_CLICK_TIME)
+					{
+						//movePinInventoryToWorn(invPin);
+					}
+					firstClick = 0;
+				}
+				else
+				{
+					firstClick = System.currentTimeMillis();
+				}
+			}
+		});
+		inventoryClothingPanel.add(invPin);
+		
+		// add the furniture backing
+		JLabel invSquare = new JLabel(inventorySquare);
+		invSquare.setHorizontalAlignment(JLabel.CENTER);
+		invSquare.setBounds((INVENTORY_SQUARE_SPACING * col) + (42 * col), (INVENTORY_SQUARE_SPACING * row) + (42 * row), 42, 42);
+		inventoryClothingPanel.add(invSquare);
 	}
 	
 	// add a pin to the Inventory pins section

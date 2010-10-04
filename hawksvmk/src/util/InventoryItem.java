@@ -12,6 +12,7 @@ public class InventoryItem implements Serializable, Comparable
 	public static final int FURNITURE = 0;
 	public static final int PIN = 1;
 	public static final int POSTER = 2;
+	public static final int CLOTHING = 3;
 	
 	private String name = "";
 	private String id = "";

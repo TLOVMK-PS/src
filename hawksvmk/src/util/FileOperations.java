@@ -1435,6 +1435,10 @@ public class FileOperations
 						{
 							invType = InventoryItem.POSTER;
 						}
+						else if(line.equals("CLOTHING"))
+						{
+							invType = InventoryItem.CLOTHING;
+						}
 					}
 					else if(line.startsWith("SPECIAL: "))
 					{
@@ -1478,6 +1482,11 @@ public class FileOperations
 							{
 								// poster
 								posters.add(theItem);
+							}
+							else if(invType == InventoryItem.CLOTHING)
+							{
+								// clothing
+								clothing.add(theItem);
 							}
 						}
 					}
@@ -1659,6 +1668,13 @@ public class FileOperations
 							inventoryID = line;
 							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.POSTER));
 						}
+						else if(line.startsWith("CLOTHING: "))
+						{
+							// get the clothing item
+							line = line.replaceAll("CLOTHING: ", "");
+							inventoryID = line;
+							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.CLOTHING));
+						}
 						else if(line.startsWith(commentDelimeter))
 						{
 							// comment line, so ignore
@@ -1726,6 +1742,11 @@ public class FileOperations
 					// poster
 					fileWriter.println("POSTER: " + r.getId());
 				}
+				else if(r.getType() == InventoryItem.CLOTHING)
+				{
+					// clothing
+					fileWriter.println("CLOTHING: " + r.getId());
+				}
 			}
 			
 			fileWriter.close();
@@ -1771,6 +1792,10 @@ public class FileOperations
 			else if(item.getType() == InventoryItem.POSTER)
 			{
 				writer.println("POSTER: " + item.getId());
+			}
+			else if(item.getType() == InventoryItem.CLOTHING)
+			{
+				writer.println("CLOTHING: " + item.getId());
 			}
 			
 			// flush the stream and close it

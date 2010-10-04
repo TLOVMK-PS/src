@@ -1,4 +1,44 @@
 // ===================
+// CLOTHING
+// ===================
+
+ID: hat_0
+NAME: Cowboy Hat Black
+PATH: img/clothing/hats/hat_0/
+CARD: img/clothing/hats/hat_0/card_0.jpg
+ICON: img/clothing/hats/hat_0/icon_0.jpg
+PRICE: 500
+RATING: G
+@END@
+
+ID: pants_0
+NAME: Black Camoflauge Pants
+PATH: img/clothing/pants/pants_0/
+CARD: img/clothing/pants/pants_0/card_0.jpg
+ICON: img/clothing/pants/pants_0/icon_0.jpg
+PRICE: 100
+RATING: G
+@END@
+
+ID: shirt_0
+NAME: Hawk's VMK Shirt Black
+PATH: img/clothing/shirts/shirt_0/
+CARD: img/clothing/shirts/shirt_0/card_0.jpg
+ICON: img/clothing/shirts/shirt_0/icon_0.jpg
+PRICE: 25
+RATING: G
+@END@
+
+ID: shoes_0
+NAME: Cowboy Boots Black
+PATH: img/clothing/shoes/shoes_0/
+CARD: img/clothing/shoes/shoes_0/card_0.jpg
+ICON: img/clothing/shoes/shoes_0/icon_0.jpg
+PRICE: 500
+RATING: G
+@END@
+
+// ===================
 // FURNITURE
 // ===================
 

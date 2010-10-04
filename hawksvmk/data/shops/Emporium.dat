@@ -2,6 +2,18 @@
 // EMPORIUM
 // ===============================
 
+// Clothing
+
+ID: pants_0
+TYPE: CLOTHING
+SPECIAL: NO
+@END@
+
+ID: shirt_0
+TYPE: CLOTHING
+SPECIAL: NO
+@END@
+
 // Furniture
 
 // Pins
