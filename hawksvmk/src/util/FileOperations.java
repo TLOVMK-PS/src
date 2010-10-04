@@ -652,6 +652,13 @@ public class FileOperations
 			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
 			fileWriter.println("RATING: G"); // assign a default content rating of General
 			
+			// assign some default clothing
+			fileWriter.println("BASE AVATAR: base_0");
+			fileWriter.println("SHIRT: shirt_0");
+			fileWriter.println("SHOES: shoes_0");
+			fileWriter.println("PANTS: pants_0");
+			fileWriter.println("HAT: hat_0");
+			
 			if(username.startsWith("QA_") || username.startsWith("HOST_") || username.startsWith("VMK_"))
 			{
 				defaultBadges++; // staff get one extra badge when they create their account
@@ -717,6 +724,7 @@ public class FileOperations
 	// load a character given an email address
 	public static synchronized AStarCharacter loadCharacter(String username, String email)
 	{
+		boolean isNewPlayer = false;
 		String filename = "";
 		
 		if(!email.equals(""))
@@ -732,6 +740,7 @@ public class FileOperations
 		if(!(new File(filename).exists()))
 		{
 			// create a new default player with the given email address
+			isNewPlayer = true;
 			createNewPlayerFiles(username, email);
 		}
 		
@@ -872,6 +881,17 @@ public class FileOperations
 		newCharacter.setHatID(hatID);
 		newCharacter.setDisplayedBadges(displayedBadges);
 		newCharacter.setDisplayedPins(displayedPins);
+		
+		// check to see if this is a new player
+		if(isNewPlayer)
+		{
+			// it's a new player, so create default clothing for him in his avatar directory
+			buildAvatarImages(newCharacter);
+		}
+		
+		// grab the most current avatar images for this character
+		newCharacter.updateAvatarImages();
+		
 		return newCharacter;
 	}
 	
@@ -960,7 +980,7 @@ public class FileOperations
 		
 		// sizes that the character needs
 		//String sizes[] = {"64","48","32"};
-		String sizes[] = {"64"};
+		String sizes[] = {"64","48"};
 		
 		// image objects for the avatar compositions
 		BufferedImage base = null;

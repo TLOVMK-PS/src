@@ -343,54 +343,11 @@ public class AStarCharacter implements Serializable, ContentRateable
 	{
 		// make sure the character is 87.5% the width of the tile
 		// make sure the character height = (width) / 0.44094488188976377952755905511811 
-		if(tileWidth == 64 && tileHeight == 32)
-		{
-			// 64x32 tile
-			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_64.png"));
-			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_64.png"));
-			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_64.png"));
-			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_64.png"));
-			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_64.png"));
-			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_64.png"));
-			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_64.png"));
-			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_64.png"));
-			
-			// figure out what the current avatar image should be
-			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_64.png"));
-		}
-		else if(tileWidth == 48 && tileHeight == 24)
-		{
-			// 48x24 tile
-			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_48.png"));
-			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_48.png"));
-			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_48.png"));
-			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_48.png"));
-			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_48.png"));
-			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_48.png"));
-			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_48.png"));
-			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_48.png"));
-			
-			// figure out what the current avatar image should be
-			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_48.png"));
-		}
-		else if(tileWidth == 32 && tileHeight == 16)
-		{
-			// 32x16 tile
-			avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_32.png"));
-			avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_32.png"));
-			avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_32.png"));
-			avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_32.png"));
-			avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_32.png"));
-			avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_32.png"));
-			avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_32.png"));
-			avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_32.png"));
-			
-			// figure out what the current avatar image should be
-			characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_" + currentDirection + "_32.png"));
-		}
 		
 		// set the tile height
 		this.tileHeight = tileHeight;
+		
+		updateAvatarImages();
 	}
 	
 	// figure out whether the character image is fully transparent at a given X and Y value
@@ -410,9 +367,21 @@ public class AStarCharacter implements Serializable, ContentRateable
 	}
 	
 	// update the avatar images in a hacked way
-	// ONLY TO BE CALLED FROM VMKServerThread AFTER CLOTHING IS UPDATED
+	// ONLY TO BE CALLED ON THE SERVER SIDE AFTER CLOTHING IS UPDATED
 	public void updateAvatarImages()
 	{
-		changeAvatarSizeForTile(tileHeight * 2,tileHeight);
+		int tileWidth = tileHeight * 2;
+		
+		avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_n_" + tileWidth + ".png"));
+		avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_nw_" + tileWidth + ".png"));
+		avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_w_" + tileWidth + ".png"));
+		avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_sw_" + tileWidth + ".png"));
+		avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_s_" + tileWidth + ".png"));
+		avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_se_" + tileWidth + ".png"));
+		avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_e_" + tileWidth + ".png"));
+		avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_ne_" + tileWidth + ".png"));
+		
+		// figure out what the current avatar image should be
+		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_" + currentDirection + "_" + tileWidth + ".png"));
 	}
 }
