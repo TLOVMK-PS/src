@@ -44,6 +44,7 @@ public class AStarCharacter implements Serializable, ContentRateable
 	
 	private Tile currentTile;
 	
+	// TODO: Change these objects to use the current avatar's own images instead of the template images
 	// avatar images for the eight directions
 	private AStarCharacterImage avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_64.png"));
 	private AStarCharacterImage avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_64.png"));
@@ -56,6 +57,13 @@ public class AStarCharacter implements Serializable, ContentRateable
 	
 	private AStarCharacterImage characterImage = avatarSouthEast;
 	private String currentDirection = "se"; // the direction the avatar is currently facing
+	
+	// Strings for clothing IDs
+	private String baseAvatarID = "base_0";
+	private String shirtID = "shirt_0";
+	private String shoesID = "shoes_0";
+	private String pantsID = "pants_0";
+	private String hatID = "hat_0";
 	
 	private Rectangle boundingBox = new Rectangle(x, y, characterImage.getImage().getWidth(), characterImage.getImage().getHeight());
 	
@@ -200,6 +208,46 @@ public class AStarCharacter implements Serializable, ContentRateable
 		boundingBox.height = characterImage.getImage().getHeight();
 	}
 	
+	public String getBaseAvatarID() {
+		return baseAvatarID;
+	}
+
+	public void setBaseAvatarID(String baseAvatarID) {
+		this.baseAvatarID = baseAvatarID;
+	}
+
+	public String getShirtID() {
+		return shirtID;
+	}
+
+	public void setShirtID(String shirtID) {
+		this.shirtID = shirtID;
+	}
+
+	public String getShoesID() {
+		return shoesID;
+	}
+
+	public void setShoesID(String shoesID) {
+		this.shoesID = shoesID;
+	}
+
+	public String getPantsID() {
+		return pantsID;
+	}
+
+	public void setPantsID(String pantsID) {
+		this.pantsID = pantsID;
+	}
+
+	public String getHatID() {
+		return hatID;
+	}
+
+	public void setHatID(String hatID) {
+		this.hatID = hatID;
+	}
+
 	public void setColDiff(int colDiff) {
 		this.colDiff = colDiff;
 	}
@@ -289,6 +337,7 @@ public class AStarCharacter implements Serializable, ContentRateable
 	public void setDisplayedPins(InventoryInfo[] displayedPins) {this.displayedPins = displayedPins;}
 	public InventoryInfo[] getDisplayedPins() {return displayedPins;}
 	
+	// TODO: Change this method to use the current avatar's own images instead of the template images
 	// change the size of the avatar given the width and height of the room tiles
 	public void changeAvatarSizeForTile(int tileWidth, int tileHeight)
 	{
@@ -350,13 +399,20 @@ public class AStarCharacter implements Serializable, ContentRateable
 		int pixel = characterImage.getImage().getRGB(x, y);
 		int alpha = (pixel >> 24) & 0x000000FF; // bit shift by 24 and bitwise AND with 0x000000FF for the alpha value
 		
-		// check if the image is of a four-byte ABGR image
-		if(characterImage.getImage().getType() == BufferedImage.TYPE_4BYTE_ABGR && alpha == 0)
+		// check if the image is of a four-byte ABGR or INT_ARGB image
+		if((characterImage.getImage().getType() == BufferedImage.TYPE_4BYTE_ABGR || characterImage.getImage().getType() == BufferedImage.TYPE_INT_ARGB) && alpha == 0)
 		{
 			// fully transparent, so return true
 			return true;
 		}
 		
 		return false;
+	}
+	
+	// update the avatar images in a hacked way
+	// ONLY TO BE CALLED FROM VMKServerThread AFTER CLOTHING IS UPDATED
+	public void updateAvatarImages()
+	{
+		changeAvatarSizeForTile(tileHeight * 2,tileHeight);
 	}
 }

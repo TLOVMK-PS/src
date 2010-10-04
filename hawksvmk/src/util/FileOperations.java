@@ -8,6 +8,8 @@ package util;
 
 import interfaces.GridViewable;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -19,6 +21,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
 
 import animations.Animation;
 import animations.MovingAnimation;
@@ -699,6 +703,9 @@ public class FileOperations
 			
 			// create the new user's Guest Rooms folder
 			new File("rooms/guest/" + email).mkdir();
+			
+			// create the new user's Avatar folder
+			new File("img/avatars/" + email).mkdir();
 		}
 		catch(Exception e)
 		{
@@ -733,6 +740,12 @@ public class FileOperations
 		long credits = 1000;
 		String signature = "";
 		String contentRating = "";
+		
+		String baseAvatarID = "";
+		String shirtID = "";
+		String shoesID = "";
+		String pantsID = "";
+		String hatID = "";
 		
 		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
 		InventoryInfo displayedPins[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];
@@ -769,6 +782,31 @@ public class FileOperations
 					{
 						line = line.replaceAll("RATING: ", "");
 						contentRating = line;
+					}
+					else if(line.startsWith("BASE AVATAR: ")) // base avatar ID
+					{
+						line = line.replaceAll("BASE AVATAR: ", "");
+						baseAvatarID = line;
+					}
+					else if(line.startsWith("SHIRT: ")) // shirt ID
+					{
+						line = line.replaceAll("SHIRT: ", "");
+						shirtID = line;
+					}
+					else if(line.startsWith("SHOES: ")) // shoes ID
+					{
+						line = line.replaceAll("SHOES: ", "");
+						shoesID = line;
+					}
+					else if(line.startsWith("PANTS: ")) // pants ID
+					{
+						line = line.replaceAll("PANTS: ", "");
+						pantsID = line;
+					}
+					else if(line.startsWith("HAT: ")) // hat ID
+					{
+						line = line.replaceAll("HAT: ", "");
+						hatID = line;
 					}
 					else if(line.startsWith("BADGE: ")) // badge
 					{
@@ -827,6 +865,11 @@ public class FileOperations
 		newCharacter.setCredits(credits);
 		newCharacter.setSignature(signature);
 		newCharacter.setContentRating(contentRating);
+		newCharacter.setBaseAvatarID(baseAvatarID);
+		newCharacter.setShirtID(shirtID);
+		newCharacter.setShoesID(shoesID);
+		newCharacter.setPantsID(pantsID);
+		newCharacter.setHatID(hatID);
 		newCharacter.setDisplayedBadges(displayedBadges);
 		newCharacter.setDisplayedPins(displayedPins);
 		return newCharacter;
@@ -865,6 +908,13 @@ public class FileOperations
 			// write out the content rating
 			fileWriter.println("RATING: " + character.getContentRatingAsString());
 			
+			// write out the clothing information
+			fileWriter.println("BASE AVATAR: " + character.getBaseAvatarID());
+			fileWriter.println("SHIRT: " + character.getShirtID());
+			fileWriter.println("SHOES: " + character.getShoesID());
+			fileWriter.println("PANTS: " + character.getPantsID());
+			fileWriter.println("HAT: " + character.getHatID());
+			
 			// write out the badges
 			InventoryInfo[] displayedBadges = character.getDisplayedBadges();
 			for(int i = 0; i < displayedBadges.length; i++)
@@ -886,6 +936,91 @@ public class FileOperations
 			System.out.println("ERROR IN saveCharacter()");
 			e.printStackTrace();
 		}
+	}
+	
+	// take a character and basically re-create his clothing and avatar images
+	public static synchronized AStarCharacter buildAvatarImages(AStarCharacter character)
+	{
+		// figure out what the email should be
+		String email = "";
+		if(character.getEmail().equals(""))
+		{
+			email = "default";
+		}
+		else
+		{
+			email = character.getEmail();
+		}
+		
+		// grab the character from the parameter
+		AStarCharacter theCharacter = character;
+		
+		// directions that the character needs
+		String directions[] = {"n","ne","e","se","s","sw","w","nw"};
+		
+		// sizes that the character needs
+		//String sizes[] = {"64","48","32"};
+		String sizes[] = {"64"};
+		
+		// image objects for the avatar compositions
+		BufferedImage base = null;
+		BufferedImage shirt = null;
+		BufferedImage shoes = null;
+		BufferedImage pants = null;
+		BufferedImage hat = null;
+		
+		try
+		{
+			// iterate through the necessary directions
+			for(String direction : directions)
+			{
+				// iterate through the necessary sizes
+				for(String size: sizes)
+				{
+					// get the respective images given the clothing IDs
+					base = AppletResourceLoader.getBufferedImageFromJar("img/clothing/base/" + character.getBaseAvatarID() + "/" + character.getBaseAvatarID() + "_" + direction + "_" + size + ".png");
+					shirt = AppletResourceLoader.getBufferedImageFromJar("img/clothing/shirts/" + character.getShirtID() + "/" + character.getShirtID() + "_" + direction + "_" + size + ".png");
+					shoes = AppletResourceLoader.getBufferedImageFromJar("img/clothing/shoes/" + character.getShoesID() + "/" + character.getShoesID() + "_" + direction + "_" + size + ".png");
+					pants = AppletResourceLoader.getBufferedImageFromJar("img/clothing/pants/" + character.getPantsID() + "/" + character.getPantsID() + "_" + direction + "_" + size + ".png");
+					
+					// check to see if there is actually a hat specified
+					if(!character.getHatID().equals(""))
+					{
+						hat = AppletResourceLoader.getBufferedImageFromJar("img/clothing/hats/" + character.getHatID() + "/" + character.getHatID() + "_" + direction + "_" + size + ".png");
+					}
+					
+					// create the combined BufferedImage object and allow for transparency
+					BufferedImage combined = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
+					
+					// create the Graphics instance so we can draw on the canvas
+					Graphics g = combined.getGraphics();
+					
+					// apply all the clothing images in the necessary order so they layer properly
+					g.drawImage(base,0,0,null);
+					g.drawImage(shirt,0,0,null);
+					g.drawImage(shoes,0,0,null);
+					g.drawImage(pants,0,0,null);
+					
+					// check to see if a hat has been specified
+					if(!character.getHatID().equals(""))
+					{
+						g.drawImage(hat,0,0,null);
+					}
+					
+					g.dispose();
+					
+					// write the generated image back out to the player's avatar folder
+					ImageIO.write(combined,"png",new File("img/avatars/" + email + "/avatar_" + direction + "_" + size + ".png"));
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN createAvatarImages()");
+			e.printStackTrace();
+		}
+		
+		return theCharacter;
 	}
 	
 	// load a friends list given a player's email address
