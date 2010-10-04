@@ -979,8 +979,7 @@ public class FileOperations
 		String directions[] = {"n","ne","e","se","s","sw","w","nw"};
 		
 		// sizes that the character needs
-		//String sizes[] = {"64","48","32"};
-		String sizes[] = {"64","48"};
+		String sizes[] = {"64","48","32"};
 		
 		// image objects for the avatar compositions
 		BufferedImage base = null;
