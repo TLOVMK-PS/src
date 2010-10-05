@@ -1,0 +1,112 @@
+====================================
+HVMK CLOTHING RE-COLORING GUIDELINES
+====================================
+
+All of these assume you're starting with the black/ash-gray (RGB: 80,80,80) version of the clothing.
+
+There needs to be a base layer with ONLY the colored simple clothing item.  All decorations need to be on a separate layer.
+
+In Photoshop, create a Selective Color layer directly above the base clothing layer and check "Group with Previous Layer" is selected.
+
+Make sure "Relative" is marked in the Selective Color Options box.
+
+Go to the "Neutrals" selection in the Selective Color Options box and apply one of the following settings:
+
+------------
+RED CLOTHING
+------------
+
+Cyan: -100
+Magenta: 0
+Yellow: 0
+Black: +50
+
+--------------
+GREEN CLOTHING
+--------------
+
+Cyan: 0
+Magenta: -100
+Yellow: +100
+Black: +50
+
+-------------------
+DARK GREEN CLOTHING
+-------------------
+
+Cyan: 0
+Magenta: -50
+Yellow: +100
+Black: +50
+
+-------------
+CYAN CLOTHING
+-------------
+
+Cyan: 0
+Magenta: -100
+Yellow: -100
+Black: +50
+
+------------------
+BLUE CLOTHING
+------------------
+
+Cyan: 0
+Magenta: -50
+Yellow: -100
+Black: +50
+
+---------------
+YELLOW CLOTHING
+---------------
+
+Cyan: -100
+Magenta: -100
+Yellow: +100
+Black: +50
+
+--------------
+WHITE CLOTHING
+--------------
+
+Cyan: -100
+Magenta: -100
+Yellow: -100
+Black: +100
+
+-------------
+GRAY CLOTHING
+-------------
+
+Cyan: +100
+Magenta: +100
+Yellow: +100
+Black: -76
+
+---------------
+PURPLE CLOTHING
+---------------
+
+Cyan: -70
+Magenta: 0
+Yellow: -100
+Black: +50
+
+---------------
+ORANGE CLOTHING
+---------------
+
+Cyan: -100
+Magenta: -50
+Yellow: +100
+Black: +50
+
+--------------
+BROWN CLOTHING
+--------------
+
+Cyan: -48
+Magenta: -41
+Yellow: +100
+Black: +83
