@@ -384,10 +384,4 @@ public class AStarCharacter implements Serializable, ContentRateable
 		// figure out what the current avatar image should be
 		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_" + currentDirection + "_" + tileWidth + ".png"));
 	}
-	
-	// ==============================================================
-	// GETTERS/SETTERS FOR THE AVATAR IMAGES
-	// ==============================================================
-	
-	
 }

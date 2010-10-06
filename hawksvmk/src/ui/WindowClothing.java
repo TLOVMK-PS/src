@@ -7,6 +7,7 @@ package ui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -29,6 +30,7 @@ import comparators.InventoryItemNameComparator;
 import roomviewer.RoomViewerGrid;
 import sockets.messages.MessageAddChatToRoom;
 import util.AppletResourceLoader;
+import util.InventoryInfo;
 import util.InventoryItem;
 import util.StaticAppletData;
 
@@ -67,6 +69,8 @@ public class WindowClothing extends JPanel
 	private int selectedPantsIndex = 0;
 	private ArrayList<InventoryItem> hats = new ArrayList<InventoryItem>();
 	private int selectedHatIndex = 0;
+	private ArrayList<InventoryItem> bases = new ArrayList<InventoryItem>();
+	private int selectedBaseIndex = 0;
 	
 	Rectangle hatImageBounds = new Rectangle(52,99,41,41);
 	private JLabel hatLabel = new JLabel();
@@ -85,6 +89,13 @@ public class WindowClothing extends JPanel
 	Rectangle nextPantsRect = new Rectangle(95,285,17,18);
 	Rectangle prevShoesRect = new Rectangle(32,329,17,18);
 	Rectangle nextShoesRect = new Rectangle(95,329,17,18);
+	
+	private JLabel basePreviewLabel = new JLabel();
+	private JLabel shirtPreviewLabel = new JLabel();
+	private JLabel shoesPreviewLabel = new JLabel();
+	private JLabel pantsPreviewLabel = new JLabel();
+	private JLabel hatPreviewLabel = new JLabel();
+	Rectangle characterPreviewRect = new Rectangle(107,111,122,254);
 	
 	private boolean setCurrentlySelectedClothingFirstTime = false; // TRUE when the selected clothing has been set for the first time
 	
@@ -178,6 +189,28 @@ public class WindowClothing extends JPanel
 	    	 }
 	     });
 		add(signatureBox);
+		
+		// add the character preview image labels
+		
+		hatPreviewLabel.setBounds(characterPreviewRect);
+		hatPreviewLabel.setBackground(new Color(40, 86, 146));
+		add(hatPreviewLabel);
+		
+		shirtPreviewLabel.setBounds(characterPreviewRect);
+		shirtPreviewLabel.setBackground(new Color(40, 86, 146));
+		add(shirtPreviewLabel);
+		
+		shoesPreviewLabel.setBounds(characterPreviewRect);
+		shoesPreviewLabel.setBackground(new Color(40, 86, 146));
+		add(shoesPreviewLabel);
+		
+		pantsPreviewLabel.setBounds(characterPreviewRect);
+		pantsPreviewLabel.setBackground(new Color(40, 86, 146));
+		add(pantsPreviewLabel);
+		
+		basePreviewLabel.setBounds(characterPreviewRect);
+		basePreviewLabel.setBackground(new Color(40, 86, 146));
+		add(basePreviewLabel);
 		
 		backgroundLabel.setBounds(0,0,width,height);
 		add(backgroundLabel);
@@ -284,6 +317,9 @@ public class WindowClothing extends JPanel
 		
 		// add a blank InventoryItem entry to the hats structure since a hat isn't required
 		hats.add(new InventoryItem("","",InventoryItem.CLOTHING));
+		
+		// add a new base
+		bases.add(new InventoryItem("base_0","base_0",InventoryItem.CLOTHING));
 	}
 	
 	// toggle the visibility of this window
@@ -315,6 +351,9 @@ public class WindowClothing extends JPanel
 			
 			// set the selected shirt's icon
 			shirtLabel.setIcon(getClothingItemIcon(shirts.get(selectedShirtIndex)));
+			
+			// update the shirt preview
+			updateShirtPreview();
 		}
 		else if(collection.equals("shoes")) // show shoes
 		{
@@ -328,6 +367,9 @@ public class WindowClothing extends JPanel
 			
 			// set the selected shoes' icon
 			shoesLabel.setIcon(getClothingItemIcon(shoes.get(selectedShoesIndex)));
+			
+			// update the shoes preview
+			updateShoesPreview();
 		}
 		else if(collection.equals("pants")) // show pants
 		{
@@ -341,6 +383,9 @@ public class WindowClothing extends JPanel
 			
 			// set the selected pants' icon
 			pantsLabel.setIcon(getClothingItemIcon(pants.get(selectedPantsIndex)));
+			
+			// update the pants preview
+			updatePantsPreview();
 		}
 		else if(collection.equals("hats")) // show hats
 		{
@@ -354,6 +399,9 @@ public class WindowClothing extends JPanel
 			
 			// set the selected hat's icon
 			hatLabel.setIcon(getClothingItemIcon(hats.get(selectedHatIndex)));
+			
+			// update the hat preview
+			updateHatPreview();
 		}
 	}
 	
@@ -410,7 +458,83 @@ public class WindowClothing extends JPanel
 			}
 		}
 		
+		// set the selected skin base
+		selectedBaseIndex = 0;
+		
+		setCharacterPreviewImages();
+		
 		setCurrentlySelectedClothingFirstTime = true;
+	}
+	
+	// set the preview images for the first time
+	public void setCharacterPreviewImages()
+	{
+		updateBasePreview();
+		updateShirtPreview();
+		updateShoesPreview();
+		updatePantsPreview();
+		updateHatPreview();
+	}
+	
+	// update the shirt preview image
+	private void updateShirtPreview()
+	{
+		InventoryInfo itemInfo = StaticAppletData.getInvInfo(shirts.get(selectedShirtIndex).getId());
+		String path = itemInfo.getPath() + itemInfo.getID() + "_se_64.png";
+		
+		// set the shirt preview image
+		shirtPreviewLabel.setIcon(new ImageIcon(AppletResourceLoader.getBufferedImageFromJar(path).getScaledInstance(characterPreviewRect.width, characterPreviewRect.height, Image.SCALE_DEFAULT)));
+	}
+	
+	// update the base preview image
+	private void updateBasePreview()
+	{
+		InventoryInfo itemInfo = StaticAppletData.getInvInfo(bases.get(selectedBaseIndex).getId());
+		String path = itemInfo.getPath() + itemInfo.getID() + "_se_64.png";
+		
+		// set the base preview image
+		basePreviewLabel.setIcon(new ImageIcon(AppletResourceLoader.getBufferedImageFromJar(path).getScaledInstance(characterPreviewRect.width, characterPreviewRect.height, Image.SCALE_DEFAULT)));
+	}
+	
+	// update the pants preview image
+	private void updatePantsPreview()
+	{
+		InventoryInfo itemInfo = StaticAppletData.getInvInfo(pants.get(selectedPantsIndex).getId());
+		String path = itemInfo.getPath() + itemInfo.getID() + "_se_64.png";
+		
+		// set the pants preview image
+		pantsPreviewLabel.setIcon(new ImageIcon(AppletResourceLoader.getBufferedImageFromJar(path).getScaledInstance(characterPreviewRect.width, characterPreviewRect.height, Image.SCALE_DEFAULT)));
+	}
+	
+	// update the shoes preview image
+	private void updateShoesPreview()
+	{
+		InventoryInfo itemInfo = StaticAppletData.getInvInfo(shoes.get(selectedShoesIndex).getId());
+		String path = itemInfo.getPath() + itemInfo.getID() + "_se_64.png";
+		
+		// set the hat preview image
+		shoesPreviewLabel.setIcon(new ImageIcon(AppletResourceLoader.getBufferedImageFromJar(path).getScaledInstance(characterPreviewRect.width, characterPreviewRect.height, Image.SCALE_DEFAULT)));
+	}
+	
+	// update the hat preview image
+	private void updateHatPreview()
+	{
+		InventoryInfo itemInfo = StaticAppletData.getInvInfo(hats.get(selectedHatIndex).getId());
+		String path = "";
+		
+		// check to make sure there's actually an available image
+		if(!itemInfo.getPath().equals(""))
+		{
+			path = itemInfo.getPath() + itemInfo.getID() + "_se_64.png";
+			
+			// set the hat preview image
+			hatPreviewLabel.setIcon(new ImageIcon(AppletResourceLoader.getBufferedImageFromJar(path).getScaledInstance(characterPreviewRect.width, characterPreviewRect.height, Image.SCALE_DEFAULT)));
+		}
+		else
+		{
+			// clear the icon
+			hatPreviewLabel.setIcon(null);
+		}
 	}
 	
 	// add a clothing item to one of the ArrayList structures if it doesn't already contain the item
