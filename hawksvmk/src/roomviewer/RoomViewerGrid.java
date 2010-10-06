@@ -47,6 +47,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
+import sockets.messages.MessageUpdateCharacterClothing;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
@@ -1129,8 +1130,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				
 				myCharacter = character;
 				myCharacter.setUsername(uiObject.getUsername());
-				settingsWindow.setSelectedRating(myCharacter.getContentRatingAsString());
 				
+				// set the content rating and the currently-selected clothing
+				settingsWindow.setSelectedRating(myCharacter.getContentRatingAsString());
+				clothingWindow.setCurrentlySelectedClothing();
+
 				// if this is the first time the room is loaded...
 				if(!uiObject.theGridView.isVisible() || roomLoading == true)
 				{
@@ -1261,13 +1265,35 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		}
 	}
 	
-	public void updateUserSignature(String username, String signature)
-	{
-		AStarCharacter character = characters.get(username); // get the character
-		character.setSignature(signature); // set the signature
+	// update the signature and clothing items of myCharacter
+	public void updateUserSignatureAndClothing(String signature, String shirtID, String shoesID, String pantsID, String hatID)
+	{	
+		// check to see if the signature needs to be updated
+		if(!myCharacter.getSignature().equals(signature))
+		{
+			// update the signature
+			myCharacter.setSignature(signature);
+			
+			// send the update message to the server
+			uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomID));
+		}
 		
-		// send the update message to the server
-		uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+		// check to see if at least one clothing item has changed in order to send the Update Clothing message
+		if(!shirtID.equals(myCharacter.getShirtID()) ||
+		   !shoesID.equals(myCharacter.getShoesID()) ||
+		   !pantsID.equals(myCharacter.getPantsID()) ||
+		   !hatID.equals(myCharacter.getHatID()))
+		{
+			
+			// update the clothing information first
+			if(!shirtID.equals("")) {myCharacter.setShirtID(shirtID);}
+			if(!shoesID.equals("")) {myCharacter.setShoesID(shoesID);}
+			if(!pantsID.equals("")) {myCharacter.setPantsID(pantsID);}
+			myCharacter.setHatID(hatID);
+			
+			// send the update clothing message to the server
+			uiObject.sendMessageToServer(new MessageUpdateCharacterClothing(myCharacter, roomID));
+		}
 	}
 	
 	// add a friend request to the Messages window
@@ -1695,6 +1721,25 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		
 		// send the message to the server
 		uiObject.sendMessageToServer(new MessageAddInventory(myCharacter.getUsername(), item));
+	}
+	
+	// add a clothing item to the Clothing window from another window or thread
+	public void addClothingItemToClothingWindow(InventoryItem item, boolean sortCollections)
+	{
+		clothingWindow.addClothingItem(item, sortCollections);
+	}
+	
+	// re-add the character to the characters HashMap
+	public void updateCharacterClothing(AStarCharacter character)
+	{
+		// update the character in the structure
+		characters.put(character.getUsername(), character);
+		
+		if(character.getUsername().equals(myCharacter.getUsername()))
+		{
+			// update the myCharacter object if necessary
+			myCharacter = character;
+		}
 	}
 }
 

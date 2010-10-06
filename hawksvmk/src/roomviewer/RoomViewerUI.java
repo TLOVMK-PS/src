@@ -874,4 +874,9 @@ public class RoomViewerUI extends Applet
 	{
 		theGridView.shopWindow.addRoomInfo("ID", roomID);
 	}
+	
+	public void updateCharacterClothing(AStarCharacter character)
+	{
+		theGridView.updateCharacterClothing(character);
+	}
 }

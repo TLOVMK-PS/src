@@ -16,6 +16,8 @@ public class MessageAddChatToRoom extends Message implements Serializable
 	
 	public MessageAddChatToRoom(String username, String roomID, String text)
 	{
+		super("MessageAddChatToRoom");
+		
 		this.username = username;
 		this.roomID = roomID;
 		this.text = text;

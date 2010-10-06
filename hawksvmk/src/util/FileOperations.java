@@ -889,9 +889,6 @@ public class FileOperations
 			buildAvatarImages(newCharacter);
 		}
 		
-		// grab the most current avatar images for this character
-		newCharacter.updateAvatarImages();
-		
 		return newCharacter;
 	}
 	

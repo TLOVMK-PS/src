@@ -38,6 +38,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveGuestRoom;
 import sockets.messages.MessageSaveMailMessages;
 import sockets.messages.MessageSendMailToUser;
+import sockets.messages.MessageUpdateCharacterClothing;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
@@ -231,6 +232,26 @@ public class VMKServerThread extends Thread
 							MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)outputMessage;
 							roomID = userMsg.getRoomID();
 							VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+						}
+						else if(outputMessage instanceof MessageUpdateCharacterClothing)
+						{
+							// update character clothing message received from client
+							MessageUpdateCharacterClothing userMsg = (MessageUpdateCharacterClothing)outputMessage;
+							
+							// re-create the character's avatar rotations from the clothing images
+							FileOperations.buildAvatarImages(userMsg.getCharacter());
+							
+							// save the character since the clothing IDs have been changed
+							FileOperations.saveCharacter(userMsg.getCharacter());
+							
+							// tell the character to update the images
+							userMsg.getCharacter().updateAvatarImages();
+							
+							// update the character in the room HashMap
+							VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+							
+							// send the message back out to the clients to update the character's clothing on their end
+							sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
 						}
 						else if(outputMessage instanceof MessageAddUserToRoom)
 						{

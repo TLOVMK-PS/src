@@ -581,6 +581,14 @@ public class WindowInventory extends JPanel
 	public void addInventory(InventoryItem item)
 	{	
 		inventoryItems.add(item);
+		
+		// check to see if it's a clothing item
+		if(item.getType() == InventoryItem.CLOTHING)
+		{
+			// add the item to the Clothing window selectors too
+			gridObject.addClothingItemToClothingWindow(item, true);
+		}
+		
 		gridObject.sendUpdateInventoryMessage(inventoryItems);
 		
 		// add the item to one of the panels
@@ -592,6 +600,13 @@ public class WindowInventory extends JPanel
 	{
 		// add the item to the inventory
 		inventoryItems.add(item);
+		
+		// check to see if it's a clothing item
+		if(item.getType() == InventoryItem.CLOTHING)
+		{
+			// add the item to the Clothing window selectors too
+			gridObject.addClothingItemToClothingWindow(item, true);
+		}
 		
 		// add the item to one of the panels
 		addItemToInventoryPanel(item);
@@ -700,6 +715,13 @@ public class WindowInventory extends JPanel
 
 			// figure out which panel needs to have the item added
 			addItemToInventoryPanel(invItem);
+			
+			// check to see if it's a clothing item
+			if(invItem.getType() == InventoryItem.CLOTHING)
+			{
+				// add the item to the Clothing window selectors too
+				gridObject.addClothingItemToClothingWindow(invItem, false);
+			}
 		}
 		
 		// set the size of the pins panel

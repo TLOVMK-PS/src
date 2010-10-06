@@ -31,6 +31,7 @@ import sockets.messages.MessageMoveCharacter;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSendMailToUser;
+import sockets.messages.MessageUpdateCharacterClothing;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import util.MailMessage;
@@ -275,6 +276,13 @@ public class VMKClientThread extends Thread
 						
 						// set the newly-created room ID client-side
 						uiObject.setNewlyCreatedRoomID(createRoomMsg.getRoomInfo().get("ID"));
+					}
+					else if(outputMessage instanceof MessageUpdateCharacterClothing)
+					{
+						MessageUpdateCharacterClothing updateClothingMsg = (MessageUpdateCharacterClothing)outputMessage;
+						System.out.println("Update clothing response received from server");
+						
+						uiObject.updateCharacterClothing(updateClothingMsg.getCharacter());
 					}
 			    }
 		    }
