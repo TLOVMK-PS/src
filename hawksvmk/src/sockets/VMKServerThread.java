@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -482,6 +483,29 @@ public class VMKServerThread extends Thread
 	    	{
 	    		// somehow the stream got corrupted; shut down the thread gracefully so the server doesn't hang
 	    		System.out.println("Stream corrupted on client (" + this.getName() + ")");
+	    		
+	    		// save the character to file
+	    		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
+	    		
+	    		System.out.println("Saved character (" + this.getName() + ") to file");
+	    		
+	    		// remove the character's server thread
+	    		serverThreads.remove(this);
+	    		
+	    		// set an offline status alteration message to this user's friends
+				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
+	    		
+	    		// remove the character from the room
+				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
+	    		
+	    		this.interrupt(); // stop this server thread
+	    	}
+	    	catch(OptionalDataException ode)
+	    	{
+	    		// somehow the stream got corrupted; shut down the thread gracefully so the server doesn't hang
+	    		System.out.println();
+	    		System.out.println("Stream corrupted [optional data] on client (" + this.getName() + ")");
+	    		System.out.println();
 	    		
 	    		// save the character to file
 	    		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
