@@ -85,10 +85,10 @@ public class WindowClothing extends JPanel
 	Rectangle nextHatRect = new Rectangle(95,107,17,18);
 	Rectangle prevShirtRect = new Rectangle(32,241,17,18);
 	Rectangle nextShirtRect = new Rectangle(95,241,17,18);
-	Rectangle prevPantsRect = new Rectangle(32,285,17,18);
-	Rectangle nextPantsRect = new Rectangle(95,285,17,18);
-	Rectangle prevShoesRect = new Rectangle(32,329,17,18);
-	Rectangle nextShoesRect = new Rectangle(95,329,17,18);
+	Rectangle prevShoesRect = new Rectangle(32,285,17,18);
+	Rectangle nextShoesRect = new Rectangle(95,285,17,18);
+	Rectangle prevPantsRect = new Rectangle(32,329,17,18);
+	Rectangle nextPantsRect = new Rectangle(95,329,17,18);
 	
 	private JLabel basePreviewLabel = new JLabel();
 	private JLabel shirtPreviewLabel = new JLabel();
