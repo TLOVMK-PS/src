@@ -89,13 +89,13 @@ public class VMKClient
         catch (UnknownHostException e)
         {
         	// couldn't connect to the host
-            JOptionPane.showMessageDialog(null, "Couldn't resolve host: " + hostname + ":" + port, "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Couldn't resolve host for the HVMK server.\n\nEither it's not running or you're not connected to the Internet.", "Connection Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
         catch (IOException e)
         {
         	// couldn't open up the I/O streams
-        	JOptionPane.showMessageDialog(null, "Couldn't get I/O for host: " + hostname + ":" + port, "I/O Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Couldn't get I/O for the HVMK server.\n\nIt's probably not running.", "I/O Error", JOptionPane.ERROR_MESSAGE);
         	e.printStackTrace();
         }
         
