@@ -79,7 +79,7 @@ public class VMKServerThread extends Thread
     	}
     	catch(IOException e)
     	{
-    		System.out.println("Could not set up object I/O on the server");
+    		System.out.println("Could not set up object I/O on the server for client " + socket.getRemoteSocketAddress().toString());
     	}
     }
     
@@ -117,7 +117,7 @@ public class VMKServerThread extends Thread
 								loginMessage.setName("VMK Player");
 							}
 							
-							System.out.println("Changing thread name: " + loginMessage.getName());
+							System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + loginMessage.getName());
 							
 							// load the character from a file
 							loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getName(), loginMessage.getEmail()));
@@ -524,7 +524,7 @@ public class VMKServerThread extends Thread
 	    		this.interrupt(); // stop this server thread
 	    	}
 	    	
-	    	System.out.println("VMKServerThread - Shutting down client socket...");
+	    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
 	    	
 	    	// update the player's status in the database (offline)
 	    	updatePlayerStatusInDatabase(this.getName(), "offline");

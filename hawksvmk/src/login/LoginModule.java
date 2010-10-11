@@ -29,7 +29,7 @@ public class LoginModule
 		try
 		{
 			// set up the URL and open up a stream to the file
-			loginURL = new URL(url + "?e=" + email + "&p=" + password);
+			loginURL = new URL(url + "?e=" + email.trim() + "&p=" + password.trim());
 			System.out.println("Logging in...");
 			loginStream = loginURL.openStream();
 			
