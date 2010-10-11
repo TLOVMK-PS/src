@@ -703,7 +703,7 @@ public class FileOperations
 			// messages file (give them one new message from VMK Staff)
 			filename = "data/messages/" + email + ".dat";
 			fileWriter = new PrintWriter(filename);
-			fileWriter.println("SENDER: VMK Staff");
+			fileWriter.println("SENDER: HVMK Staff");
 			fileWriter.println("DATE: " + new Date().toString());
 			fileWriter.println("BODY: " + newPlayerMessage);
 			fileWriter.println();
