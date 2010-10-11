@@ -280,6 +280,10 @@ public class RoomViewerUI extends Applet
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				// trim the email and password for whitespace upon a login attempt
+				emailTextBox.setText(emailTextBox.getText().trim());
+				passwordTextBox.setText(new String(passwordTextBox.getPassword()).trim());
+				
 				loginButton.setEnabled(false);
 				emailTextBox.setEnabled(false);
 				passwordTextBox.setEnabled(false);
