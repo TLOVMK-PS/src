@@ -640,7 +640,7 @@ public class FileOperations
 		
 		long credits = 1000; // default amount of credits to give a new player
 		
-		int defaultBadges = 1; // how many badges to put on the new user
+		int defaultBadges = 2; // how many badges to put on the new user
 		
 		try
 		{
@@ -666,6 +666,7 @@ public class FileOperations
 			}
 			
 			fileWriter.println("BADGE: badge_2"); // give the user a "Here From Day One" badge
+			fileWriter.println("BADGE: badge_3"); // give the user a "Charter Member" badge
 			
 			// print out empty badge entries
 			for(int i = 0; i < StaticAppletData.MAX_DISPLAYABLE_BADGES - defaultBadges; i++)
