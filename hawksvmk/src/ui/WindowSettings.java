@@ -76,6 +76,7 @@ public class WindowSettings extends JPanel implements ActionListener
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		g.drawImage(windowImage.getImage(), 0, 0, this);
 	}
 	
 	public void update(Graphics g)
@@ -88,8 +89,11 @@ public class WindowSettings extends JPanel implements ActionListener
 		// turn off double-buffering and set the opacity to "false"
 		// required for image transparency on the window
 		setDoubleBuffered(false);
+		//setDoubleBuffered(true);
 		setOpaque(false);
 		
+		//setBorder(null);
+		setBackground(new Color(0,0,0,0));
 		setLayout(null);
 		
 		// rating selectors
@@ -218,6 +222,8 @@ public class WindowSettings extends JPanel implements ActionListener
 			ratingPG13Btn.setVisible(false);
 			ratingMBtn.setVisible(false);
 			backgroundLabel.setIcon(settingsImage);
+			
+			windowImage = settingsImage;
 		}
 		else if(tab.equals("rating"))
 		{
@@ -227,6 +233,8 @@ public class WindowSettings extends JPanel implements ActionListener
 			ratingPG13Btn.setVisible(true);
 			ratingMBtn.setVisible(true);
 			backgroundLabel.setIcon(ratingImage);
+			
+			windowImage = ratingImage;
 		}
 	}
 	

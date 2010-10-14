@@ -87,6 +87,8 @@ public class AppletResourceLoader implements Serializable
 	// get a BufferedImage from a JAR file
 	public static BufferedImage getBufferedImageFromJar(String path)
 	{
+		BufferedImage image = null;
+		
 		// make sure it starts with a forward slash
 		if(!path.startsWith("/")) {path = "/" + path;}
 
@@ -95,7 +97,7 @@ public class AppletResourceLoader implements Serializable
 			if(StaticAppletData.getCodeBase().contains("/bin"))
 			{
 				// Eclipse development environment
-				return ImageIO.read(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)));
+				image = ImageIO.read(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)));
 			}
 			else
 			{
@@ -103,12 +105,12 @@ public class AppletResourceLoader implements Serializable
 				try
 				{
 					// release environment (local machine)
-					return ImageIO.read(new URL("file:///" + System.getProperty("user.dir") + path));
+					image = ImageIO.read(new URL("file:///" + System.getProperty("user.dir") + path));
 				}
 				catch(Exception e)
 				{
 					// release environment (web server)
-					return ImageIO.read(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+					image = ImageIO.read(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
 				}
 			}
 		}
@@ -117,6 +119,8 @@ public class AppletResourceLoader implements Serializable
 			System.out.println("Invalid BufferedImage URL: " + StaticAppletData.getCodeBase() + "../" + path.substring(1));
 			return null;
 		}
+		
+		return image;
 	}
 	
 	// get an InputStream representing a file from a JAR file

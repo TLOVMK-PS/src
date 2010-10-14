@@ -211,7 +211,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			// only paint if this grid is visible
 			if(isVisible())
 			{
-				paint(this.getGraphics());
+				paintComponent(this.getGraphics());
 			}
 			
 			try
@@ -256,7 +256,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void loadGridView()
 	{	
 		// turn off the double-buffering for the grid
-		this.setDoubleBuffered(false);
+		//this.setDoubleBuffered(false);
 		
 		this.addMouseListener(new MouseAdapter()
      {
@@ -463,7 +463,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		bufferGraphics = this.offscreen.getGraphics();
 	}
 	
-	public void paint(Graphics g)
+	public void paintComponent(Graphics g)
 	{	
 		// make sure the buffer exists
 		if(bufferGraphics != null)
