@@ -69,8 +69,23 @@ public class Firework
 	}
 	
 	// move the firework
-	public void moveFirework()
+	public void moveFirework(int speedFactor)
 	{
+		int xSpeed = this.xSpeed;
+		int ySpeed = this.ySpeed;
+		
+		// check to see if we need to apply a speed damping factor based upon the amount of
+		// explosions that are currently visible
+		if(speedFactor != -1)
+		{
+			xSpeed /= speedFactor;
+			ySpeed /= speedFactor;
+			
+			//if(xSpeed == 0 && this.xSpeed > 0 && (y - targetY <= Y_THRESHOLD)) {xSpeed = 1;}
+			//if(xSpeed == 0 && this.xSpeed < 0 && (y - targetY <= Y_THRESHOLD)) {xSpeed = -1;}
+			if(ySpeed == 0 && this.ySpeed < 0) {ySpeed = -1;}
+		}
+		
 		// check to make sure the firework is active
 		if(active)
 		{

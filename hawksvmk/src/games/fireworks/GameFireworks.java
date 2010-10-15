@@ -67,6 +67,10 @@ public class GameFireworks extends JPanel implements Runnable
 	private BufferedImage fireworkImage3 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_3.png");
 	private BufferedImage flawlessStarImage = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/flawless_star.png");
 	
+	// the actual explosions that are displayed when a firework is burst
+	private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+	private BufferedImage firework1_explo = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework1_explo.gif");
+	
 	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level1_reticles.jpg");
 	private BufferedImage reticles_chooser = level1_reticles;
 	
@@ -127,6 +131,11 @@ public class GameFireworks extends JPanel implements Runnable
 								
 								// remove the firework
 								fireworks.remove(firework);
+								
+								// add a new firework explosion where the click occurred
+								Explosion explosion = new Explosion(firework.getX(), firework.getY());
+								explosion.setExplosionImage(firework1_explo);
+								explosions.add(explosion);
 								
 								break;
 							}
@@ -268,8 +277,7 @@ public class GameFireworks extends JPanel implements Runnable
 				// make sure the firework is still active
 				if(firework.isActive() && firework.getFireworkImage() != null)
 				{
-					// move the firework
-					firework.moveFirework();
+					firework.moveFirework(-1);
 					
 					// draw the firework image
 					bufferGraphics.drawImage(firework.getFireworkImage(), firework.getX(), firework.getY(), this);
@@ -290,6 +298,29 @@ public class GameFireworks extends JPanel implements Runnable
 				// draw a rectangle around the firework's target
 				bufferGraphics.setColor(Color.RED);
 				bufferGraphics.drawRect(firework.getTargetX(), firework.getTargetY(), 24, 24);
+			}
+			
+			// iterate through the explosions
+			for(int i = 0; i < explosions.size(); i++)
+			{
+				Explosion explosion = explosions.get(i);
+				
+				explosion.expand();
+				
+				// make sure the explosion is still active
+				if(explosion.isActive())
+				{
+					// draw the expanding explosion
+					if(explosion.getScaledImage() != null)
+					{
+						bufferGraphics.drawImage(explosion.getExplosionImage(), explosion.getX(), explosion.getY(), this);
+					}
+				}
+				else
+				{
+					// kill the explosion since it faded out
+					explosions.remove(explosion);
+				}
 			}
 			
 			bufferGraphics.setColor(Color.WHITE);
