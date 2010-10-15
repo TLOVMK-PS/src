@@ -303,6 +303,13 @@ public class GameFireworks extends JPanel implements Runnable
 			bufferGraphics.setColor(Color.YELLOW);
 			bufferGraphics.drawRect((width / 2) - (reticles_chooser.getWidth() / 2) + (60 * (reticleNumber - 1)), 512, 60, 59);
 			
+			// check to see if the level has been completed (the polling thread is interrupted and there are no more fireworks)
+			if(isGameOver())
+			{
+				bufferGraphics.setColor(Color.WHITE);
+				bufferGraphics.drawString("FINISHED",400,200);
+			}
+			
 			// check to make sure the internal graphics object exists
 			if(g != null)
 			{
@@ -310,6 +317,23 @@ public class GameFireworks extends JPanel implements Runnable
 				g.drawImage(offscreen, 0, 0, this);
 			}
 		}
+	}
+	
+	// check to see if the game has ended
+	private boolean isGameOver()
+	{
+		if(pollingThread != null)
+		{
+			if(pollingThread.isInterrupted() && fireworks.size() == 0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public void setUIObject(RoomViewerUI uiObject) {this.uiObject = uiObject;}
@@ -371,6 +395,15 @@ class FireworkEntryPollingThread implements Runnable
 	public FireworkEntryPollingThread(GameFireworks fireworksGame)
 	{
 		this.fireworksGame = fireworksGame;
+	}
+	
+	public boolean isInterrupted()
+	{
+		if(pollingThread != null)
+		{
+			return pollingThread.isInterrupted();
+		}
+		return true;
 	}
 	
 	public void start()
