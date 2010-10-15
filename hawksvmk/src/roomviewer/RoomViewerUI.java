@@ -4,6 +4,8 @@
 
 package roomviewer;
 
+import games.fireworks.GameFireworks;
+
 import java.applet.Applet;
 import java.awt.AWTKeyStroke;
 import java.awt.Color;
@@ -126,6 +128,9 @@ public class RoomViewerUI extends Applet
 	private RoomViewerUI roomViewerUI;
 	
 	private String loginPath = "";
+	
+	// references to game area windows for use with showGameArea()
+	private GameFireworks gameFireworks = null;
 	
 	public RoomViewerUI() {} // set the code base}
 	
@@ -523,6 +528,7 @@ public class RoomViewerUI extends Applet
       		else if(questButtonRect.contains(mousePoint)) // click inside the quest button
       		{
       			System.out.println("Clicked toolbar quest button");
+      			hideGameArea("fireworks");
       		}
       		else if(emoticonsButtonRect.contains(mousePoint)) // click inside the emoticons button
       		{
@@ -668,6 +674,13 @@ public class RoomViewerUI extends Applet
   	
   	 // load the room
   	 //FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
+  	 
+  	 // create a reference to the Fireworks game
+  	 gameFireworks = new GameFireworks();
+  	 gameFireworks.setBounds(new Rectangle(0,0,800,572));
+  	 gameFireworks.setVisible(false);
+  	 gameFireworks.setUIObject(this);
+  	 add(gameFireworks);
      
   	 repaint();
      roomViewerUI = this;
@@ -882,5 +895,39 @@ public class RoomViewerUI extends Applet
 	public void updateCharacterClothing(AStarCharacter character)
 	{
 		theGridView.updateCharacterClothing(character);
+	}
+	
+	// show an internal game playing area
+	public void showGameArea(String gameArea)
+	{
+		// hide the regular grid view
+		theGridView.setVisible(false);
+		
+		if(gameArea.toLowerCase().equals("fireworks"))
+		{	
+			// disable the chat box so the game can accept keyboard commands
+			chatTextBox.setEnabled(false);
+			
+			// show the Fireworks game
+			gameFireworks.start();
+			gameFireworks.setVisible(true);
+		}
+	}
+	
+	// hide an internal game playing area
+	public void hideGameArea(String gameArea)
+	{
+		if(gameArea.toLowerCase().equals("fireworks"))
+		{
+			// enable the chat box again so the player can type
+			chatTextBox.setEnabled(true);
+			
+			// hide the game area
+			gameFireworks.stop();
+			gameFireworks.setVisible(false);
+		}
+		
+		// show the regular grid view
+		theGridView.setVisible(true);
 	}
 }

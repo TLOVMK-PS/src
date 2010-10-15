@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
+import javax.swing.JOptionPane;
+
 import astar.AStarCharacter;
 
 import roomviewer.RoomViewerUI;
@@ -304,6 +306,16 @@ public class VMKClientThread extends Thread
 	    		
 	    		// pop up a notification that the server shut down
 	    		//JOptionPane.showMessageDialog(null, "Your connection has been lost because the server has shut down.\n\nPlease close the VMK window.", "Hawk's Virtual Magic Kingdom", JOptionPane.WARNING_MESSAGE);
+	    	}
+	    	catch(IllegalStateException ise)
+	    	{
+	    		System.out.println("Stream corrupted when trying to read an object: " + ise.getMessage());
+	    		
+	    		// pop up a message letting the user know that there was a problem
+	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		
+	    		// stop this client thread
+	    		this.interrupt();
 	    	}
 	    	
 	    	// remove the current user from the current room

@@ -1741,6 +1741,16 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			myCharacter = character;
 		}
 	}
+	
+	public void showGameArea(String gameArea)
+	{
+		uiObject.showGameArea(gameArea);
+	}
+	
+	public void hideGameArea(String gameArea)
+	{
+		uiObject.hideGameArea(gameArea);
+	}
 }
 
 class GridViewMovementImageObserver implements ImageObserver

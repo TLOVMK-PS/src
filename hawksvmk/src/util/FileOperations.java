@@ -6,6 +6,7 @@
 
 package util;
 
+import games.fireworks.FireworkEntry;
 import interfaces.GridViewable;
 
 import java.awt.Graphics;
@@ -2120,5 +2121,69 @@ public class FileOperations
 
 		// create a new dictionary from the file data
 		return dictionary;
+	}
+	
+	// load the fireworks entries for a given level number
+	public static ArrayList<FireworkEntry> loadFireworksEntries(int levelNum)
+	{
+		String filename = "data/games/fireworks/level_" + levelNum + ".dat";
+		ArrayList<FireworkEntry> entries = new ArrayList<FireworkEntry>();
+		
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("@")) // beginning of an entry line
+					{
+						line = line.replaceAll("@","");
+						
+						// split the entry line into its respective components
+						String entryData[] = line.split(",");
+						
+						// parse out the components as integers
+						int x = Integer.parseInt(entryData[0]);
+						int y = Integer.parseInt(entryData[1]);
+						int targetX = Integer.parseInt(entryData[2]);
+						int targetY = Integer.parseInt(entryData[3]);
+						int xSpeed = Integer.parseInt(entryData[4]);
+						int ySpeed = Integer.parseInt(entryData[5]);
+						int fireworkNumber = Integer.parseInt(entryData[6]);
+						int delay = Integer.parseInt(entryData[7]);
+						
+						// add a new entry to the structure
+						entries.add(new FireworkEntry(x, y, targetX, targetY, xSpeed, ySpeed, fireworkNumber, delay));
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default entries structure
+				return entries;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadFireworksEntries(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new set of Fireworks entries from the file data
+		return entries;
 	}
 }
