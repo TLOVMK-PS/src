@@ -74,6 +74,9 @@ public class GameFireworks extends JPanel implements Runnable
 	private BufferedImage firework1_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework1_explo.gif");
 	private BufferedImage firework1_explo[] = new BufferedImage[10]; // array of explosion images
 	
+	private BufferedImage firework2_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework2_explo.gif");
+	private BufferedImage firework2_explo[] = new BufferedImage[10];
+	
 	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level1_reticles.jpg");
 	private BufferedImage reticles_chooser = level1_reticles;
 	
@@ -81,29 +84,10 @@ public class GameFireworks extends JPanel implements Runnable
 	{
 		// allow this component to be focusable so keys can be processed
 		setFocusable(true);
-		requestFocusInWindow();
 		
-		// create the explosion images
-		int widthScaleFactor = firework1_e.getWidth() / firework1_explo.length; // width increase factor
-		int heightScaleFactor = firework1_e.getHeight() / firework1_explo.length; // height increase factor
-		for(int i = 0; i < firework1_explo.length; i++)
-		{
-			// figure out the next width and height for the scaled image
-			int width = firework1_e.getWidth() - (widthScaleFactor * (i + 1));
-			int height = firework1_e.getHeight() - (heightScaleFactor * (i + 1));
-			
-			// create a new BufferedImage of the new width and height with alpha support
-			BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-			// create a Graphics instance, a scaling/rendering hint set, and then scale the original image onto
-			// the newly-created scaledImage BufferedImage object
-			Graphics2D graphics2D = scaledImage.createGraphics();
-			graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			graphics2D.drawImage(firework1_e, 0, 0, width, height, null);
-			
-			// set the scaled image
-			firework1_explo[i] = scaledImage;
-		}
+		// create the explosion image arrays for the firework explosions
+		createFireworkExplosionImages(firework1_e,firework1_explo);
+		createFireworkExplosionImages(firework2_e,firework2_explo);
 		
 		// add the mouse handlers
 		addMouseMotionListener(new MouseMotionListener()
@@ -157,9 +141,22 @@ public class GameFireworks extends JPanel implements Runnable
 								// remove the firework
 								fireworks.remove(firework);
 								
-								// add a new firework explosion where the click occurred
+								// create a new firework explosion where the click occurred
 								Explosion explosion = new Explosion(firework.getX(), firework.getY());
-								explosion.setExplosionImages(firework1_explo);
+								
+								System.out.println("Firework number: " + firework.getFireworkNumber());
+								
+								// set the explosion images
+								if(firework.getFireworkNumber() == 1)
+								{
+									explosion.setExplosionImages(firework1_explo);
+								}
+								else if(firework.getFireworkNumber() == 2)
+								{
+									explosion.setExplosionImages(firework2_explo);
+								}
+								
+								// add the explosion
 								explosions.add(explosion);
 								
 								break;
@@ -191,6 +188,32 @@ public class GameFireworks extends JPanel implements Runnable
 				}
 			}
 		});
+	}
+	
+	// create the firework explosion images for a given source image and a given array
+	private void createFireworkExplosionImages(BufferedImage source, BufferedImage explosionImages[])
+	{
+		// create the explosion images
+		int widthScaleFactor = source.getWidth() / explosionImages.length; // width increase factor
+		int heightScaleFactor = source.getHeight() / explosionImages.length; // height increase factor
+		for(int i = 0; i < explosionImages.length; i++)
+		{
+			// figure out the next width and height for the scaled image
+			int width = source.getWidth() - (widthScaleFactor * (i + 1));
+			int height = source.getHeight() - (heightScaleFactor * (i + 1));
+			
+			// create a new BufferedImage of the new width and height with alpha support
+			BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+			// create a Graphics instance, a scaling/rendering hint set, and then scale the original image onto
+			// the newly-created scaledImage BufferedImage object
+			Graphics2D graphics2D = scaledImage.createGraphics();
+			graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			graphics2D.drawImage(source, 0, 0, width, height, null);
+			
+			// set the scaled image
+			explosionImages[i] = scaledImage;
+		}
 	}
 	
 	public void start()
