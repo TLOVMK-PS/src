@@ -12,18 +12,22 @@ public class Explosion
 	private int x = 0;
 	private int y = 0;
 	
+	private int imageX = 0;
+	private int imageY = 0;
+	
 	private int targetWidth = 0;
 	private int targetHeight = 0;
 	
 	private int currentWidth = 0;
 	private int currentHeight = 0;
 	
-	private int scaleUnitWidth = 2;
-	private int scaleUnitHeight = 2;
+	private int scaleUnitWidth = 4;
+	private int scaleUnitHeight = 4;
 	
 	private boolean active = true;
 	
-	private BufferedImage explosionImage = null;
+	private BufferedImage explosionImages[] = null;
+	private int imageIndex = 0;
 	private Image scaledImage = null;
 	
 	public Explosion(int x, int y)
@@ -32,11 +36,11 @@ public class Explosion
 		this.y = y;
 	}
 	
-	public void setExplosionImage(BufferedImage explosionImage)
+	public void setExplosionImages(BufferedImage explosionImages[])
 	{
-		this.explosionImage = explosionImage;
-		this.targetWidth = explosionImage.getWidth();
-		this.targetHeight = explosionImage.getHeight();
+		this.explosionImages = explosionImages;
+		this.targetWidth = explosionImages[0].getWidth();
+		this.targetHeight = explosionImages[0].getHeight();
 		this.currentWidth = (int)(this.targetWidth * 0.1);
 		this.currentHeight = (int)(this.targetHeight * 0.1);
 	}
@@ -48,7 +52,7 @@ public class Explosion
 		{
 			// it's at its largest, so stop the explosion
 			active = false;
-			explosionImage = null;
+			explosionImages = null;
 			scaledImage = null;
 		}
 		else
@@ -57,18 +61,19 @@ public class Explosion
 			currentWidth += scaleUnitWidth;
 			currentHeight += scaleUnitHeight;
 			
-			// attempt to center the explosion as it expands
-			x -= scaleUnitWidth / 2;
-			y -= scaleUnitHeight / 2;
+			// get a scaled version of the original image corresponding to the image array index (10....0)
+			imageIndex = (targetWidth / currentWidth) - 1;
+			if(imageIndex < 0) {imageIndex = 0;}
+			if(imageIndex >= explosionImages.length) {imageIndex = explosionImages.length - 1;}
 			
-			// get a scaled version of the original image
-			// TODO: Causes frames to be lost on painting.  Figure out another way to show expansion.
-			scaledImage = explosionImage.getScaledInstance(currentWidth, currentHeight, BufferedImage.SCALE_FAST);
+			// attempt to center the explosion as it expands
+			imageX = x - (explosionImages[imageIndex].getWidth() / 2);
+			imageY = y - (explosionImages[imageIndex].getHeight() / 2);
 		}
 	}
 	
 	public BufferedImage getExplosionImage() {
-		return explosionImage;
+		return explosionImages[imageIndex];
 	}
 	
 	public Image getScaledImage()
@@ -81,11 +86,11 @@ public class Explosion
 		return active;
 	}
 	
-	public int getX() {
-		return x;
+	public int getImageX() {
+		return imageX;
 	}
 	
-	public int getY() {
-		return y;
+	public int getImageY() {
+		return imageY;
 	}
 }

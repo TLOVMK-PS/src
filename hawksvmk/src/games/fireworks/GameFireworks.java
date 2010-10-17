@@ -7,7 +7,9 @@ package games.fireworks;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,7 +30,7 @@ public class GameFireworks extends JPanel implements Runnable
 {
 	private final String GAME_ID = "fireworks";
 	private final String GAME_TITLE = "Castle Fireworks";
-	private final int GRAPHICS_DELAY = 33; // approx. 30 frames-per-second
+	private final int GRAPHICS_DELAY = 40; // approx. 30 frames-per-second
 	
 	private int levelNum = 1; // the number of the current level
 	
@@ -69,7 +71,8 @@ public class GameFireworks extends JPanel implements Runnable
 	
 	// the actual explosions that are displayed when a firework is burst
 	private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
-	private BufferedImage firework1_explo = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework1_explo.gif");
+	private BufferedImage firework1_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework1_explo.gif");
+	private BufferedImage firework1_explo[] = new BufferedImage[10]; // array of explosion images
 	
 	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level1_reticles.jpg");
 	private BufferedImage reticles_chooser = level1_reticles;
@@ -79,6 +82,28 @@ public class GameFireworks extends JPanel implements Runnable
 		// allow this component to be focusable so keys can be processed
 		setFocusable(true);
 		requestFocusInWindow();
+		
+		// create the explosion images
+		int widthScaleFactor = firework1_e.getWidth() / firework1_explo.length; // width increase factor
+		int heightScaleFactor = firework1_e.getHeight() / firework1_explo.length; // height increase factor
+		for(int i = 0; i < firework1_explo.length; i++)
+		{
+			// figure out the next width and height for the scaled image
+			int width = firework1_e.getWidth() - (widthScaleFactor * (i + 1));
+			int height = firework1_e.getHeight() - (heightScaleFactor * (i + 1));
+			
+			// create a new BufferedImage of the new width and height with alpha support
+			BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+			// create a Graphics instance, a scaling/rendering hint set, and then scale the original image onto
+			// the newly-created scaledImage BufferedImage object
+			Graphics2D graphics2D = scaledImage.createGraphics();
+			graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			graphics2D.drawImage(firework1_e, 0, 0, width, height, null);
+			
+			// set the scaled image
+			firework1_explo[i] = scaledImage;
+		}
 		
 		// add the mouse handlers
 		addMouseMotionListener(new MouseMotionListener()
@@ -134,7 +159,7 @@ public class GameFireworks extends JPanel implements Runnable
 								
 								// add a new firework explosion where the click occurred
 								Explosion explosion = new Explosion(firework.getX(), firework.getY());
-								explosion.setExplosionImage(firework1_explo);
+								explosion.setExplosionImages(firework1_explo);
 								explosions.add(explosion);
 								
 								break;
@@ -311,9 +336,9 @@ public class GameFireworks extends JPanel implements Runnable
 				if(explosion.isActive())
 				{
 					// draw the expanding explosion
-					if(explosion.getScaledImage() != null)
+					if(explosion.getExplosionImage() != null)
 					{
-						bufferGraphics.drawImage(explosion.getExplosionImage(), explosion.getX(), explosion.getY(), this);
+						bufferGraphics.drawImage(explosion.getExplosionImage(), explosion.getImageX(), explosion.getImageY(), this);
 					}
 				}
 				else
