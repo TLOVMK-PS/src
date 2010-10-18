@@ -909,13 +909,17 @@ public class RoomViewerUI extends Applet
 		// hide the regular grid view
 		theGridView.setVisible(false);
 		
+		// disable the chat box so the internal game can accept keyboard commands
+		chatTextBox.setEnabled(false);
+		
+		// disable the toolbars
+		toolbar_left.setEnabled(false);
+		toolbar_right.setEnabled(false);
+		
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{	
 			// send the "Game Add User" message to add the user to the game room and remove him from the original room
 			sendMessageToServer(new MessageGameAddUserToRoom(gameArea, theGridView.getMyCharacter()));
-			
-			// disable the chat box so the game can accept keyboard commands
-			chatTextBox.setEnabled(false);
 			
 			// show the Fireworks game
 			gameFireworks.start();
@@ -937,13 +941,17 @@ public class RoomViewerUI extends Applet
 			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
 			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
 			
-			// enable the chat box again so the player can type
-			chatTextBox.setEnabled(true);
-			
 			// hide the game area
 			gameFireworks.stop();
 			gameFireworks.setVisible(false);
 		}
+		
+		// enable the toolbars again
+		toolbar_left.setEnabled(true);
+		toolbar_right.setEnabled(true);
+		
+		// enable the chat box again so the player can type
+		chatTextBox.setEnabled(true);
 		
 		// change the room back to the original room he was in
 		theGridView.changeRoom(theGridView.getRoomInfo().get("ID"));

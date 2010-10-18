@@ -39,7 +39,7 @@ public class GameFireworks extends JPanel implements Runnable
 	private String roomID = "fireworks_0"; // ID of the current Fireworks game room
 	
 	private final int MAX_ROUNDS_PER_LEVEL = 3; // maximum number of rounds-per-level
-	private final int MAX_LEVELS = 1; // maximum number of levels
+	private final int MAX_LEVELS = 2; // maximum number of levels
 	private int roundNum = 1; // the number of the current round
 	private int levelNum = 1; // the number of the current level
 	
@@ -57,7 +57,12 @@ public class GameFireworks extends JPanel implements Runnable
 	
 	private RoomViewerUI uiObject = null;
 	
-	private BufferedImage backgroundImage = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_1.jpg");
+	private BufferedImage scene1_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_1.jpg");
+	private BufferedImage scene2_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_2.jpg");
+	private BufferedImage scene3_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_3.jpg");
+	private BufferedImage scene4_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_4.jpg");
+	private BufferedImage scene5_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_5.jpg");
+	private BufferedImage backgroundImage = scene1_background;
 	private long gameScore = 0;
 	
 	// the entries for the fireworks that will eventually be displayed
@@ -84,6 +89,7 @@ public class GameFireworks extends JPanel implements Runnable
 	private BufferedImage fireworkImage1 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_1.png");
 	private BufferedImage fireworkImage2 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_2.png");
 	private BufferedImage fireworkImage3 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_3.png");
+	private BufferedImage fireworkImage4 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_4.png");
 	private BufferedImage flawlessStarImage = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/flawless_star.png");
 	
 	// the actual explosions that are displayed when a firework is burst
@@ -102,6 +108,7 @@ public class GameFireworks extends JPanel implements Runnable
 	
 	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level1_reticles.jpg");
 	private BufferedImage level2_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level2_reticles.jpg");
+	private BufferedImage level3_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level3_reticles.jpg");
 	private BufferedImage reticles_chooser = level1_reticles;
 	
 	private boolean countdownActive = false; // whether the countdown to the next round/game end is active
@@ -126,6 +133,9 @@ public class GameFireworks extends JPanel implements Runnable
 		targetScores.put("1_1",new Long(9000));
 		targetScores.put("1_2",new Long(23000));
 		targetScores.put("1_3",new Long(36000));
+		targetScores.put("2_1",new Long(47000));
+		targetScores.put("2_2",new Long(59000));
+		targetScores.put("2_3",new Long(80000));
 		
 		// allow this component to be focusable so keys can be processed
 		setFocusable(true);
@@ -290,6 +300,9 @@ public class GameFireworks extends JPanel implements Runnable
 		roundNum = 1;
 		levelNum = 1;
 		
+		// reset the background image
+		resetLevelBackgroundImage();
+		
 		// create the fireworks
 		createFireworks();
 		
@@ -350,6 +363,12 @@ public class GameFireworks extends JPanel implements Runnable
 			maxReticles = LEVEL2_RETICLES;
 			reticles_chooser = level2_reticles;
 		}
+		else if(levelNum == 2 && roundNum == 3)
+		{
+			// reset the reticles
+			maxReticles = LEVEL3_RETICLES;
+			reticles_chooser = level3_reticles;
+		}
 		
 		// set the reticle to the first reticle
 		reticleNumber = 1;
@@ -370,7 +389,7 @@ public class GameFireworks extends JPanel implements Runnable
 		}
 		
 		// check to see if the game has ended
-		if(levelNum > MAX_LEVELS) //|| gameScore < targetScore)
+		if(levelNum > MAX_LEVELS || gameScore < targetScore)
 		{
 			// end the game
 			endGame();
@@ -389,9 +408,22 @@ public class GameFireworks extends JPanel implements Runnable
 			// reset the target score for the current level
 			targetScore = targetScores.get(levelNum + "_" + roundNum);
 			
+			// reset the background image
+			resetLevelBackgroundImage();
+			
 			// create the fireworks for the level
 			createFireworks();
 		}
+	}
+	
+	// reset the background image for the level
+	private void resetLevelBackgroundImage()
+	{
+		if(levelNum == 1) {backgroundImage = scene1_background;}
+		if(levelNum == 2) {backgroundImage = scene2_background;}
+		if(levelNum == 3) {backgroundImage = scene3_background;}
+		if(levelNum == 4) {backgroundImage = scene4_background;}
+		if(levelNum == 5) {backgroundImage = scene5_background;}
 	}
 	
 	// end the game
@@ -426,6 +458,7 @@ public class GameFireworks extends JPanel implements Runnable
 		if(reticleNumber == 1) {reticleImage = reticle1;}
 		if(reticleNumber == 2) {reticleImage = reticle2;}
 		if(reticleNumber == 3) {reticleImage = reticle3;}
+		if(reticleNumber == 4) {reticleImage = reticle4;}
 	}
 	
 	// create the fireworks
@@ -620,6 +653,11 @@ public class GameFireworks extends JPanel implements Runnable
 			{
 				// set the firework image
 				firework.setFireworkImage(fireworkImage3);
+			}
+			else if(firework.getFireworkNumber() == 4)
+			{
+				// set the firework image
+				firework.setFireworkImage(fireworkImage4);
 			}
 			
 			// add the firework to the structure
