@@ -106,6 +106,11 @@ public class VMKRoom implements Serializable, Comparable<VMKRoom>
 		return characterNames.get(characterName);
 	}
 	
+	public int countCharacters()
+	{
+		return characterNames.values().size();
+	}
+	
 	public boolean contains(String characterName)
 	{
 		return characterNames.containsKey(characterName);

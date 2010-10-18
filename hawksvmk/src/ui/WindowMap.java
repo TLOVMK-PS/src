@@ -207,7 +207,7 @@ public class WindowMap extends JPanel
 	{
 		// turn off double-buffering and set the opacity to "false"
 		// required for image transparency on the window
-		setDoubleBuffered(false);
+		setDoubleBuffered(true);
 		setOpaque(false);
 		
 		this.setLayout(null);

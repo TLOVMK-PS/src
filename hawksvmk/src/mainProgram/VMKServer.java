@@ -95,6 +95,12 @@ public class VMKServer
         System.out.println("Room mappings loaded");
         System.out.println();
         
+        // load the game rooms
+        System.out.println("Loading game rooms...");
+        VMKServerPlayerData.createGameRooms();
+        System.out.println("Game rooms loaded");
+        System.out.println();
+        
         System.out.println("Listening for client connections...");
         System.out.println();
         

@@ -4,6 +4,7 @@
 
 package roomviewer;
 
+import games.GameScore;
 import games.fireworks.GameFireworks;
 
 import java.applet.Applet;
@@ -53,6 +54,9 @@ import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageUpdateCharacterInRoom;
+import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameRemoveUserFromRoom;
+import sockets.messages.games.MessageGameScore;
 import ui.WindowLoading;
 import ui.WindowMap;
 import ui.WindowRoomDescription;
@@ -905,6 +909,9 @@ public class RoomViewerUI extends Applet
 		
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{	
+			// send the "Game Add User" message to add the user to the game room and remove him from the original room
+			sendMessageToServer(new MessageGameAddUserToRoom(gameArea, theGridView.getMyCharacter()));
+			
 			// disable the chat box so the game can accept keyboard commands
 			chatTextBox.setEnabled(false);
 			
@@ -919,6 +926,9 @@ public class RoomViewerUI extends Applet
 	{
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{
+			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
+			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
+			
 			// enable the chat box again so the player can type
 			chatTextBox.setEnabled(true);
 			
@@ -927,7 +937,37 @@ public class RoomViewerUI extends Applet
 			gameFireworks.setVisible(false);
 		}
 		
+		// change the room back to the original room he was in
+		theGridView.changeRoom(theGridView.getRoomInfo().get("ID"));
+		
 		// show the regular grid view
 		theGridView.setVisible(true);
+		
+		// hide the map
+		theGridView.hideMap();
+	}
+	
+	// send an add score message to the server (to be used by the internal games)
+	public void sendAddGameScoreMessage(GameScore g)
+	{
+		sendMessageToServer(new MessageGameScore(g));
+	}
+	
+	// set the generated game room ID from the server for the game
+	public void setGameRoomID(String gameArea, String gameRoomID)
+	{
+		if(gameArea.toLowerCase().equals("fireworks"))
+		{
+			gameFireworks.setRoomID(gameRoomID);
+		}
+	}
+	
+	// add a score to the desired game from the server
+	public void addGameScore(String gameArea, GameScore score)
+	{
+		if(gameArea.toLowerCase().equals("fireworks"))
+		{
+			gameFireworks.addGameScore(score);
+		}
 	}
 }

@@ -2124,9 +2124,9 @@ public class FileOperations
 	}
 	
 	// load the fireworks entries for a given level number
-	public static ArrayList<FireworkEntry> loadFireworksEntries(int levelNum)
+	public static ArrayList<FireworkEntry> loadFireworksEntries(int levelNum, int roundNum)
 	{
-		String filename = "data/games/fireworks/level_" + levelNum + ".dat";
+		String filename = "data/games/fireworks/level_" + levelNum + "_" + roundNum + ".dat";
 		ArrayList<FireworkEntry> entries = new ArrayList<FireworkEntry>();
 		
 		Scanner fileReader;

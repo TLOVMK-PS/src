@@ -4,6 +4,8 @@
 
 package sockets.messages;
 
+import sockets.messages.games.*;
+
 public class VMKProtocol
 {
 	// process client input and return an answer from the server
@@ -154,6 +156,24 @@ public class VMKProtocol
         	// pass back the request
         	theOutput = (MessageUpdateCharacterClothing)theInput;
         	theOutput.setType("MessageUpdateCharacterClothing");
+        }
+        else if(theInput instanceof MessageGameAddUserToRoom)
+        {
+        	// pass back the request
+        	theOutput = (MessageGameAddUserToRoom)theInput;
+        	theOutput.setType("MessageGameAddUserToRoom");
+        }
+        else if(theInput instanceof MessageGameRemoveUserFromRoom)
+        {
+        	// pass back the request
+        	theOutput = (MessageGameRemoveUserFromRoom)theInput;
+        	theOutput.setType("MessageGameRemoveUserFromRoom");
+        }
+        else if(theInput instanceof MessageGameScore)
+        {
+        	// pass back the request
+        	theOutput = (MessageGameScore)theInput;
+        	theOutput.setType("MessageGameScore");
         }
 
         return theOutput;

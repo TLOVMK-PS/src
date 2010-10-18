@@ -8,9 +8,11 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
 
 import astar.AStarCharacter;
@@ -36,6 +38,8 @@ import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterClothing;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
+import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameScore;
 import util.MailMessage;
 import util.StaticAppletData;
 import util.VMKRoom;
@@ -286,6 +290,20 @@ public class VMKClientThread extends Thread
 						
 						uiObject.updateCharacterClothing(updateClothingMsg.getCharacter());
 					}
+					else if(outputMessage instanceof MessageGameAddUserToRoom)
+					{
+						MessageGameAddUserToRoom gameAddUserMsg = (MessageGameAddUserToRoom)outputMessage;
+						System.out.println("Game add user to room response received from server");
+						
+						uiObject.setGameRoomID(gameAddUserMsg.getGameID(), gameAddUserMsg.getRoomID());
+					}
+					else if(outputMessage instanceof MessageGameScore)
+					{
+						MessageGameScore gameScoreMsg = (MessageGameScore)outputMessage;
+						System.out.println("Game score response received from server");
+						
+						uiObject.addGameScore(gameScoreMsg.getGameScore().getGame(), gameScoreMsg.getGameScore());
+					}
 			    }
 		    }
 		    catch(EOFException eofe)
@@ -307,12 +325,32 @@ public class VMKClientThread extends Thread
 	    		// pop up a notification that the server shut down
 	    		//JOptionPane.showMessageDialog(null, "Your connection has been lost because the server has shut down.\n\nPlease close the VMK window.", "Hawk's Virtual Magic Kingdom", JOptionPane.WARNING_MESSAGE);
 	    	}
-	    	catch(IllegalStateException ise)
+	    	catch(StreamCorruptedException sce)
 	    	{
-	    		System.out.println("Stream corrupted when trying to read an object: " + ise.getMessage());
+	    		System.out.println("Stream corrupted when trying to read an object: " + sce.getMessage());
 	    		
 	    		// pop up a message letting the user know that there was a problem
-	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading object data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		
+	    		// stop this client thread
+	    		this.interrupt();
+	    	}
+	    	catch(IllegalStateException ise)
+	    	{
+	    		System.out.println("Stream corrupted when trying to read a state object: " + ise.getMessage());
+	    		
+	    		// pop up a message letting the user know that there was a problem
+	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading state data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		
+	    		// stop this client thread
+	    		this.interrupt();
+	    	}
+	    	catch(IIOException iioe)
+	    	{
+	    		System.out.println("Stream corrupted when trying to read an image: " + iioe.getMessage());
+	    		
+	    		// pop up a message letting the user know that there was a problem
+	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading image data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
 	    		
 	    		// stop this client thread
 	    		this.interrupt();
@@ -324,8 +362,8 @@ public class VMKClientThread extends Thread
 	    	// close down the socket if it's still connected
 	    	if(socket.isConnected())
 	    	{
-	    		out.close(); // close the output stream
 	    		in.close(); // close the input stream
+	    		out.close(); // close the output stream
 	    		socket.close(); // close the socket
 	    	}
 	    	
@@ -348,7 +386,7 @@ public class VMKClientThread extends Thread
     		System.out.println("Sending message (" + m.getType() + ") to server...");
     		out.writeUnshared(m);
     		//out.reset();
-    		out.flush();
+    		//out.flush();
     		out.reset();
     	}
     	catch(IOException e)

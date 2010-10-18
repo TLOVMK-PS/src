@@ -44,6 +44,9 @@ import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
+import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameRemoveUserFromRoom;
+import sockets.messages.games.MessageGameScore;
 import util.FileOperations;
 import util.FriendsList;
 import util.StaticAppletData;
@@ -269,7 +272,7 @@ public class VMKServerThread extends Thread
 								VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
 							}
 	
-							// send the message to ALL clients
+							// send the message to ALL clients in the room he's in
 							sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
 						}
 						else if(outputMessage instanceof MessageRemoveUserFromRoom)
@@ -443,13 +446,68 @@ public class VMKServerThread extends Thread
 							// update the player's inventory file
 							FileOperations.appendInventory(email, addInvMsg.getItem());
 						}
+						else if(outputMessage instanceof MessageGameAddUserToRoom)
+						{
+							// add user to GAME ROOM message received from client
+							MessageGameAddUserToRoom addUserGameMsg = (MessageGameAddUserToRoom)outputMessage;
+							
+							// check to make sure the character is still logged-in
+							if(VMKServerPlayerData.getCharacter(addUserGameMsg.getCharacter().getUsername()) != null)
+							{
+								// remove the character from the current room he's in
+								VMKServerPlayerData.removeCharacter(addUserGameMsg.getCharacter().getUsername(), roomID);
+								
+								// send the message to ALL clients in the room he's in
+								sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(addUserGameMsg.getCharacter().getUsername(), roomID), roomID);
+								
+								// figure out the game room to which the user should be added
+								String gameID = addUserGameMsg.getGameID();
+								roomID = VMKServerPlayerData.addCharacterToGameRoom(gameID, addUserGameMsg.getCharacter());
+								
+								// pass the message back to the client with the new roomID
+								addUserGameMsg.setRoomID(roomID);
+								sendMessageToClient(addUserGameMsg);
+							}
+						}
+						else if(outputMessage instanceof MessageGameRemoveUserFromRoom)
+						{
+							// remove user from GAME ROOM message received from client
+							MessageGameRemoveUserFromRoom removeUserGameMsg = (MessageGameRemoveUserFromRoom)outputMessage;
+							
+							// remove the character from the current room he's in
+							VMKServerPlayerData.removeCharacter(removeUserGameMsg.getCharacter().getUsername(), roomID);
+							
+							// send the message to ALL clients in the room he's in
+							sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(removeUserGameMsg.getCharacter().getUsername(), roomID), roomID);
+							
+							// check to make sure the character is still logged-in
+							if(VMKServerPlayerData.getCharacter(removeUserGameMsg.getCharacter().getUsername()) != null)
+							{
+								// add him back to the original room he came from before the game
+								roomID = removeUserGameMsg.getDestRoomID();
+								VMKServerPlayerData.addCharacter(removeUserGameMsg.getUsername(), removeUserGameMsg.getCharacter(), roomID);
+								
+								// send an add character message to ALL clients in the specified destination room
+								MessageAddUserToRoom addUserMsg = new MessageAddUserToRoom(removeUserGameMsg.getCharacter(), roomID, VMKServerPlayerData.getRoom(roomID).getRoomName());
+								sendMessageToAllClientsInRoom(addUserMsg, addUserMsg.getRoomID());
+							}
+							
+						}
+						else if(outputMessage instanceof MessageGameScore)
+						{
+							// add game score message received from client
+							MessageGameScore gameScoreMsg = (MessageGameScore)outputMessage;
+							
+							// pass the message back to all clients in the current game room
+							sendMessageToAllClientsInRoom(gameScoreMsg, roomID);
+						}
 						
 						// sleep to prevent the stream from getting corrupted
-						try
+						/*try
 						{
 							Thread.sleep(20);
 						}
-						catch(Exception e) {}
+						catch(Exception e) {}*/
 				    }
 		    	}
 		    }
@@ -532,8 +590,8 @@ public class VMKServerThread extends Thread
 	    	// close down the socket if it's still connected
 	    	if(socket.isConnected())
 	    	{
-	    		out.close(); // close the output stream
 	    		in.close(); // close the input stream
+	    		out.close(); // close the output stream
 	    		socket.close(); // close the socket
 	    	}
 	    	

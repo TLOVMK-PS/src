@@ -21,6 +21,9 @@ public class VMKServerPlayerData
 	private static HashMap<String, FriendsList> friendsLists = new HashMap<String, FriendsList>();
 	private static HashMap<String, String> usernameToEmail = new HashMap<String, String>();
 	
+	private static final int MAX_FIREWORKS_ROOMS = 3; // maximum number of rooms for the Fireworks game
+	private static final int MAX_PLAYERS_PER_FIREWORKS_ROOM = 20; // maximum number of players in any given Fireworks room
+	
 	// add a character to the HashMap
 	public static void addCharacter(String username, AStarCharacter character)
 	{
@@ -74,6 +77,49 @@ public class VMKServerPlayerData
 	public static void addRoom(String roomID, VMKRoom room)
 	{
 		rooms.put(roomID, room);
+	}
+	
+	// get a room
+	protected static VMKRoom getRoom(String roomID)
+	{
+		return rooms.get(roomID);
+	}
+	
+	// return how many characters are in a room
+	public static int countCharactersInRoom(String roomID)
+	{
+		return rooms.get(roomID).countCharacters();
+	}
+	
+	// create the game room instances for the internal games
+	public static void createGameRooms()
+	{
+		for(int i = 0; i < MAX_FIREWORKS_ROOMS; i++)
+		{
+			addRoom("fireworks_" + i,new VMKRoom("fireworks_" + i,"Fireworks Game " + i,""));
+		}
+	}
+	
+	// add a player to an internal game room and return the ID of the room
+	public static String addCharacterToGameRoom(String gameID, AStarCharacter character)
+	{
+		if(gameID.equals("fireworks")) // Fireworks game
+		{
+			// check to find a room that currently has less than the maximum number of players available
+			for(int i = 0; i < MAX_FIREWORKS_ROOMS; i++)
+			{
+				// check the number of players in this room
+				VMKRoom gameRoom = rooms.get(gameID + "_" + i);
+				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_FIREWORKS_ROOM)
+				{
+					// this will be the room that we put this user into
+					addCharacter(character.getUsername(), character, gameRoom.getRoomID());
+					return gameRoom.getRoomID();
+				}
+			}
+		}
+		
+		return gameID + "_0000"; // return a dummy room
 	}
 	
 	// increment the number of guest rooms that exist
