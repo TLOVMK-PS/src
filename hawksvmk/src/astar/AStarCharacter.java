@@ -312,6 +312,7 @@ public class AStarCharacter implements Serializable, ContentRateable
 	
 	public Rectangle getBoundingBox() {return boundingBox;}
 	
+	public void addCredits(long credits) {this.credits += credits;}
 	public void setCredits(long credits) {this.credits = credits;}
 	public long getCredits() {return credits;}
 	

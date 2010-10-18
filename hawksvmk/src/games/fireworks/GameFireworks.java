@@ -115,6 +115,9 @@ public class GameFireworks extends JPanel implements Runnable
 	private HashMap<String,Long> targetScores = new HashMap<String,Long>();
 	private long targetScore = 0;
 	
+	// credits won by the player
+	private long creditsWon = 0;
+	
 	private BufferedImage gameResultsBackground = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/game_results.png");
 	
 	public GameFireworks()
@@ -131,6 +134,7 @@ public class GameFireworks extends JPanel implements Runnable
 		createFireworkExplosionImages(firework1_e,firework1_explo);
 		createFireworkExplosionImages(firework2_e,firework2_explo);
 		createFireworkExplosionImages(firework3_e,firework3_explo);
+		createFireworkExplosionImages(firework4_e,firework4_explo);
 		
 		// add the mouse handlers
 		addMouseMotionListener(new MouseMotionListener()
@@ -273,6 +277,9 @@ public class GameFireworks extends JPanel implements Runnable
 		// create the buffer graphics object
 		bufferGraphics = offscreen.getGraphics();
 		
+		// reset the credits won
+		creditsWon = 0;
+		
 		// reset the score
 		gameScore = 0;
 		
@@ -392,6 +399,9 @@ public class GameFireworks extends JPanel implements Runnable
 	{
 		// stop the polling thread
 		pollingThread.stop();
+		
+		// figure out how many credits the player has won (1/100th of the final score)
+		creditsWon = (gameScore / 100);
 		
 		// hide the game area
 		uiObject.hideGameArea(GAME_ID);
@@ -671,6 +681,11 @@ public class GameFireworks extends JPanel implements Runnable
 	public int getRoundCountdown()
 	{
 		return nextRoundCountdown;
+	}
+	
+	public long getCreditsWon()
+	{
+		return creditsWon;
 	}
 }
 

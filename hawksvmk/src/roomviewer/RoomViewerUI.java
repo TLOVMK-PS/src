@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -53,6 +54,7 @@ import sockets.messages.Message;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageRemoveUserFromRoom;
+import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.games.MessageGameAddUserToRoom;
 import sockets.messages.games.MessageGameRemoveUserFromRoom;
@@ -926,6 +928,12 @@ public class RoomViewerUI extends Applet
 	{
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{
+			// give the player his credits
+			theGridView.getMyCharacter().addCredits(gameFireworks.getCreditsWon());
+			
+			// send a message to the user informing him of his accomplishment
+			sendMessageToServer(new MessageSendMailToUser("HVMK Staff",username,"Nice job with your fireworks display in Castle Fireworks!<br /><br />In recognition of your accomplishment, you have been awarded " + gameFireworks.getCreditsWon() + " credits.",new Date()));
+			
 			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
 			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
 			
