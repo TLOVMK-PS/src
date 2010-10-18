@@ -2,6 +2,23 @@
 // CLOTHING
 // ===================
 
+// ----
+// Base
+// ----
+
+ID: base_0
+NAME: base_0
+PATH: img/clothing/base/base_0/
+CARD: 
+ICON: 
+PRICE: 0
+RATING: G
+@END@
+
+// ----
+// Hats
+// ----
+
 ID: hat_0
 NAME: Cowboy Hat Black
 PATH: img/clothing/hats/hat_0/
@@ -10,6 +27,46 @@ ICON: img/clothing/hats/hat_0/icon_0.jpg
 PRICE: 500
 RATING: G
 @END@
+
+ID: hat_1
+NAME: Cowboy Hat
+PATH: img/clothing/hats/hat_1/
+CARD: img/clothing/hats/hat_1/card_1.jpg
+ICON: img/clothing/hats/hat_1/icon_1.jpg
+PRICE: 500
+RATING: G
+@END@
+
+ID: hat_2
+NAME: Cowboy Hat Red
+PATH: img/clothing/hats/hat_2/
+CARD: img/clothing/hats/hat_2/card_2.jpg
+ICON: img/clothing/hats/hat_2/icon_2.jpg
+PRICE: 500
+RATING: G
+@END@
+
+ID: hat_3
+NAME: Black Baseball Cap
+PATH: img/clothing/hats/hat_3/
+CARD: img/clothing/hats/hat_3/card_3.jpg
+ICON: img/clothing/hats/hat_3/icon_3.jpg
+PRICE: 500
+RATING: G
+@END@
+
+ID: hat_4
+NAME: Haunted Mansion Tophat
+PATH: img/clothing/hats/hat_4/
+CARD: img/clothing/hats/hat_4/card_4.jpg
+ICON: img/clothing/hats/hat_4/icon_4.jpg
+PRICE: 500
+RATING: G
+@END@
+
+// -----
+// Pants
+// -----
 
 ID: pants_0
 NAME: Black Camoflauge Pants
@@ -20,6 +77,19 @@ PRICE: 100
 RATING: G
 @END@
 
+ID: pants_1
+NAME: Haunted Mansion Trousers Black
+PATH: img/clothing/pants/pants_1/
+CARD: img/clothing/pants/pants_1/card_1.jpg
+ICON: img/clothing/pants/pants_1/icon_1.jpg
+PRICE: 500
+RATING: G
+@END@
+
+// ------
+// Shirts
+// ------
+
 ID: shirt_0
 NAME: Hawk's VMK Shirt Black
 PATH: img/clothing/shirts/shirt_0/
@@ -28,6 +98,37 @@ ICON: img/clothing/shirts/shirt_0/icon_0.jpg
 PRICE: 25
 RATING: G
 @END@
+
+ID: shirt_1
+NAME: Hawk's VMK Shirt Dark Green
+PATH: img/clothing/shirts/shirt_1/
+CARD: img/clothing/shirts/shirt_1/card_1.jpg
+ICON: img/clothing/shirts/shirt_1/icon_1.jpg
+PRICE: 25
+RATING: G
+@END@
+
+ID: shirt_2
+NAME: Haunted Mansion Jacket Black
+PATH: img/clothing/shirts/shirt_2/
+CARD: img/clothing/shirts/shirt_2/card_2.jpg
+ICON: img/clothing/shirts/shirt_2/icon_2.jpg
+PRICE: 500
+RATING: G
+@END@
+
+ID: shirt_3
+NAME: Ankh Shirt Black
+PATH: img/clothing/shirts/shirt_3/
+CARD: img/clothing/shirts/shirt_3/card_3.jpg
+ICON: img/clothing/shirts/shirt_3/icon_3.jpg
+PRICE: 100
+RATING: G
+@END@
+
+// -----
+// Shoes
+// -----
 
 ID: shoes_0
 NAME: Cowboy Boots Black
@@ -100,8 +201,8 @@ RATING: G
 @END@
 
 ID: badge_3
-NAME: VIP Member
-PATH: img/badges/vip_badge.png
+NAME: Charter Member
+PATH: img/badges/charter_badge.png
 CARD: 
 RATING: G
 @END@
@@ -109,6 +210,13 @@ RATING: G
 ID: badge_4
 NAME: Community Leader
 PATH: img/badges/community_leader_badge.png
+CARD: 
+RATING: G
+@END@
+
+ID: badge_5
+NAME: VIP Member
+PATH: img/badges/vip_badge.png
 CARD: 
 RATING: G
 @END@

@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class Firework
 {
-	private final int MAX_SCORE = 450; // applied twice to get to a maximum of 900
+	private final int MAX_SCORE = 500; // applied twice to get to a maximum of 1000
 	private int score = 0;
 	
 	private int x = 0;

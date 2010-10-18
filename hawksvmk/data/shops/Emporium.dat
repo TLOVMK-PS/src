@@ -14,6 +14,11 @@ TYPE: CLOTHING
 SPECIAL: NO
 @END@
 
+ID: shirt_1
+TYPE: CLOTHING
+SPECIAL: NO
+@END@
+
 // Furniture
 
 // Pins

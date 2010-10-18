@@ -1,6 +1,7 @@
 // Clothing
 
 CLOTHING: shirt_0
+CLOTHING: shirt_0
 CLOTHING: pants_0
 CLOTHING: shoes_0
 CLOTHING: hat_0
@@ -23,3 +24,12 @@ FURNITURE: furni_22
 POSTER: poster_0
 PIN: misc_pin_12
 PIN: misc_pin_21
+CLOTHING: shirt_1
+CLOTHING: shirt_2
+CLOTHING: shirt_3
+CLOTHING: hat_1
+CLOTHING: hat_0
+CLOTHING: hat_3
+CLOTHING: hat_4
+CLOTHING: hat_2
+CLOTHING: pants_1
