@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 
 import javax.imageio.IIOException;
@@ -47,6 +50,8 @@ import util.VMKRoom;
 public class VMKClientThread extends Thread
 {
     private Socket socket = null;
+    private InetSocketAddress remoteAddress = null;
+    private boolean rebooting = false;
     
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -62,6 +67,7 @@ public class VMKClientThread extends Thread
     public VMKClientThread(Socket socket)
     {
     	super("VMKClientThread");
+    	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
     	this.socket = socket;
     	
     	// initialize the object IO
@@ -81,7 +87,13 @@ public class VMKClientThread extends Thread
     // run the thread and process the responses from the server
     public void run()
     {
-		try
+		collectInput();
+    }
+    
+    // collect input from the thread objects
+    private void collectInput()
+    {
+    	try
 		{
 		    try
 		    {
@@ -317,10 +329,12 @@ public class VMKClientThread extends Thread
 		    }
 	    	catch(SocketException se)
 	    	{
-	    		// server shut down, so the connection was reset
-	    		System.out.println("Logout / Server shutdown");
+	    		reconnectToServer();
 	    		
-	    		this.interrupt(); // stop this client thread
+	    		// server shut down, so the connection was reset
+	    		//System.out.println("Logout / Server shutdown");
+	    		
+	    		//this.interrupt(); // stop this client thread
 	    		
 	    		// pop up a notification that the server shut down
 	    		//JOptionPane.showMessageDialog(null, "Your connection has been lost because the server has shut down.\n\nPlease close the VMK window.", "Hawk's Virtual Magic Kingdom", JOptionPane.WARNING_MESSAGE);
@@ -330,10 +344,16 @@ public class VMKClientThread extends Thread
 	    		System.out.println("Stream corrupted when trying to read an object: " + sce.getMessage());
 	    		
 	    		// pop up a message letting the user know that there was a problem
-	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading object data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		//JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading object data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
 	    		
 	    		// stop this client thread
-	    		this.interrupt();
+	    		//this.interrupt();
+	    		
+	    		reconnectToServer();
+	    		
+	    		// try to re-boot this client thread
+	    		collectInput();
+	    		return;
 	    	}
 	    	catch(IllegalStateException ise)
 	    	{
@@ -365,6 +385,7 @@ public class VMKClientThread extends Thread
 	    		in.close(); // close the input stream
 	    		out.close(); // close the output stream
 	    		socket.close(); // close the socket
+	    		//socket.
 	    	}
 	    	
 	    	if(!this.isInterrupted())
@@ -378,20 +399,70 @@ public class VMKClientThread extends Thread
 		}
     }
     
+    private void reconnectToServer()
+    {
+    	rebooting = true;
+    	System.out.println("Reconnecting to server...");
+    	
+    	try
+    	{
+    		in.close();
+    		System.out.println("Closed input stream");
+	    	
+    		if(!socket.isClosed())
+			{
+				socket.close();
+				socket = null;
+				System.out.println("Closed socket");
+			}
+			
+	    	System.out.println("Creating socket for host " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort() + "...");
+			socket = new Socket(remoteAddress.getAddress().getHostAddress(), remoteAddress.getPort());
+			System.out.println("Created socket for host " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort());
+			
+			out = new ObjectOutputStream(socket.getOutputStream());
+			System.out.println("Created socket output stream");
+    		in = new ObjectInputStream(socket.getInputStream());
+    		System.out.println("Created socket input stream");
+			
+			System.out.println("Reconnected");
+    	}
+    	catch(IOException e)
+    	{
+    		e.printStackTrace();
+    	}
+    	finally
+    	{
+    		rebooting = false;
+    	}
+    }
+    
     // send a message to the server
     public synchronized void sendMessageToServer(Message m)
     {
+    	// wait while we reboot the socket
+    	while(rebooting) {}
+    	
     	try
     	{
     		System.out.println("Sending message (" + m.getType() + ") to server...");
     		out.writeUnshared(m);
-    		//out.reset();
-    		//out.flush();
     		out.reset();
+    		//out.flush();
+    		//out.reset();
+    	}
+    	catch(SocketException se)
+    	{
+    		System.out.println("Socket exception: " + se.getMessage());
+    		
+    		if(se.getMessage().toLowerCase().contains("socket write error"))
+    		{
+    			reconnectToServer();
+    		}
     	}
     	catch(IOException e)
     	{
-    		System.out.println("Could not send message (" + m.getType() + ") to server");
+    		System.out.println("Could not send message (" + m.getType() + ") to server for reason: " + e.getClass().getName() + " - " + e.getMessage());
     	}
     	catch(Exception e)
     	{

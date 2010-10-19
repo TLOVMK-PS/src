@@ -4,12 +4,14 @@
 
 package sockets;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
@@ -55,6 +57,7 @@ import util.VMKRoom;
 public class VMKServerThread extends Thread
 {
     private Socket socket = null;
+    private InetSocketAddress remoteAddress = null;
     
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -71,6 +74,7 @@ public class VMKServerThread extends Thread
     public VMKServerThread(Socket socket)
     {
     	super("VMKServerThread");
+    	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
     	this.socket = socket;
     	
     	try
@@ -86,10 +90,38 @@ public class VMKServerThread extends Thread
     	}
     }
     
+    public InetSocketAddress getRemoteAddress() {return remoteAddress;}
+    public void setSocket(Socket socket)
+    {
+    	this.socket = socket;
+    	System.out.println("Set the socket in setSocket()");
+    	
+    	try
+    	{
+    		out = new ObjectOutputStream(socket.getOutputStream());
+    		in = new ObjectInputStream(socket.getInputStream());
+		
+    		System.out.println("Streams re-initialized");
+    		
+    		// start collecting input again
+    		collectInput();
+    	}
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    }
+    
     public void setServerThreads(ArrayList<VMKServerThread> serverThreads) {this.serverThreads = serverThreads;}
 
     // run the thread and process the input from the client
     public void run()
+    {
+    	collectInput();
+    }
+    
+    // collect input from the thread objects
+    private void collectInput()
     {
     	Object lock = new Object();
 		try
@@ -518,45 +550,26 @@ public class VMKServerThread extends Thread
 		    }
 	    	catch(SocketException se)
 	    	{
+	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("socket write error"))
+	    		{
+	    			// try to re-boot this server thread
+		    		rebootSocket();
+
+		    		return;
+	    		}
+	    		
 	    		// client shut down, so the connection was reset
 	    		System.out.println("Client shutdown (" + this.getName() + ")");
-	    		
-				// save the character to file
-				FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
-				
-				System.out.println("Saved character (" + this.getName() + ") to file");
-				
-	    		// remove the character's server thread
-	    		serverThreads.remove(this);
-	    		
-				// set an offline status alteration message to this user's friends
-				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
-	    		
-	    		// remove the character from the room
-				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
-	    		
-	    		this.interrupt(); // stop this server thread
 	    	}
 	    	catch(StreamCorruptedException sce)
 	    	{
 	    		// somehow the stream got corrupted; shut down the thread gracefully so the server doesn't hang
 	    		System.out.println("Stream corrupted on client (" + this.getName() + ")");
 	    		
-	    		// save the character to file
-	    		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
-	    		
-	    		System.out.println("Saved character (" + this.getName() + ") to file");
-	    		
-	    		// remove the character's server thread
-	    		serverThreads.remove(this);
-	    		
-	    		// set an offline status alteration message to this user's friends
-				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
-	    		
-	    		// remove the character from the room
-				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
-	    		
-	    		this.interrupt(); // stop this server thread
+	    		// try to re-boot this server thread
+	    		rebootSocket();
+
+	    		return;
 	    	}
 	    	catch(OptionalDataException ode)
 	    	{
@@ -565,24 +578,28 @@ public class VMKServerThread extends Thread
 	    		System.out.println("Stream corrupted [optional data] on client (" + this.getName() + ")");
 	    		System.out.println();
 	    		
-	    		// save the character to file
-	    		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
+	    		// try to re-boot this server thread
+	    		rebootSocket();
 	    		
-	    		System.out.println("Saved character (" + this.getName() + ") to file");
+	    		return;
+	    	}
+	    	catch(EOFException eofe)
+	    	{
+	    		// somehow the client-side stream got corrupted with an EOF exception; shut down the thread gracefully so the server doesn't hang
+	    		System.out.println();
+	    		System.out.println("Stream corrupted [invalid type code: client-side] on client (" + this.getName() + ")");
+	    		System.out.println();
 	    		
-	    		// remove the character's server thread
-	    		serverThreads.remove(this);
-	    		
-	    		// set an offline status alteration message to this user's friends
-				sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
-	    		
-	    		// remove the character from the room
-				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
-	    		
-	    		this.interrupt(); // stop this server thread
+	    		// try to re-boot this server thread
+	    		rebootSocket();
+
+	    		return;
 	    	}
 	    	
 	    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
+	    	
+	    	// shut down the server thread gracefully
+	    	shutDownServerThreadGracefully();
 	    	
 	    	// update the player's status in the database (offline)
 	    	updatePlayerStatusInDatabase(this.getName(), "offline");
@@ -604,6 +621,60 @@ public class VMKServerThread extends Thread
 		{
 		    e.printStackTrace();
 		}
+    }
+    
+    private void rebootSocket()
+    {
+		try
+		{
+			in.close();
+			System.out.println("Closed input stream");
+			//out.close();
+	    	//System.out.println("Closed output stream");
+	    	
+			if(!socket.isClosed())
+			{
+				socket.close();
+				socket = null;
+				System.out.println("Closed socket");
+			}
+	    	
+	    	System.out.println("Waiting for a re-connection from the client...");
+	    	
+	    	while(socket == null)
+			{
+				try
+				{
+					Thread.sleep(33);
+				}
+				catch(Exception e) {}
+			}
+			System.out.println("Client re-connected.");
+		}
+		catch(IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+    }
+    
+    // shut down the server thread gracefully
+    private void shutDownServerThreadGracefully()
+    {
+    	// save the character to file
+		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
+		
+		System.out.println("Saved character (" + this.getName() + ") to file");
+		
+		// remove the character's server thread
+		serverThreads.remove(this);
+		
+		// set an offline status alteration message to this user's friends
+		sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
+		
+		// remove the character from the room
+		sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
+		
+		this.interrupt(); // stop this server thread
     }
     
     // send a message to the client

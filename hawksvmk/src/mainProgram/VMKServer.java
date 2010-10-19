@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -109,13 +110,40 @@ public class VMKServer
         	try
         	{
         		// get a new server thread from a client connection
-        		VMKServerThread newServerThread = new VMKServerThread(serverSocket.accept());
-        		newServerThread.start();
-        		serverThreads.add(newServerThread);
+        		Socket newSocket = serverSocket.accept();
         		
-        		newServerThread.setServerThreads(serverThreads);
-        		
-        		System.out.println("Accepted client socket");
+        		if(serverThreads.size() > 0)
+        		{
+	        		for(int i = 0; i < serverThreads.size(); i++)
+	        		{
+	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress()))
+	        			{
+	        				serverThreads.get(i).setSocket(newSocket);
+	        				
+	        				System.out.println("Set new socket for existing client");
+	        			}
+	        			else
+	        			{
+	        				VMKServerThread newServerThread = new VMKServerThread(newSocket);
+	                		newServerThread.start();
+	                		serverThreads.add(newServerThread);
+	                		
+	                		newServerThread.setServerThreads(serverThreads);
+	                		
+	                		System.out.println("Accepted client socket");
+	        			}
+	        		}
+        		}
+        		else
+        		{
+        			VMKServerThread newServerThread = new VMKServerThread(newSocket);
+            		newServerThread.start();
+            		serverThreads.add(newServerThread);
+            		
+            		newServerThread.setServerThreads(serverThreads);
+            		
+            		System.out.println("Accepted client socket");
+        		}
         	}
         	catch(IOException e)
         	{
