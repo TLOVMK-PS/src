@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -106,6 +107,9 @@ public class VMKClientThread extends Thread
 
 					if(outputMessage instanceof MessageLogin)
 					{
+						// update the description in the loading window
+						uiObject.setLoadingDescription("Logging you into HVMK...");
+						
 						// login response from server
 						MessageLogin loginMessage = (MessageLogin)outputMessage;
 						System.out.println("Login response received from server");
@@ -143,10 +147,16 @@ public class VMKClientThread extends Thread
 							uiObject.addCharacterToRoom(nextCharacter);
 							//uiObject.addUserToRoom(nextCharacter.getUsername(), nextCharacter.getRow(), nextCharacter.getCol());
 						}
+						
+						// make the chat text box visible
+						uiObject.showChatBox();
 					}
 					else if (outputMessage instanceof MessageAddUserToRoom)
 					{
 						//MessageAddUserToRoom userMsg = (MessageAddUserToRoom)outputMessage;
+						
+						// update the description in the loading window
+						uiObject.setLoadingDescription("Adding you to the HVMK map...");
 						
 						// user response received from server
 						roomID = ((MessageAddUserToRoom)outputMessage).getRoomID();
@@ -198,7 +208,7 @@ public class VMKClientThread extends Thread
 						// add friend response received from server
 						MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)outputMessage;
 						
-						System.out.println("FRIENDSHIP REQUESTED. Add friend request response received from server");
+						System.out.println("Add friend request response received from server");
 						
 						// add the friend request to the user's UI
 						uiObject.addFriendRequest(requestMsg.getSender());
@@ -218,6 +228,9 @@ public class VMKClientThread extends Thread
 					}
 					else if(outputMessage instanceof MessageGetFriendsList)
 					{
+						// update the description in the loading window
+						uiObject.setLoadingDescription("Receiving your friends list...");
+						
 						MessageGetFriendsList getFriendsMsg = (MessageGetFriendsList)outputMessage;
 						
 						// get friends list message received from server
@@ -248,6 +261,9 @@ public class VMKClientThread extends Thread
 					}
 					else if(outputMessage instanceof MessageGetOfflineMailMessages)
 					{
+						// update the description in the loading window
+						uiObject.setLoadingDescription("Receiving your offline mail messages...");
+						
 						MessageGetOfflineMailMessages offlineMsg = (MessageGetOfflineMailMessages)outputMessage;
 						
 						// offline mail messages received from server
@@ -266,6 +282,9 @@ public class VMKClientThread extends Thread
 					}
 					else if(outputMessage instanceof MessageGetInventory)
 					{
+						// update the description in the loading window
+						uiObject.setLoadingDescription("Receiving your inventory...");
+						
 						MessageGetInventory getInvMsg = (MessageGetInventory)outputMessage;
 						
 						// get inventory message received from server
@@ -330,10 +349,19 @@ public class VMKClientThread extends Thread
 		    }
 	    	catch(SocketException se)
 	    	{
-	    		reconnectToServer();
+	    		// make sure the user is not logging-out when we attempt to re-connect to the server
+	    		if(!uiObject.isWindowClosing())
+	    		{
+	    			reconnectToServer();
 	    		
-	    		collectInput();
-	    		return;
+	    			collectInput();
+	    			return;
+	    		}
+	    		else
+	    		{
+	    			// the user is logging-out
+	    			rebooting = false;
+	    		}
 	    		
 	    		// server shut down, so the connection was reset
 	    		//System.out.println("Logout / Server shutdown");
@@ -389,6 +417,7 @@ public class VMKClientThread extends Thread
 	    	// remove the current user from the current room
 	    	//sendMessageToServer(new MessageRemoveUserFromRoom(uiObject.getUsername(), "Boot Hill Shooting Gallery Guest Room"));
 	    	
+	    	// check to make sure the socket is not re-booting
 	    	if(!rebooting)
 	    	{
 		    	// close down the socket if it's still connected
@@ -397,7 +426,6 @@ public class VMKClientThread extends Thread
 		    		in.close(); // close the input stream
 		    		out.close(); // close the output stream
 		    		socket.close(); // close the socket
-		    		//socket.
 		    	}
 		    	
 		    	if(!this.isInterrupted())
@@ -412,62 +440,77 @@ public class VMKClientThread extends Thread
 		}
     }
     
-    private void reconnectToServer()
+    // reconnect to the server after something has happened
+    private synchronized void reconnectToServer()
     {
     	// check to see if the client window is terminating
     	if(uiObject.isWindowClosing())
     	{
+    		// instruct the thread that re-booting will not take place
     		rebooting = false;
     		return;
     	}
     	
+    	// instruct the thread that re-booting is taking place
     	rebooting = true;
     	System.out.println("Reconnecting to server...");
     	
     	try
     	{
+    		// close the input stream and the socket
     		in.close();
     		socket.close();
-    		//out.close();
+
     		System.out.println("Closed input stream");
+			
+	    	System.out.println("Creating socket connection...");
 	    	
-    		/*if(!socket.isClosed())
-			{
-				socket.close();
-				System.out.println("Closed socket");
-			}*/
-			
-	    	System.out.println("Creating socket for host " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort() + "...");
+	    	// create the socket connection to the server again
 			socket = new Socket(remoteAddress.getAddress().getHostAddress(), remoteAddress.getPort());
-			System.out.println("Created socket for host " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort());
 			
+			System.out.println("Created socket connection");
+			
+			// create the output stream again so we can write to the server
 			out = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("Created socket output stream");
     		
+			// create the input stream again so we can read from the server
 			in = new ObjectInputStream(socket.getInputStream());
     		System.out.println("Created socket input stream");
     		
+    		// instruct the thread that we have finished re-booting
     		rebooting = false;
     		
-    		// send an update character message to the server
-    		System.out.println("Updating character " + uiObject.getMyCharacter().getEmail() + " in room " + roomID);
+    		// send an update character message to the server to bring the character back up
     		sendMessageToServer(new MessageUpdateCharacterInRoom(uiObject.getMyCharacter(), roomID));
 			
 			System.out.println("Reconnected to server");
     	}
+    	catch(ConnectException ce)
+    	{
+    		// the server probably isn't running any more or it doesn't want to accept the fucking connection
+    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears that the HVMK server is not running right now.","Hawk's Virtual Magic Kingdom",JOptionPane.ERROR_MESSAGE);
+    	
+    		// reveal that the socket is no longer re-booting
+    		rebooting = false;
+    	}
     	catch(IOException e)
     	{
+    		// ah... fuck
     		e.printStackTrace();
     	}
     }
     
+    // make the server shit its pants
+    // for testing purposes only.
     public void fuckUpServer() throws Exception
     {
     	System.out.println("Fucking up server...");
-    	out.writeInt(27);
+    	out.writeInt(27); // the server expects an object, so sending a primitive will make its bunghole angry
     	out.reset();
     	System.out.println("Server fucked up.");
     	
+    	// re-connect to the server once we're finished with our up-fucking
     	reconnectToServer();
     }
     
@@ -479,25 +522,21 @@ public class VMKClientThread extends Thread
     	
     	try
     	{
-    		if(m instanceof MessageAddChatToRoom)
-    		{
-    			fuckUpServer();
-    		}
-    		else
-    		{
-    			System.out.println("Sending message (" + m.getType() + ") to server...");
-    			out.writeUnshared(m);
-    			out.reset();
-    		}
+    		System.out.println("Sending message (" + m.getType() + ") to server...");
+    		out.writeUnshared(m);
+    		out.reset();
     		//out.flush();
     		//out.reset();
     	}
     	catch(SocketException se)
     	{
+    		// something happened on the server-end with the socket connection
     		System.out.println("Socket exception: " + se.getMessage());
     		
+    		// check to see if the socket was either written improperly or if the server closed the connection
     		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("socket closed"))
     		{
+    			// try to re-connect to the server
     			reconnectToServer();
     		}
     	}
@@ -508,7 +547,7 @@ public class VMKClientThread extends Thread
     	catch(Exception e)
     	{
     		// some other problem
-    		System.out.println("Goddamnit. " + e.getClass().getName() + " - " + e.getMessage());
+    		System.out.println("Ah shit: " + e.getClass().getName() + " - " + e.getMessage());
     	}
     }
 }

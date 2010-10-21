@@ -6,6 +6,7 @@ package mainProgram;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -86,19 +87,30 @@ public class VMKClient
 
             System.out.println("Connected to server");
         }
+        catch (ConnectException ce)
+        {
+        	JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears the HVMK server isn't running right now.","Hawk's Virtual Magic Kingdom",JOptionPane.ERROR_MESSAGE);
+        	uiObject.destroy();
+        	
+        	return;
+        }
         catch (UnknownHostException e)
         {
         	// couldn't connect to the host
-            JOptionPane.showMessageDialog(null, "Couldn't resolve host for the HVMK server.\n\nEither it's not running or you're not connected to the Internet.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Couldn't resolve host for the HVMK server.\n\nEither it's not running or you're not connected to the Internet.", "HVMK Connection Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            System.exit(0);
+            uiObject.destroy();
+            
+            return;
         }
         catch (IOException e)
         {
         	// couldn't open up the I/O streams
-        	JOptionPane.showMessageDialog(null, "Couldn't get I/O for the HVMK server.\n\nIt's probably not running.", "I/O Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Couldn't get I/O for the HVMK server.\n\nIt's probably not running.", "HVMK I/O Error", JOptionPane.ERROR_MESSAGE);
         	e.printStackTrace();
-        	System.exit(0);
+        	uiObject.destroy();
+        	
+        	return;
         }
         
         // start up the client thread to communicate with the server
@@ -112,14 +124,21 @@ public class VMKClient
         System.out.println("Login message sent");
     }
     
+    // stop the client
     public void stopClient()
     {
-    	clientThread.interrupt();
+    	if(clientThread != null)
+    	{
+    		clientThread.interrupt();
+    	}
     	
     	try
     	{
-    		vmkSocket.close();
-    		vmkSocket = null;
+    		if(vmkSocket != null)
+    		{
+    			vmkSocket.close();
+    			vmkSocket = null;
+    		}
     	}
     	catch(Exception e)
     	{
@@ -131,6 +150,17 @@ public class VMKClient
     public void sendMessageToServer(Message m)
     {
     	clientThread.sendMessageToServer(m);
+    }
+    
+    // return whether the socket is connected to the server
+    public boolean isClientConnected()
+    {
+    	if(vmkSocket != null)
+    	{
+    		return vmkSocket.isConnected();
+    	}
+    	
+    	return false;
     }
 
     public static void main(String args[])

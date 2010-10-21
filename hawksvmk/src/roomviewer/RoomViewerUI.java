@@ -214,11 +214,17 @@ public class RoomViewerUI extends Applet
 		// stop the client
 		if(theVMKClient != null)
 		{
-			// logout
+			// manual logout by the client, either by closing the window or the client stopping execution
 			windowClosing = true;
-			System.out.println("Sending logout message to server for user " + username);
-			sendMessageToServer(new MessageLogout());
 			
+			// check to see if the client socket is connected to the server
+			if(theVMKClient.isClientConnected())
+			{
+				System.out.println("Sending logout message to server for user " + username);
+				sendMessageToServer(new MessageLogout());
+			}
+			
+			// stop the client
 			theVMKClient.stopClient();
 		}
 	}
@@ -617,6 +623,7 @@ public class RoomViewerUI extends Applet
      
      // Text box for chat input
      chatTextBox = new JTextField();
+     chatTextBox.setVisible(false);
      chatTextBox.setBorder(null);
      chatTextBox.setCaretColor(Color.WHITE);
      chatTextBox.setBackground(new Color(23, 34, 49));
@@ -987,6 +994,20 @@ public class RoomViewerUI extends Applet
 		{
 			gameFireworks.addGameScore(score);
 		}
+	}
+	
+	public void showChatBox()
+	{
+		if(!chatTextBox.isVisible())
+		{
+			chatTextBox.setVisible(true);
+		}
+	}
+	
+	// set the description on the loading window
+	public void setLoadingDescription(String description)
+	{
+		loadingWindow.setDescription(description);
 	}
 	
 	// return the character for the current user

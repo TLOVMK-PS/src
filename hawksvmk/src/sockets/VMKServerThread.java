@@ -94,16 +94,23 @@ public class VMKServerThread extends Thread
     public InetSocketAddress getRemoteAddress() {return remoteAddress;}
     public void setSocket(Socket socket)
     {
+    	// set the socket again
     	this.socket = socket;
+    	
+    	// set the remote address again (on the off-chance that the client's IP address changed)
+    	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
 
-    	System.out.println("Client re-connected.");
+    	System.out.println("Client [" + this.getName() + "] re-connected.");
     	
     	try
     	{
+    		// re-create the output and input streams so we can communicate with the client again
     		out = new ObjectOutputStream(socket.getOutputStream());
     		in = new ObjectInputStream(socket.getInputStream());
 		
-    		System.out.println("Streams re-initialized");
+    		System.out.println("Streams re-initialized for client [" + this.getName() + "]");
+    		
+    		// let the thread know that the client has re-connected
     		waitingForReconnect = false;
     		
     		// start collecting input again
@@ -134,9 +141,10 @@ public class VMKServerThread extends Thread
 		    	// process message input from the client, locking to prevent stream corruption
 		    	synchronized(lock)
 		    	{
-				    while ((inputMessage = (Message)in.readUnshared()) != null)
+				    while (!isInterrupted())
 				    {
 				    	// create a response from an input message
+				    	inputMessage = (Message)in.readUnshared();
 						outputMessage = vmkp.processInput(inputMessage);
 	
 						if(outputMessage instanceof MessageLogin)
@@ -247,7 +255,7 @@ public class VMKServerThread extends Thread
 						else if(outputMessage instanceof MessageUpdateCharacterInRoom)
 						{
 							// update character in room message received from client
-							System.out.println("Update character in room message received from client for thread: " + this.getName());
+							//System.out.println("Update character in room message received from client for thread: " + this.getName());
 							
 							// update the character in the room HashMap
 							MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)outputMessage;
@@ -518,13 +526,6 @@ public class VMKServerThread extends Thread
 							// pass the message back to all clients in the current game room
 							sendMessageToAllClientsInRoom(gameScoreMsg, roomID);
 						}
-						
-						// sleep to prevent the stream from getting corrupted
-						/*try
-						{
-							Thread.sleep(20);
-						}
-						catch(Exception e) {}*/
 				    }
 		    	}
 		    }
@@ -605,36 +606,36 @@ public class VMKServerThread extends Thread
 		    	}
 	    	}
 		}
+		catch (SocketException se)
+		{
+			// check to see if the software caused a connection abort or if there was a socket write error
+			if(se.getMessage().toLowerCase().contains("abort") || se.getMessage().toLowerCase().contains("socket write error"))
+			{
+				// attempt to re-boot the socket
+				rebootSocket();
+			    return;
+			}
+		}
 		catch (IOException e)
 		{
-			rebootSocket();
-		    e.printStackTrace();
-		    return;
+			e.printStackTrace();
 		}
     }
     
+    // close the connection so the user can re-connect automatically
     private void rebootSocket()
     {
 		try
 		{
-			/*in.close();
-			System.out.println("Closed input stream");
-			//out.close();
-	    	//System.out.println("Closed output stream");
-	    	
-			if(!socket.isClosed())
-			{
-				socket.close();
-				System.out.println("Closed socket");
-			}*/
-			
+			// let the thread know that we're waiting for the client to re-connect automatically
 			waitingForReconnect = true;
-			System.out.println("Closing input stream and socket for the client...");
+			System.out.println("Closing input stream and socket for client [" + this.getName() + "]...");
 			
+			// close the input stream and the socket
 			in.close();
 			socket.close();
 	    	
-	    	System.out.println("Waiting for a re-connection from the client...");
+	    	System.out.println("Waiting for a re-connection for client [" + this.getName() + "]...");
 		}
 		catch(Exception ioe)
 		{
@@ -645,14 +646,13 @@ public class VMKServerThread extends Thread
     // shut down the server thread gracefully
     private void shutDownServerThreadGracefully()
     {
-    	// save the character to file
-    	//System.out.println("Saving character " + VMKServerPlayerData.getCharacter(this.getName()).getUsername() + " to file...");
-		
+    	// check to see if the fucking character exists
     	if(VMKServerPlayerData.getCharacter(this.getName()) == null)
     	{
-    		System.out.println("THE FUCKING CHARACTER IS NULL.  WHY IS THE CHARACTER FUCKING NULL?");
+    		System.out.println("THE FUCKING CHARACTER IS NULL.  WHY IS THE CHARACTER FUCKING NULL? [" + this.getName() + "]");
     	}
     	
+    	// save the character to file
     	FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
 		
 		System.out.println("Saved character (" + this.getName() + ") to file");
@@ -666,12 +666,16 @@ public class VMKServerThread extends Thread
 		// remove the character from the room
 		sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
 		
+		// remove the character from the room on the server end
+		VMKServerPlayerData.removeCharacter(this.getName(), roomID);
+		
 		this.interrupt(); // stop this server thread
     }
     
     // send a message to the client
     public synchronized void sendMessageToClient(Message m)
     {
+    	// TODO: Store the messages that would have been sent to the client for later sending
     	while(waitingForReconnect) {}
     	
     	try
@@ -681,19 +685,28 @@ public class VMKServerThread extends Thread
     		out.reset();
     		//out.flush();
     	}
-    	catch(IOException e)
+    	catch(SocketException se)
     	{
-    		System.out.println("Could not send message (" + m.getType() + ") to client");
-    		
-    		if(e.getMessage().toLowerCase().contains("socket write error"))
+    		// there was a socket error (no shit, right?)
+    		if(se.getMessage().toLowerCase().contains("socket write error"))
     		{
-    			System.out.println(e.getMessage());
+    			// print out the message and attempt to reboot the socket
+    			System.out.println(se.getMessage());
     			rebootSocket();
     		}
     		else
     		{
-    			e.printStackTrace();
+    			se.printStackTrace();
     		}
+    	}
+    	catch(StreamCorruptedException sce)
+    	{
+    		// attempt reboot the socket
+    		rebootSocket();
+    	}
+    	catch(IOException e)
+    	{
+    		System.out.println("Could not send message (" + m.getType() + ") to client");
     	}
     }
     
