@@ -58,6 +58,7 @@ public class VMKServerThread extends Thread
 {
     private Socket socket = null;
     private InetSocketAddress remoteAddress = null;
+    private boolean waitingForReconnect = false;
     
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -94,7 +95,8 @@ public class VMKServerThread extends Thread
     public void setSocket(Socket socket)
     {
     	this.socket = socket;
-    	System.out.println("Set the socket in setSocket()");
+
+    	System.out.println("Client re-connected.");
     	
     	try
     	{
@@ -102,6 +104,7 @@ public class VMKServerThread extends Thread
     		in = new ObjectInputStream(socket.getInputStream());
 		
     		System.out.println("Streams re-initialized");
+    		waitingForReconnect = false;
     		
     		// start collecting input again
     		collectInput();
@@ -218,25 +221,7 @@ public class VMKServerThread extends Thread
 							// logout/shutdown message received from client
 							System.out.println("Logout message received from client for thread: " + this.getName());
 							
-							// save the character to file
-							FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
-							
-							System.out.println("Saved character (" + this.getName() + ") to file");
-							
-							// remove the user from the room
-							VMKServerPlayerData.removeCharacter(this.getName());
-							
-							// remove this thread from the group
-							serverThreads.remove(this);
-							
-							// set an offline status alteration message to this user's friends
-							sendMessageToAllClients(new MessageAlterFriendStatus(this.getName(), false));
-							
-							// send the message to ALL clients
-							sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(this.getName(), roomID), roomID);
-							
-							// send the logout message back to the client
-							//sendMessageToClient((MessageLogout)outputMessage);
+							// break out of the loop to execute the centralized shutdown code
 						    break;
 						}
 						else if(outputMessage instanceof MessageGetCharactersInRoom)
@@ -262,7 +247,7 @@ public class VMKServerThread extends Thread
 						else if(outputMessage instanceof MessageUpdateCharacterInRoom)
 						{
 							// update character in room message received from client
-							//System.out.println("Update character in room message received from client for thread: " + this.getName());
+							System.out.println("Update character in room message received from client for thread: " + this.getName());
 							
 							// update the character in the room HashMap
 							MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)outputMessage;
@@ -596,30 +581,35 @@ public class VMKServerThread extends Thread
 	    		return;
 	    	}
 	    	
-	    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
-	    	
-	    	// shut down the server thread gracefully
-	    	shutDownServerThreadGracefully();
-	    	
-	    	// update the player's status in the database (offline)
-	    	updatePlayerStatusInDatabase(this.getName(), "offline");
-	    	
-	    	// close down the socket if it's still connected
-	    	if(socket.isConnected())
+	    	if(!waitingForReconnect)
 	    	{
-	    		in.close(); // close the input stream
-	    		out.close(); // close the output stream
-	    		socket.close(); // close the socket
-	    	}
-	    	
-	    	if(!this.isInterrupted())
-	    	{
-	    		this.interrupt(); // stop this server thread
+		    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
+		    	
+		    	// shut down the server thread gracefully
+		    	shutDownServerThreadGracefully();
+		    	
+		    	// update the player's status in the database (offline)
+		    	updatePlayerStatusInDatabase(this.getName(), "offline");
+		    	
+		    	// close down the socket if it's still connected
+		    	if(socket.isConnected())
+		    	{
+		    		in.close(); // close the input stream
+		    		out.close(); // close the output stream
+		    		socket.close(); // close the socket
+		    	}
+		    	
+		    	if(!this.isInterrupted())
+		    	{
+		    		this.interrupt(); // stop this server thread
+		    	}
 	    	}
 		}
 		catch (IOException e)
 		{
+			rebootSocket();
 		    e.printStackTrace();
+		    return;
 		}
     }
     
@@ -627,7 +617,7 @@ public class VMKServerThread extends Thread
     {
 		try
 		{
-			in.close();
+			/*in.close();
 			System.out.println("Closed input stream");
 			//out.close();
 	    	//System.out.println("Closed output stream");
@@ -635,23 +625,18 @@ public class VMKServerThread extends Thread
 			if(!socket.isClosed())
 			{
 				socket.close();
-				socket = null;
 				System.out.println("Closed socket");
-			}
+			}*/
+			
+			waitingForReconnect = true;
+			System.out.println("Closing input stream and socket for the client...");
+			
+			in.close();
+			socket.close();
 	    	
 	    	System.out.println("Waiting for a re-connection from the client...");
-	    	
-	    	while(socket == null)
-			{
-				try
-				{
-					Thread.sleep(33);
-				}
-				catch(Exception e) {}
-			}
-			System.out.println("Client re-connected.");
 		}
-		catch(IOException ioe)
+		catch(Exception ioe)
 		{
 			ioe.printStackTrace();
 		}
@@ -661,7 +646,14 @@ public class VMKServerThread extends Thread
     private void shutDownServerThreadGracefully()
     {
     	// save the character to file
-		FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
+    	//System.out.println("Saving character " + VMKServerPlayerData.getCharacter(this.getName()).getUsername() + " to file...");
+		
+    	if(VMKServerPlayerData.getCharacter(this.getName()) == null)
+    	{
+    		System.out.println("THE FUCKING CHARACTER IS NULL.  WHY IS THE CHARACTER FUCKING NULL?");
+    	}
+    	
+    	FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
 		
 		System.out.println("Saved character (" + this.getName() + ") to file");
 		
@@ -680,6 +672,8 @@ public class VMKServerThread extends Thread
     // send a message to the client
     public synchronized void sendMessageToClient(Message m)
     {
+    	while(waitingForReconnect) {}
+    	
     	try
     	{
     		//System.out.println("Sending message (" + m.getType() + ") to client...");
@@ -690,7 +684,16 @@ public class VMKServerThread extends Thread
     	catch(IOException e)
     	{
     		System.out.println("Could not send message (" + m.getType() + ") to client");
-    		e.printStackTrace();
+    		
+    		if(e.getMessage().toLowerCase().contains("socket write error"))
+    		{
+    			System.out.println(e.getMessage());
+    			rebootSocket();
+    		}
+    		else
+    		{
+    			e.printStackTrace();
+    		}
     	}
     }
     
@@ -711,6 +714,8 @@ public class VMKServerThread extends Thread
     // send a message to ALL clients
     public synchronized void sendMessageToAllClients(Message m)
     {
+    	while(socket.isOutputShutdown()) {}
+    	
     	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
     	
     	for(int i = 0; i < serverThreads.size(); i++)

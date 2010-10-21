@@ -73,6 +73,7 @@ import util.StaticAppletData;
 public class RoomViewerUI extends Applet
 {
 	private boolean release = true; // TRUE to change the window display
+	private boolean windowClosing = false; // TRUE when the window is closing
 	
 	private VMKClient theVMKClient; // VMK client socket connection
 	
@@ -214,6 +215,7 @@ public class RoomViewerUI extends Applet
 		if(theVMKClient != null)
 		{
 			// logout
+			windowClosing = true;
 			System.out.println("Sending logout message to server for user " + username);
 			sendMessageToServer(new MessageLogout());
 			
@@ -985,5 +987,17 @@ public class RoomViewerUI extends Applet
 		{
 			gameFireworks.addGameScore(score);
 		}
+	}
+	
+	// return the character for the current user
+	// ONLY USED BY VMKClientThread WHEN SENDING AN UPDATE TO THE SERVER AFTER A RE-CONNECT
+	public AStarCharacter getMyCharacter()
+	{
+		return theGridView.getMyCharacter();
+	}
+	
+	public boolean isWindowClosing()
+	{
+		return windowClosing;
 	}
 }

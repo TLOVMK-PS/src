@@ -118,9 +118,8 @@ public class VMKServer
 	        		{
 	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress()))
 	        			{
+	        				System.out.println("Set new socket for existing client [" + serverThreads.get(i).getName() + "]");
 	        				serverThreads.get(i).setSocket(newSocket);
-	        				
-	        				System.out.println("Set new socket for existing client");
 	        			}
 	        			else
 	        			{

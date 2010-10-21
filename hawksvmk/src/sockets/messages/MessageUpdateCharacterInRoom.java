@@ -20,7 +20,7 @@ public class MessageUpdateCharacterInRoom extends Message implements Serializabl
 	
 	public MessageUpdateCharacterInRoom(AStarCharacter character, String roomID)
 	{
-		super("MessageUpdateCharactersInRoom");
+		super("MessageUpdateCharacterInRoom");
 		this.character = character;
 		this.roomID = roomID;
 	}
