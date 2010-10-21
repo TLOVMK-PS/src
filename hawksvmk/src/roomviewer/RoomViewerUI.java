@@ -1004,6 +1004,13 @@ public class RoomViewerUI extends Applet
 		}
 	}
 	
+	// manipulate the loading window to display a message about the server being down
+	public void displayLoadingWindowServerDown()
+	{
+		loadingWindow.hideLoadingBar();
+		loadingWindow.setDescription("The HVMK server is down.  Please try again later.");
+	}
+	
 	// set the description on the loading window
 	public void setLoadingDescription(String description)
 	{

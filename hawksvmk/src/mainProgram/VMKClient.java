@@ -89,6 +89,8 @@ public class VMKClient
         }
         catch (ConnectException ce)
         {
+        	// couldn't connect to the server (since the damn thing isn't running)
+        	uiObject.displayLoadingWindowServerDown();
         	JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears the HVMK server isn't running right now.","Hawk's Virtual Magic Kingdom",JOptionPane.ERROR_MESSAGE);
         	uiObject.destroy();
         	
@@ -96,7 +98,8 @@ public class VMKClient
         }
         catch (UnknownHostException e)
         {
-        	// couldn't connect to the host
+        	// couldn't resolve the host for the server
+        	uiObject.displayLoadingWindowServerDown();
             JOptionPane.showMessageDialog(null, "Couldn't resolve host for the HVMK server.\n\nEither it's not running or you're not connected to the Internet.", "HVMK Connection Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             uiObject.destroy();
@@ -106,6 +109,7 @@ public class VMKClient
         catch (IOException e)
         {
         	// couldn't open up the I/O streams
+        	uiObject.displayLoadingWindowServerDown();
         	JOptionPane.showMessageDialog(null, "Couldn't get I/O for the HVMK server.\n\nIt's probably not running.", "HVMK I/O Error", JOptionPane.ERROR_MESSAGE);
         	e.printStackTrace();
         	uiObject.destroy();

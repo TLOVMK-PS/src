@@ -125,4 +125,11 @@ public class WindowLoading extends JPanel
 	{
 		this.gridObject = gridObject;
 	}
+	
+	// hide the loading bar
+	public void hideLoadingBar()
+	{
+		loadingBarLabel.setVisible(false);
+		loadingBarGradient.setVisible(false);
+	}
 }
