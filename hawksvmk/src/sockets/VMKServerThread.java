@@ -319,7 +319,7 @@ public class VMKServerThread extends Thread
 						else if(outputMessage instanceof MessageAddChatToRoom)
 						{
 							// add chat to room message received from client
-							System.out.println("Add chat to room message received from client for thread: " + this.getName());
+							//System.out.println("Add chat to room message received from client for thread: " + this.getName());
 							
 							// send the message to ALL clients
 							MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)outputMessage;
