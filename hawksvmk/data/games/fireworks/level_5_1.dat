@@ -2,7 +2,7 @@
 // Level 5-1
 // [x], [y], [targetX], [targetY], [xSpeed], [ySpeed], [fireworkNumber], [delay]
 // Fireworks: 24
-// Target Score: 0
+// Target Score: 223,000
 
 @250,500,230,100,-5,-5,1,3000@
 
