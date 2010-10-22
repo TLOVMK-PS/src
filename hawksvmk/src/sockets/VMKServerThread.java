@@ -66,12 +66,13 @@ public class VMKServerThread extends Thread
     Message inputMessage; // input message sent from client
     Message outputMessage; // output message sent to client
     VMKProtocol vmkp = new VMKProtocol(); // message handler protocol
+    private ArrayList<Message> cachedMessages = new ArrayList<Message>(); // cached list of messages to be sent after the client re-connects
     
     private String roomID = ""; // ID of the current room the user is in
     private String roomName = ""; // name of the current room the user is in
     
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
-
+    
     public VMKServerThread(Socket socket)
     {
     	super("VMKServerThread");
@@ -109,6 +110,9 @@ public class VMKServerThread extends Thread
     		in = new ObjectInputStream(socket.getInputStream());
 		
     		System.out.println("Streams re-initialized for client [" + this.getName() + "]");
+    		
+    		// send the cached messages back to the client
+    		sendCachedMessages();
     		
     		// let the thread know that the client has re-connected
     		waitingForReconnect = false;
@@ -315,7 +319,7 @@ public class VMKServerThread extends Thread
 						else if(outputMessage instanceof MessageAddChatToRoom)
 						{
 							// add chat to room message received from client
-							//System.out.println("Add chat to room message received from client for thread: " + this.getName());
+							System.out.println("Add chat to room message received from client for thread: " + this.getName());
 							
 							// send the message to ALL clients
 							MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)outputMessage;
@@ -536,7 +540,7 @@ public class VMKServerThread extends Thread
 		    }
 	    	catch(SocketException se)
 	    	{
-	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("socket write error"))
+	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("abort"))
 	    		{
 	    			// try to re-boot this server thread
 		    		rebootSocket();
@@ -672,41 +676,107 @@ public class VMKServerThread extends Thread
 		this.interrupt(); // stop this server thread
     }
     
+    // write a message to the output buffer to be sent to the client
+    private synchronized void writeOutputToClient(Message m) throws SocketException, IOException
+    {
+    	out.writeUnshared(m);
+		out.reset();
+		//out.flush();
+    }
+    
+    // send out the cached messages after a re-connect
+    private synchronized void sendCachedMessages()
+    {
+    	// check to see if there are cached messages
+    	if(cachedMessages.size() > 0)
+    	{
+    		// send out all the cached messages first
+    		for(int i = 0; i < cachedMessages.size(); i++)
+    		{
+    			// get the next cached message
+    			Message cachedMessage = cachedMessages.remove(0);
+    			
+    			try
+    			{
+    				// send the cached message to the client
+    				System.out.println("Sending cached message (" + cachedMessage.getType() + ") to client [" + this.getName() + "]...");
+    				writeOutputToClient(cachedMessage);
+    				
+    				Thread.sleep(40);
+    			}
+    			catch(Exception e)
+    			{
+    				System.out.println("Could not send cached message (" + cachedMessage.getType() + ") to client [" + this.getName() + "]");
+    				
+    				// add the message back to the cached messages structure for later sending
+    				cachedMessages.add(cachedMessage);
+    				
+    				// allow the client to re-connect
+    				rebootSocket();
+    			}
+    		}
+    	}
+    }
+    
+    // add a message to the messages cache for later sending
+    private synchronized void cacheMessage(Message m)
+    {
+    	// add the message to the cache
+    	cachedMessages.add(m);
+    	
+    	System.out.println("Cached message (" + m.getType() + ") for client [" + this.getName() + "]");
+    }
+    
     // send a message to the client
     public synchronized void sendMessageToClient(Message m)
     {
-    	// TODO: Store the messages that would have been sent to the client for later sending
-    	while(waitingForReconnect) {}
-    	
-    	try
+    	// check to see if we're waiting for the client to re-connect
+    	if(!waitingForReconnect)
     	{
-    		//System.out.println("Sending message (" + m.getType() + ") to client...");
-    		out.writeUnshared(m);
-    		out.reset();
-    		//out.flush();
+	    	try
+	    	{
+	    		// write the message to the client
+	    		writeOutputToClient(m);
+	    	}
+	    	catch(SocketException se)
+	    	{
+	    		// there was a socket error (no shit, right?)
+	    		if(se.getMessage().toLowerCase().contains("socket write error"))
+	    		{
+	    			// print out the error message
+	    			System.out.println(se.getMessage());
+	    			
+	    			// cache the message
+	    			cacheMessage(m);
+	    			
+	    			// reboot the socket
+	    			rebootSocket();
+	    		}
+	    		else
+	    		{
+	    			// cache the message
+	    			cacheMessage(m);
+	    			
+	    			se.printStackTrace();
+	    		}
+	    	}
+	    	catch(StreamCorruptedException sce)
+	    	{
+	    		// cache the message
+				cacheMessage(m);
+				
+	    		// attempt reboot the socket
+	    		rebootSocket();
+	    	}
+	    	catch(IOException e)
+	    	{
+	    		System.out.println("Could not send message (" + m.getType() + ") to client");
+	    	}
     	}
-    	catch(SocketException se)
+    	else
     	{
-    		// there was a socket error (no shit, right?)
-    		if(se.getMessage().toLowerCase().contains("socket write error"))
-    		{
-    			// print out the message and attempt to reboot the socket
-    			System.out.println(se.getMessage());
-    			rebootSocket();
-    		}
-    		else
-    		{
-    			se.printStackTrace();
-    		}
-    	}
-    	catch(StreamCorruptedException sce)
-    	{
-    		// attempt reboot the socket
-    		rebootSocket();
-    	}
-    	catch(IOException e)
-    	{
-    		System.out.println("Could not send message (" + m.getType() + ") to client");
+    		// cache the message for later sending
+    		cacheMessage(m);
     	}
     }
     
@@ -727,8 +797,6 @@ public class VMKServerThread extends Thread
     // send a message to ALL clients
     public synchronized void sendMessageToAllClients(Message m)
     {
-    	while(socket.isOutputShutdown()) {}
-    	
     	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
     	
     	for(int i = 0; i < serverThreads.size(); i++)

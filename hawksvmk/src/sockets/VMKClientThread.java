@@ -589,40 +589,46 @@ public class VMKClientThread extends Thread
     // send a message to the server
     public synchronized void sendMessageToServer(Message m)
     {
-    	// wait while we reboot the socket
-    	while(rebooting) {}
-    	
-    	try
+    	// check to see if we're currently re-booting the socket
+    	if(!rebooting)
     	{
-    		System.out.println("Sending message (" + m.getType() + ") to server...");
-    		writeOutputToServer(m);
+	    	try
+	    	{
+	    		System.out.println("Sending message (" + m.getType() + ") to server...");
+	    		writeOutputToServer(m);
+	    	}
+	    	catch(SocketException se)
+	    	{
+	    		// cache the message for later sending
+	    		cacheMessage(m);
+	    		
+	    		// something happened on the server-end with the socket connection
+	    		System.out.println("Socket exception: " + se.getMessage());
+	    		
+	    		// check to see if the socket was either written improperly or if the server closed the connection
+	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("socket closed"))
+	    		{
+	    			// try to re-connect to the server
+	    			reconnectToServer();
+	    		}
+	    	}
+	    	catch(IOException e)
+	    	{
+	    		// cache the message for later sending
+	    		cacheMessage(m);
+	    		
+	    		System.out.println("Could not send message (" + m.getType() + ") to server for reason: " + e.getClass().getName() + " - " + e.getMessage());
+	    	}
+	    	catch(Exception e)
+	    	{
+	    		// some other problem
+	    		System.out.println("Ah shit: " + e.getClass().getName() + " - " + e.getMessage());
+	    	}
     	}
-    	catch(SocketException se)
+    	else
     	{
     		// cache the message for later sending
     		cacheMessage(m);
-    		
-    		// something happened on the server-end with the socket connection
-    		System.out.println("Socket exception: " + se.getMessage());
-    		
-    		// check to see if the socket was either written improperly or if the server closed the connection
-    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("socket closed"))
-    		{
-    			// try to re-connect to the server
-    			reconnectToServer();
-    		}
-    	}
-    	catch(IOException e)
-    	{
-    		// cache the message for later sending
-    		cacheMessage(m);
-    		
-    		System.out.println("Could not send message (" + m.getType() + ") to server for reason: " + e.getClass().getName() + " - " + e.getMessage());
-    	}
-    	catch(Exception e)
-    	{
-    		// some other problem
-    		System.out.println("Ah shit: " + e.getClass().getName() + " - " + e.getMessage());
     	}
     }
 }
