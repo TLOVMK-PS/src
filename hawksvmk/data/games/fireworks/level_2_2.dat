@@ -1,7 +1,7 @@
 // Castle Fireworks
 // Level 2-2
 // [x], [y], [targetX], [targetY], [xSpeed], [ySpeed], [fireworkNumber], [delay]
-// Fireworks: 16
+// Fireworks: 15
 // Target Score: 59,000
 
 @520,550,540,50,5,-5,1,3000@

@@ -111,11 +111,14 @@ public class VMKServerThread extends Thread
 		
     		System.out.println("Streams re-initialized for client [" + this.getName() + "]");
     		
-    		// send the cached messages back to the client
-    		sendCachedMessages();
-    		
     		// let the thread know that the client has re-connected
     		waitingForReconnect = false;
+    		
+    		// sleep to prevent hitting the client as the client is sending a message to the server
+    		Thread.sleep(1000);
+    		
+    		// send the cached messages back to the client
+    		sendCachedMessages();
     		
     		// start collecting input again
     		collectInput();
@@ -477,6 +480,8 @@ public class VMKServerThread extends Thread
 						}
 						else if(outputMessage instanceof MessageGameAddUserToRoom)
 						{
+							System.out.println("Game add user to room message received from client");
+							
 							// add user to GAME ROOM message received from client
 							MessageGameAddUserToRoom addUserGameMsg = (MessageGameAddUserToRoom)outputMessage;
 							
@@ -492,6 +497,8 @@ public class VMKServerThread extends Thread
 								// figure out the game room to which the user should be added
 								String gameID = addUserGameMsg.getGameID();
 								roomID = VMKServerPlayerData.addCharacterToGameRoom(gameID, addUserGameMsg.getCharacter());
+								
+								System.out.println("Added user to game room: " + roomID);
 								
 								// pass the message back to the client with the new roomID
 								addUserGameMsg.setRoomID(roomID);
@@ -590,11 +597,11 @@ public class VMKServerThread extends Thread
 	    	{
 		    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
 		    	
-		    	// shut down the server thread gracefully
-		    	shutDownServerThreadGracefully();
-		    	
 		    	// update the player's status in the database (offline)
 		    	updatePlayerStatusInDatabase(this.getName(), "offline");
+		    	
+		    	// shut down the server thread gracefully
+		    	shutDownServerThreadGracefully();
 		    	
 		    	// close down the socket if it's still connected
 		    	if(socket.isConnected())

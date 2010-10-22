@@ -14,6 +14,8 @@ public class Explosion
 	
 	private int imageX = 0;
 	private int imageY = 0;
+	private int textX = 0;
+	private int textY = 0;
 	
 	private int targetWidth = 0;
 	private int targetHeight = 0;
@@ -30,10 +32,22 @@ public class Explosion
 	private int imageIndex = 0;
 	private Image scaledImage = null;
 	
+	private BufferedImage scoreTextImage = null;
+	
 	public Explosion(int x, int y)
 	{
 		this.x = x;
 		this.y = y;
+	}
+	
+	public void setScoreTextImage(BufferedImage scoreTextImage)
+	{
+		this.scoreTextImage = scoreTextImage;
+	}
+	
+	public BufferedImage getScoreTextImage()
+	{
+		return scoreTextImage;
 	}
 	
 	public void setExplosionImages(BufferedImage explosionImages[])
@@ -69,6 +83,9 @@ public class Explosion
 			// attempt to center the explosion as it expands
 			imageX = x - (explosionImages[imageIndex].getWidth() / 2);
 			imageY = y - (explosionImages[imageIndex].getHeight() / 2);
+			
+			textX = x - (scoreTextImage.getWidth() / 2);
+			textY = y - (scoreTextImage.getHeight() / 2);
 		}
 	}
 	
@@ -92,5 +109,13 @@ public class Explosion
 	
 	public int getImageY() {
 		return imageY;
+	}
+	
+	public int getTextX() {
+		return textX;
+	}
+	
+	public int getTextY() {
+		return textY;
 	}
 }

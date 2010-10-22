@@ -951,8 +951,8 @@ public class RoomViewerUI extends Applet
 			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
 			
 			// hide the game area
-			gameFireworks.stop();
 			gameFireworks.setVisible(false);
+			gameFireworks.stop();
 		}
 		
 		// enable the toolbars again
