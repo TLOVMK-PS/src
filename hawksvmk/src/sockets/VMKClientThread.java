@@ -8,6 +8,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -15,6 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
@@ -65,6 +67,8 @@ public class VMKClientThread extends Thread
     private String roomID = "";
     private String roomName = "";
     RoomViewerUI uiObject; // reference to the client UI
+    
+    private ArrayList<Message> cachedMessages = new ArrayList<Message>(); // ArrayList of cached messages to send to the server after a re-connect
 
     public VMKClientThread(Socket socket)
     {
@@ -478,11 +482,15 @@ public class VMKClientThread extends Thread
 			in = new ObjectInputStream(socket.getInputStream());
     		System.out.println("Created socket input stream");
     		
+    		// send an update character message to the server to bring the character back up
+    		// we write the output directly since the sendMessageToServer() method is paused
+    		writeOutputToServer(new MessageUpdateCharacterInRoom(uiObject.getMyCharacter(), roomID));
+    		
+    		// send out the cached messages
+    		sendCachedMessages();
+    		
     		// instruct the thread that we have finished re-booting
     		rebooting = false;
-    		
-    		// send an update character message to the server to bring the character back up
-    		sendMessageToServer(new MessageUpdateCharacterInRoom(uiObject.getMyCharacter(), roomID));
 			
 			System.out.println("Reconnected to server");
     	}
@@ -503,15 +511,79 @@ public class VMKClientThread extends Thread
     
     // make the server shit its pants
     // for testing purposes only.
-    public void fuckUpServer() throws Exception
+    public void fuckUpServer(Exception typeOfException) throws Exception
     {
     	System.out.println("Fucking up server...");
-    	out.writeInt(27); // the server expects an object, so sending a primitive will make its bunghole angry
-    	out.reset();
+    	
+    	if(typeOfException instanceof OptionalDataException)
+    	{
+    		// make the server throw an OptionalDataException
+    		out.writeInt(27); // the server expects an object, so sending a primitive will make its bunghole angry
+    		out.reset();
+    	}
+    	else if(typeOfException instanceof StreamCorruptedException)
+    	{
+    		// make the server throw a StreamCorruptedException by initializing another output stream on the same socket
+    		ObjectOutputStream out2 = new ObjectOutputStream(socket.getOutputStream());
+    		out2.reset();
+    	}
+    	
     	System.out.println("Server fucked up.");
     	
     	// re-connect to the server once we're finished with our up-fucking
     	reconnectToServer();
+    }
+    
+    // write a message to the output buffer to be sent to the server
+    private synchronized void writeOutputToServer(Message m) throws SocketException, IOException
+    {
+    	out.writeUnshared(m);
+		out.reset();
+		//out.flush();
+		//out.reset();
+    }
+    
+    // send out the cached messages after a re-connect
+    private synchronized void sendCachedMessages()
+    {
+    	// check to see if there are cached messages
+    	if(cachedMessages.size() > 0)
+    	{
+    		// send out all the cached messages first
+    		for(int i = 0; i < cachedMessages.size(); i++)
+    		{
+    			// get the next cached message
+    			Message cachedMessage = cachedMessages.remove(0);
+    			
+    			try
+    			{
+    				// send the cached message
+    				System.out.println("Sending cached message (" + cachedMessage.getType() + ") to server...");
+    				writeOutputToServer(cachedMessage);
+    				
+    				Thread.sleep(40);
+    			}
+    			catch(Exception e)
+    			{
+    				System.out.println("Could not send cached message (" + cachedMessage.getType() + ") to server");
+    				
+    				// add the message back to the cached messages structure for later sending
+    				cachedMessages.add(cachedMessage);
+    				
+    				// try to reconnect to the server again
+    				reconnectToServer();
+    			}
+    		}
+    	}
+    }
+    
+    // add a message to the messages cache for later sending
+    private synchronized void cacheMessage(Message m)
+    {
+    	// add the message to the cache
+    	cachedMessages.add(m);
+    	
+    	System.out.println("Cached message (" + m.getType() + ")");
     }
     
     // send a message to the server
@@ -523,13 +595,13 @@ public class VMKClientThread extends Thread
     	try
     	{
     		System.out.println("Sending message (" + m.getType() + ") to server...");
-    		out.writeUnshared(m);
-    		out.reset();
-    		//out.flush();
-    		//out.reset();
+    		writeOutputToServer(m);
     	}
     	catch(SocketException se)
     	{
+    		// cache the message for later sending
+    		cacheMessage(m);
+    		
     		// something happened on the server-end with the socket connection
     		System.out.println("Socket exception: " + se.getMessage());
     		
@@ -542,6 +614,9 @@ public class VMKClientThread extends Thread
     	}
     	catch(IOException e)
     	{
+    		// cache the message for later sending
+    		cacheMessage(m);
+    		
     		System.out.println("Could not send message (" + m.getType() + ") to server for reason: " + e.getClass().getName() + " - " + e.getMessage());
     	}
     	catch(Exception e)
