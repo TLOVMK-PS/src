@@ -11,6 +11,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -89,6 +90,7 @@ public class GameFireworks extends JPanel implements Runnable
 	private BufferedImage reticle6 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_6.png");
 	private BufferedImage reticle7 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_7.png");
 	private BufferedImage reticleImage = reticle1;
+	private Rectangle reticleBounds = new Rectangle();
 	
 	private BufferedImage fireworkImage1 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_1.png");
 	private BufferedImage fireworkImage2 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_2.png");
@@ -163,21 +165,21 @@ public class GameFireworks extends JPanel implements Runnable
 	public GameFireworks()
 	{
 		// add the target scores
-		targetScores.put("1_1",new Long(9000));
-		targetScores.put("1_2",new Long(23000));
-		targetScores.put("1_3",new Long(36000));
-		targetScores.put("2_1",new Long(47000));
-		targetScores.put("2_2",new Long(59000));
-		targetScores.put("2_3",new Long(80000));
-		targetScores.put("3_1",new Long(93000));
-		targetScores.put("3_2",new Long(112000));
-		targetScores.put("3_3",new Long(137000));
-		targetScores.put("4_1",new Long(153000));
-		targetScores.put("4_2",new Long(173000));
-		targetScores.put("4_3",new Long(199000));
-		targetScores.put("5_1",new Long(223000));
-		targetScores.put("5_2",new Long(243000));
-		targetScores.put("5_3",new Long(278000));
+		targetScores.put("1_1",new Long(8000));
+		targetScores.put("1_2",new Long(21000));
+		targetScores.put("1_3",new Long(34000));
+		targetScores.put("2_1",new Long(45000));
+		targetScores.put("2_2",new Long(56000));
+		targetScores.put("2_3",new Long(78000));
+		targetScores.put("3_1",new Long(91000));
+		targetScores.put("3_2",new Long(109000));
+		targetScores.put("3_3",new Long(134000));
+		targetScores.put("4_1",new Long(150000));
+		targetScores.put("4_2",new Long(170000));
+		targetScores.put("4_3",new Long(196000));
+		targetScores.put("5_1",new Long(217000));
+		targetScores.put("5_2",new Long(238000));
+		targetScores.put("5_3",new Long(274000));
 		
 		// allow this component to be focusable so keys can be processed
 		setFocusable(true);
@@ -223,7 +225,7 @@ public class GameFireworks extends JPanel implements Runnable
 							Firework firework = fireworks.get(i);
 							
 							// check to see if we clicked on a firework
-							if(firework.getBoundingBox().contains(e.getPoint()))
+							if(firework.getBoundingBox().intersects(reticleBounds))
 							{
 								// burst the firework
 								firework.burstFirework();
@@ -653,9 +655,11 @@ public class GameFireworks extends JPanel implements Runnable
 			
 			bufferGraphics.setColor(Color.WHITE);
 			bufferGraphics.drawString("SCORE: " + gameScore, 20, 50);
+			bufferGraphics.drawString("LEVEL " + levelNum + " - ROUND " + roundNum, 20, 70);
 			
 			// draw the reticle on-screen
-			bufferGraphics.drawImage(reticleImage, mouseX - (reticleImage.getWidth() / 2), mouseY - (reticleImage.getHeight() / 2),this);
+			reticleBounds.setBounds(mouseX - (reticleImage.getWidth() / 2), mouseY - (reticleImage.getHeight() / 2), reticleImage.getWidth(), reticleImage.getHeight());
+			bufferGraphics.drawImage(reticleImage, reticleBounds.x, reticleBounds.y, this);
 			
 			// draw the reticles selector centered at the bottom, along with a yellow rectangle on the current reticle
 			bufferGraphics.drawImage(reticles_chooser, (width / 2) - (reticles_chooser.getWidth() / 2), 502, this);
