@@ -21,7 +21,7 @@ public class VMKServerPlayerData
 	private static HashMap<String, FriendsList> friendsLists = new HashMap<String, FriendsList>();
 	private static HashMap<String, String> usernameToEmail = new HashMap<String, String>();
 	
-	private static final int MAX_FIREWORKS_ROOMS = 3; // maximum number of rooms for the Fireworks game
+	private static int MAX_FIREWORKS_ROOMS = 3; // maximum number of rooms for the Fireworks game
 	private static final int MAX_PLAYERS_PER_FIREWORKS_ROOM = 20; // maximum number of players in any given Fireworks room
 	
 	// add a character to the HashMap
@@ -103,6 +103,8 @@ public class VMKServerPlayerData
 	// add a player to an internal game room and return the ID of the room
 	public static String addCharacterToGameRoom(String gameID, AStarCharacter character)
 	{
+		String gameRoomID = gameID + "_0000"; // initialize with a dummy value
+		
 		if(gameID.equals("fireworks")) // Fireworks game
 		{
 			// check to find a room that currently has less than the maximum number of players available
@@ -113,13 +115,22 @@ public class VMKServerPlayerData
 				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_FIREWORKS_ROOM)
 				{
 					// this will be the room that we put this user into
-					addCharacter(character.getUsername(), character, gameRoom.getRoomID());
-					return gameRoom.getRoomID();
+					gameRoomID = gameRoom.getRoomID();
+					addCharacter(character.getUsername(), character, gameRoomID);
+					return gameRoomID;
 				}
 			}
+			
+			// no suitable room found, so create one and add the player to it
+			gameRoomID = "fireworks_" + MAX_FIREWORKS_ROOMS;
+			addRoom(gameRoomID, new VMKRoom(gameRoomID, "Fireworks Game " + MAX_FIREWORKS_ROOMS,""));
+			addCharacter(character.getUsername(), character, gameRoomID);
+			
+			// increment the number of Fireworks rooms available
+			MAX_FIREWORKS_ROOMS++;
 		}
 		
-		return gameID + "_0000"; // return a dummy room
+		return gameRoomID; // return a the generated gameRoomID
 	}
 	
 	// increment the number of guest rooms that exist
