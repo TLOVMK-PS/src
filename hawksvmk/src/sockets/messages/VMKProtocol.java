@@ -157,6 +157,12 @@ public class VMKProtocol
         	theOutput = (MessageUpdateCharacterClothing)theInput;
         	theOutput.setType("MessageUpdateCharacterClothing");
         }
+        else if(theInput instanceof MessageReconnectToServer)
+        {
+        	// pass back the request
+        	theOutput = (MessageReconnectToServer)theInput;
+        	theOutput.setType("MessageReconnectToServer");
+        }
         else if(theInput instanceof MessageGameAddUserToRoom)
         {
         	// pass back the request

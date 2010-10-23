@@ -36,6 +36,7 @@ import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
+import sockets.messages.MessageReconnectToServer;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSaveGuestRoom;
@@ -113,12 +114,6 @@ public class VMKServerThread extends Thread
     		
     		// let the thread know that the client has re-connected
     		waitingForReconnect = false;
-    		
-    		// sleep to prevent hitting the client as the client is sending a message to the server
-    		Thread.sleep(1000);
-    		
-    		// send the cached messages back to the client
-    		sendCachedMessages();
     		
     		// start collecting input again
     		collectInput();
@@ -478,9 +473,21 @@ public class VMKServerThread extends Thread
 							// update the player's inventory file
 							FileOperations.appendInventory(email, addInvMsg.getItem());
 						}
+						else if(outputMessage instanceof MessageReconnectToServer)
+						{
+							// reconnect to server message received from client
+							MessageReconnectToServer reconnectMsg = (MessageReconnectToServer)outputMessage;
+							
+							// update the character in the HashMap so we don't lose information
+							roomID = reconnectMsg.getRoomID();
+							VMKServerPlayerData.addCharacter(reconnectMsg.getCharacter().getUsername(), reconnectMsg.getCharacter(), reconnectMsg.getRoomID());
+							
+				    		// send the cached messages back to the client since he's re-connected now
+				    		sendCachedMessages();
+						}
 						else if(outputMessage instanceof MessageGameAddUserToRoom)
 						{
-							System.out.println("Game add user to room message received from client");
+							//System.out.println("Game add user to room message received from client");
 							
 							// add user to GAME ROOM message received from client
 							MessageGameAddUserToRoom addUserGameMsg = (MessageGameAddUserToRoom)outputMessage;

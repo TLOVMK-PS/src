@@ -38,6 +38,7 @@ import sockets.messages.MessageGetOfflineMailMessages;
 import sockets.messages.MessageLogin;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageMoveCharacter;
+import sockets.messages.MessageReconnectToServer;
 import sockets.messages.MessageRemoveFriend;
 import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSendMailToUser;
@@ -482,9 +483,9 @@ public class VMKClientThread extends Thread
 			in = new ObjectInputStream(socket.getInputStream());
     		System.out.println("Created socket input stream");
     		
-    		// send an update character message to the server to bring the character back up
+    		// send a reconnect message to the server to make sure character data isn't lost
     		// we write the output directly since the sendMessageToServer() method is paused
-    		writeOutputToServer(new MessageUpdateCharacterInRoom(uiObject.getMyCharacter(), roomID));
+    		writeOutputToServer(new MessageReconnectToServer(uiObject.getMyCharacter(), roomID));
     		
     		// send out the cached messages
     		sendCachedMessages();
