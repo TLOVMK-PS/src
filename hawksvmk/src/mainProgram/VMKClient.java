@@ -1,6 +1,7 @@
 // VMKClient.java by Matt Fritz
 // November 20, 2009
-// Test class that handles message passing to the server and interprets responses
+// Class that handles message passing to the server and interprets responses
+// Originally made only for socket-testing purposes, but functioned so well that it was put into further production
 
 package mainProgram;
 
