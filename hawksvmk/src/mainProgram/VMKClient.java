@@ -69,21 +69,19 @@ public class VMKClient
         
         try
         {
-        	// get the server IP address from the web service to ensure it's always the most current version
-        	Scanner scan = new Scanner(new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=getGameServerIP").openStream());
-        	hostname = scan.nextLine();
-        	scan.close();
-        	
-        	/*if(StaticAppletData.getCodeBase().startsWith("http")) // release environment
+        	try
         	{
-        		hostname = StaticAppletData.getCodeBaseURL().toString();
+        		// get the server IP address from the web service to ensure it's always the most current version
+        		Scanner scan = new Scanner(new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=getGameServerIP").openStream());
+        		hostname = scan.nextLine();
+        		scan.close();
         	}
-        	else
+        	catch(UnknownHostException uhe)
         	{
-        		// production environment
+        		// default to the offline production server mode
         		InetAddress address = InetAddress.getLocalHost();
         		hostname = address.getHostAddress();
-        	}*/
+        	}
         	
         	System.out.println("Connecting to VMK server at " + hostname + " on port " + port + "...");
         	
