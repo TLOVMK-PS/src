@@ -373,6 +373,9 @@ public class AStarCharacter implements Serializable, ContentRateable
 	{
 		int tileWidth = tileHeight * 2;
 		
+		// check to see if the email exists and assign the default address if it doesn't
+		if(email.equals("")) {email = "default";}
+		
 		avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_n_" + tileWidth + ".png"));
 		avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_nw_" + tileWidth + ".png"));
 		avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_w_" + tileWidth + ".png"));
