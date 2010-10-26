@@ -129,40 +129,25 @@ public class AppletResourceLoader implements Serializable
 	// get an InputStream representing a file from a JAR file
 	public static InputStream getFileFromJar(String path)
 	{
-		// make sure it starts with a forward slash
-		//System.out.println("In getFileFromJar()");
-		
-		if(!path.startsWith("/")) {path = "/" + path;}
-		
-		/*if(tryToLoadFromJar)
+		// first check to see if this is an online resource
+		if(path.startsWith("http:"))
 		{
 			try
-			{	
-				// inside the JAR
-				//System.out.println("Loading file from JAR");
-				return getClass().getResource(path).openStream();
+			{
+				// try to open an online resource
+				return new URL(path).openStream();
 			}
 			catch(Exception e)
 			{
-				//System.out.println("Loading file from local file system");
-				// local file system
-				try
-				{
-					return new URL("file:///" + System.getProperty("user.dir") + path).openStream();
-				}
-				catch(Exception ex)
-				{
-					//System.out.println("Problem loading from local file system");
-					return null;
-				}
+				return null;
 			}
 		}
 		else
-		{*/
-			//System.out.println("Loading file from local file system");
-			// local file system
+		{
 			try
 			{
+				if(!path.startsWith("/")) {path = "/" + path;}
+				
 				if(StaticAppletData.getCodeBase().contains("/bin"))
 				{
 					// Eclipse development environment
@@ -192,7 +177,7 @@ public class AppletResourceLoader implements Serializable
 				ex.printStackTrace();
 				return null;
 			}
-		//}
+		}
 	}
 	
 	// get an InputStream representing a character from a JAR file
@@ -237,12 +222,6 @@ public class AppletResourceLoader implements Serializable
 		{
 			try
 			{
-				// make sure we remove the "File1=" because people might be accidentally copy these too
-				if(path.contains("File1="))
-				{
-					path = path.replaceAll("File1=", "");
-				}
-				
 				// try to get an online sound stream
 				theShittyURL = new URL(path);
 				return new ShittyInputStream(theShittyURL.openStream(), -1);
@@ -250,7 +229,7 @@ public class AppletResourceLoader implements Serializable
 			catch(Exception e)
 			{
 				System.out.println("Could not get online sound resource: " + path);
-				e.printStackTrace();
+				return null;
 			}
 		}
 		else
@@ -291,7 +270,5 @@ public class AppletResourceLoader implements Serializable
 				}
 			}
 		}
-		
-		return null;
 	}
 }

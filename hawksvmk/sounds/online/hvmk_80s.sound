@@ -1,11 +1,10 @@
 // HVMK 80s Mix
 // .977 The 80s Channel
 // Found with ShoutCast
-// Download the Winamp .pls file and find the File1 attribute
 
 TYPE: SINGLE
 
 // Sound information
 
 NAME: hvmk_80s
-PATH: http://scfire-dtc-aa06.stream.aol.com:80/stream/1040
+PATH: http://yp.shoutcast.com/sbin/tunein-station.pls?id=1281066

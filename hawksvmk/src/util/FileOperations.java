@@ -214,7 +214,12 @@ public class FileOperations
 					line = line.replaceAll("SOUND: ", "");
 					
 					// load the sound and it to the ArrayList
-					sounds.add(loadSound(line));
+					SoundPlayable sound = loadSound(line);
+					if(sound != null)
+					{
+						// only add the sound if it returned a valid resource
+						sounds.add(sound);
+					}
 				}
 				else if(line.startsWith("ANIMATION: "))
 				{
@@ -375,27 +380,133 @@ public class FileOperations
 			System.out.println("ERROR IN loadSound(): " + e.getClass().getName() + " - " + e.getMessage());
 		}
 		
-		// check the type of the sound before we create the object
-		if(type.equals("REPEATING"))
+		// check to see if we have received a playlist file first
+		if(path.toLowerCase().contains(".pls"))
 		{
-			// create a repeating sound with dual buffers for an attempt at continuous sound
-			sound = new RepeatingSound(name, length, delay, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
-			
-			// add a dual buffer if the buffer size there should be no delay when the sound repeats
-			if(delay == 0 && !path.startsWith("http:"))
-			{
-				// add the second buffer
-				sound.addDualBuffer(AppletResourceLoader.getSoundFromJar(path, bufferSize));
-			}
+			// parse the available stream from the .pls playlist return it
+			sound = getStreamFromPlaylist(path, "pls");
 		}
-		else if(type.equals("SINGLE"))
+		else if(path.toLowerCase().contains(".m3u"))
 		{
-			// create a single sound
-			sound = new SingleSound(name, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+			// parse the available stream from the .m3u playlist and return it
+			sound = getStreamFromPlaylist(path, "m3u");
+		}
+		else
+		{
+			// check the type of the sound before we create the object
+			if(type.equals("REPEATING"))
+			{
+				// create a repeating sound with dual buffers for an attempt at continuous sound
+				sound = new RepeatingSound(name, length, delay, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+				
+				// add a dual buffer if the buffer size there should be no delay when the sound repeats
+				if(delay == 0 && !path.startsWith("http:"))
+				{
+					// add the second buffer
+					sound.addDualBuffer(AppletResourceLoader.getSoundFromJar(path, bufferSize));
+				}
+			}
+			else if(type.equals("SINGLE"))
+			{
+				// create a single sound
+				sound = new SingleSound(name, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+			}
 		}
 		
 		// return the sound
 		return sound;
+	}
+	
+	// parse an online playlist .pls file to find the next available stream
+	public static synchronized SoundPlayable getStreamFromPlaylist(String path, String type)
+	{
+		Scanner fileReader;
+		InputStream inputStream = null;
+		String line = "";
+		
+		ArrayList<String> streams = new ArrayList<String>();
+		
+		SoundPlayable sound = null;
+		
+		try
+		{
+			inputStream = AppletResourceLoader.getFileFromJar(path);
+			fileReader = new Scanner(inputStream);
+			
+			while(fileReader.hasNextLine())
+			{
+				line = fileReader.nextLine();
+				
+				if(type.equals("pls")) // Winamp playlist file
+				{
+					// check to see if this line contains a stream
+					if(line.startsWith("File") && line.contains("="))
+					{
+						// get the URL of the stream and add it to the list of streams
+						int startOfStream = line.indexOf("=") + 1;
+						line = line.substring(startOfStream);
+						streams.add(line);
+					}
+				}
+				else if(type.equals("m3u")) // m3u playlist file
+				{
+					// check to see if this line contains a reference to a multimedia file
+					if(line.startsWith("http:"))
+					{
+						// check to see if this line redirects to another playlist file
+						if(line.contains(".m3u"))
+						{
+							// follow the redirection to the m3u playlist
+							fileReader.close();
+							inputStream.close();
+							return getStreamFromPlaylist(line, "m3u");
+						}
+						else if(line.contains(".pls"))
+						{
+							// follow the redirection to the pls playlist
+							fileReader.close();
+							inputStream.close();
+							return getStreamFromPlaylist(line, "pls");
+						}
+						else
+						{
+							// add the line to the stream
+							streams.add(line);
+						}
+					}
+				}
+			}
+			
+			// close the scanner
+			fileReader.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		// iterate through the streams
+		for(int i = 0; i < streams.size(); i++)
+		{
+			// get the next stream
+			String stream = streams.get(i);
+			
+			// try to connect to the stream
+			sound = new SingleSound(stream, stream, AppletResourceLoader.getSoundFromJar(stream, -1));
+			
+			// check to make sure we successfully connected to the stream
+			if(sound != null)
+			{
+				// let the user know we're playing the sound
+				System.out.println("Playing online stream: " + stream);
+				
+				// return the sound stream
+				return sound;
+			}
+		}
+		
+		// return the sound stream
+		return null;
 	}
 	
 	// load a Guest Room from a file
