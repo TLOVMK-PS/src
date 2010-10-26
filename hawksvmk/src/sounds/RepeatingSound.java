@@ -14,10 +14,8 @@ public class RepeatingSound extends Thread implements SoundPlayable
 	private String path = "";
 	
 	private Player player;
-	private Player player2;
 	private ShittyInputStream soundStream; // sound player stream
 	
-	private boolean firstStream = true;
 	private boolean playing = false;
 	
 	public RepeatingSound() {}
@@ -56,6 +54,7 @@ public class RepeatingSound extends Thread implements SoundPlayable
 		{
 			// get the first ShittyInputStream and start playing
 			player = new Player(soundStream);
+			player.play();
 			
 			// set the playing status
 			playing = true;
@@ -112,7 +111,6 @@ public class RepeatingSound extends Thread implements SoundPlayable
 
 		// close the player and set the "playing" attribute to false
 		player.close();
-		player2.close();
 		playing = false;
 	}
 	
