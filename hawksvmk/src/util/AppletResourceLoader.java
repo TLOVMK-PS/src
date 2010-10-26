@@ -233,40 +233,65 @@ public class AppletResourceLoader implements Serializable
 	{
 		URL theShittyURL = null;
 		
-		if(!path.startsWith("/")) {path = "/" + path;}
-		
-		try
+		if(path.startsWith("http:"))
 		{
-			if(StaticAppletData.getCodeBase().contains("/bin"))
-			{
-				// Eclipse development environment (local machine)
-				theShittyURL = new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1));
-
-				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
-			}
-			else
-			{
-				// release environment (local machine)
-				theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
-
-				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
-			}
-		}
-		catch(Exception e)
-		{
-			// release environment (web server)
 			try
 			{
-				theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
-
-				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+				// make sure we remove the "File1=" because people might be accidentally copy these too
+				if(path.contains("File1="))
+				{
+					path = path.replaceAll("File1=", "");
+				}
+				
+				// try to get an online sound stream
+				theShittyURL = new URL(path);
+				return new ShittyInputStream(theShittyURL.openStream(), -1);
 			}
-			catch(Exception ex)
+			catch(Exception e)
 			{
-				System.out.println("Problem loading ShittyInputStream from local file system");
-				ex.printStackTrace();
-				return null;
+				System.out.println("Could not get online sound resource: " + path);
+				e.printStackTrace();
 			}
 		}
+		else
+		{
+			if(!path.startsWith("/")) {path = "/" + path;}
+			
+			try
+			{
+				if(StaticAppletData.getCodeBase().contains("/bin"))
+				{
+					// Eclipse development environment (local machine)
+					theShittyURL = new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1));
+	
+					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+				}
+				else
+				{
+					// release environment (local machine)
+					theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
+	
+					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+				}
+			}
+			catch(Exception e)
+			{
+				// release environment (web server)
+				try
+				{
+					theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
+	
+					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+				}
+				catch(Exception ex)
+				{
+					System.out.println("Problem loading ShittyInputStream from local file system");
+					ex.printStackTrace();
+					return null;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

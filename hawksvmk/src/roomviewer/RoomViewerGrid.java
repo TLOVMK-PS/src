@@ -52,6 +52,7 @@ import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
 import sounds.RepeatingSound;
+import sounds.SingleSound;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowAvatarInformation;

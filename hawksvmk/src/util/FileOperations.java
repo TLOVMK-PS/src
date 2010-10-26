@@ -375,14 +375,14 @@ public class FileOperations
 			System.out.println("ERROR IN loadSound(): " + e.getClass().getName() + " - " + e.getMessage());
 		}
 		
-		// check the type of the sound before we cerate the object
+		// check the type of the sound before we create the object
 		if(type.equals("REPEATING"))
 		{
 			// create a repeating sound with dual buffers for an attempt at continuous sound
 			sound = new RepeatingSound(name, length, delay, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
 			
 			// add a dual buffer if the buffer size there should be no delay when the sound repeats
-			if(delay == 0)
+			if(delay == 0 && !path.startsWith("http:"))
 			{
 				// add the second buffer
 				sound.addDualBuffer(AppletResourceLoader.getSoundFromJar(path, bufferSize));
