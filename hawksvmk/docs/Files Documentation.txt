@@ -1,0 +1,93 @@
+=============================
+HVMK DATA FILES DOCUMENTATION
+=============================
+
+----------
+ROOM FILES
+----------
+
+EXTENSION: .room
+
+* ROOM INFORMATION *
+
+- ID (unique room ID used by the mapping files)
+- NAME (room name displayed in the Information window)
+- OWNER (owner of the room, either HVMK for public rooms or the character name)
+- DESCRIPTION (room description displayed in the Information window)
+- COST (cost of the room in credits)
+- TIMESTAMP (UNIX timestamp when the room was created)
+
+* ROOM CONFIGURATION *
+
+- IMAGE (image used as the background for the room)
+    - OPTIONAL? NO
+    - ALLOWED: 1
+    - EXTENSION: JPG, PNG
+    - FORMAT: Filename relative to the HVMK main directory
+- TILES (tile size for the grid, either 64x32, 48x24, or 32x16)
+    - OPTIONAL? NO
+    - ALLOWED: 1
+- ANIMATION (animation to display in the room)
+    - OPTIONAL? YES
+    - ALLOWED: 0 to n
+    - FORMAT: Animation file relative to the HVMK main directory
+- SOUND (sound to play in the room)
+    - OPTIONAL? YES
+    - ALLOWED: 0 to n
+    - FORMAT: Sound file relative to the HVMK main directory
+
+* TILES *
+
+- FORMAT: @[row],[column],[type],[exit]@
+- ROW (row where the tile is to be placed)
+- COLUMN (column where the tile is to be placed)
+- TYPE (type of the tile, either EXIT, NOGO, or WALK)
+- EXIT (room ID that this exit will take the player into)
+
+-----------
+ROOM SOUNDS
+-----------
+
+EXTENSION: .sound
+
+- TYPE (type of the sound, either SINGLE or REPEATING)
+
+* SOUND INFORMATION *
+
+- NAME (name of the sound for identification purposes)
+- PATH (path to the sound file relative to the HVMK main directory)
+     - EXTENSION: MP3, WAV
+
+* SOUND CONFIGURATION *
+
+- BUFFER SIZE (size of the sound file in bytes)
+     - OPTIONAL? YES
+- LENGTH (length of the sound in milliseconds)
+     - OPTIONAL? YES
+- DELAY (delay between playing the sound in milliseconds for repeating sounds)
+     - OPTIONAL? YES
+
+---------------
+ROOM ANIMATIONS
+---------------
+
+EXTENSION: .anim
+
+- TYPE (type of the animation, either stationary or moving)
+- ANIMATION NAME (name of the animation for identification purposes)
+- TOTAL FRAMES (total number of frames that comprise one full cycle of the animation)
+- X-COORD (the X-coordinate on the screen where the animation should run)
+- Y-COORD (the Y-coordinate on the screen where the animation should run)
+
+* ANIMATION FRAMES *
+
+- FORMAT: @[frame path],[x],[y],[delay]@
+- ALLOWED: 1 to TOTAL FRAMES
+- FRAME PATH (path to the image for this frame relative to the HVMK main directory)
+     - OPTIONAL? NO
+- X (the X-coordinate on the screen where this frame should be drawn for moving anims)
+     - OPTIONAL? YES
+- Y (the Y-coordinate on the screen where this frame should be drawn for moving anims)
+     - OPTIONAL? YES
+- DELAy (the delay in milliseconds before displaying the next frame)
+     - OPTIONAL? NO

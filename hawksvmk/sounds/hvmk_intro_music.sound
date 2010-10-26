@@ -1,0 +1,14 @@
+// HVMK Intro Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: hvmk_intro_music
+PATH: sound/ui/vmk_intro.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 42700
+LENGTH: 21000
+DELAY: 0

@@ -210,37 +210,11 @@ public class FileOperations
 				}
 				else if(line.startsWith("SOUND: "))
 				{
+					// get the sound from the file
 					line = line.replaceAll("SOUND: ", "");
 					
-					soundScanner = new Scanner(line);
-					
-					String soundFilename = soundScanner.next();
-					String soundName = soundScanner.next();
-					int bufferSize = Integer.parseInt(soundScanner.next());
-					
-					// add the single sound to the ArrayList
-					sounds.add(new SingleSound(soundName, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename, bufferSize)));
-					
-					soundScanner.close();
-				}
-				else if(line.startsWith("REPEATING SOUND: "))
-				{
-					line = line.replaceAll("REPEATING SOUND: ", "");
-					
-					// remove the commas and turn them into spaces
-					line = line.replaceAll(",", " ");
-					
-					soundScanner = new Scanner(line);
-					
-					String soundFilename = soundScanner.next();
-					String soundName = soundScanner.next();
-					int bufferSize = Integer.parseInt(soundScanner.next());
-					int soundDelay = Integer.parseInt(soundScanner.next());
-					
-					// add the repeating sound to the ArrayList
-					sounds.add(new RepeatingSound(soundName, soundDelay, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename, bufferSize)));
-					
-					soundScanner.close();
+					// load the sound and it to the ArrayList
+					sounds.add(loadSound(line));
 				}
 				else if(line.startsWith("ANIMATION: "))
 				{
@@ -250,6 +224,7 @@ public class FileOperations
 					if(!line.equals("none"))
 					{
 						System.out.println("Loading animation: " + line + "...");
+						
 						// load an animation and add it to the ArrayList
 						animations.add(loadAnimation(line));
 					}
@@ -325,6 +300,102 @@ public class FileOperations
 			System.out.println("ERROR IN loadFile(): " + e.getClass().getName() + " - " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	// load and return a sound from a file
+	public static SoundPlayable loadSound(String filename)
+	{
+		Scanner fileReader;
+		
+		String type = "";
+		String name = "";
+		String path = "";
+		int bufferSize = -1;
+		int length = -1;
+		int delay = 0;
+		
+		SoundPlayable sound = null;
+
+		try
+		{
+			fileReader = new Scanner(AppletResourceLoader.getFileFromJar(filename));
+			
+			while(fileReader.hasNextLine())
+			{
+				String line = fileReader.nextLine();
+				
+				if(line.startsWith("TYPE: "))
+				{
+					// get the sound type
+					line = line.replaceAll("TYPE: ", "");
+					type = line;
+				}
+				else if(line.startsWith("NAME: "))
+				{
+					// get the sound name
+					line = line.replaceAll("NAME: ", "");
+					name = line;
+				}
+				else if(line.startsWith("PATH: "))
+				{
+					// get the sound path
+					line = line.replaceAll("PATH: ", "");
+					path = line;
+				}
+				else if(line.startsWith("BUFFER SIZE: "))
+				{
+					// get the sound buffer size
+					line = line.replaceAll("BUFFER SIZE: ", "");
+					bufferSize = Integer.parseInt(line);
+				}
+				else if(line.startsWith("LENGTH: "))
+				{
+					// get the sound length
+					line = line.replaceAll("LENGTH: ", "");
+					length = Integer.parseInt(line);
+				}
+				else if(line.startsWith("DELAY: "))
+				{
+					// get the sound delay
+					line = line.replaceAll("DELAY: ", "");
+					delay = Integer.parseInt(line);
+				}
+				else if(line.startsWith(commentDelimeter) || line.equals(""))
+				{
+					// do nothing since it's either a comment or a blank line
+				}
+			}
+			
+			fileReader.close();
+			
+			System.out.println("Sound \"" + name + "\" loaded from file");
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadSound(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+		
+		// check the type of the sound before we cerate the object
+		if(type.equals("REPEATING"))
+		{
+			// create a repeating sound with dual buffers for an attempt at continuous sound
+			sound = new RepeatingSound(name, length, delay, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+			
+			// add a dual buffer if the buffer size there should be no delay when the sound repeats
+			if(delay == 0)
+			{
+				// add the second buffer
+				sound.addDualBuffer(AppletResourceLoader.getSoundFromJar(path, bufferSize));
+			}
+		}
+		else if(type.equals("SINGLE"))
+		{
+			// create a single sound
+			sound = new SingleSound(name, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+		}
+		
+		// return the sound
+		return sound;
 	}
 	
 	// load a Guest Room from a file

@@ -1075,7 +1075,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void playIntroMusic()
 	{
 		// play the intro music for the Map screen
-		hvmkIntroMusic = new RepeatingSound("HVMK Intro Music", 0, "sound/ui/vmk_intro.mp3", AppletResourceLoader.getSoundFromJar("sound/ui/vmk_intro.mp3", 42700));
+		hvmkIntroMusic = (RepeatingSound)FileOperations.loadSound("sounds/hvmk_intro_music.sound");
 		sounds.add(hvmkIntroMusic);
 		sounds.get(0).playSound();
 	}

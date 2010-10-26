@@ -1,0 +1,14 @@
+// Boot Hill Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: boot_hill_music
+PATH: sound/guest/boot_hill_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 360448
+LENGTH: 22000
+DELAY: 60000

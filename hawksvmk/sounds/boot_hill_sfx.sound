@@ -1,0 +1,14 @@
+// Boot Hill SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: boot_hill_sfx
+PATH: sound/guest/boot_hill_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 3061842
+LENGTH: 191000
+DELAY: 0

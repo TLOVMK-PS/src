@@ -10,23 +10,33 @@ import javazoom.jl.player.Player;
 
 public class RepeatingSound extends Thread implements SoundPlayable
 {
+	private int length = 0; // length of the sound in milliseconds
 	private int delay = 0; // delay in milliseconds from when the sound starts up again
 	private String path = "";
 	
-	private Player player;
-	private ShittyInputStream soundStream; // sound player stream
+	private PlayerThread playerThread;
+	
+	private Player player = null;
+	private Player player2 = null;
+	
+	private ShittyInputStream soundStream = null; // sound player stream
+	private ShittyInputStream secondSoundStream = null; // second player sound stream
 	
 	private boolean playing = false;
+	private boolean useSecondBuffer = false; // TRUE to activate the second sound stream
+	
+	private final int BUFFER_SWITCH_THRESHOLD = 500; // the threshold in milliseconds when the buffer should be switched
 	
 	public RepeatingSound() {}
 	
-	public RepeatingSound(String name, int delay, String path, ShittyInputStream soundStream)
+	public RepeatingSound(String name, int length, int delay, String path, ShittyInputStream soundStream)
 	{
 		this();
 		
 		// set the name of the thread
 		setName(name);
 		
+		this.length = length;
 		this.delay = delay;
 		this.path = path;
 		
@@ -50,35 +60,86 @@ public class RepeatingSound extends Thread implements SoundPlayable
 	
 	public void run()
 	{
+		int position = 0; // holds the position of one of the players
+		
 		try
-		{
-			// get the first ShittyInputStream and start playing
-			player = new Player(soundStream);
-			player.play();
+		{	
+			// check to see which player we need to create
+			if(!useSecondBuffer)
+			{
+				player = new Player(soundStream);
+			}
+			else
+			{
+				player2 = new Player(secondSoundStream);
+			}
+			
+			// start the playing thread
+			playerThread = new PlayerThread();
+			playerThread.start();
 			
 			// set the playing status
 			playing = true;
 			
 			while(playing)
 			{
-				// get the current position of the player
-				//int position = player.getPosition();
-				
-				// check to see if the sound has finished playing
+				// check to see if either of the players have completed playback, and close it if so
 				if(player.isComplete())
 				{
-					playing = false;
+					player.close();
 				}
-				else
+				if(player2 != null && player2.isComplete())
 				{
-					// still playing, so sleep for a second
-					try
+					player2.close();
+				}
+				
+				// check to see which buffer we need to use
+				if(!useSecondBuffer) // use the first buffer
+				{
+					// get the current position of the player
+					position = player.getPosition();
+					
+					// check to see if we have hit the buffer switch threshold
+					if((Math.abs(length - position) <= BUFFER_SWITCH_THRESHOLD) && secondSoundStream != null)
 					{
-						Thread.sleep( 750 );
+						// restart playback to switch the buffers
+						restart();
 					}
-					catch( Exception ee )
+					else
 					{
-						// obviously, the sound will get interrupted during sleep eventually
+						// still playing, so sleep for a little bit
+						try
+						{
+							Thread.sleep( 750 );
+						}
+						catch( Exception ee )
+						{
+							// obviously, the sound will get interrupted during sleep eventually
+						}
+					}
+				}
+				else // use the second buffer
+				{
+					// get the current position of the player
+					position = player2.getPosition();
+					
+					// check to see if we have hit the buffer switch threshold for the second buffer
+					if(Math.abs(length - position) <= BUFFER_SWITCH_THRESHOLD)
+					{
+						// restart playback to switch the buffers back to the first
+						restart();
+					}
+					else
+					{
+						// still playing, so sleep for a little bit
+						try
+						{
+							Thread.sleep( 750 );
+						}
+						catch( Exception ee )
+						{
+							// obviously, the sound will get interrupted during sleep eventually
+						}
 					}
 				}
 			}
@@ -103,6 +164,13 @@ public class RepeatingSound extends Thread implements SoundPlayable
 		// close the ShittyInputStream manually
 		soundStream.closeManually();
 		
+		// check to see if the second stream was active
+		if(secondSoundStream != null)
+		{
+			// close the second ShittyInputStream manually
+			secondSoundStream.closeManually();
+		}
+		
 		// interrupt the thread
 		if(!isInterrupted())
 		{
@@ -111,6 +179,15 @@ public class RepeatingSound extends Thread implements SoundPlayable
 
 		// close the player and set the "playing" attribute to false
 		player.close();
+		
+		// check to see if the second player was active
+		if(player2 != null)
+		{
+			// close the second player
+			player2.close();
+		}
+		
+		// no longer playing the sounds
 		playing = false;
 	}
 	
@@ -133,6 +210,13 @@ public class RepeatingSound extends Thread implements SoundPlayable
 				}
 			}
 			
+			// check to see if the buffers should be flipped
+			if(secondSoundStream != null)
+			{
+				// we actually have a second sound stream, so flip the buffer
+				useSecondBuffer = !useSecondBuffer;
+			}
+			
 			// start playing the sound again
 			playing = true;
 			run();
@@ -145,5 +229,33 @@ public class RepeatingSound extends Thread implements SoundPlayable
 
 	public void setDelay(int delay) {
 		this.delay = delay;
+	}
+	
+	// add a second ShittyInputStream so we can make an attempt at continuous sound
+	public void addDualBuffer(ShittyInputStream secondSoundStream)
+	{
+		this.secondSoundStream = secondSoundStream;
+	}
+	
+	class PlayerThread extends Thread
+	{
+		public void run()
+		{
+			try
+			{
+				// check which buffer to use
+				if(!useSecondBuffer)
+				{
+					// use the first buffer to play the sound		
+					player.play();
+				}
+				else
+				{
+					// use the second buffer to play the sound
+					player2.play();
+				}
+			}
+			catch(Exception e) {}
+		}
 	}
 }

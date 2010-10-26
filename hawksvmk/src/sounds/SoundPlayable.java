@@ -4,8 +4,6 @@
 
 package sounds;
 
-import java.applet.AudioClip;
-
 public interface SoundPlayable
 {
 	public String getName();
@@ -19,4 +17,6 @@ public interface SoundPlayable
 	public void stopSound();
 	
 	public void interrupt();
+	
+	public void addDualBuffer(ShittyInputStream secondSoundStream);
 }

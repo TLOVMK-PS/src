@@ -13,6 +13,7 @@ public class SingleSound extends Thread implements SoundPlayable
 	private Player player;
 	private ShittyInputStream soundStream; // sound player
 	
+	private PlayerThread playerThread = new PlayerThread();
 	private boolean playing = false;
 	
 	public SingleSound() {}
@@ -50,7 +51,8 @@ public class SingleSound extends Thread implements SoundPlayable
 		{
 			// get the first ShittyInputStream and start playing
 			player = new Player(soundStream);
-			player.play();
+			playerThread = new PlayerThread();
+			playerThread.start();
 			
 			// set the playing status
 			playing = true;
@@ -109,4 +111,20 @@ public class SingleSound extends Thread implements SoundPlayable
 		player.close();
 		playing = false;
 	}
+	
+	class PlayerThread extends Thread
+	{
+		public void run()
+		{
+			try
+			{
+				// play the sound buffer
+				player.play();
+			}
+			catch(Exception e) {}
+		}
+	}
+	
+	// we don't need the second buffer since this is a sound that will only be played once
+	public void addDualBuffer(ShittyInputStream secondSoundStream) {}
 }
