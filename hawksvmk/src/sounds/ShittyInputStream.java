@@ -17,7 +17,12 @@ public class ShittyInputStream extends InputStream
 	{
 		this.boundStream = bound; // assign the bound stream
 		this.length = length; // assign the buffer length
-		this.boundStream.mark(length); // mark the location of the stream at the beginning and set the invalidation size to be the size of the file
+		
+		// make sure we actually have a stream marker
+		if(length > 0)
+		{
+			this.boundStream.mark(length); // mark the location of the stream at the beginning and set the invalidation size to be the size of the file
+		}
 	}
 
 	// read from the bound stream
@@ -32,14 +37,18 @@ public class ShittyInputStream extends InputStream
 	@Override
 	public void close()
 	{
-		try
+		// only try to prevent closing if there was a specified byte marker
+		if(length > 0)
 		{
-			// attempt to reset the bound stream to the beginning so playback can occur again
-			boundStream.reset(); // will throw an exception here when closeManually() is used if the player is running, but who the hell cares?
-		}
-		catch(Exception e)
-		{
-			// No?  Well, something's fucked, but that's about par for the course.
+			try
+			{
+				// attempt to reset the bound stream to the beginning so playback can occur again
+				boundStream.reset(); // will throw an exception here when closeManually() is used if the player is running, but who the hell cares?
+			}
+			catch(Exception e)
+			{
+				// No?  Well, something's fucked, but that's about par for the course.
+			}
 		}
 	}
 
