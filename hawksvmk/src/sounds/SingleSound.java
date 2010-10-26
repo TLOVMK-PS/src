@@ -4,25 +4,30 @@
 
 package sounds;
 
-import java.applet.AudioClip;
+import javazoom.jl.player.Player;
 
-public class SingleSound implements SoundPlayable
+public class SingleSound extends Thread implements SoundPlayable
 {
-	private String name; // name of the sound
-	private AudioClip sound; // sound player
-	private String path = "";
+	private String path = ""; // path to the sound file
+	
+	private Player player;
+	private ShittyInputStream soundStream; // sound player
+	
+	private boolean playing = false;
 	
 	public SingleSound() {}
 	
-	public SingleSound(String name, String path, AudioClip soundFile)
+	public SingleSound(String name, String path, ShittyInputStream soundStream)
 	{
 		this();
-		
-		this.name = name;
+
+		// set the name of the thread
+		setName(name);
+
 		this.path = path;
 		
 		// create the sound
-		createSound(soundFile);
+		createSound(soundStream);
 	}
 	
 	public void setPath(String path) {
@@ -34,30 +39,74 @@ public class SingleSound implements SoundPlayable
 	}
 	
 	// create the sound
-	public void createSound(AudioClip clip)
+	public void createSound(ShittyInputStream soundStream)
 	{
-		this.sound = clip;
+		this.soundStream = soundStream;
+	}
+	
+	public void run()
+	{
+		try
+		{
+			// get the first ShittyInputStream and start playing
+			player = new Player(soundStream);
+			player.play();
+			
+			// set the playing status
+			playing = true;
+			
+			while(playing)
+			{
+				// get the current position
+				//int position = player.getPosition();
+				
+				// check to see if the sound has finished playing
+				if(player.isComplete())
+				{
+					playing = false;
+				}
+				else
+				{
+					// still playing, so sleep for a second
+					try
+					{
+						Thread.sleep( 1000 );
+					}
+					catch( Exception ee )
+					{
+						// obviously, the sound might be interrupted
+					}
+				}
+			}
+			
+			// stop the sound since it shouldn't replay
+			stopSound();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	// play the sound
 	public void playSound()
 	{
-		sound.play();
-		
-		System.out.println("Sound played");
+		start();
 	}
 	
-	// stop the thread and the sound
-	public void stop()
+	public void stopSound()
 	{
-		sound.stop();
-	}
+		// close the ShittyInputStream manually
+		soundStream.closeManually();
+		
+		// interrupt the thread
+		if(!isInterrupted())
+		{
+			this.interrupt();
+		}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		// close the player and set the "playing" attribute to false
+		player.close();
+		playing = false;
 	}
 }

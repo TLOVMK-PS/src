@@ -7,29 +7,29 @@ package sounds;
 
 import javazoom.jl.player.*;
 import java.io.*;
+import java.util.ArrayList;
 
 import util.AppletResourceLoader;
 
 public class MP3SoundTester
 {
 	private Player player;
-	private InputStream is;
+	private ShittyInputStream is; // shitty input stream
 	
 	private boolean playing = false;
 	private PlayerThread pt = null;
-	private String filename = "";
 	private boolean replay = false;
 
-	/** Creates a new instance of MP3Player */
-	public MP3SoundTester( String filename, boolean replay ) 
+	// create a new instance of MP3SoundTester with the specified filename, buffer size, and looping values
+	public MP3SoundTester( String filename, int bufferSize, boolean replay ) 
 	{
 		try
 		{
-			// set the filename
-			this.filename = filename;
-			
 			// set the replay boolean
 			this.replay = replay;
+			
+			// Create a ShittyInputStream for the file with the appropriate shitty buffer size
+			is = AppletResourceLoader.getSoundFromJar(filename, bufferSize);
 		}
 		catch( Exception e )
 		{
@@ -41,10 +41,8 @@ public class MP3SoundTester
 	{
 		try
 		{
-			// Create an InputStream to the file
-			is = AppletResourceLoader.getFileFromJar(filename);
-			
-			player = new Player( is );
+			// get the first ShittyInputStream and start playing
+			player = new Player(is);
 			pt = new PlayerThread();
 			pt.start();
 			
@@ -61,33 +59,32 @@ public class MP3SoundTester
 				{
 					playing = false;
 				}
-				
-				try
+				else
 				{
-					Thread.sleep( 1000 );
-				}
-				catch( Exception ee )
-				{
-					ee.printStackTrace();
+					// still playing, so sleep for a second
+					try
+					{
+						Thread.sleep( 1000 );
+					}
+					catch( Exception ee )
+					{
+						ee.printStackTrace();
+					}
 				}
 			}
 
 			System.out.println("Playing completed");
-			
-			/*try
-			{
-				Thread.sleep(1000);
-			}
-			catch(Exception ee)
-			{
-				ee.printStackTrace();
-			}*/
 			
 			// replay?
 			if(replay)
 			{
 				System.out.println("Replay!");
 				play();
+			}
+			else
+			{
+				// stop
+				stop();
 			}
 		}
 		catch( Exception e )
@@ -101,6 +98,9 @@ public class MP3SoundTester
 		playing = false;
 		pt.interrupt();
 		player.close();
+		
+		// close the stream manually
+		is.closeManually();
 	}
 
 	class PlayerThread extends Thread
@@ -133,6 +133,9 @@ public class MP3SoundTester
 			BufferedReader input = new BufferedReader(reader);
 			filename = input.readLine();
 			
+			System.out.print("Buffer size (size of file in bytes): ");
+			int bufferSize = Integer.parseInt(input.readLine());
+			
 			System.out.print("Loop (y/n): ");
 			String loop = input.readLine();
 			boolean replay = false;
@@ -146,7 +149,7 @@ public class MP3SoundTester
 				replay = false;
 			}
 		  
-			MP3SoundTester mp3Player = new MP3SoundTester(filename, replay);
+			MP3SoundTester mp3Player = new MP3SoundTester(filename, bufferSize, replay);
 			mp3Player.play();
 		}
 		catch(Exception e)

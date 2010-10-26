@@ -6,30 +6,32 @@
 
 package sounds;
 
-import java.applet.AudioClip;
+import javazoom.jl.player.Player;
 
-public class RepeatingSound implements Runnable, SoundPlayable
+public class RepeatingSound extends Thread implements SoundPlayable
 {
-	private String name = ""; // name of the sound
 	private int delay = 0; // delay in milliseconds from when the sound starts up again
 	private String path = "";
 	
-	private AudioClip sound; // sound player
+	private Player player;
+	private ShittyInputStream soundStream; // sound player
 	
-	private Thread soundThread; // thread for this sound
+	private boolean playing = false;
 	
 	public RepeatingSound() {}
 	
-	public RepeatingSound(String name, int delay, String path, AudioClip soundFile)
+	public RepeatingSound(String name, int delay, String path, ShittyInputStream soundStream)
 	{
 		this();
 		
-		this.name = name;
+		// set the name of the thread
+		setName(name);
+		
 		this.delay = delay;
 		this.path = path;
 		
 		// create the sound
-		createSound(soundFile);
+		createSound(soundStream);
 	}
 	
 	public void setPath(String path) {
@@ -41,59 +43,100 @@ public class RepeatingSound implements Runnable, SoundPlayable
 	}
 	
 	// create the sound
-	public void createSound(AudioClip clip)
+	public void createSound(ShittyInputStream soundStream)
 	{
-		this.sound = clip;
+		this.soundStream = soundStream;
 	}
 	
 	public void run()
 	{
-		while(soundThread != null)
+		try
 		{
-			if(delay > 0) // check if there's a delay
+			// get the first ShittyInputStream and start playing
+			player = new Player(soundStream);
+			player.play();
+			
+			// set the playing status
+			playing = true;
+			
+			while(playing)
 			{
-				try
+				// get the current position of the player
+				// int position = player.getPosition();
+				
+				// check to see if the sound has finished playing
+				if(player.isComplete())
 				{
-					// stop the sound
-					sound.stop();
-					
-					Thread.sleep(delay); // sleep for the delay
-					
-					// restart the sound
-					playSound();
+					playing = false;
 				}
-				catch(Exception e) {}
+				else
+				{
+					// still playing, so sleep for a second
+					try
+					{
+						Thread.sleep( 1000 );
+					}
+					catch( Exception ee )
+					{
+						// obviously, the sound will get interrupted during sleep eventually
+					}
+				}
 			}
+			
+			// loop the sound since it's supposed to repeat
+			restart();
+		}
+		catch( Exception e )
+		{
+			// the stream is going to close, and that will throw an exception here during playback
 		}
 	}
 	
 	// play the sound
 	public void playSound()
 	{
-		if(delay > 0)
-		{
-			if(soundThread == null)
-			{
-				soundThread = new Thread(this);
-				soundThread.start();
-			}
-			sound.play();
-		}
-		else
-		{
-			sound.loop();
-		}
-
-		System.out.println("Sound played");
+		start();
 	}
 	
-	// stop the thread and the sound
-	public void stop()
+	public void stopSound()
 	{
-		soundThread.interrupt();
-		soundThread = null;
+		// close the ShittyInputStream manually
+		soundStream.closeManually();
 		
-		sound.stop();
+		// interrupt the thread
+		if(!isInterrupted())
+		{
+			this.interrupt();
+		}
+
+		// close the player and set the "playing" attribute to false
+		player.close();
+		playing = false;
+	}
+	
+	// restart the sound
+	private void restart()
+	{
+		if(!isInterrupted())
+		{
+			// check to make sure there's an actual delay specified
+			if(delay > 0)
+			{
+				// sleep for the delay
+				try
+				{
+					Thread.sleep(delay);
+				}
+				catch(Exception e)
+				{
+					// could get interrupted here too
+				}
+			}
+			
+			// start playing the sound again
+			playing = true;
+			run();
+		}
 	}
 
 	public int getDelay() {
@@ -102,13 +145,5 @@ public class RepeatingSound implements Runnable, SoundPlayable
 
 	public void setDelay(int delay) {
 		this.delay = delay;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }

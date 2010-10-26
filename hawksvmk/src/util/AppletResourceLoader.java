@@ -4,6 +4,7 @@
 
 package util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -14,6 +15,8 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import sounds.ShittyInputStream;
 
 public class AppletResourceLoader implements Serializable
 {
@@ -225,74 +228,45 @@ public class AppletResourceLoader implements Serializable
 		}
 	}
 	
-	// get a URL representing a sound file from a JAR file
-	public static AudioClip getSoundFromJar(String path)
+	// get a ShittyInputStream representing a sound file from a JAR
+	public static ShittyInputStream getSoundFromJar(String path, int bufferSize)
 	{
-		// make sure it starts with a forward slash
-		//System.out.println("In getSoundFromJar()");
+		URL theShittyURL = null;
 		
 		if(!path.startsWith("/")) {path = "/" + path;}
 		
-		/*if(tryToLoadFromJar)
+		try
 		{
-			try
-			{	
-				// inside the JAR
-				String soundPath = getClass().getResource(path).toString(); // THIS MUST BE PRESENT TO ENSURE THE EXCEPTION IS THROWN
-				//System.out.println("Loading sound from JAR: " + soundPath);
-				return getClass().getResource(path);
-			}
-			catch(Exception e)
+			if(StaticAppletData.getCodeBase().contains("/bin"))
 			{
-				// local file system
-				//System.out.println("Loading sound from local file system");
-				
-				try
-				{
-					return new URL("file:///" + System.getProperty("user.dir") + path);
-				}
-				catch(Exception ex)
-				{
-					System.out.println("Problem loading sound from local file system");
-					return null;
-				}
+				// Eclipse development environment (local machine)
+				theShittyURL = new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1));
+
+				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+			}
+			else
+			{
+				// release environment (local machine)
+				theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
+
+				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
 			}
 		}
-		else
-		{*/
-			// local file system
-			//System.out.println("Loading sound from local file system");
-			
+		catch(Exception e)
+		{
+			// release environment (web server)
 			try
 			{
-				if(StaticAppletData.getCodeBase().contains("/bin"))
-				{
-					// Eclipse development environment
-					return Applet.newAudioClip(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)));
-					//return new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1));
-				}
-				else
-				{
-					// release environment
-					try
-					{
-						// release environment (local machine)
-						return Applet.newAudioClip(new URL("file:///" + System.getProperty("user.dir") + path));
-						//return new URL("file:///" + System.getProperty("user.dir") + path);
-					}
-					catch(Exception e)
-					{
-						// release environment (web server)
-						return Applet.newAudioClip(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
-						//return new URL(StaticAppletData.getCodeBase() + path.substring(1));
-					}
-				}
+				theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
+
+				return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
 			}
 			catch(Exception ex)
 			{
-				System.out.println("Problem loading sound from local file system");
+				System.out.println("Problem loading ShittyInputStream from local file system");
+				ex.printStackTrace();
 				return null;
 			}
-		//}
+		}
 	}
 }

@@ -14,7 +14,9 @@ public interface SoundPlayable
 	public void setPath(String path);
 	public String getPath();
 	
-	public void createSound(AudioClip clip);
+	public void createSound(ShittyInputStream soundStream);
 	public void playSound();
-	public void stop();
+	public void stopSound();
+	
+	public void interrupt();
 }

@@ -126,7 +126,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	ArrayList<Animation> animations = new ArrayList<Animation>(); // ArrayList of animations
 	//WindmillAnimation windmillAnimation = new WindmillAnimation(); // test animation
 	
-	boolean startSounds = false; // true to start the sounds
+	boolean startSounds = true; // true to start the sounds
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); // ArrayList of sounds
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
@@ -886,7 +886,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		}
 		for(SoundPlayable s : sounds)
 		{
-			s.stop();
+			s.stopSound();
 		}
 		theChatBubbles.stop();
 		theChatBubbles.clearAll();
@@ -1077,6 +1077,16 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		if(startSounds)
 		{
 			setupSounds();
+		}
+	}
+	
+	// stop the sounds
+	public void stopSounds()
+	{
+		// stop the sounds
+		for(int i = 0; i < sounds.size(); i++)
+		{
+			sounds.get(i).stopSound();
 		}
 	}
 	
@@ -1401,6 +1411,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// change to another room
 	public void changeRoom(String newRoomID)
 	{
+		// stop any sounds currently playing
+		stopSounds();
+		
 		// set the current room item in its current position if it exists
 		if(currentRoomItem != null)
 		{

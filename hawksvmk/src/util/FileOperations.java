@@ -216,9 +216,10 @@ public class FileOperations
 					
 					String soundFilename = soundScanner.next();
 					String soundName = soundScanner.next();
+					int bufferSize = Integer.parseInt(soundScanner.next());
 					
 					// add the single sound to the ArrayList
-					sounds.add(new SingleSound(soundName, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename)));
+					sounds.add(new SingleSound(soundName, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename, bufferSize)));
 					
 					soundScanner.close();
 				}
@@ -233,10 +234,11 @@ public class FileOperations
 					
 					String soundFilename = soundScanner.next();
 					String soundName = soundScanner.next();
+					int bufferSize = Integer.parseInt(soundScanner.next());
 					int soundDelay = Integer.parseInt(soundScanner.next());
 					
 					// add the repeating sound to the ArrayList
-					sounds.add(new RepeatingSound(soundName, soundDelay, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename)));
+					sounds.add(new RepeatingSound(soundName, soundDelay, soundFilename, AppletResourceLoader.getSoundFromJar(soundFilename, bufferSize)));
 					
 					soundScanner.close();
 				}

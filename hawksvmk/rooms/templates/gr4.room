@@ -13,8 +13,8 @@ TIMESTAMP: 1272237681
 IMAGE: img/rooms/gr4/gr4.jpg
 TILES: 64x32
 ANIMATION: anims/gr4/BootHillWindmill.anim
-//REPEATING SOUND: sound/GR_BootHill_Music.wav,GR_BootHill_Music,60000
-//REPEATING SOUND: sound/GR_BootHill_sfx.wav,GR_BootHill_sfx,0
+REPEATING SOUND: sound/guest/boot_hill_music.mp3,boot_hill_music,360448,60000
+REPEATING SOUND: sound/guest/boot_hill_sfx.mp3,boot_hill_sfx,3061842,0
 
 // Tiles
 
