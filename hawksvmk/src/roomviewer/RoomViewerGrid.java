@@ -51,6 +51,7 @@ import sockets.messages.MessageUpdateCharacterClothing;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
+import sounds.RepeatingSound;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import ui.WindowAvatarInformation;
@@ -186,6 +187,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	String roomName = ""; // name of the current room
 	boolean roomLoading = false;
 	boolean suspendMessages = false; // true to prevent the sending of messages
+	
+	RepeatingSound hvmkIntroMusic = null; // the music for the Map screen when it loads for the first time
 	
 	public RoomViewerGrid()
 	{
@@ -1068,6 +1071,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		setupAnimations();
 	}
 	
+	// play the intro music for the Map screen
+	public void playIntroMusic()
+	{
+		// play the intro music for the Map screen
+		hvmkIntroMusic = new RepeatingSound("HVMK Intro Music", 0, "sound/ui/vmk_intro.mp3", AppletResourceLoader.getSoundFromJar("sound/ui/vmk_intro.mp3", 42700));
+		sounds.add(hvmkIntroMusic);
+		sounds.get(0).playSound();
+	}
+	
 	// set the sounds
 	public void setSounds(ArrayList<SoundPlayable> sounds)
 	{
@@ -1130,6 +1142,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// add a character to the current room
 	public void addCharacterToRoom(AStarCharacter character)
 	{
+		// check to see if this is the first time the user has been created, and if so, play the music
+		if(myCharacter.getEmail().equals("") && !uiObject.getEmail().equals(""))
+		{
+			playIntroMusic();
+		}
+		
 		// add the character to the HashMap
 		// make sure it's not the character already referenced for this user
 		if(character != null)

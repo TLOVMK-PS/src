@@ -14,8 +14,10 @@ public class RepeatingSound extends Thread implements SoundPlayable
 	private String path = "";
 	
 	private Player player;
-	private ShittyInputStream soundStream; // sound player
+	private Player player2;
+	private ShittyInputStream soundStream; // sound player stream
 	
+	private boolean firstStream = true;
 	private boolean playing = false;
 	
 	public RepeatingSound() {}
@@ -54,7 +56,6 @@ public class RepeatingSound extends Thread implements SoundPlayable
 		{
 			// get the first ShittyInputStream and start playing
 			player = new Player(soundStream);
-			player.play();
 			
 			// set the playing status
 			playing = true;
@@ -62,7 +63,7 @@ public class RepeatingSound extends Thread implements SoundPlayable
 			while(playing)
 			{
 				// get the current position of the player
-				// int position = player.getPosition();
+				//int position = player.getPosition();
 				
 				// check to see if the sound has finished playing
 				if(player.isComplete())
@@ -74,7 +75,7 @@ public class RepeatingSound extends Thread implements SoundPlayable
 					// still playing, so sleep for a second
 					try
 					{
-						Thread.sleep( 1000 );
+						Thread.sleep( 750 );
 					}
 					catch( Exception ee )
 					{
@@ -111,12 +112,13 @@ public class RepeatingSound extends Thread implements SoundPlayable
 
 		// close the player and set the "playing" attribute to false
 		player.close();
+		player2.close();
 		playing = false;
 	}
 	
 	// restart the sound
 	private void restart()
-	{
+	{	
 		if(!isInterrupted())
 		{
 			// check to make sure there's an actual delay specified
