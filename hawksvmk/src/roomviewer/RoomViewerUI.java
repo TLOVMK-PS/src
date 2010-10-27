@@ -513,7 +513,23 @@ public class RoomViewerUI extends Applet
       		if(infoButtonRect.contains(mousePoint)) // click inside the "I" button
       		{
       			System.out.println("Clicked toolbar info button");
-      			theGridView.toggleRoomDescriptionWindow(); // show/hide the description
+      			
+      			// check to see if the room owner information exists
+      			if(theGridView.getRoomInfo().get("OWNER") != null)
+      			{
+      				if(theGridView.getRoomInfo().get("OWNER").equals(theGridView.getMyCharacter().getUsername()))
+      				{
+      					theGridView.toggleEditRoomDescriptionWindow(); // show/hide the Edit Room Description window
+      				}
+      				else
+      				{
+      					theGridView.toggleRoomDescriptionWindow(); // show/hide the description
+      				}
+      			}
+      			else
+      			{
+      				theGridView.toggleRoomDescriptionWindow(); // show/hide the description
+      			}
       		}
       		else if(globeButtonRect.contains(mousePoint)) // click inside the globe button
       		{

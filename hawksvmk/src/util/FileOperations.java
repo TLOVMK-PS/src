@@ -141,7 +141,6 @@ public class FileOperations
 		ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
 		
 		Scanner tileScanner;
-		Scanner soundScanner;
 		
 		String roomID = "";
 		
@@ -291,6 +290,13 @@ public class FileOperations
 			
 			// set the sounds
 			gridView.setSounds(sounds);
+			
+			// check to make sure this isn't a guest room since there could be a music override
+			if(!roomID.startsWith("gr"))
+			{
+				// start the sounds
+				gridView.startSounds();
+			}
 			
 			// set up the chat bubbles
 			gridView.setupChatBubbles();
@@ -498,7 +504,7 @@ public class FileOperations
 			if(sound != null)
 			{
 				// let the user know we're playing the sound
-				System.out.println("Playing online stream: " + stream);
+				System.out.println("Loaded online stream: " + stream);
 				
 				// return the sound stream
 				return sound;
@@ -517,6 +523,9 @@ public class FileOperations
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
 		
 		String filename = roomPath;
+		
+		String musicPath = "";
+		SoundPlayable sound = null;
 		
 		try
 		{	
@@ -591,10 +600,47 @@ public class FileOperations
 					newItem.setContentRating(RatingSystem.getContentRating(furniInfo.getRatingIndex()));
 					items.add(newItem);
 				}
+				else if(line.startsWith("MUSIC: "))
+				{
+					// a music override has been specified
+					line = line.replaceAll("MUSIC: ", "");
+					musicPath = line;
+				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
 				}
+			}
+			
+			// check to see if a music override was specified
+			if(!musicPath.equals(""))
+			{
+				gridView.setLoadingDescription("Loading online audio stream...");
+				
+				// check to see if we have received a playlist file first
+				if(musicPath.toLowerCase().contains(".pls"))
+				{
+					// parse the available stream from the .pls playlist return it
+					sound = getStreamFromPlaylist(musicPath, "pls");
+				}
+				else if(musicPath.toLowerCase().contains(".m3u"))
+				{
+					// parse the available stream from the .m3u playlist and return it
+					sound = getStreamFromPlaylist(musicPath, "m3u");
+				}
+				else
+				{
+					// create a connection to the stream directly
+					sound = new SingleSound(musicPath, musicPath, AppletResourceLoader.getSoundFromJar(musicPath, -1));
+				}
+				
+				// stop the current sounds
+				gridView.stopSounds();
+				
+				// create a new list of sounds and add the new overridden music stream
+				ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
+				sounds.add(sound);
+				gridView.setSounds(sounds);
 			}
 			
 			// set the room information first
@@ -605,8 +651,18 @@ public class FileOperations
 			gridView.addRoomInfo("DESCRIPTION", roomInfo.get("DESCRIPTION"));
 			gridView.addRoomInfo("TIMESTAMP", roomInfo.get("TIMESTAMP"));
 			
+			// check to see if there was a music override
+			if(!musicPath.equals(""))
+			{
+				// add the music override so it can be saved to the file later
+				gridView.addRoomInfo("MUSIC", musicPath);
+			}
+			
 			// set the room items
 			gridView.setRoomItems(items);
+			
+			// start the sounds
+			gridView.startSounds();
 			
 			fileReader.close();
 			
@@ -650,6 +706,16 @@ public class FileOperations
 			fileWriter.println("DESCRIPTION: " + roomInfo.get("DESCRIPTION"));
 			fileWriter.println("TIMESTAMP: " + roomInfo.get("TIMESTAMP"));
 			fileWriter.println();
+			
+			// check to see if there was a music override specified
+			if(roomInfo.get("MUSIC") != null && !roomInfo.get("MUSIC").equals(""))
+			{
+				// write out the music override to the file
+				fileWriter.println("// Music override");
+				fileWriter.println();
+				fileWriter.println("MUSIC: " + roomInfo.get("MUSIC"));
+				fileWriter.println();
+			}
 			
 			// print out the furniture information
 			fileWriter.println("// Furniture");

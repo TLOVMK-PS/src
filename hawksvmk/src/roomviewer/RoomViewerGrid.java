@@ -58,6 +58,7 @@ import tiles.Tile;
 import ui.WindowAvatarInformation;
 import ui.WindowClothing;
 import ui.WindowDesignModeItem;
+import ui.WindowEditRoomDescription;
 import ui.WindowGuestRooms;
 import ui.WindowHelp;
 import ui.WindowInventory;
@@ -148,6 +149,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	// room description window
 	WindowRoomDescription roomDescriptionWindow;
+	
+	// edit room description window
+	WindowEditRoomDescription editRoomDescriptionWindow;
 	
 	// messages window
 	WindowMessages messagesWindow;
@@ -903,6 +907,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		 roomDescriptionWindow.setVisible(false);
 		 add(roomDescriptionWindow);
 		 
+		 // set up the edit room description window
+		 editRoomDescriptionWindow = new WindowEditRoomDescription(textFont, textFontBold, "Walk Text", "This is a walk test room.  You can try out the features of the game, including chat and walking.  Please feel free to wander around.<br><br>-Hawk's VMK: Development Team", 0, 272);
+		 editRoomDescriptionWindow.setGridObject(this);
+		 editRoomDescriptionWindow.setVisible(false);
+		 add(editRoomDescriptionWindow);
+		 
 		 // set up the messages window
 		 messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
 		 messagesWindow.setGridObject(this);
@@ -1085,8 +1095,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setSounds(ArrayList<SoundPlayable> sounds)
 	{
 		this.sounds = sounds;
-		
-		// set up the sounds
+	}
+	
+	// start the sounds
+	public void startSounds()
+	{
+		// make sure we can start the sounds
 		if(startSounds)
 		{
 			setupSounds();
@@ -1118,6 +1132,23 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setUIObject(RoomViewerUI uiObject) {this.uiObject = uiObject;}
 	
 	public void toggleRoomDescriptionWindow() {roomDescriptionWindow.toggleVisibility();}
+	
+	public void toggleEditRoomDescriptionWindow()
+	{
+		editRoomDescriptionWindow.toggleVisibility();
+		
+		if(editRoomDescriptionWindow.isVisible())
+		{
+			// set the values in the boxes
+			if(roomInfo != null)
+			{
+				editRoomDescriptionWindow.setRoomOwner(myCharacter.getUsername());
+				editRoomDescriptionWindow.setRoomName(roomInfo.get("NAME"));
+				editRoomDescriptionWindow.setRoomDescription(roomInfo.get("DESCRIPTION"));
+				editRoomDescriptionWindow.setMusicURL(roomInfo.get("MUSIC"));
+			}
+		}
+	}
 	
 	public void toggleMessagesWindow() {messagesWindow.toggleVisibility();}
 	
@@ -1430,121 +1461,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// change to another room
 	public void changeRoom(String newRoomID)
 	{
-		// stop any sounds currently playing
-		stopSounds();
-		
-		// set the current room item in its current position if it exists
-		if(currentRoomItem != null)
-		{
-			items.add(currentRoomItem);
-			
-			// clear the current room item
-			currentRoomItem = null;
-			
-			// save the room items
-			saveRoomItems();
-		}
-		
-		String newRoomName = StaticAppletData.getRoomMapping(newRoomID).getRoomName();
-		
-		// show the loading window
-		uiObject.showLoadingWindow(newRoomName, "Room loading... please wait", true, true);
-		
-		roomLoading = true;
-		
-		uiObject.theGridView.setVisible(false);
-		
-		// hide the map
-		mapWindow.setVisible(false);
-		
-		// remove this player from the current room
-		uiObject.sendMessageToServer(new MessageRemoveUserFromRoom(myCharacter.getUsername(), roomID));
-		
-		// remove all users from the room
-		characters.clear();
-		
-		// remove all chat bubbles from the room
-		theChatBubbles.clearAll();
-		
-		// load the room file
-		if(newRoomID.startsWith("gr"))
-		{
-			// load a guest room
-			FileOperations.loadGuestRoom(StaticAppletData.getRoomMapping(newRoomID).getRoomPath(), this);
-		}
-		else
-		{
-			// load a public room
-			FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), this);
-		}
-	  	
-	  	// find an exit tile to start on
-	  	myCharacter.setCurrentTile(null);
-		Iterator<Tile> it = tilesMap.values().iterator();
-		while(it.hasNext())
-		{
-			Tile t = it.next();
-			
-			// check and make sure the tile's destination is the same ID as the room
-			// this character just exited from
-			if(t.getType() == Tile.TILE_EXIT)
-			{
-				if(t.getDest().equals(roomID) || roomID.equals(""))
-				{
-					// set the position to this exit tile
-					myCharacter.setRow(t.getRow());
-					myCharacter.setCol(t.getColumn());
-					myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
-					myCharacter.setX(t.getX());
-					myCharacter.setY(t.getY());
-					break;
-				}
-			}
-		}
-		
-		// no suitable EXIT tile found above, so default to any exit tile
-		if(myCharacter.getCurrentTile() == null)
-		{
-			Iterator<Tile> it2 = tilesMap.values().iterator();
-			while(it2.hasNext())
-			{
-				Tile t = it2.next();
-				
-				// check and make sure the tile's destination is the same ID as the room
-				// this character just exited from
-				if(t.getType() == Tile.TILE_EXIT)
-				{
-					// set the position to this exit tile
-					myCharacter.setRow(t.getRow());
-					myCharacter.setCol(t.getColumn());
-					myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
-					myCharacter.setX(t.getX());
-					myCharacter.setY(t.getY());
-					break;
-				}
-			}
-		}
-	  	
-		// make sure the correct size is set
-		myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
-		
-	  	// add this player to the new room
-	  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomID, newRoomName));
-	  	
-	  	// set the room name and ID
-	  	roomID = newRoomID;
-	  	roomName = newRoomName;
-	  	
-	  	// hide the loading window
-	  	uiObject.showLoadingWindow(false, false);
-	  	
-	  	// set the room information window data
-	  	roomDescriptionWindow.setRoomID(roomInfo.get("ID"));
-	  	roomDescriptionWindow.setRoomOwner(roomInfo.get("OWNER"));
-	  	roomDescriptionWindow.setRoomName(roomInfo.get("NAME"));
-	  	roomDescriptionWindow.setRoomDescription(roomInfo.get("DESCRIPTION"));
-	  	
-	  	uiObject.theGridView.setVisible(true);
+		new RoomLoaderThread(newRoomID, this).start();
 	}
 	
 	// send an "Update Character" message to the server
@@ -1695,7 +1612,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// save the room items to the Guest Room file
-	private void saveRoomItems()
+	public void saveRoomItems()
 	{
 		// send the save message to the server
 		uiObject.sendMessageToServer(new MessageSaveGuestRoom(items, roomInfo));
@@ -1783,6 +1700,143 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		uiObject.hideGameArea(gameArea);
 	}
+	
+	// set the description on the loading window
+	public void setLoadingDescription(String description)
+	{
+		uiObject.setLoadingDescription(description);
+	}
+	
+	// thread that serves as the room loader so painting and updates can still take place while a room loads
+	class RoomLoaderThread extends Thread
+	{
+		String newRoomID = "";
+		RoomViewerGrid grid = null;
+		
+		public RoomLoaderThread(String newRoomID, RoomViewerGrid grid)
+		{
+			this.newRoomID = newRoomID;
+			this.grid = grid;
+		}
+		
+		public void run()
+		{
+			String newRoomName = StaticAppletData.getRoomMapping(newRoomID).getRoomName();
+			
+			// hide the map and the grid so nothing obscures the loading window
+			mapWindow.setVisible(false);
+			grid.setVisible(false);
+			
+			// show the loading window
+			uiObject.showLoadingWindow(newRoomName, "Room loading... please wait", true, true);
+			
+			// stop any sounds currently playing
+			stopSounds();
+			
+			// set the current room item in its current position if it exists
+			if(currentRoomItem != null)
+			{
+				items.add(currentRoomItem);
+				
+				// clear the current room item
+				currentRoomItem = null;
+				
+				// save the room items
+				saveRoomItems();
+			}
+			
+			roomLoading = true;
+			
+			// remove this player from the current room
+			uiObject.sendMessageToServer(new MessageRemoveUserFromRoom(myCharacter.getUsername(), roomID));
+			
+			// remove all users from the room
+			characters.clear();
+			
+			// remove all chat bubbles from the room
+			theChatBubbles.clearAll();
+			
+			// load the room file
+			if(newRoomID.startsWith("gr"))
+			{
+				// load a guest room
+				FileOperations.loadGuestRoom(StaticAppletData.getRoomMapping(newRoomID).getRoomPath(), grid);
+			}
+			else
+			{
+				// load a public room
+				FileOperations.loadFile(AppletResourceLoader.getFileFromJar(StaticAppletData.getRoomMapping(newRoomID).getRoomPath()), grid);
+			}
+		  	
+		  	// find an exit tile to start on
+		  	myCharacter.setCurrentTile(null);
+			Iterator<Tile> it = tilesMap.values().iterator();
+			while(it.hasNext())
+			{
+				Tile t = it.next();
+				
+				// check and make sure the tile's destination is the same ID as the room
+				// this character just exited from
+				if(t.getType() == Tile.TILE_EXIT)
+				{
+					if(t.getDest().equals(roomID) || roomID.equals(""))
+					{
+						// set the position to this exit tile
+						myCharacter.setRow(t.getRow());
+						myCharacter.setCol(t.getColumn());
+						myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+						myCharacter.setX(t.getX());
+						myCharacter.setY(t.getY());
+						break;
+					}
+				}
+			}
+			
+			// no suitable EXIT tile found above, so default to any exit tile
+			if(myCharacter.getCurrentTile() == null)
+			{
+				Iterator<Tile> it2 = tilesMap.values().iterator();
+				while(it2.hasNext())
+				{
+					Tile t = it2.next();
+					
+					// check and make sure the tile's destination is the same ID as the room
+					// this character just exited from
+					if(t.getType() == Tile.TILE_EXIT)
+					{
+						// set the position to this exit tile
+						myCharacter.setRow(t.getRow());
+						myCharacter.setCol(t.getColumn());
+						myCharacter.setCurrentTile(tilesMap.get(t.getRow() + "-" + t.getColumn()));
+						myCharacter.setX(t.getX());
+						myCharacter.setY(t.getY());
+						break;
+					}
+				}
+			}
+		  	
+			// make sure the correct size is set
+			myCharacter.changeAvatarSizeForTile(tileWidth, tileHeight);
+			
+		  	// add this player to the new room
+		  	uiObject.sendMessageToServer(new MessageAddUserToRoom(myCharacter, newRoomID, newRoomName));
+		  	
+		  	// set the room name and ID
+		  	roomID = newRoomID;
+		  	roomName = newRoomName;
+		  	
+		  	// hide the loading window
+		  	uiObject.showLoadingWindow(false, false);
+		  	
+		  	// set the room information window data
+		  	roomDescriptionWindow.setRoomID(roomInfo.get("ID"));
+		  	roomDescriptionWindow.setRoomOwner(roomInfo.get("OWNER"));
+		  	roomDescriptionWindow.setRoomName(roomInfo.get("NAME"));
+		  	roomDescriptionWindow.setRoomDescription(roomInfo.get("DESCRIPTION"));
+		  	
+		  	uiObject.theGridView.setVisible(true);
+		}
+	}
 }
 
 class GridViewMovementImageObserver implements ImageObserver
@@ -1798,4 +1852,3 @@ class GridViewMovementImageObserver implements ImageObserver
 	    return true;
 	}
 }
-

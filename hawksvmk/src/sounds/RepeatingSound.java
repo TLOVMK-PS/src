@@ -178,7 +178,10 @@ public class RepeatingSound extends Thread implements SoundPlayable
 		}
 
 		// close the player and set the "playing" attribute to false
-		player.close();
+		if(player != null)
+		{
+			player.close();
+		}
 		
 		// check to see if the second player was active
 		if(player2 != null)

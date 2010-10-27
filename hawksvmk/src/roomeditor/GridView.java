@@ -408,6 +408,12 @@ public class GridView extends JLabel implements GridViewable
 		this.sounds = sounds;
 	}
 	
+	// start the sounds
+	public void startSounds() {}
+	
+	// stop the sounds
+	public void stopSounds() {}
+	
 	public ArrayList<SoundPlayable> getSounds() {
 		return sounds;
 	}
@@ -500,6 +506,8 @@ public class GridView extends JLabel implements GridViewable
 	{
 		roomInfo.put(key, value);
 	}
+	
+	public void setLoadingDescription(String description) {}
 }
 
 class GridViewMovementImageObserver implements ImageObserver

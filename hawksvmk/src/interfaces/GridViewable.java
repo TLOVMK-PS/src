@@ -35,6 +35,8 @@ public interface GridViewable
 	
 	public void setAnimations(ArrayList<Animation> animations);
 	public void setSounds(ArrayList<SoundPlayable> sounds);
+	public void startSounds();
+	public void stopSounds();
 	
 	public void addTextBubble(String username, String text, int x);
 	public void setupChatBubbles();
@@ -48,4 +50,6 @@ public interface GridViewable
 	public void setRoomInfo(HashMap<String,String> roomInfo);
 	public HashMap<String,String> getRoomInfo();
 	public void addRoomInfo(String key, String value);
+	
+	public void setLoadingDescription(String description);
 }
