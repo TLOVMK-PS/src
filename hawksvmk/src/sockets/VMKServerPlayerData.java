@@ -24,6 +24,9 @@ public class VMKServerPlayerData
 	private static int MAX_FIREWORKS_ROOMS = 3; // maximum number of rooms for the Fireworks game
 	private static final int MAX_PLAYERS_PER_FIREWORKS_ROOM = 20; // maximum number of players in any given Fireworks room
 	
+	private static int MAX_PIRATES_ROOMS = 3; // maximum number of rooms for the Pirates game
+	private static final int MAX_PLAYERS_PER_PIRATES_ROOM = 8; // maximum number of players in any given Pirates room
+	
 	// add a character to the HashMap
 	public static void addCharacter(String username, AStarCharacter character)
 	{
@@ -96,7 +99,12 @@ public class VMKServerPlayerData
 	{
 		for(int i = 0; i < MAX_FIREWORKS_ROOMS; i++)
 		{
-			addRoom("fireworks_" + i,new VMKRoom("fireworks_" + i,"Fireworks Game " + i,""));
+			addRoom("fireworks_" + i, new VMKRoom("fireworks_" + i, "Fireworks Game " + i, ""));
+		}
+		
+		for(int i = 0; i < MAX_PIRATES_ROOMS; i++)
+		{
+			addRoom("pirates_" + i, new VMKRoom("pirates_" + i, "Pirates Game " + i, ""));
 		}
 	}
 	
@@ -128,6 +136,30 @@ public class VMKServerPlayerData
 			
 			// increment the number of Fireworks rooms available
 			MAX_FIREWORKS_ROOMS++;
+		}
+		else if(gameID.equals("pirates")) // Pirates game
+		{
+			// check to find a room that currently has less than the maximum number of players available
+			for(int i = 0; i < MAX_PIRATES_ROOMS; i++)
+			{
+				// check the number of players in this room
+				VMKRoom gameRoom = rooms.get(gameID + "_" + i);
+				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_PIRATES_ROOM)
+				{
+					// this will be the room that we put this user into
+					gameRoomID = gameRoom.getRoomID();
+					addCharacter(character.getUsername(), character, gameRoomID);
+					return gameRoomID;
+				}
+			}
+			
+			// no suitable room found, so create one and add the player to it
+			gameRoomID = "pirates_" + MAX_PIRATES_ROOMS;
+			addRoom(gameRoomID, new VMKRoom(gameRoomID, "Pirates Game " + MAX_PIRATES_ROOMS,""));
+			addCharacter(character.getUsername(), character, gameRoomID);
+			
+			// increment the number of Pirates rooms available
+			MAX_PIRATES_ROOMS++;
 		}
 		
 		return gameRoomID; // return a the generated gameRoomID

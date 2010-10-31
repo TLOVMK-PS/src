@@ -6,6 +6,7 @@ package roomviewer;
 
 import games.GameScore;
 import games.fireworks.GameFireworks;
+import games.pirates.GamePirates;
 
 import java.applet.Applet;
 import java.awt.AWTKeyStroke;
@@ -138,6 +139,7 @@ public class RoomViewerUI extends Applet
 	
 	// references to game area windows for use with showGameArea()
 	private GameFireworks gameFireworks = null;
+	private GamePirates gamePirates = null;
 	
 	public RoomViewerUI() {} // set the code base}
 	
@@ -558,7 +560,7 @@ public class RoomViewerUI extends Applet
       		else if(questButtonRect.contains(mousePoint)) // click inside the quest button
       		{
       			System.out.println("Clicked toolbar quest button");
-      			hideGameArea("fireworks");
+      			gamePirates.endGame();
       		}
       		else if(emoticonsButtonRect.contains(mousePoint)) // click inside the emoticons button
       		{
@@ -712,6 +714,13 @@ public class RoomViewerUI extends Applet
   	 gameFireworks.setVisible(false);
   	 gameFireworks.setUIObject(this);
   	 add(gameFireworks);
+  	 
+  	 // create a reference to the Pirates game
+  	 gamePirates = new GamePirates();
+  	 gamePirates.setBounds(new Rectangle(0,0,800,572));
+  	 gamePirates.setVisible(false);
+  	 gamePirates.setUIObject(this);
+  	 add(gamePirates);
      
   	 repaint();
      roomViewerUI = this;
@@ -941,14 +950,21 @@ public class RoomViewerUI extends Applet
 		toolbar_left.setEnabled(false);
 		toolbar_right.setEnabled(false);
 		
+		// send the "Game Add User" message to add the user to the game room and remove him from the original room
+		sendMessageToServer(new MessageGameAddUserToRoom(gameArea, theGridView.getMyCharacter()));
+		
+		// check to see which game needs to be started
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{	
-			// send the "Game Add User" message to add the user to the game room and remove him from the original room
-			sendMessageToServer(new MessageGameAddUserToRoom(gameArea, theGridView.getMyCharacter()));
-			
 			// show the Fireworks game
 			gameFireworks.start();
 			gameFireworks.setVisible(true);
+		}
+		else if(gameArea.toLowerCase().equals("pirates"))
+		{
+			// show the Pirates game
+			gamePirates.start();
+			gamePirates.setVisible(true);
 		}
 	}
 	
@@ -969,6 +985,18 @@ public class RoomViewerUI extends Applet
 			// hide the game area
 			gameFireworks.setVisible(false);
 			gameFireworks.stop();
+		}
+		else if(gameArea.toLowerCase().equals("pirates"))
+		{
+			// give the player his credits
+			theGridView.getMyCharacter().addCredits(gamePirates.getCreditsWon());
+			
+			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
+			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gamePirates.getRoomID(), theGridView.getRoomInfo().get("ID")));
+			
+			// hide the game area
+			gamePirates.setVisible(false);
+			gamePirates.stop();
 		}
 		
 		// enable the toolbars again

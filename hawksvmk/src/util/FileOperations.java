@@ -2436,4 +2436,67 @@ public class FileOperations
 		// create a new set of Fireworks entries from the file data
 		return entries;
 	}
+	
+	// return the tiles for a specific level and round in the POTC game
+	public static HashMap<String, Tile> loadPiratesLevelTiles(int levelNum, int roundNum)
+	{
+		String filename = "data/games/pirates/level_" + levelNum + "_" + roundNum + ".room";
+		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
+		
+		Scanner fileReader;
+		
+		try
+		{
+			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
+
+			if(is != null) // file exists
+			{
+				fileReader = new Scanner(is);
+				while(fileReader.hasNextLine())
+				{
+					String line = fileReader.nextLine();
+					
+					if(line.equals("") || line.startsWith(commentDelimeter))
+					{
+						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("@")) // beginning of an entry line
+					{
+						line = line.replaceAll("@","");
+						
+						// split the tile line into its respective components
+						String tileData[] = line.split(",");
+						
+						int row = Integer.parseInt(tileData[0]);
+						int col = Integer.parseInt(tileData[1]);
+						String tileType = tileData[2];
+						String tileDest = "";
+						
+						// add the tile to the HashMap
+						Tile newTile = new Tile(row,col,tileType,tileDest);
+						newTile.setWidth(64);
+						newTile.setHeight(32);
+						newTile.setAbsoluteCoordinates();
+						tiles.put(row + "-" + col, newTile);
+					}
+				}
+				
+				fileReader.close();
+				is.close();
+			}
+			else
+			{
+				// file doesn't exist
+				// return the default tiles structure
+				return tiles;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("ERROR IN loadPiratesLevelTiles(): " + e.getClass().getName() + " - " + e.getMessage());
+		}
+
+		// create a new set of Pirates level tiles from the file data
+		return tiles;
+	}
 }

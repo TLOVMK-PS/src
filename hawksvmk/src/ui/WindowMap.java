@@ -512,7 +512,8 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Pirates of the Caribbean Game room
-				changeRoom("Pirates of the Caribbean Game");
+				//changeRoom("Pirates of the Caribbean Game");
+				gridObject.showGameArea("pirates");
 			}
 			public void mouseEntered(MouseEvent e)
 			{

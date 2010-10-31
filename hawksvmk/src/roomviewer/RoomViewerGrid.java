@@ -1177,7 +1177,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		// check to see if this is the first time the user has been created, and if so, play the music
 		if(myCharacter.getEmail().equals("") && !uiObject.getEmail().equals(""))
 		{
-			playIntroMusic();
+			// make sure sounds are enabled before we play the sound
+			if(startSounds)
+			{
+				playIntroMusic();
+			}
 		}
 		
 		// add the character to the HashMap
