@@ -5,15 +5,14 @@
 package games.fireworks;
 
 import games.GameScore;
+import games.InternalGame;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -24,39 +23,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.swing.JPanel;
-
-import roomviewer.RoomViewerUI;
-
 import util.AppletResourceLoader;
 import util.FileOperations;
 
-public class GameFireworks extends JPanel implements Runnable
-{
-	private final String GAME_ID = "fireworks";
-	private final String GAME_TITLE = "Castle Fireworks";
-	private final int GRAPHICS_DELAY = 40; // approx. 25 frames-per-second
-	
-	private String roomID = "fireworks_0"; // ID of the current Fireworks game room
-	
-	private final int MAX_ROUNDS_PER_LEVEL = 3; // maximum number of rounds-per-level
-	private final int MAX_LEVELS = 5; // maximum number of levels
-	private int roundNum = 1; // the number of the current round
-	private int levelNum = 1; // the number of the current level
-	
+public class GameFireworks extends InternalGame implements Runnable
+{	
 	private Thread gameThread = null; // thread to handle the running of the game
 	private FireworkEntryPollingThread pollingThread = null; // thread to handle adding fireworks to the game
-	
-	private int width = 800; // width of this game's area
-	private int height = 572; // height of this game's area
 	
 	private int mouseX = -20;
 	private int mouseY = -20;
 	
 	private Image offscreen = null; // offscreen buffer
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
-	
-	private RoomViewerUI uiObject = null;
 	
 	private BufferedImage scene1_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_1.jpg");
 	private BufferedImage scene2_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_2.jpg");
@@ -65,7 +44,6 @@ public class GameFireworks extends JPanel implements Runnable
 	private BufferedImage scene5_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_5.jpg");
 	private BufferedImage backgroundImage = scene1_background;
 	private long fireworkScore = 0;
-	private long gameScore = 0;
 	
 	// the entries for the fireworks that will eventually be displayed
 	private ArrayList<FireworkEntry> fireworkEntries = new ArrayList<FireworkEntry>();
@@ -157,13 +135,13 @@ public class GameFireworks extends JPanel implements Runnable
 	private HashMap<String,Long> targetScores = new HashMap<String,Long>();
 	private long targetScore = 0;
 	
-	// credits won by the player
-	private long creditsWon = 0;
-	
 	private BufferedImage gameResultsBackground = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/game_results.png");
 	
 	public GameFireworks()
 	{
+		// set the game properties
+		super("fireworks", "Castle Fireworks", 3, 5);
+		
 		// add the target scores
 		targetScores.put("1_1",new Long(8000));
 		targetScores.put("1_2",new Long(21000));
@@ -180,9 +158,6 @@ public class GameFireworks extends JPanel implements Runnable
 		targetScores.put("5_1",new Long(217000));
 		targetScores.put("5_2",new Long(238000));
 		targetScores.put("5_3",new Long(274000));
-		
-		// allow this component to be focusable so keys can be processed
-		setFocusable(true);
 		
 		// create the explosion image arrays for the firework explosions
 		createFireworkExplosionImages(firework1_e,firework1_explo);
@@ -235,17 +210,17 @@ public class GameFireworks extends JPanel implements Runnable
 								{
 									// add the score for the burst firework
 									fireworkScore = firework.getScore();
-									gameScore += fireworkScore;
+									incrementPlayerScore(fireworkScore);
 								}
 								else
 								{
 									// only add a portion of the score for the burst firework
 									fireworkScore = (long)(firework.getScore() * 0.1);
-									gameScore += fireworkScore;
+									incrementPlayerScore(fireworkScore);
 								}
 								
 								// figure out how many credits the player has possibly won (1/100th of the score)
-								creditsWon = (gameScore / 100);
+								setCreditsWon(getPlayerScore() / 100);
 								
 								// remove the firework
 								fireworks.remove(firework);
@@ -373,24 +348,24 @@ public class GameFireworks extends JPanel implements Runnable
 	public void start()
 	{
 		// create the offscreen buffer
-		offscreen = createImage(width, height);
+		offscreen = createImage(getWidth(), getHeight());
 		
 		// create the buffer graphics object
 		bufferGraphics = offscreen.getGraphics();
 		
 		// reset the credits won
-		creditsWon = 0;
+		setCreditsWon(0);
 		
 		// reset the scores
 		fireworkScore = 0;
-		gameScore = 0;
+		setPlayerScore(0);
 		
 		// reset the target score
 		targetScore = targetScores.get("1_1");
 		
 		// reset the level and round number
-		roundNum = 1;
-		levelNum = 1;
+		setRoundNum(1);
+		setLevelNum(1);
 		
 		// reset the background image
 		resetLevelBackgroundImage();
@@ -398,7 +373,7 @@ public class GameFireworks extends JPanel implements Runnable
 		// create the fireworks
 		createFireworks();
 		
-		gameThread = new Thread(this, GAME_TITLE);
+		gameThread = new Thread(this, getGameTitle());
 		gameThread.start();
 	}
 	
@@ -429,7 +404,7 @@ public class GameFireworks extends JPanel implements Runnable
 			
 			try
 			{
-				Thread.sleep(GRAPHICS_DELAY);
+				Thread.sleep(getGraphicsDelay());
 			}
 			catch(Exception e) {}
 		}
@@ -443,37 +418,37 @@ public class GameFireworks extends JPanel implements Runnable
 	// reset the possible reticles for the current level
 	private void resetReticlesForLevel()
 	{
-		if(levelNum == 1 && roundNum == 1)
+		if(getLevelNum() == 1 && getRoundNum() == 1)
 		{
 			// reset the reticles
 			maxReticles = LEVEL1_RETICLES;
 			reticles_chooser = level1_reticles;
 		}
-		else if(levelNum == 1 && roundNum == 3)
+		else if(getLevelNum() == 1 && getRoundNum() == 3)
 		{
 			// reset the reticles
 			maxReticles = LEVEL2_RETICLES;
 			reticles_chooser = level2_reticles;
 		}
-		else if(levelNum == 2 && roundNum == 3)
+		else if(getLevelNum() == 2 && getRoundNum() == 3)
 		{
 			// reset the reticles
 			maxReticles = LEVEL3_RETICLES;
 			reticles_chooser = level3_reticles;
 		}
-		else if(levelNum == 3 && roundNum == 3)
+		else if(getLevelNum() == 3 && getRoundNum() == 3)
 		{
 			// reset the reticles
 			maxReticles = LEVEL4_RETICLES;
 			reticles_chooser = level4_reticles;
 		}
-		else if(levelNum == 4 && roundNum == 3)
+		else if(getLevelNum() == 4 && getRoundNum() == 3)
 		{
 			// reset the reticles
 			maxReticles = LEVEL5_RETICLES;
 			reticles_chooser = level5_reticles;
 		}
-		else if(levelNum == 5 && roundNum == 3)
+		else if(getLevelNum() == 5 && getRoundNum() == 3)
 		{
 			// reset the reticles
 			maxReticles = LEVEL6_RETICLES;
@@ -489,17 +464,17 @@ public class GameFireworks extends JPanel implements Runnable
 	protected void changeFireworksLevel()
 	{
 		// increment the round number
-		roundNum++;
+		incrementRoundNum();
 		
 		// check to see if we need to increment the level number
-		if(roundNum > MAX_ROUNDS_PER_LEVEL)
+		if(getRoundNum() > getMaxRoundsPerLevel())
 		{
-			roundNum = 1;
-			levelNum++;
+			setRoundNum(1);
+			incrementLevelNum();
 		}
 		
 		// check to see if the game has ended
-		if(levelNum > MAX_LEVELS || gameScore < targetScore)
+		if(getLevelNum() > getMaxLevels() || getPlayerScore() < targetScore)
 		{
 			// end the game
 			endGame();
@@ -516,7 +491,7 @@ public class GameFireworks extends JPanel implements Runnable
 			resetReticlesForLevel();
 			
 			// reset the target score for the current level
-			targetScore = targetScores.get(levelNum + "_" + roundNum);
+			targetScore = targetScores.get(getLevelNum() + "_" + getRoundNum());
 			
 			// reset the background image
 			resetLevelBackgroundImage();
@@ -529,11 +504,11 @@ public class GameFireworks extends JPanel implements Runnable
 	// reset the background image for the level
 	private void resetLevelBackgroundImage()
 	{
-		if(levelNum == 1) {backgroundImage = scene1_background;}
-		if(levelNum == 2) {backgroundImage = scene2_background;}
-		if(levelNum == 3) {backgroundImage = scene3_background;}
-		if(levelNum == 4) {backgroundImage = scene4_background;}
-		if(levelNum == 5) {backgroundImage = scene5_background;}
+		if(getLevelNum() == 1) {backgroundImage = scene1_background;}
+		if(getLevelNum() == 2) {backgroundImage = scene2_background;}
+		if(getLevelNum() == 3) {backgroundImage = scene3_background;}
+		if(getLevelNum() == 4) {backgroundImage = scene4_background;}
+		if(getLevelNum() == 5) {backgroundImage = scene5_background;}
 	}
 	
 	// end the game
@@ -543,7 +518,7 @@ public class GameFireworks extends JPanel implements Runnable
 		pollingThread.stop();
 		
 		// hide the game area
-		uiObject.hideGameArea(GAME_ID);
+		getUIObject().hideGameArea(getGameID());
 	}
 	
 	// change the reticle in the given direction
@@ -575,7 +550,7 @@ public class GameFireworks extends JPanel implements Runnable
 	public void createFireworks()
 	{
 		// create the firework entries
-		fireworkEntries = FileOperations.loadFireworksEntries(levelNum, roundNum);
+		fireworkEntries = FileOperations.loadFireworksEntries(getLevelNum(), getRoundNum());
 		
 		// countdown no longer active
 		countdownActive = false;
@@ -591,7 +566,7 @@ public class GameFireworks extends JPanel implements Runnable
 		if(bufferGraphics != null)
 		{
 			// clear the buffered image
-			bufferGraphics.clearRect(0, 0, width, height);
+			bufferGraphics.clearRect(0, 0, getWidth(), getHeight());
 			
 			// draw the background image onto the buffer
 			bufferGraphics.drawImage(backgroundImage, 0, 0, this);
@@ -654,17 +629,17 @@ public class GameFireworks extends JPanel implements Runnable
 			}
 			
 			bufferGraphics.setColor(Color.WHITE);
-			bufferGraphics.drawString("SCORE: " + gameScore, 20, 50);
-			bufferGraphics.drawString("LEVEL " + levelNum + " - ROUND " + roundNum, 20, 70);
+			bufferGraphics.drawString("SCORE: " + getPlayerScore(), 20, 50);
+			bufferGraphics.drawString("LEVEL " + getLevelNum() + " - ROUND " + getRoundNum(), 20, 70);
 			
 			// draw the reticle on-screen
 			reticleBounds.setBounds(mouseX - (reticleImage.getWidth() / 2), mouseY - (reticleImage.getHeight() / 2), reticleImage.getWidth(), reticleImage.getHeight());
 			bufferGraphics.drawImage(reticleImage, reticleBounds.x, reticleBounds.y, this);
 			
 			// draw the reticles selector centered at the bottom, along with a yellow rectangle on the current reticle
-			bufferGraphics.drawImage(reticles_chooser, (width / 2) - (reticles_chooser.getWidth() / 2), 502, this);
+			bufferGraphics.drawImage(reticles_chooser, (getWidth() / 2) - (reticles_chooser.getWidth() / 2), 502, this);
 			bufferGraphics.setColor(Color.YELLOW);
-			bufferGraphics.drawRect((width / 2) - (reticles_chooser.getWidth() / 2) + (60 * (reticleNumber - 1)) + 5, 507, 60, 59);
+			bufferGraphics.drawRect((getWidth() / 2) - (reticles_chooser.getWidth() / 2) + (60 * (reticleNumber - 1)) + 5, 507, 60, 59);
 			
 			// check to see if the level has been completed (the polling thread is interrupted and there are no more fireworks)
 			if(countdownActive)
@@ -702,7 +677,7 @@ public class GameFireworks extends JPanel implements Runnable
 				bufferGraphics.setColor(Color.WHITE);
 				
 				// display the end game countdown?
-				if((roundNum >= MAX_ROUNDS_PER_LEVEL && levelNum >= MAX_LEVELS) || gameScore < targetScore)
+				if((getRoundNum() >= getMaxRoundsPerLevel() && getLevelNum() >= getMaxLevels()) || getPlayerScore() < targetScore)
 				{
 					bufferGraphics.drawString("Game ends in " + nextRoundCountdown + " second(s).", 200, 520);
 				}
@@ -739,9 +714,6 @@ public class GameFireworks extends JPanel implements Runnable
 		}
 		return true;
 	}
-	
-	public void setUIObject(RoomViewerUI uiObject) {this.uiObject = uiObject;}
-	protected RoomViewerUI getUIObject() {return uiObject;}
 	
 	// add the next firework to the fireworks structure
 	public int addNextFirework()
@@ -806,26 +778,11 @@ public class GameFireworks extends JPanel implements Runnable
 		return fireworkEntries.size();
 	}
 	
-	// get the current player's score
-	public long getPlayerScore() {
-		return gameScore;
-	}
-	
 	// add a score to the structure and sort them
 	public void addGameScore(GameScore score)
 	{
 		gameScores.add(score);
 		Collections.sort(gameScores);
-	}
-	
-	// set the ID of the current Fireworks game room
-	public void setRoomID(String roomID) {
-		this.roomID = roomID;
-	}
-	
-	// get the ID of the current Fireworks game room
-	public String getRoomID() {
-		return roomID;
 	}
 	
 	protected void startRoundCountdown()
@@ -849,11 +806,6 @@ public class GameFireworks extends JPanel implements Runnable
 	public int getRoundCountdown()
 	{
 		return nextRoundCountdown;
-	}
-	
-	public long getCreditsWon()
-	{
-		return creditsWon;
 	}
 }
 
