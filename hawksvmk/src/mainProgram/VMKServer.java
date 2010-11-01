@@ -116,7 +116,7 @@ public class VMKServer
         		{
 	        		for(int i = 0; i < serverThreads.size(); i++)
 	        		{
-	        			// check to see if the IP address and port matches a client that already has a thread
+	        			// check to see if the IP address matches a client that already has a thread
 	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress())
 	        					&& serverThreads.get(i).getRemoteAddress().getPort() == newSocket.getPort())
 	        			{
@@ -125,37 +125,25 @@ public class VMKServer
 	        				{
 	        					System.out.println("Set new socket for existing client [" + serverThreads.get(i).getName() + "]");
 	        					serverThreads.get(i).setSocket(newSocket);
+	        					
+	        					break;
 	        				}
 	        			}
 	        			else
 	        			{
 	        				VMKServerThread newServerThread = null;
 	        				
-	        				// Check to see if only the IP address is a match since
-	        				// that would mean it's two clients running on the
-	        				// same computer and we don't want to corrupt the
-	        				// input streams.
-	        				if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress()))
-	        				{
-	        					// it's the same IP address, so use the same input stream
-	        					newServerThread = new VMKServerThread(newSocket, true);
-	        					newServerThread.setOutputStream(serverThreads.get(i).getOutputStream());
-	        					newServerThread.setInputStream(serverThreads.get(i).getInputStream());
+	        				// it's an entirely different IP address
+	        				newServerThread = new VMKServerThread(newSocket, false);
 	        					
-	        					System.out.println("Accepted client socket - same computer (" + newSocket.getInetAddress().getHostAddress() + ")");
-	        				}
-	        				else
-	        				{
-	        					// it's an entirely different IP address
-	        					newServerThread = new VMKServerThread(newSocket, false);
-	        					
-	        					System.out.println("Accepted client socket");
-	        				}
+	        				System.out.println("Accepted client socket - NO HIGHLANDER SHIT");
 	        				
 	                		newServerThread.start();
 	                		serverThreads.add(newServerThread);
 	                		
 	                		newServerThread.setServerThreads(serverThreads);
+	                		
+	                		break;
 	        			}
 	        		}
         		}
@@ -171,7 +159,7 @@ public class VMKServer
             		
             		newServerThread.setServerThreads(serverThreads);
             		
-            		System.out.println("Accepted client socket");
+            		System.out.println("Accepted client socket - THERE CAN BE ONLY ONE");
         		}
         	}
         	catch(IOException e)

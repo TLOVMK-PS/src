@@ -81,7 +81,6 @@ public class VMKClientThread extends Thread
     	try
     	{
     		out = new ObjectOutputStream(socket.getOutputStream());
-    		out.flush();
     	    in = new ObjectInputStream(socket.getInputStream());
     	}
     	catch(IOException e)
@@ -553,9 +552,9 @@ public class VMKClientThread extends Thread
     // write a message to the output buffer to be sent to the server
     private synchronized void writeOutputToServer(Message m) throws SocketException, IOException
     {
+    	//out.reset();
     	out.writeUnshared(m);
-		out.reset();
-		//out.flush();
+		out.flush();
 		//out.reset();
     }
     

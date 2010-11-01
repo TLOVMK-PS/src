@@ -61,8 +61,8 @@ public class VMKServerThread extends Thread
     private InetSocketAddress remoteAddress = null;
     private boolean waitingForReconnect = false;
     
-    ObjectOutputStream out = null;
-    ObjectInputStream in = null;
+    ObjectOutputStream out;
+    ObjectInputStream in;
     
     Message inputMessage; // input message sent from client
     Message outputMessage; // output message sent to client
@@ -75,42 +75,31 @@ public class VMKServerThread extends Thread
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
     
     public VMKServerThread(Socket socket, boolean sameIPAddress)
-    {
+    {	
     	super("VMKServerThread");
-    	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
-    	this.socket = socket;
-    	
     	try
     	{	
+        	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
+        	this.socket = socket;
+        	
     		// TODO: Figure out another way to handle possibly multiple connections
     		// from the same machine since we can't use the same input stream for the
     		// same computer, as it corrupts the stream with an invalid header.
-    		if(!sameIPAddress)
-    		{
-    			out = new ObjectOutputStream(socket.getOutputStream());
-        		out.flush();
-        		
-    			in = new ObjectInputStream(socket.getInputStream());
-    		}
+    		out = new ObjectOutputStream(socket.getOutputStream());
+    		in = new ObjectInputStream(socket.getInputStream());
     		
-    		System.out.println("Client " + socket.getRemoteSocketAddress().toString() + " connected to server");
+    		System.out.println("Socket port: " + socket.getPort());
+    		System.out.println("Client " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort() + " connected to server");
     	}
     	catch(IOException e)
-    	{
-    		this.interrupt();
+    	{	
     		System.out.println("Could not set up object I/O on the server for client " + socket.getRemoteSocketAddress().toString());
     		e.printStackTrace();
-    		System.exit(0);
+    		
+    		this.interrupt();
+    		System.exit(-1);
     	}
     }
-    
-    // get and set the output stream
-    public ObjectOutputStream getOutputStream() {return out;}
-    public void setOutputStream(ObjectOutputStream out) {this.out = out;}
-    
-    // get and set the input stream
-    public ObjectInputStream getInputStream() {return in;}
-    public void setInputStream(ObjectInputStream in) {this.in = in;}
     
     public InetSocketAddress getRemoteAddress() {return remoteAddress;}
     public void setSocket(Socket socket)
@@ -142,10 +131,11 @@ public class VMKServerThread extends Thread
 	    	}
 	    	catch(Exception e)
 	    	{
-	    		this.interrupt();
 	    		System.out.println("Client had a re-connection error: " + e.getMessage());
 	    		e.printStackTrace();
-	    		System.exit(0);
+	    		
+	    		this.interrupt();
+	    		System.exit(-1);
 	    	}
     	}
     }
@@ -717,9 +707,9 @@ public class VMKServerThread extends Thread
     // write a message to the output buffer to be sent to the client
     private synchronized void writeOutputToClient(Message m) throws SocketException, IOException
     {
+    	//out.reset();
     	out.writeUnshared(m);
-		out.reset();
-		//out.flush();
+		out.flush();
     }
     
     // send out the cached messages after a re-connect

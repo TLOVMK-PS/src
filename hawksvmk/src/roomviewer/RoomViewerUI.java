@@ -348,380 +348,8 @@ public class RoomViewerUI extends Applet
 	// load the Room Viewer UI after login
 	public void loadRoomViewerUI()
 	{
-		if(release == false) // in-house development UI
-		{
-			this.setPreferredSize(new Dimension(1000, 628));
-		}
-		else // public release UI
-		{
-			this.setPreferredSize(new Dimension(800, 628));
-		}
-		
-		this.setSize(800,600);
-     
-     this.setLayout(null);
-     
-     // create the pin mappings
-     StaticAppletData.createInvMappings();
-     
-     // create the room mappings
-     StaticAppletData.createRoomMappings();
-     
-     // create the dictionaries
-     Dictionary.createDictionaries();
-     
-     // set up the fonts
-	 setupFonts();
-     
-     if(release == false) // in-house development UI
-     {
-	     JLabel titleLabel = new JLabel("<html><center>Room Viewer v.1<br>by Hawkster</center></html>");
-	     titleLabel.setBounds(new Rectangle(860, 10, 100, 40));
-	     add(titleLabel);
-	     
-	     // Show Grid button
-	     final JCheckBox showGridButton = new JCheckBox("Show Grid");
-	     showGridButton.setSelected(false);
-	     showGridButton.setBounds(new Rectangle(850, 150, 100, 32));
-	     showGridButton.addChangeListener(new ChangeListener()
-	     {
-	     	public void stateChanged(ChangeEvent e)
-	     	{
-	     		// toggle the grid
-	     		theGridView.showGrid(showGridButton.isSelected());
-	     	}
-	     });
-	     add(showGridButton);
-	     
-	     // Show Exit Tiles button
-	     final JCheckBox showExitTilesButton = new JCheckBox("Show Exit Tiles");
-	     showExitTilesButton.setSelected(true);
-	     showExitTilesButton.setBounds(new Rectangle(850, 200, 132, 32));
-	     showExitTilesButton.addChangeListener(new ChangeListener()
-	     {
-	     	public void stateChanged(ChangeEvent e)
-	     	{
-	     		// show/hide the exit tiles
-	     		theGridView.showExitTiles(showExitTilesButton.isSelected());
-	     	}
-	     });
-	     add(showExitTilesButton);
-	     
-	     // Show Nogo Tiles button
-	     final JCheckBox showNogoTilesButton = new JCheckBox("Show Nogo Tiles");
-	     showNogoTilesButton.setSelected(true);
-	     showNogoTilesButton.setBounds(new Rectangle(850, 226, 132, 32));
-	     showNogoTilesButton.addChangeListener(new ChangeListener()
-	     {
-	     	public void stateChanged(ChangeEvent e)
-	     	{
-	     		// show/hide the nogo tiles
-	     		theGridView.showNogoTiles(showNogoTilesButton.isSelected());
-	     	}
-	     });
-	     add(showNogoTilesButton);
-	     
-	     // Show Walk Tiles button
-	     final JCheckBox showWalkTilesButton = new JCheckBox("Show Walk Tiles");
-	     showWalkTilesButton.setSelected(true);
-	     showWalkTilesButton.setBounds(new Rectangle(850, 252, 132, 32));
-	     showWalkTilesButton.addChangeListener(new ChangeListener()
-	     {
-	     	public void stateChanged(ChangeEvent e)
-	     	{
-	     		// show/hide the walk tiles
-	     		theGridView.showWalkTiles(showWalkTilesButton.isSelected());
-	     	}
-	     });
-	     add(showWalkTilesButton);
-	     
-	     // "Load Room" button
-	     final JButton loadRoomButton = new JButton("Load Room");
-	     loadRoomButton.setBounds(new Rectangle(835, 348, 132, 32));
-	     loadRoomButton.addActionListener(new ActionListener()
-	     {
-	     	public void actionPerformed(ActionEvent ae)
-	     	{
-	     		// open the file
-	     	    JFileChooser chooser = new JFileChooser();
-	     	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	     	        "Room Files (*.room)", "room");
-	     	    chooser.setFileFilter(filter);
-	     	    //chooser.setCurrentDirectory(new File(currentDirectory));
-	     	    int returnVal = chooser.showOpenDialog(roomViewerUI);
-	     	    if(returnVal == JFileChooser.APPROVE_OPTION)
-	     	    {
-	     	    	filename = chooser.getSelectedFile().getPath();
-	     	    	
-	     	    	System.out.println("You chose to load this file: " + filename);
-	     	    	
-	     	    	// stop all the threads from the current room
-	     	    	theGridView.stopAll();
-	     	    	
-	     	    	// load the room
-	     	    	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
-	     	    }
-	     	}
-	     });
-	     add(loadRoomButton);
-	     
-	     // "Add Chat" button
-	     final JButton addChatButton = new JButton("Add Chat");
-	     addChatButton.setBounds(new Rectangle(835, 396, 132, 32));
-	     addChatButton.addActionListener(new ActionListener()
-	     {
-	     	public void actionPerformed(ActionEvent ae)
-	     	{
-	     		// add a chat bubble to the grid view
-	     		theGridView.addTextBubble(username, "This is another chat bubble!", 100);
-	     	}
-	     });
-	     add(addChatButton);
-     }
-     
-     // set up the "Loading" window
-     loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
-     loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
-     loadingWindow.setDescription("Loading... please wait");
-     loadingWindow.setVisible(true);
-     add(loadingWindow);
-     
-     // set up the "Loading" window background
-     loadingBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/loading_room_vmk.png"));
-     loadingBackground.setBounds(0,0,800,600);
-     loadingBackground.setVisible(true);
-     add(loadingBackground);
-     
-     // Toolbar (left)
-     toolbar_left = new JLabel("");
-     toolbar_left.setBounds(new Rectangle(0, 572, 228, 28));
-     toolbar_left.addMouseListener(new MouseAdapter()
-     {
-      	public void mouseReleased(MouseEvent e)
-      	{	
-      		// make sure we only process these events when the mouse
-      		// is within the editing grid
-      		int mouseX = e.getX();
-      		int mouseY = e.getY();
-      		Point mousePoint = new Point(mouseX, mouseY);
-      		
-      		if(infoButtonRect.contains(mousePoint)) // click inside the "I" button
-      		{
-      			System.out.println("Clicked toolbar info button");
-      			
-      			// check to see if the room owner information exists
-      			if(theGridView.getRoomInfo().get("OWNER") != null)
-      			{
-      				if(theGridView.getRoomInfo().get("OWNER").equals(theGridView.getMyCharacter().getUsername()))
-      				{
-      					theGridView.toggleEditRoomDescriptionWindow(); // show/hide the Edit Room Description window
-      				}
-      				else
-      				{
-      					theGridView.toggleRoomDescriptionWindow(); // show/hide the description
-      				}
-      			}
-      			else
-      			{
-      				theGridView.toggleRoomDescriptionWindow(); // show/hide the description
-      			}
-      		}
-      		else if(globeButtonRect.contains(mousePoint)) // click inside the globe button
-      		{
-      			System.out.println("Clicked toolbar globe button");
-      			theGridView.showMap(); // show the map
-      		}
-      		else if(inventoryButtonRect.contains(mousePoint)) // click inside the inventory button
-      		{
-      			System.out.println("Clicked toolbar inventory button");
-      			theGridView.toggleInventoryWindow(); // show/hide the inventory window
-      		}
-      		else if(messagesButtonRect.contains(mousePoint)) // click inside the messages button
-      		{
-      			System.out.println("Clicked toolbar messages button");
-      			
-      			// hide the "New Mail" animation
-      			messagesAnimationLabel.setVisible(false);
-      			
-      			theGridView.toggleMessagesWindow(); // show/hide the messages window
-      		}
-      		else if(shopButtonRect.contains(mousePoint)) // click inside the shop button
-      		{
-      			System.out.println("Clicked toolbar shop button");
-      			theGridView.toggleShopWindow(); // show/hide the shop window
-      		}
-      		else if(questButtonRect.contains(mousePoint)) // click inside the quest button
-      		{
-      			System.out.println("Clicked toolbar quest button");
-      			gamePirates.endGame();
-      		}
-      		else if(emoticonsButtonRect.contains(mousePoint)) // click inside the emoticons button
-      		{
-      			System.out.println("Clicked toolbar emoticons button");
-      		}
-      		else
-      		{
-          		System.out.println("Clicked Toolbar (left): " + mouseX + "-" + mouseY);
-      		}
-      	}
-      });
-      add(toolbar_left);
-     
-     // Toolbar (right)
-     toolbar_right = new JLabel("");
-     toolbar_right.setBounds(new Rectangle(603, 572, 199, 28));
-     toolbar_right.addMouseListener(new MouseAdapter()
-     {
-       	public void mouseReleased(MouseEvent e)
-       	{	
-       		// make sure we only process these events when the mouse
-       		// is within the editing grid
-       		int mouseX = e.getX();
-       		int mouseY = e.getY();
-       		Point mousePoint = new Point(mouseX, mouseY);
-       		
-       		if(magicButtonRect.contains(mousePoint)) // click inside the magic pins button
-       		{
-       			System.out.println("Clicked toolbar magic pins button");
-       		}
-       		else if(cameraButtonRect.contains(mousePoint)) // click inside the camera button
-       		{
-       			System.out.println("Clicked toolbar camera button");
-       		}
-       		else if(clothingButtonRect.contains(mousePoint)) // click inside the clothing button
-       		{
-       			System.out.println("Clicked toolbar clothing button");
-       			theGridView.toggleClothingWindow(); // show/hide the clothing window
-       		}
-       		else if(soundButtonRect.contains(mousePoint)) // click inside the sound button
-       		{
-       			System.out.println("Clicked toolbar sound button");
-       			theGridView.toggleSettingsWindow(); // show/hide the settings window
-       		}
-       		else if(helpButtonRect.contains(mousePoint)) // click inside the help button
-       		{
-       			System.out.println("Clicked toolbar help button");
-       			theGridView.toggleHelpWindow(); // show/hide the help window
-       		}
-       		else if(exitButtonRect.contains(mousePoint)) // click inside the exit button
-       		{
-       			// logout
-       			sendMessageToServer(new MessageLogout());
-       			theVMKClient.stopClient();
-       			theVMKClient = null;
-       			
-       			// load the login UI
-       			loadLoginUI();
-       		}
-       		else
-       		{
-       			System.out.println("Clicked Toolbar (right): " + mouseX + "-" + mouseY);
-       		}
-       	}
-       });
-     add(toolbar_right);
-     
-     // add the "New Mail" animation
-     messagesAnimationLabel = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/mail_anim.gif"));
-     messagesAnimationLabel.setBounds(100, 574, 32, 23);
-     messagesAnimationLabel.setVisible(false);
-     add(messagesAnimationLabel);
-     
-     // Toolbar image
-     toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
-     toolbar.setBounds(new Rectangle(0, 572, 800, 28));
-     add(toolbar);
-     
-     // Text box for chat input
-     chatTextBox = new JTextField();
-     chatTextBox.setVisible(false);
-     chatTextBox.setBorder(null);
-     chatTextBox.setCaretColor(Color.WHITE);
-     chatTextBox.setBackground(new Color(23, 34, 49));
-     chatTextBox.setForeground(Color.WHITE);
-     chatTextBox.setFont(textFont);
-     chatTextBox.setBounds(new Rectangle(235, 576, 360, 17));
-     chatTextBox.addKeyListener(new KeyListener()
-     {
-    	 public void keyPressed(KeyEvent e) {}
-    	 public void keyTyped(KeyEvent e)
-    	 {
-			 // only allow a certain number of characters
-			 if(chatTextBox.getText().length() > maximumChatCharacters)
-			 {
-				 e.consume();
-			 }
-    	 }
-    	 public void keyReleased(KeyEvent e)
-    	 { 
-    		 if(e.getKeyCode() == KeyEvent.VK_ENTER) // check for an ENTER key
-    		 {
-    			 // send the input to the chat bubbles object in the grid
-    			 theGridView.addTextBubble(username, chatTextBox.getText(), 100);
-    			 
-    			 // send an "Add Chat" message to the server
-    			 theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomID, chatTextBox.getText()));
-    			 
-    			 // clear the text box
-    			 chatTextBox.setText("");
-    		 }
-    	 }
-     });
-     add(chatTextBox);
-     
-     // create the grid
-     theGridView = new RoomViewerGrid();
-     theGridView.setVisible(false);
-     theGridView.setBounds(new Rectangle(0,0,800,572));
-     
-     // assign the fonts to the grid
-     theGridView.setTextFont(textFont);
-     theGridView.setTextFontBold(textFontBold);
-     
-     // hide the grid tiles
-     theGridView.showGrid(false);
-     
-     // add the grid
-     add(theGridView);
-     
-     // pack the window and display it
-     this.setName("Hawk's Virtual Magic Kingdom");
-     this.setVisible(true);
-     
-     // set-up the double-buffering objects and start the grid graphics loop
-     theGridView.setOffscreenImage(createImage(800, 572));
-     theGridView.setUIObject(this);
-     theGridView.start();
-     theGridView.loadGridView();
-     
-     // auto-load the Walk Test room
-  	 // stop all the threads from the current room
-  	 theGridView.stopAll();
-  	
-  	 // load the room
-  	 //FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
-  	 
-  	 // create a reference to the Fireworks game
-  	 gameFireworks = new GameFireworks();
-  	 gameFireworks.setBounds(new Rectangle(0,0,800,572));
-  	 gameFireworks.setVisible(false);
-  	 gameFireworks.setUIObject(this);
-  	 add(gameFireworks);
-  	 
-  	 // create a reference to the Pirates game
-  	 gamePirates = new GamePirates();
-  	 gamePirates.setBounds(new Rectangle(0,0,800,572));
-  	 gamePirates.setVisible(false);
-  	 gamePirates.setUIObject(this);
-  	 add(gamePirates);
-     
-  	 repaint();
-     roomViewerUI = this;
-     
-	 // connect to the server and start the client connection
-	 theVMKClient = new VMKClient(getUsername());
-	 theVMKClient.setUIObject(roomViewerUI);
-	 theVMKClient.startClient();
+		// start the loader thread so the graphics can be drawn as the loading takes place
+		new RoomViewerLoadingThread(this).start();
 	}
 
 	// set up the fonts
@@ -1064,5 +692,394 @@ public class RoomViewerUI extends Applet
 	public boolean isWindowClosing()
 	{
 		return windowClosing;
+	}
+	
+	// internal class to load the actual RoomViewerUI after login
+	class RoomViewerLoadingThread extends Thread
+	{
+		private RoomViewerUI uiObject = null;
+		
+		public RoomViewerLoadingThread(RoomViewerUI uiObject) {this.uiObject = uiObject;}
+		
+		public void run()
+		{
+			if(release == false) // in-house development UI
+			{
+				uiObject.setPreferredSize(new Dimension(1000, 628));
+			}
+			else // public release UI
+			{
+				uiObject.setPreferredSize(new Dimension(800, 628));
+			}
+
+			uiObject.setSize(800,600);
+
+			uiObject.setLayout(null);
+
+			// set up the fonts
+			setupFonts();
+
+			if(release == false) // in-house development UI
+			{
+				JLabel titleLabel = new JLabel("<html><center>Room Viewer v.1<br>by Hawkster</center></html>");
+				titleLabel.setBounds(new Rectangle(860, 10, 100, 40));
+				add(titleLabel);
+
+				// Show Grid button
+				final JCheckBox showGridButton = new JCheckBox("Show Grid");
+				showGridButton.setSelected(false);
+				showGridButton.setBounds(new Rectangle(850, 150, 100, 32));
+				showGridButton.addChangeListener(new ChangeListener()
+				{
+					public void stateChanged(ChangeEvent e)
+					{
+						// toggle the grid
+						theGridView.showGrid(showGridButton.isSelected());
+					}
+				});
+				add(showGridButton);
+
+				// Show Exit Tiles button
+				final JCheckBox showExitTilesButton = new JCheckBox("Show Exit Tiles");
+				showExitTilesButton.setSelected(true);
+				showExitTilesButton.setBounds(new Rectangle(850, 200, 132, 32));
+				showExitTilesButton.addChangeListener(new ChangeListener()
+				{
+					public void stateChanged(ChangeEvent e)
+					{
+						// show/hide the exit tiles
+						theGridView.showExitTiles(showExitTilesButton.isSelected());
+					}
+				});
+				add(showExitTilesButton);
+
+				// Show Nogo Tiles button
+				final JCheckBox showNogoTilesButton = new JCheckBox("Show Nogo Tiles");
+				showNogoTilesButton.setSelected(true);
+				showNogoTilesButton.setBounds(new Rectangle(850, 226, 132, 32));
+				showNogoTilesButton.addChangeListener(new ChangeListener()
+				{
+					public void stateChanged(ChangeEvent e)
+					{
+						// show/hide the nogo tiles
+						theGridView.showNogoTiles(showNogoTilesButton.isSelected());
+					}
+				});
+				add(showNogoTilesButton);
+
+				// Show Walk Tiles button
+				final JCheckBox showWalkTilesButton = new JCheckBox("Show Walk Tiles");
+				showWalkTilesButton.setSelected(true);
+				showWalkTilesButton.setBounds(new Rectangle(850, 252, 132, 32));
+				showWalkTilesButton.addChangeListener(new ChangeListener()
+				{
+					public void stateChanged(ChangeEvent e)
+					{
+						// show/hide the walk tiles
+						theGridView.showWalkTiles(showWalkTilesButton.isSelected());
+					}
+				});
+				add(showWalkTilesButton);
+
+				// "Load Room" button
+				final JButton loadRoomButton = new JButton("Load Room");
+				loadRoomButton.setBounds(new Rectangle(835, 348, 132, 32));
+				loadRoomButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent ae)
+					{
+						// open the file
+						JFileChooser chooser = new JFileChooser();
+						FileNameExtensionFilter filter = new FileNameExtensionFilter(
+								"Room Files (*.room)", "room");
+						chooser.setFileFilter(filter);
+						//chooser.setCurrentDirectory(new File(currentDirectory));
+						int returnVal = chooser.showOpenDialog(roomViewerUI);
+						if(returnVal == JFileChooser.APPROVE_OPTION)
+						{
+							filename = chooser.getSelectedFile().getPath();
+
+							System.out.println("You chose to load this file: " + filename);
+
+							// stop all the threads from the current room
+							theGridView.stopAll();
+
+							// load the room
+							FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
+						}
+					}
+				});
+				add(loadRoomButton);
+
+				// "Add Chat" button
+				final JButton addChatButton = new JButton("Add Chat");
+				addChatButton.setBounds(new Rectangle(835, 396, 132, 32));
+				addChatButton.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent ae)
+					{
+						// add a chat bubble to the grid view
+						theGridView.addTextBubble(username, "This is another chat bubble!", 100);
+					}
+				});
+				add(addChatButton);
+			}
+
+			// set up the "Loading" window
+			loadingWindow = new WindowLoading(textFont, textFontBold, 250, 150);
+			loadingWindow.setRoomTitle("Hawk's Virtual Magic Kingdom");
+			loadingWindow.setDescription("Loading... please wait");
+			loadingWindow.setVisible(true);
+			add(loadingWindow);
+
+			// set up the "Loading" window background
+			loadingBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/loading_room_vmk.png"));
+			loadingBackground.setBounds(0,0,800,600);
+			loadingBackground.setVisible(true);
+			add(loadingBackground);
+			
+			// repaint the window
+			repaint();
+
+			// Toolbar (left)
+			toolbar_left = new JLabel("");
+			toolbar_left.setBounds(new Rectangle(0, 572, 228, 28));
+			toolbar_left.addMouseListener(new MouseAdapter()
+			{
+				public void mouseReleased(MouseEvent e)
+				{	
+					// make sure we only process these events when the mouse
+					// is within the editing grid
+					int mouseX = e.getX();
+					int mouseY = e.getY();
+					Point mousePoint = new Point(mouseX, mouseY);
+
+					if(infoButtonRect.contains(mousePoint)) // click inside the "I" button
+					{
+						System.out.println("Clicked toolbar info button");
+
+						// check to see if the room owner information exists
+						if(theGridView.getRoomInfo().get("OWNER") != null)
+						{
+							if(theGridView.getRoomInfo().get("OWNER").equals(theGridView.getMyCharacter().getUsername()))
+							{
+								theGridView.toggleEditRoomDescriptionWindow(); // show/hide the Edit Room Description window
+							}
+							else
+							{
+								theGridView.toggleRoomDescriptionWindow(); // show/hide the description
+							}
+						}
+						else
+						{
+							theGridView.toggleRoomDescriptionWindow(); // show/hide the description
+						}
+					}
+					else if(globeButtonRect.contains(mousePoint)) // click inside the globe button
+					{
+						System.out.println("Clicked toolbar globe button");
+						theGridView.showMap(); // show the map
+					}
+					else if(inventoryButtonRect.contains(mousePoint)) // click inside the inventory button
+					{
+						System.out.println("Clicked toolbar inventory button");
+						theGridView.toggleInventoryWindow(); // show/hide the inventory window
+					}
+					else if(messagesButtonRect.contains(mousePoint)) // click inside the messages button
+					{
+						System.out.println("Clicked toolbar messages button");
+
+						// hide the "New Mail" animation
+						messagesAnimationLabel.setVisible(false);
+
+						theGridView.toggleMessagesWindow(); // show/hide the messages window
+					}
+					else if(shopButtonRect.contains(mousePoint)) // click inside the shop button
+					{
+						System.out.println("Clicked toolbar shop button");
+						theGridView.toggleShopWindow(); // show/hide the shop window
+					}
+					else if(questButtonRect.contains(mousePoint)) // click inside the quest button
+					{
+						System.out.println("Clicked toolbar quest button");
+						gamePirates.endGame();
+					}
+					else if(emoticonsButtonRect.contains(mousePoint)) // click inside the emoticons button
+					{
+						System.out.println("Clicked toolbar emoticons button");
+					}
+					else
+					{
+						System.out.println("Clicked Toolbar (left): " + mouseX + "-" + mouseY);
+					}
+				}
+			});
+			add(toolbar_left);
+
+			// Toolbar (right)
+			toolbar_right = new JLabel("");
+			toolbar_right.setBounds(new Rectangle(603, 572, 199, 28));
+			toolbar_right.addMouseListener(new MouseAdapter()
+			{
+				public void mouseReleased(MouseEvent e)
+				{	
+					// make sure we only process these events when the mouse
+					// is within the editing grid
+					int mouseX = e.getX();
+					int mouseY = e.getY();
+					Point mousePoint = new Point(mouseX, mouseY);
+
+					if(magicButtonRect.contains(mousePoint)) // click inside the magic pins button
+					{
+						System.out.println("Clicked toolbar magic pins button");
+					}
+					else if(cameraButtonRect.contains(mousePoint)) // click inside the camera button
+					{
+						System.out.println("Clicked toolbar camera button");
+					}
+					else if(clothingButtonRect.contains(mousePoint)) // click inside the clothing button
+					{
+						System.out.println("Clicked toolbar clothing button");
+						theGridView.toggleClothingWindow(); // show/hide the clothing window
+					}
+					else if(soundButtonRect.contains(mousePoint)) // click inside the sound button
+					{
+						System.out.println("Clicked toolbar sound button");
+						theGridView.toggleSettingsWindow(); // show/hide the settings window
+					}
+					else if(helpButtonRect.contains(mousePoint)) // click inside the help button
+					{
+						System.out.println("Clicked toolbar help button");
+						theGridView.toggleHelpWindow(); // show/hide the help window
+					}
+					else if(exitButtonRect.contains(mousePoint)) // click inside the exit button
+					{
+						// logout
+						sendMessageToServer(new MessageLogout());
+						theVMKClient.stopClient();
+						theVMKClient = null;
+
+						// load the login UI
+						loadLoginUI();
+					}
+					else
+					{
+						System.out.println("Clicked Toolbar (right): " + mouseX + "-" + mouseY);
+					}
+				}
+			});
+			add(toolbar_right);
+
+			// add the "New Mail" animation
+			messagesAnimationLabel = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/mail_anim.gif"));
+			messagesAnimationLabel.setBounds(100, 574, 32, 23);
+			messagesAnimationLabel.setVisible(false);
+			add(messagesAnimationLabel);
+
+			// Toolbar image
+			toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
+			toolbar.setBounds(new Rectangle(0, 572, 800, 28));
+			add(toolbar);
+
+			// Text box for chat input
+			chatTextBox = new JTextField();
+			chatTextBox.setVisible(false);
+			chatTextBox.setBorder(null);
+			chatTextBox.setCaretColor(Color.WHITE);
+			chatTextBox.setBackground(new Color(23, 34, 49));
+			chatTextBox.setForeground(Color.WHITE);
+			chatTextBox.setFont(textFont);
+			chatTextBox.setBounds(new Rectangle(235, 576, 360, 17));
+			chatTextBox.addKeyListener(new KeyListener()
+			{
+				public void keyPressed(KeyEvent e) {}
+				public void keyTyped(KeyEvent e)
+				{
+					// only allow a certain number of characters
+					if(chatTextBox.getText().length() > maximumChatCharacters)
+					{
+						e.consume();
+					}
+				}
+				public void keyReleased(KeyEvent e)
+				{ 
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) // check for an ENTER key
+					{
+						// send the input to the chat bubbles object in the grid
+						theGridView.addTextBubble(username, chatTextBox.getText(), 100);
+
+						// send an "Add Chat" message to the server
+						theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomID, chatTextBox.getText()));
+
+						// clear the text box
+						chatTextBox.setText("");
+					}
+				}
+			});
+			add(chatTextBox);
+			
+			// create the pin mappings
+			StaticAppletData.createInvMappings();
+
+			// create the room mappings
+			StaticAppletData.createRoomMappings();
+
+			// create the dictionaries
+			Dictionary.createDictionaries();
+
+			// create the grid
+			theGridView = new RoomViewerGrid();
+			theGridView.setVisible(false);
+			theGridView.setBounds(new Rectangle(0,0,800,572));
+
+			// assign the fonts to the grid
+			theGridView.setTextFont(textFont);
+			theGridView.setTextFontBold(textFontBold);
+
+			// hide the grid tiles
+			theGridView.showGrid(false);
+
+			// add the grid
+			add(theGridView);
+
+			// pack the window and display it
+			uiObject.setName("Hawk's Virtual Magic Kingdom");
+			uiObject.setVisible(true);
+
+			// set-up the double-buffering objects and start the grid graphics loop
+			theGridView.setOffscreenImage(createImage(800, 572));
+			theGridView.setUIObject(uiObject);
+			theGridView.start();
+			theGridView.loadGridView();
+
+			// auto-load the Walk Test room
+			// stop all the threads from the current room
+			theGridView.stopAll();
+
+			// load the room
+			//FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
+
+			// create a reference to the Fireworks game
+			gameFireworks = new GameFireworks();
+			gameFireworks.setBounds(new Rectangle(0,0,800,572));
+			gameFireworks.setVisible(false);
+			gameFireworks.setUIObject(uiObject);
+			add(gameFireworks);
+
+			// create a reference to the Pirates game
+			gamePirates = new GamePirates();
+			gamePirates.setBounds(new Rectangle(0,0,800,572));
+			gamePirates.setVisible(false);
+			gamePirates.setUIObject(uiObject);
+			add(gamePirates);
+
+			repaint();
+			roomViewerUI = uiObject;
+
+			// connect to the server and start the client connection
+			theVMKClient = new VMKClient(getUsername());
+			theVMKClient.setUIObject(roomViewerUI);
+			theVMKClient.startClient();
+		}
 	}
 }
