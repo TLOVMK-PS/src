@@ -66,14 +66,17 @@ public class AppletResourceLoader implements Serializable
 					// release environment
 					try
 					{
-						// release environment (local machine)
-						return new ImageIcon(new URL("file:///" + System.getProperty("user.dir") + path));
-						//return new ImageIcon(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+						// release environment (web server)
+						//System.out.println("Web server image: " + new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+						return new ImageIcon(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
 					}
 					catch(Exception e)
 					{
-						// release environment (web server)
-						return new ImageIcon(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+						// release environment (local machine)
+						//System.out.println("Local image: " + new URL("file:///" + System.getProperty("user.dir") + path).toString());
+
+						return new ImageIcon(new URL("file:///" + System.getProperty("user.dir") + path));
+						//return new ImageIcon(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
 					}
 				}
 			}
@@ -107,13 +110,13 @@ public class AppletResourceLoader implements Serializable
 				// release environment
 				try
 				{
-					// release environment (local machine)
-					image = ImageIO.read(new URL("file:///" + System.getProperty("user.dir") + path));
+					// release environment (web server)
+					image = ImageIO.read(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
 				}
 				catch(Exception e)
 				{
-					// release environment (web server)
-					image = ImageIO.read(new URL(StaticAppletData.getCodeBase() + path.substring(1)));
+					// release environment (local machine)
+					image = ImageIO.read(new URL("file:///" + System.getProperty("user.dir") + path));
 				}
 			}
 		}
@@ -160,14 +163,14 @@ public class AppletResourceLoader implements Serializable
 					//return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
 					try
 					{
-						// release environment (local machine)
-						return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
-						//return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+						// release environment (web server)
+						return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 					}
 					catch(Exception e)
 					{
-						// release environment (web server)
-						return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+						// release environment (local machine)
+						return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
+						//return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 					}
 				}
 			}
@@ -193,16 +196,17 @@ public class AppletResourceLoader implements Serializable
 			}
 			else
 			{
-				// release environment (local machine)
-				return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
+				// release environment (web server)
+				return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 			}
 		}
 		catch(Exception e)
 		{
-			// release environment (web server)
+			
 			try
 			{
-				return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+				// release environment (local machine)
+				return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
 			}
 			catch(Exception ex)
 			{
@@ -247,18 +251,19 @@ public class AppletResourceLoader implements Serializable
 				}
 				else
 				{
-					// release environment (local machine)
-					theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
+					// release environment (web server)
+					theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
 	
 					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
 				}
 			}
 			catch(Exception e)
 			{
-				// release environment (web server)
+				
 				try
 				{
-					theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
+					// release environment (local machine)
+					theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
 	
 					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
 				}
