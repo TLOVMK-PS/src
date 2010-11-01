@@ -148,15 +148,8 @@ public class RoomViewerUI extends Applet
 		StaticAppletData.setCodeBase(getCodeBase().toString()); // set the code base
 		StaticAppletData.setCodeBaseURL(getCodeBase()); // set the code base URL
 		
-		if(getCodeBase().toString().startsWith("http")) // release environment
-		{
-			loginPath = getCodeBase().toString() + "login.php";
-		}
-		else
-		{
-			// production environment
-			loginPath = "http://www.burbankparanormal.com/vmk/game/login.php";
-		}
+		// set the path to the login script
+		loginPath = "http://www.burbankparanormal.com/vmk/game/login.php";
 		
 		loadLoginUI(); // load the login UI first
 		//loadRoomViewerUI();

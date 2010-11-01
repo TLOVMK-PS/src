@@ -41,7 +41,7 @@ public class LoginModule
 			while(loginScanner.hasNextLine())
 			{
 				line = loginScanner.nextLine();
-				
+
 				if(line.startsWith("USERNAME: "))
 				{
 					// get the username from the connection
