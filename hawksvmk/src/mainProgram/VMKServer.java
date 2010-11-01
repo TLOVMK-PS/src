@@ -116,27 +116,57 @@ public class VMKServer
         		{
 	        		for(int i = 0; i < serverThreads.size(); i++)
 	        		{
-	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress()))
+	        			// check to see if the IP address and port matches a client that already has a thread
+	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress())
+	        					&& serverThreads.get(i).getRemoteAddress().getPort() == newSocket.getPort())
 	        			{
-	        				System.out.println("Set new socket for existing client [" + serverThreads.get(i).getName() + "]");
-	        				serverThreads.get(i).setSocket(newSocket);
+	        				// make sure the server thread is still alive
+	        				if(!serverThreads.get(i).isInterrupted())
+	        				{
+	        					System.out.println("Set new socket for existing client [" + serverThreads.get(i).getName() + "]");
+	        					serverThreads.get(i).setSocket(newSocket);
+	        				}
 	        			}
 	        			else
 	        			{
-	        				VMKServerThread newServerThread = new VMKServerThread(newSocket);
+	        				VMKServerThread newServerThread = null;
+	        				
+	        				// Check to see if only the IP address is a match since
+	        				// that would mean it's two clients running on the
+	        				// same computer and we don't want to corrupt the
+	        				// input streams.
+	        				if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress()))
+	        				{
+	        					// it's the same IP address, so use the same input stream
+	        					newServerThread = new VMKServerThread(newSocket, true);
+	        					newServerThread.setOutputStream(serverThreads.get(i).getOutputStream());
+	        					newServerThread.setInputStream(serverThreads.get(i).getInputStream());
+	        					
+	        					System.out.println("Accepted client socket - same computer (" + newSocket.getInetAddress().getHostAddress() + ")");
+	        				}
+	        				else
+	        				{
+	        					// it's an entirely different IP address
+	        					newServerThread = new VMKServerThread(newSocket, false);
+	        					
+	        					System.out.println("Accepted client socket");
+	        				}
+	        				
 	                		newServerThread.start();
 	                		serverThreads.add(newServerThread);
 	                		
 	                		newServerThread.setServerThreads(serverThreads);
-	                		
-	                		System.out.println("Accepted client socket");
 	        			}
 	        		}
         		}
         		else
         		{
-        			VMKServerThread newServerThread = new VMKServerThread(newSocket);
-            		newServerThread.start();
+        			VMKServerThread newServerThread = null;
+        			
+    				// there's only one client so don't worry about stream corruption yet
+    				newServerThread = new VMKServerThread(newSocket, false);
+            		
+        			newServerThread.start();
             		serverThreads.add(newServerThread);
             		
             		newServerThread.setServerThreads(serverThreads);

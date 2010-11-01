@@ -81,6 +81,7 @@ public class VMKClientThread extends Thread
     	try
     	{
     		out = new ObjectOutputStream(socket.getOutputStream());
+    		out.flush();
     	    in = new ObjectInputStream(socket.getInputStream());
     	}
     	catch(IOException e)
@@ -105,8 +106,11 @@ public class VMKClientThread extends Thread
 		    try
 		    {
 		    	// process message input from the server
-			    while ((inputMessage = (Message)in.readUnshared()) != null)
+			    while (!isInterrupted())
 			    {
+			    	// process message input from the server
+			    	inputMessage = (Message)in.readUnshared();
+			    	
 			    	// get the response from an input message
 					outputMessage = vmkp.processInput(inputMessage);
 
@@ -502,6 +506,17 @@ public class VMKClientThread extends Thread
     	
     		// reveal that the socket is no longer re-booting
     		rebooting = false;
+    		
+    		// interrupt the thread and CLOSE FUCKING EVERYTHING
+    		this.interrupt();
+    		
+    		try
+    		{
+    			in.close();
+    			out.close();
+    			socket.close();
+    		}
+    		catch(IOException ioe) {}
     	}
     	catch(IOException e)
     	{

@@ -42,6 +42,8 @@ public class VMKServerPlayerData
 	{
 		characters.put(username, character);
 		rooms.get(roomID).addCharacterName(username);
+		
+		System.out.println("Characters in " + roomID + ": " + rooms.get(roomID).countCharacters());
 	}
 	
 	// get a character from the HashMap
@@ -50,6 +52,10 @@ public class VMKServerPlayerData
 		AStarCharacter character = characters.get(username);
 		return character;
 	}
+	
+	// TODO: Write a getCharactersInRoom(String roomID) method to return all the
+	// character names in a given room and then convert them to an ArrayList of
+	// AStarCharacter objects to be returned to the VMKServerThread class
 	
 	// remove a character from the HashMap
 	public static void removeCharacter(String username)
