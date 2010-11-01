@@ -50,7 +50,7 @@ public class VMKServer
 		System.out.println(dashes);
 		System.out.println();
 		
-		int port = 80;
+		int port = 4444;
 		System.out.println("Starting VMK server on port " + port + "...");
 		
         try

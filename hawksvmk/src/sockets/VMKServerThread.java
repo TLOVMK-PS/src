@@ -148,6 +148,8 @@ public class VMKServerThread extends Thread
 				    	// create a response from an input message
 				    	inputMessage = (Message)in.readUnshared();
 						outputMessage = vmkp.processInput(inputMessage);
+						
+						System.out.println("Received message (" + outputMessage.getType() + ") from client " + this.getName());
 	
 						if(outputMessage instanceof MessageLogin)
 						{

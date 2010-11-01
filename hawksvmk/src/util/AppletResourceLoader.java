@@ -164,11 +164,13 @@ public class AppletResourceLoader implements Serializable
 					try
 					{
 						// release environment (web server)
+						System.out.println("File web server: " + new URL(StaticAppletData.getCodeBase() + path.substring(1)).toString());
 						return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 					}
 					catch(Exception e)
 					{
 						// release environment (local machine)
+						System.out.println("File local machine: " + (new URL("file:///" + System.getProperty("user.dir") + path).toString()));
 						return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
 						//return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 					}

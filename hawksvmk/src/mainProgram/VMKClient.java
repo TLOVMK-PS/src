@@ -50,7 +50,7 @@ public class VMKClient
 		catch(Exception e) {}
 		
     	String hostname = "";
-    	int port = 80;
+    	int port = 4444;
     	
         vmkSocket = null;
         
