@@ -36,7 +36,7 @@ public class StaticAppletData
 	public static void createRoomMappings()
 	{
 		// load room mappings from the mappings file
-		roomMappings = FileOperations.loadRoomMappings();
+		roomMappings = FileOperations.loadRoomMappings(false);
 		
 		System.out.println("Created room mappings");
 	}

@@ -2137,8 +2137,9 @@ public class FileOperations
 		return infoMap;
 	}
 	
-	// load the room mappings
-	public static HashMap<String,VMKRoom> loadRoomMappings()
+	// load the room mappingse
+	// TODO: HERE'S WHERE THE PROBLEM ARISES
+	public static HashMap<String,VMKRoom> loadRoomMappings(boolean fromServer)
 	{
 		String filename = "data/mappings/roomNames.dat";
 		HashMap<String,VMKRoom> roomMappings = new HashMap<String,VMKRoom>();
@@ -2183,8 +2184,11 @@ public class FileOperations
 						}
 						else if(roomID.startsWith("gr"))
 						{
-							// it's an actual guest room
-							VMKServerPlayerData.incrementGuestRoomCount(); // increment the number of guest rooms
+							if(fromServer)
+							{
+								// it's an actual guest room
+								VMKServerPlayerData.incrementGuestRoomCount(); // increment the number of guest rooms
+							}
 						}
 					}
 					else if(line.startsWith("PATH: "))

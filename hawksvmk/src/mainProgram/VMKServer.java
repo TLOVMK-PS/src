@@ -92,7 +92,7 @@ public class VMKServer
         
         // load the room mappings
         System.out.println("Loading room mappings...");
-        VMKServerPlayerData.setRooms(FileOperations.loadRoomMappings());
+        VMKServerPlayerData.setRooms(FileOperations.loadRoomMappings(true));
         System.out.println("Room mappings loaded");
         System.out.println();
         
