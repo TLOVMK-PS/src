@@ -497,7 +497,7 @@ public class RoomViewerUI extends Applet
 	// send a message to the server (only used for messages from the grid)
 	protected void sendMessageToServer(Message m)
 	{
-		theVMKClient.sendMessageToServer(m);
+		new MessageSenderThread(m).start();
 	}
 	
 	public String getEmail() {return email;}
@@ -692,6 +692,20 @@ public class RoomViewerUI extends Applet
 	public boolean isWindowClosing()
 	{
 		return windowClosing;
+	}
+	
+	// thread to handle sending messages
+	class MessageSenderThread extends Thread
+	{
+		private Message m = null;
+		
+		public MessageSenderThread(Message m) {this.m = m;}
+		
+		public void run()
+		{
+			// send the message to the server
+			theVMKClient.sendMessageToServer(m);
+		}
 	}
 	
 	// internal class to load the actual RoomViewerUI after login
