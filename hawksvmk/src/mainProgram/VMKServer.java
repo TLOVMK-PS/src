@@ -116,9 +116,11 @@ public class VMKServer
         		{
 	        		for(int i = 0; i < serverThreads.size(); i++)
 	        		{
-	        			// check to see if the IP address matches a client that already has a thread
+	        			// check to see if the IP address matches a client that already
+	        			// has a thread, checking to make sure that thread is also waiting
+	        			// for a re-connect from the client.
 	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress())
-	        					&& serverThreads.get(i).getRemoteAddress().getPort() == newSocket.getPort())
+	        					&& serverThreads.get(i).isWaitingForReconnect())
 	        			{
 	        				// make sure the server thread is still alive
 	        				if(!serverThreads.get(i).isInterrupted())

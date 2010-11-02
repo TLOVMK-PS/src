@@ -95,10 +95,13 @@ public class VMKServerThread extends Thread
     	{	
     		System.out.println("Could not set up object I/O on the server for client " + socket.getRemoteSocketAddress().toString());
     		e.printStackTrace();
-    		
-    		this.interrupt();
-    		System.exit(-1);
     	}
+    }
+    
+    // check whether this thread is waiting for a socket re-connection from the client
+    public boolean isWaitingForReconnect()
+    {
+    	return waitingForReconnect;
     }
     
     public InetSocketAddress getRemoteAddress() {return remoteAddress;}
@@ -133,9 +136,6 @@ public class VMKServerThread extends Thread
 	    	{
 	    		System.out.println("Client had a re-connection error: " + e.getMessage());
 	    		e.printStackTrace();
-	    		
-	    		this.interrupt();
-	    		System.exit(-1);
 	    	}
     	}
     }
@@ -844,6 +844,7 @@ public class VMKServerThread extends Thread
     		if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), room))
     		{
     		//System.out.println("Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName());
+    			System.out.println("sendMessageToAllClientsInRoom(): Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName() + " in room " + room);
     			serverThreads.get(i).sendMessageToClient(m);
     		}
     	}

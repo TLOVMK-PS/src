@@ -40,6 +40,12 @@ public class VMKServerPlayerData
 	// add a character to the HashMap and a room
 	public static void addCharacter(String username, AStarCharacter character, String roomID)
 	{
+		// clear the path so the character doesn't seem like he's walking face-first into a fucking tree
+		//character.clearPath();
+		
+		// TODO: Set the X and Y coordinates of the character here, given the tile row
+		// and tile column of the last tile in his path
+		
 		characters.put(username, character);
 		rooms.get(roomID).addCharacterName(username);
 		
