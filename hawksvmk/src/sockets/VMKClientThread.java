@@ -31,7 +31,7 @@ import sockets.messages.MessageAddFriendRequest;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageCreateGuestRoom;
-import sockets.messages.MessageGetCharactersInRoom;
+import sockets.messages.MessageGetCharacterInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetInventory;
 import sockets.messages.MessageGetOfflineMailMessages;
@@ -86,6 +86,7 @@ public class VMKClientThread extends Thread
     	catch(IOException e)
     	{
     		System.out.println("Could not initialize object I/O for the client");
+    		System.out.println(e.getMessage());
     	}
     }
     
@@ -139,44 +140,34 @@ public class VMKClientThread extends Thread
 
 					    break;
 					}
-					else if (outputMessage instanceof MessageGetCharactersInRoom)
+					else if (outputMessage instanceof MessageGetCharacterInRoom)
 					{
-						MessageGetCharactersInRoom userMsg = (MessageGetCharactersInRoom)outputMessage;
+						MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom)outputMessage;
 						
-						// get characters in room response received from server
-						System.out.println("Get characters in room response received from server for thread: " + this.getName());
+						// get character in room response received from server
+						System.out.println("Get character in room response received from server for thread: " + this.getName());
 						
-						for(int i = 0; i < userMsg.getCharacters().size(); i++)
-						{
-							// get the next character based upon the name of the thread received
-							AStarCharacter nextCharacter = userMsg.getCharacter(i);
-							
-							// add the user to the current room
-							uiObject.addCharacterToRoom(nextCharacter);
-							//uiObject.addUserToRoom(nextCharacter.getUsername(), nextCharacter.getRow(), nextCharacter.getCol());
-						}
-						
-						// make the chat text box visible
+						// add the character to the current room
+						uiObject.addCharacterToRoom(userMsg.getCharacter());
+
+						// make the chat text box visible if necessary
 						uiObject.showChatBox();
 					}
 					else if (outputMessage instanceof MessageAddUserToRoom)
 					{
-						//MessageAddUserToRoom userMsg = (MessageAddUserToRoom)outputMessage;
+						MessageAddUserToRoom addMsg = (MessageAddUserToRoom)outputMessage;
 						
 						// update the description in the loading window
 						uiObject.setLoadingDescription("Adding you to the HVMK map...");
 						
 						// user response received from server
-						roomID = ((MessageAddUserToRoom)outputMessage).getRoomID();
-						roomName = ((MessageAddUserToRoom)outputMessage).getRoomName();
+						roomID = addMsg.getRoomID();
+						roomName = addMsg.getRoomName();
 						uiObject.setRoomInformation(roomID, roomName);
 						System.out.println("Add user to room response received from server for thread: " + this.getName());
 						
 						// get all characters currently in the room
-						sendMessageToServer(new MessageGetCharactersInRoom(roomID));
-						
-						// add the user to the current room
-						//uiObject.addUserToRoom(userMsg.getUsername(), userMsg.getRow(), userMsg.getCol());
+						sendMessageToServer(new MessageGetCharacterInRoom(roomID));
 					}
 					else if(outputMessage instanceof MessageRemoveUserFromRoom)
 					{
@@ -416,10 +407,16 @@ public class VMKClientThread extends Thread
 	    		System.out.println("Stream corrupted when trying to read an image: " + iioe.getMessage());
 	    		
 	    		// pop up a message letting the user know that there was a problem
-	    		JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading image data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
+	    		//JOptionPane.showMessageDialog(null, "Whoops!\n\nIt appears HVMK has crashed while reading image data.\n\nPlease close the HVMK window and try logging back in.","Hawk's Virtual Magic Kingdom",JOptionPane.WARNING_MESSAGE);
 	    		
 	    		// stop this client thread
-	    		this.interrupt();
+	    		//this.interrupt();
+
+	    		reconnectToServer();
+	    		
+	    		// try to re-boot this client thread
+	    		collectInput();
+	    		return;
 	    	}
 	    	
 	    	// remove the current user from the current room
@@ -552,10 +549,9 @@ public class VMKClientThread extends Thread
     // write a message to the output buffer to be sent to the server
     private synchronized void writeOutputToServer(Message m) throws SocketException, IOException
     {
-    	//out.reset();
     	out.writeUnshared(m);
-		out.flush();
-		//out.reset();
+    	out.reset();
+		//out.flush();
     }
     
     // send out the cached messages after a re-connect
@@ -638,6 +634,7 @@ public class VMKClientThread extends Thread
 	    	{
 	    		// some other problem
 	    		System.out.println("Ah shit: " + e.getClass().getName() + " - " + e.getMessage());
+	    		e.printStackTrace();
 	    	}
     	}
     	else

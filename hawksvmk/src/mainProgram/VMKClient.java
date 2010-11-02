@@ -157,7 +157,10 @@ public class VMKClient
     // send a message to the client thread to route to the server
     public void sendMessageToServer(Message m)
     {
-    	clientThread.sendMessageToServer(m);
+    	if(clientThread != null)
+    	{
+    		clientThread.sendMessageToServer(m);
+    	}
     }
     
     // return whether the socket is connected to the server

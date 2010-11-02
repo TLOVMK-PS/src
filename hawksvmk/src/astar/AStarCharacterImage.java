@@ -14,7 +14,7 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 public class AStarCharacterImage implements Serializable
 {
-	private BufferedImage theImage = null;
+	private transient BufferedImage theImage = null;
 	
 	public AStarCharacterImage() {super();}
 	public AStarCharacterImage(BufferedImage theImage)
@@ -29,12 +29,14 @@ public class AStarCharacterImage implements Serializable
 	// write the image out to the stream
 	private void writeObject(java.io.ObjectOutputStream out) throws IOException
 	{
+		out.defaultWriteObject();
 		ImageIO.write(getImage(), "png", new MemoryCacheImageOutputStream(out));
 	}
 
 	// read the image in from the stream
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	{
+		in.defaultReadObject();
 		setImage(ImageIO.read(new MemoryCacheImageInputStream(in)));
 	} 
 }

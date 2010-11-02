@@ -684,10 +684,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 														changeRoom(destination);
 													}
 												}
-												
-												if(character.getUsername().equals(myCharacter.getUsername()))
+												else
 												{
-													sendUpdateCharacterMessage(character);
+													// no exit tile, so update the character if it's the myCharacter object
+													if(character.getUsername().equals(myCharacter.getUsername()))
+													{
+														sendUpdateCharacterMessage(character);
+													}
 												}
 											}
 										}
@@ -720,10 +723,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 													changeRoom(destination);
 												}
 											}
-
-											if(character.getUsername().equals(myCharacter.getUsername()))
+											else
 											{
-												sendUpdateCharacterMessage(character);
+												// no exit tile, so update the character if it's the myCharacter object
+												if(character.getUsername().equals(myCharacter.getUsername()))
+												{
+													sendUpdateCharacterMessage(character);
+												}
 											}
 										}
 									}
@@ -735,7 +741,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					// draw the character
 					if(character != null);
 					{
-						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight(this) + tileHeight, this);
+						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight() + tileHeight, this);
 					}
 				}
 			}
@@ -1294,8 +1300,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
      		character.setPathfinderTiles(tilesMap);
      		
 	 		// process a pathfinding operation for the character
-	 		System.out.println("Setting current tile: " + character.getRow() + "-" + character.getCol());
-	 		System.out.println("Tile type: " + tilesMap.get(character.getRow() + "-" + character.getCol()).getTypeString());
+	 		//System.out.println("Setting current tile: " + character.getRow() + "-" + character.getCol());
+	 		//System.out.println("Tile type: " + tilesMap.get(character.getRow() + "-" + character.getCol()).getTypeString());
 	 		character.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
 	 		character.clearPath();
 	 		character.setPath(character.getPathfinder().getPath(character.getCurrentTile(), tilesMap.get(destGridY + "-" + destGridX)));
@@ -1469,17 +1475,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// send an "Update Character" message to the server
-	public void sendUpdateCharacterMessage(AStarCharacter character2)
+	public void sendUpdateCharacterMessage(AStarCharacter character)
 	{
-		final AStarCharacter character = character2;
-		
-		new Thread() {
-			@Override
-			public void run()
-			{
-				uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
-			}
-		}.start();
+		new CharacterUpdaterThread(character, roomID).start();
 	}
 	
 	// set the current room name
@@ -1709,6 +1707,25 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void setLoadingDescription(String description)
 	{
 		uiObject.setLoadingDescription(description);
+	}
+	
+	// thread that serves as the character updater thread so the character can be updated properly
+	class CharacterUpdaterThread extends Thread
+	{
+		private AStarCharacter character = null;
+		private String roomID = "";
+		
+		public CharacterUpdaterThread(AStarCharacter character, String roomID)
+		{
+			this.character = character;
+			this.roomID = roomID;
+		}
+		
+		public void run()
+		{
+			// send the update message to the server
+			uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(character, roomID));
+		}
 	}
 	
 	// thread that serves as the room loader so painting and updates can still take place while a room loads

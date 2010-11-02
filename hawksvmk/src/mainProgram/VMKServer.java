@@ -122,6 +122,8 @@ public class VMKServer
 	        			if(serverThreads.get(i).getRemoteAddress().getAddress().getHostAddress().equals(newSocket.getInetAddress().getHostAddress())
 	        					&& serverThreads.get(i).isWaitingForReconnect())
 	        			{
+	        				System.out.println("Client attempting to re-connect...");
+	        				
 	        				// make sure the server thread is still alive
 	        				if(!serverThreads.get(i).isInterrupted())
 	        				{

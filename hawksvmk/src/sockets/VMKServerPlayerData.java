@@ -39,17 +39,29 @@ public class VMKServerPlayerData
 	
 	// add a character to the HashMap and a room
 	public static void addCharacter(String username, AStarCharacter character, String roomID)
-	{
-		// clear the path so the character doesn't seem like he's walking face-first into a fucking tree
-		//character.clearPath();
+	{	
+		// check to see if the character has an active walkable A* path that needs to be checked
+		if(character.getPath().size() > 0)
+		{
+			// set the character's current tile as the very last tile of the path
+			character.setCurrentTile(character.getPath().get(character.getPath().size() - 1));
+			
+			// snap the character to the correct position on the current tile
+			character.snapToCurrentTile();
+			
+			// clear the path so the character doesn't start walking face-fucking-first into a tree
+			character.clearPath();
+		}
 		
-		// TODO: Set the X and Y coordinates of the character here, given the tile row
-		// and tile column of the last tile in his path
-		
+		// put the character into the HashMap
 		characters.put(username, character);
-		rooms.get(roomID).addCharacterName(username);
 		
-		System.out.println("Characters in " + roomID + ": " + rooms.get(roomID).countCharacters());
+		// check to make sure the room actually currently exists
+		if(rooms.get(roomID) != null)
+		{
+			// put the character back into the room
+			rooms.get(roomID).addCharacterName(username);
+		}
 	}
 	
 	// get a character from the HashMap

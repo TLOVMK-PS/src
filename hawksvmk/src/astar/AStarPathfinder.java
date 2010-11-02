@@ -28,7 +28,7 @@ public class AStarPathfinder implements Serializable
 		
 		targetTile = tileEnd;
 		
-		if(tileStart == null)
+		/*if(tileStart == null)
 		{
 			System.out.println("tileStart is NULL in getPath()");
 		}
@@ -36,7 +36,7 @@ public class AStarPathfinder implements Serializable
 		if(tileEnd == null)
 		{
 			System.out.println("tileEnd is NULL in getPath()");
-		}
+		}*/
 		
 		// 1. Add starting point to list of open tiles
 		openList.add(tileStart);
@@ -57,13 +57,13 @@ public class AStarPathfinder implements Serializable
 			
 			if(lowestCostTile == null)
 			{
-				System.out.println("lowestCostTile is NULL in getPath()");
+				//System.out.println("lowestCostTile is NULL in getPath()");
 				return null;
 			}
-			else
+			/*else
 			{
 				System.out.println("Tile: " + lowestCostTile.toString());
-			}
+			}*/
 			
 			// 4b. Drop it from the open list and add to the closed list
 			openList.remove(lowestCostTile);
@@ -84,7 +84,7 @@ public class AStarPathfinder implements Serializable
 	{
 		if(openList.size() == 0)
 		{
-			System.out.println("Open list is size 0 in getLowestCostTile()");
+			//System.out.println("Open list is size 0 in getLowestCostTile()");
 			return null;
 		}
 		

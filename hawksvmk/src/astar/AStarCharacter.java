@@ -264,7 +264,7 @@ public class AStarCharacter implements Serializable, ContentRateable
 		this.path = path;
 	}
 	
-	public Image getImage() {
+	public BufferedImage getImage() {
 		return characterImage.getImage();
 	}
 	
@@ -278,10 +278,21 @@ public class AStarCharacter implements Serializable, ContentRateable
 		{
 			this.row = currentTile.getRow();
 			this.col = currentTile.getColumn();
+			
 			//this.x = currentTile.getX();
 			//this.y = currentTile.getY();
 		}
 		this.currentTile = currentTile;
+	}
+	
+	// snap the character's position to that of the current tile
+	public void snapToCurrentTile()
+	{
+		if(currentTile != null)
+		{
+			this.x = currentTile.getX();
+			this.y = currentTile.getY() - characterImage.getImage().getHeight() + tileHeight;
+		}
 	}
 	
 	public Tile getCurrentTile() {

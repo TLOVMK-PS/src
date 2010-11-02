@@ -55,10 +55,10 @@ public class VMKProtocol
         	theOutput = (MessageMoveCharacter)theInput;
         	theOutput.setType("MessageMoveCharacter");
         }
-        else if(theInput instanceof MessageGetCharactersInRoom)
+        else if(theInput instanceof MessageGetCharacterInRoom)
         {
         	// pass back the request
-        	theOutput = (MessageGetCharactersInRoom)theInput;
+        	theOutput = (MessageGetCharacterInRoom)theInput;
         	theOutput.setType("MessageGetCharactersInRoom");
         }
         else if(theInput instanceof MessageUpdateCharacterInRoom)

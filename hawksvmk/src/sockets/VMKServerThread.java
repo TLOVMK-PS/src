@@ -29,7 +29,7 @@ import sockets.messages.MessageAddInventory;
 import sockets.messages.MessageAddUserToRoom;
 import sockets.messages.MessageAlterFriendStatus;
 import sockets.messages.MessageCreateGuestRoom;
-import sockets.messages.MessageGetCharactersInRoom;
+import sockets.messages.MessageGetCharacterInRoom;
 import sockets.messages.MessageGetFriendsList;
 import sockets.messages.MessageGetInventory;
 import sockets.messages.MessageGetOfflineMailMessages;
@@ -248,26 +248,25 @@ public class VMKServerThread extends Thread
 		    			// break out of the loop to execute the centralized shutdown code
 		    			break;
 		    		}
-		    		else if(outputMessage instanceof MessageGetCharactersInRoom)
+		    		else if(outputMessage instanceof MessageGetCharacterInRoom)
 		    		{
 		    			// get server threads for room message received from client
 		    			//System.out.println("Get characters in room message received from client for thread: " + this.getName());
 
 		    			// set the characters in the room
-		    			MessageGetCharactersInRoom userMsg = (MessageGetCharactersInRoom) outputMessage;
+		    			MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom) outputMessage;
 
-		    			// add each character in the room to the return message
-		    			System.out.println("GET CHARACTERS IN ROOM; SERVER THREADS SIZE: " + serverThreads.size() + " FOR CLIENT [" + this.getName() + "]");
+		    			// return all the characters in the room with a separate message for each in order to
+		    			// prevent an IllegalStateException with "unread block data"
 		    			for(int i = 0; i < serverThreads.size(); i++)
 		    			{
-		    				if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), userMsg.getRoomID()))
+		    				if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), roomID))
 		    				{
-		    					userMsg.addCharacter(VMKServerPlayerData.getCharacter(serverThreads.get(i).getName()));
+		    					// send a "Get Character" message to the client for each character in the room
+		    					userMsg.setCharacter(VMKServerPlayerData.getCharacter(serverThreads.get(i).getName()));
+		    					sendMessageToClient(userMsg);
 		    				}
 		    			}
-
-		    			// send the message back to the client
-		    			sendMessageToClient(userMsg);
 		    		}
 		    		else if(outputMessage instanceof MessageUpdateCharacterInRoom)
 		    		{
@@ -304,15 +303,13 @@ public class VMKServerThread extends Thread
 		    			// add user to room message received from client
 		    			//System.out.println("Add user to room message received from client for thread: " + this.getName());
 
-		    			// add the character to the static server HashMap
+		    			// put the character into the static server HashMap
 		    			MessageAddUserToRoom userMsg = (MessageAddUserToRoom)outputMessage;
-		    			if(VMKServerPlayerData.getCharacter(userMsg.getUsername()) == null)
-		    			{
-		    				// only add the character if it doesn't already exist in the room
-		    				roomID = userMsg.getRoomID();
-		    				roomName = userMsg.getRoomName();
-		    				VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
-		    			}
+
+		    			// set the room ID and room name properties and then add the character into the HashMap
+		    			roomID = userMsg.getRoomID();
+		    			roomName = userMsg.getRoomName();
+		    			VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
 
 		    			// send the message to ALL clients in the room he's in
 		    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
@@ -325,6 +322,7 @@ public class VMKServerThread extends Thread
 		    			// remove the character from the static server HashMap
 		    			MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)outputMessage;
 		    			VMKServerPlayerData.removeCharacter(userMsg.getUsername(), userMsg.getRoomID());
+		    			System.out.println("Characters in " + userMsg.getRoomID() + ": " + VMKServerPlayerData.getRoom(userMsg.getRoomID()).countCharacters());
 
 		    			// send the message to ALL clients
 		    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
@@ -568,16 +566,29 @@ public class VMKServerThread extends Thread
 		    }
 	    	catch(SocketException se)
 	    	{
+	    		// check to see if something happened on the client's end
 	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("abort"))
 	    		{
+	    			waitingForReconnect = true;
 	    			// try to re-boot this server thread
 		    		rebootSocket();
 
 		    		return;
 	    		}
-	    		
-	    		// client shut down, so the connection was reset
-	    		System.out.println("Client shutdown (" + this.getName() + ")");
+	    		else
+	    		{
+	    			// check to see if we're waiting for a client re-connect
+	    			if(!waitingForReconnect)
+	    			{
+	    				// client shut down, so the connection was reset
+				    	System.out.println("Client shutdown (" + this.getName() + ")");
+	    			}
+	    			else
+	    			{
+	    				// we're waiting for a re-connection, so return
+	    				return;
+	    			}
+	    		}
 	    	}
 	    	catch(StreamCorruptedException sce)
 	    	{
@@ -617,9 +628,6 @@ public class VMKServerThread extends Thread
 	    	if(!waitingForReconnect)
 	    	{
 		    	System.out.println("VMKServerThread - Shutting down client socket [" + this.getName() + "]...");
-		    	
-		    	// update the player's status in the database (offline)
-		    	updatePlayerStatusInDatabase(this.getName(), "offline");
 		    	
 		    	// shut down the server thread gracefully
 		    	shutDownServerThreadGracefully();
@@ -701,14 +709,17 @@ public class VMKServerThread extends Thread
 		// remove the character from the room on the server end
 		VMKServerPlayerData.removeCharacter(this.getName(), roomID);
 		
+		// update the player's status in the database (offline)
+    	updatePlayerStatusInDatabase(this.getName(), "offline");
+		
 		this.interrupt(); // stop this server thread
     }
     
     // write a message to the output buffer to be sent to the client
     private synchronized void writeOutputToClient(Message m) throws SocketException, IOException
     {
-    	//out.reset();
     	out.writeUnshared(m);
+    	out.reset();
 		out.flush();
     }
     
@@ -735,6 +746,8 @@ public class VMKServerThread extends Thread
     			catch(Exception e)
     			{
     				System.out.println("Could not send cached message (" + cachedMessage.getType() + ") to client [" + this.getName() + "]");
+    				
+    				waitingForReconnect = true;
     				
     				// add the message back to the cached messages structure for later sending
     				cachedMessages.add(cachedMessage);
@@ -771,8 +784,10 @@ public class VMKServerThread extends Thread
 	    		// there was a socket error (no shit, right?)
 	    		if(se.getMessage().toLowerCase().contains("socket write error"))
 	    		{
+	    			waitingForReconnect = true;
+	    			
 	    			// print out the error message
-	    			System.out.println(se.getMessage());
+	    			//System.out.println(se.getMessage());
 	    			
 	    			// cache the message
 	    			cacheMessage(m);
@@ -843,8 +858,7 @@ public class VMKServerThread extends Thread
     	{
     		if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), room))
     		{
-    		//System.out.println("Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName());
-    			System.out.println("sendMessageToAllClientsInRoom(): Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName() + " in room " + room);
+    			//System.out.println("sendMessageToAllClientsInRoom(): Sending message (" + m.getType() + ") to " + serverThreads.get(i).getName() + " in room " + room);
     			serverThreads.get(i).sendMessageToClient(m);
     		}
     	}
