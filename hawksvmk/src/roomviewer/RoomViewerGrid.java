@@ -185,6 +185,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	// Pathfinding stuff
 	HashMap<String,AStarCharacter> characters = new HashMap<String,AStarCharacter>(); // all characters in this rom
+	AStarCharacter[] charactersArray = new AStarCharacter[0];
 	AStarCharacter myCharacter = new AStarCharacter(); // the single specific character for this client
 	
 	HashMap<String,String> roomInfo = new HashMap<String,String>();
@@ -549,11 +550,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				// draw the path to the target tile for each character
 				//for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
 				//for(AStarCharacter character : characters.values())
-				for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
+				for(int characterCount = 0; characterCount < charactersArray.length; characterCount++)
 				{
-					// get a character
-					AStarCharacter character = (AStarCharacter)characters.values().toArray()[characterCount];
-					
+					// get a character from the array instead of the HashMap to save on memory consumption
+					AStarCharacter character = charactersArray[characterCount];
+
 					if(character.getPath() != null)
 					{
 						if(character.getPath().size() > 0)
@@ -748,8 +749,6 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			
 			// paint the internal UI components
 			this.paintComponents(bufferGraphics);
-			
-			
 			
 			// only draw if the map is not visible
 			if(!mapWindow.isVisible())
@@ -1073,7 +1072,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		myCharacter.setCurrentTile(tilesMap.get("15-7"));
 		myCharacter.setX(myCharacter.getCurrentTile().getX());
 		myCharacter.setY(myCharacter.getCurrentTile().getY());
+		
 		characters.put(uiObject.getUsername(), myCharacter);
+		
+		// create the charactersArray array of characters
+		convertCharactersToArray();
 		
 		this.tilesMap = tilesMap;
 	}
@@ -1177,6 +1180,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		avatarInfoWindow.toggleVisibility();
 	}
 	
+	// convert the characters HashMap to a standard array
+	private void convertCharactersToArray()
+	{
+		charactersArray = characters.values().toArray(charactersArray);
+	}
+	
 	// add a character to the current room
 	public void addCharacterToRoom(AStarCharacter character)
 	{
@@ -1276,6 +1285,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				
 				System.out.println("Character (" + character.getUsername() + ") added to room at " + character.getRow() + "-" + character.getCol());
 			}
+			
+			// create the charactersArray array of characters
+			convertCharactersToArray();
 		}
 	}
 	
@@ -1283,6 +1295,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void removeCharacterFromRoom(String username)
 	{
 		characters.remove(username);
+		
+		// create the charactersArray array of characters
+		convertCharactersToArray();
 		
 		System.out.println("Character (" + username + ") removed from room");
 	}
@@ -1308,6 +1323,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	 		
 	 		characters.put(character.getUsername(), character); // put the character back in the HashMap
 	 		
+	 		// create the charactersArray array of characters
+			convertCharactersToArray();
+	 		
 	 		// check if it's the same character as the current user's
 	 		if(character.getUsername().equals(myCharacter.getUsername()))
 	 		{
@@ -1331,6 +1349,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			if(!character.getUsername().equals(myCharacter.getUsername()))
 			{
 				characters.put(character.getUsername(), character); // put the character in the HashMap
+				
+				// create the charactersArray array of characters
+				convertCharactersToArray();
 			}
 		}
 	}
