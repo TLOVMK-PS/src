@@ -425,24 +425,35 @@ public class VMKClientThread extends Thread
 	    	// check to make sure the socket is not re-booting
 	    	if(!rebooting)
 	    	{
-		    	// close down the socket if it's still connected
-		    	if(socket.isConnected())
-		    	{
-		    		in.close(); // close the input stream
-		    		out.close(); // close the output stream
-		    		socket.close(); // close the socket
-		    	}
-		    	
-		    	if(!this.isInterrupted())
-		    	{
-		    		this.interrupt(); // stop this server thread
-		    	}
+	    		// shut down the connection to the server
+		    	shutDownConnection();
 	    	}
 		}
 		catch (IOException e)
 		{
 		    e.printStackTrace();
 		}
+    }
+    
+    // shut down the connection to the server
+    private synchronized void shutDownConnection()
+    {
+    	try
+    	{
+	    	// close down the socket if it's still connected
+	    	if(socket.isConnected())
+	    	{
+	    		in.close(); // close the input stream
+	    		out.close(); // close the output stream
+	    		socket.close(); // close the socket
+	    	}
+	    	
+	    	if(!this.isInterrupted())
+	    	{
+	    		this.interrupt(); // stop this server thread
+	    	}
+    	}
+    	catch(IOException e) {}
     }
     
     // reconnect to the server after something has happened
@@ -591,10 +602,19 @@ public class VMKClientThread extends Thread
     // add a message to the messages cache for later sending
     private synchronized void cacheMessage(Message m)
     {
-    	// add the message to the cache
-    	cachedMessages.add(m);
-    	
-    	System.out.println("Cached message (" + m.getType() + ")");
+    	// check the type of message to see if it needs to be cached
+    	if(m instanceof MessageLogout)
+    	{
+    		// it's a logout message, so just shut down the connection instead
+    		shutDownConnection();
+    	}
+    	else
+    	{
+	    	// add the message to the cache
+	    	cachedMessages.add(m);
+	    	
+	    	System.out.println("Cached message (" + m.getType() + ")");
+    	}
     }
     
     // send a message to the server

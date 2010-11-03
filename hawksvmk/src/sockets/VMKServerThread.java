@@ -619,10 +619,22 @@ public class VMKServerThread extends Thread
 	    		System.out.println("Stream corrupted [invalid type code: client-side] on client (" + this.getName() + ")");
 	    		System.out.println();
 	    		
-	    		// try to re-boot this server thread
-	    		rebootSocket();
+	    		// check to see what the message was for the exception
+	    		if(eofe.getMessage() != null)
+	    		{
+	    			// try to re-boot this server thread
+		    		rebootSocket();
 
-	    		return;
+		    		return;
+	    		}
+	    		else
+	    		{
+	    			// most likely caused by a socket error from closing the window/tab,
+	    			// so proceed normally as though it was a logout
+	    			System.out.println("Assuming a logout from the EOFException, so shutting down...");
+	    			System.out.println();
+	    			waitingForReconnect = false;
+	    		}
 	    	}
 	    	
 	    	if(!waitingForReconnect)

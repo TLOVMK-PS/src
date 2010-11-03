@@ -209,15 +209,14 @@ public class RoomViewerUI extends Applet
 		// stop the client
 		if(theVMKClient != null)
 		{
-			// manual logout by the client, either by closing the window or the client stopping execution
-			windowClosing = true;
-			
 			// check to see if the client socket is connected to the server
 			if(theVMKClient.isClientConnected())
 			{
-				System.out.println("Sending logout message to server for user " + username);
 				sendMessageToServer(new MessageLogout());
 			}
+			
+			// manual logout by the client, either by closing the window or the client stopping execution
+			windowClosing = true;
 			
 			// stop the client
 			theVMKClient.stopClient();
@@ -1032,20 +1031,30 @@ public class RoomViewerUI extends Applet
 			});
 			add(chatTextBox);
 			
+			loadingWindow.setDescription("Creating inventory mappings...");
+			
 			// create the pin mappings
 			StaticAppletData.createInvMappings();
 
+			loadingWindow.setDescription("Creating room mappings...");
+			
 			// create the room mappings
 			StaticAppletData.createRoomMappings();
 
+			loadingWindow.setDescription("Creating chat dictionaries...");
+			
 			// create the dictionaries
 			Dictionary.createDictionaries();
 
+			loadingWindow.setDescription("Creating viewer grid...");
+			
 			// create the grid
 			theGridView = new RoomViewerGrid();
 			theGridView.setVisible(false);
 			theGridView.setBounds(new Rectangle(0,0,800,572));
 
+			loadingWindow.setDescription("Assigning fonts to the grid...");
+			
 			// assign the fonts to the grid
 			theGridView.setTextFont(textFont);
 			theGridView.setTextFontBold(textFontBold);
@@ -1060,6 +1069,8 @@ public class RoomViewerUI extends Applet
 			uiObject.setName("Hawk's Virtual Magic Kingdom");
 			uiObject.setVisible(true);
 
+			loadingWindow.setDescription("Setting up the viewer grid...");
+			
 			// set-up the double-buffering objects and start the grid graphics loop
 			theGridView.setOffscreenImage(createImage(800, 572));
 			theGridView.setUIObject(uiObject);
@@ -1090,6 +1101,8 @@ public class RoomViewerUI extends Applet
 			repaint();
 			roomViewerUI = uiObject;
 
+			loadingWindow.setDescription("Starting authentication client...");
+			
 			// connect to the server and start the client connection
 			theVMKClient = new VMKClient(getUsername());
 			theVMKClient.setUIObject(roomViewerUI);
