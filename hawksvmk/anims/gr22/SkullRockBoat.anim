@@ -1,0 +1,9 @@
+TYPE: stationary
+ANIMATION NAME: skull_rock_boat
+TOTAL FRAMES: 4
+X-COORD: 38
+Y-COORD: 100
+@img/rooms/gr22/boat_0.jpg,100@
+@img/rooms/gr22/boat_1.jpg,100@
+@img/rooms/gr22/boat_2.jpg,100@
+@img/rooms/gr22/boat_3.jpg,100@
