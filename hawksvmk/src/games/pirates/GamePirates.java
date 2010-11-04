@@ -14,7 +14,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import astar.AStarCharacter;
 
 import tiles.Tile;
 import util.AppletResourceLoader;
@@ -29,14 +32,18 @@ public class GamePirates extends InternalGame implements Runnable
 	private int gridX = 0;
 	private int gridY = 0;
 	
-	// big-ass tiles
-	private int tileWidth = 64;
-	private int tileHeight = 32;
+	// small-ass tiles
+	private int tileWidth = 48;
+	private int tileHeight = 24;
 	private Tile currentTile = null;
 	private HashMap<String,Tile> tilesMap = new HashMap<String,Tile>();
 	
 	// map of the HashMap structures for the levels
 	private HashMap<String, HashMap<String,Tile>> levelsMap = new HashMap<String,HashMap<String,Tile>>();
+	
+	// HashMap and simple array of ships on the screen
+	private HashMap<String,AStarShip> ships = new HashMap<String,AStarShip>();
+	private AStarShip shipsArray[] = new AStarShip[8];
 	
 	private Image offscreen = null; // offscreen buffer
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
@@ -52,7 +59,7 @@ public class GamePirates extends InternalGame implements Runnable
 		super("pirates", "Pirates of the Caribbean", 3, 3);
 		
 		// set the background images
-		backgroundImages.put("1_1", AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/level1_1.jpg"));
+		backgroundImages.put("1_1", AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/levels/level_1_1.jpg"));
 		
 		// create the levels
 		levelsMap.put("1_1",FileOperations.loadPiratesLevelTiles(1,1));
@@ -88,7 +95,8 @@ public class GamePirates extends InternalGame implements Runnable
 			}
 			public void mouseReleased(MouseEvent e)
 			{
-				// move the ship to this point
+				// move the ship to this tile
+				moveShip(ships.get("Default"), (gridX / 2), gridY);
 			}
 			public void mouseClicked(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
@@ -114,6 +122,12 @@ public class GamePirates extends InternalGame implements Runnable
 				}
 			}
 		});
+	}
+	
+	// convert the ships HashMap to an array
+	private void convertShipsToArray()
+	{
+		shipsArray = ships.values().toArray(shipsArray);
 	}
 	
 	private void convertMouseToGridCoords()
@@ -166,6 +180,16 @@ public class GamePirates extends InternalGame implements Runnable
 		
 		// reset the tiles for the level
 		tilesMap = levelsMap.get(getLevelNum() + "_" + getRoundNum());
+		
+		// add a default ship
+		AStarShip defaultShip = new AStarShip("Default",12,2);
+		defaultShip.setCurrentTile(tilesMap.get("12-2"));
+		defaultShip.snapToCurrentTile();
+		defaultShip.updateShipImages();
+		ships.put("Default",defaultShip);
+		
+		// convert the ships ArrayList to an array
+		convertShipsToArray();
 		
 		// reset the background image
 		resetLevelBackgroundImage();
@@ -229,6 +253,163 @@ public class GamePirates extends InternalGame implements Runnable
 				bufferGraphics.drawImage(move_reticle, currentTile.getX(), currentTile.getY(), this);
 			}
 			
+			// draw all the ships
+			for(int i = 0; i < shipsArray.length; i++)
+			{
+				// get the next ship
+				AStarShip ship = shipsArray[i];
+				
+				// make sure the damn ship actually exists
+				if(ship != null)
+				{
+					if(ship.getPath() != null)
+					{
+						if(ship.getPath().size() > 0)
+						{
+							Tile nextTile = ship.getPath().get(0); // get the next step in the path
+							
+							// check if movement is necessary
+							ship.setColDiff(Math.abs(ship.getCol() - nextTile.getColumn()));
+							//System.out.println("COLDIFF: " + ship.getColDiff());
+							if(ship.getColDiff() > 0) // prevent the back-and-forth movement across the same column
+							{
+								if(ship.getX() == nextTile.getX())
+								{
+									//System.out.println("Character X speed at 0");
+									ship.setxSpeed(0);
+								}
+								else
+								{	
+									// move along the X-axis
+									if(ship.getX() == nextTile.getX())
+									{
+										// stay along the same line of movement to prevent
+										// the "back-and-forth" vertical movement
+									}
+									else
+									{
+										if(ship.getX() < nextTile.getX())
+										{
+											ship.setxSpeed(4);
+											ship.setX(ship.getX() + ship.getxSpeed());
+										}
+										if(ship.getX() > nextTile.getX())
+										{
+											ship.setxSpeed(-4);
+											ship.setX(ship.getX() + ship.getxSpeed());
+										}
+									}
+								}
+							}
+							else
+							{
+								if(ship.getPath().size() == 1)
+								{
+									// move along the X-axis
+									if(ship.getX() == nextTile.getX())
+									{
+										// stay along the same line of movement to prevent
+										// the "back-and-forth" vertical movement
+									}
+									else
+									{
+										if(ship.getX() < nextTile.getX())
+										{
+											ship.setxSpeed(4);
+											ship.setX(ship.getX() + ship.getxSpeed());
+										}
+										if(ship.getX() > nextTile.getX())
+										{
+											ship.setxSpeed(-4);
+											ship.setX(ship.getX() + ship.getxSpeed());
+										}
+									}
+								}
+								else
+								{
+									if(ship.getySpeed() > 0 || ship.getySpeed() < 0)
+									{
+										ship.setxSpeed(0);
+									}
+								}
+							}
+							
+							if(ship.getY() == nextTile.getY())
+							{
+								//System.out.println("Character Y speed at 0");
+								ship.setySpeed(0);
+							}
+							else
+							{
+								// move along the Y-axis
+								if(ship.getY() < nextTile.getY())
+								{
+									ship.setySpeed(2);
+								}
+								if(ship.getY() > nextTile.getY())
+								{
+									ship.setySpeed(-2);
+								}
+								ship.setY(ship.getY() + ship.getySpeed());
+							}
+							
+							if(ship.getColDiff() == 0)
+							{
+								if(ship.getPath() != null)
+								{
+									if(ship.getPath().size() > 1)
+									{
+										if(ship.getCol() == nextTile.getColumn() && ship.getY() == nextTile.getY())
+										{
+											// remove the first step in the path so we can proceed to the next
+											ship.setCurrentTile(ship.getPath().get(0));
+											//System.out.println("TILE MOVED: " + ship.getCurrentTile().toString());
+											ship.removeTopmostPathStep();
+										}
+									}
+									else
+									{
+										if(ship.getX() == nextTile.getX() && ship.getY() == nextTile.getY())
+										{
+											// remove the first step in the path so we can proceed to the next
+											ship.setCurrentTile(ship.getPath().get(0));
+											//System.out.println("TILE MOVED: " + ship.getCurrentTile().toString());
+											ship.removeTopmostPathStep();
+											
+											if(ship.getPath().size() == 0)
+											{
+												// ship's done moving
+											}
+										}
+									}
+								}
+							}
+							else
+							{
+								if(ship.getX() == nextTile.getX() && ship.getY() == nextTile.getY())
+								{
+									// remove the first step in the path so we can proceed to the next
+									if(ship.getPath() != null)
+									{
+										ship.setCurrentTile(ship.getPath().get(0));
+										//System.out.println("TILE MOVED: " + ship.getCurrentTile().toString());
+										ship.removeTopmostPathStep();
+										
+										if(ship.getPath().size() == 0)
+										{
+											// ship's done moving
+										}
+									}
+								}
+							}
+						}
+					}
+
+					// draw the ship
+					bufferGraphics.drawImage(ship.getImage(), ship.getX(), ship.getY() - ship.getImage().getHeight() + tileHeight, this);
+				}
+			}
+			
 			// check to make sure the internal graphics object exists
 			if(g != null)
 			{
@@ -242,5 +423,31 @@ public class GamePirates extends InternalGame implements Runnable
 	public void resetLevelBackgroundImage()
 	{
 		backgroundImage = backgroundImages.get(getLevelNum() + "_" + getRoundNum());
+	}
+	
+	// move a ship in the current room
+	public void moveShip(AStarShip ship, int destGridX, int destGridY)
+	{
+		// make sure it's not a nogo tile
+		if(tilesMap.get(destGridY + "-" + destGridX).getType() == Tile.TILE_NOGO) {return;}
+		
+ 		// make sure the ship is still in the room
+ 		if(ship != null)
+ 		{
+ 			// get the current room configuration
+     		ship.setPathfinderTiles(tilesMap);
+     		
+	 		// process a pathfinding operation for the ship
+	 		//System.out.println("Setting current tile: " + ship.getRow() + "-" + ship.getCol());
+	 		//System.out.println("Tile type: " + tilesMap.get(ship.getRow() + "-" + ship.getCol()).getTypeString());
+	 		ship.setCurrentTile(tilesMap.get(ship.getRow() + "-" + ship.getCol()));
+	 		ship.clearPath();
+	 		ship.setPath(ship.getPathfinder().getPath(ship.getCurrentTile(), tilesMap.get(destGridY + "-" + destGridX)));
+	 		
+	 		ships.put(ship.getUsername(), ship); // put the ship back in the HashMap
+	 		
+	 		// create the shipsArray array of ships
+			convertShipsToArray();
+ 		}
 	}
 }

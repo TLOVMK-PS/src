@@ -2478,8 +2478,8 @@ public class FileOperations
 						
 						// add the tile to the HashMap
 						Tile newTile = new Tile(row,col,tileType,tileDest);
-						newTile.setWidth(64);
-						newTile.setHeight(32);
+						newTile.setWidth(48);
+						newTile.setHeight(24);
 						newTile.setAbsoluteCoordinates();
 						tiles.put(row + "-" + col, newTile);
 					}

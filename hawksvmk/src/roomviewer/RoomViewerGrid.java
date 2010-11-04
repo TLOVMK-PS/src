@@ -740,7 +740,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					}
 					
 					// draw the character
-					if(character != null);
+					if(character != null)
 					{
 						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight() + tileHeight, this);
 					}
