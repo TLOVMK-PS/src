@@ -105,4 +105,7 @@ public class Cannonball
 	{
 		return boundingBox;
 	}
+	
+	public String getFiredBy() {return firedBy;}
+	public String getFiredByColor() {return firedByColor;}
 }

@@ -97,6 +97,10 @@ public class AStarShip extends AStarCharacter implements Serializable
 	{
 		return shipColor;
 	}
+	
+	public void setShipColor(String shipColor) {
+		this.shipColor = shipColor;
+	}
 
 	public int getRow() {
 		return row;
@@ -230,7 +234,9 @@ public class AStarShip extends AStarCharacter implements Serializable
 		if(currentTile != null)
 		{
 			this.x = currentTile.getX();
-			this.y = currentTile.getY() - shipImage.getImage().getHeight() + tileHeight;
+			this.y = currentTile.getY();
+			
+			boundingBox.setBounds(this.x, this.y - shipImage.getImage().getHeight() + tileHeight, shipImage.getImage().getWidth(), shipImage.getImage().getHeight());
 		}
 	}
 	
@@ -277,17 +283,24 @@ public class AStarShip extends AStarCharacter implements Serializable
 	// figure out whether the character image is fully transparent at a given X and Y value
 	public boolean isTransparentAt(int x, int y)
 	{
-		int pixel = shipImage.getImage().getRGB(x, y);
-		int alpha = (pixel >> 24) & 0x000000FF; // bit shift by 24 and bitwise AND with 0x000000FF for the alpha value
-		
-		// check if the image is of a four-byte ABGR or INT_ARGB image
-		if((shipImage.getImage().getType() == BufferedImage.TYPE_4BYTE_ABGR || shipImage.getImage().getType() == BufferedImage.TYPE_INT_ARGB) && alpha == 0)
+		try
 		{
-			// fully transparent, so return true
+			int pixel = shipImage.getImage().getRGB(x, y);
+			int alpha = (pixel >> 24) & 0x000000FF; // bit shift by 24 and bitwise AND with 0x000000FF for the alpha value
+			
+			// check if the image is of a four-byte ABGR or INT_ARGB image
+			if((shipImage.getImage().getType() == BufferedImage.TYPE_4BYTE_ABGR || shipImage.getImage().getType() == BufferedImage.TYPE_INT_ARGB) && alpha < 100)
+			{
+				// transparent, so return true
+				return true;
+			}
+		
+			return false;
+		}
+		catch(Exception e)
+		{
 			return true;
 		}
-		
-		return false;
 	}
 	
 	// update the ship images

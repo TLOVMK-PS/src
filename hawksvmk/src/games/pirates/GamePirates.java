@@ -9,6 +9,7 @@ import games.InternalGame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -156,6 +157,7 @@ public class GamePirates extends InternalGame implements Runnable
 	private void convertShipsToArray()
 	{
 		shipsArray = ships.values().toArray(shipsArray);
+		System.out.println("Ships: " + shipsArray.length);
 	}
 	
 	private void convertMouseToGridCoords()
@@ -215,6 +217,14 @@ public class GamePirates extends InternalGame implements Runnable
 		defaultShip.snapToCurrentTile();
 		defaultShip.updateShipImages();
 		ships.put(getUIObject().getUsername(),defaultShip);
+		
+		// add an enemy ship
+		AStarShip enemyShip = new AStarShip("Enemy", 14, 7);
+		enemyShip.setCurrentTile(tilesMap.get("14-7"));
+		enemyShip.setShipColor("red");
+		enemyShip.snapToCurrentTile();
+		//enemyShip.updateShipImages();
+		ships.put("Enemy",enemyShip);
 		
 		// convert the ships ArrayList to an array
 		convertShipsToArray();
@@ -436,8 +446,10 @@ public class GamePirates extends InternalGame implements Runnable
 					// draw the ship
 					bufferGraphics.drawImage(ship.getImage(), ship.getX(), ship.getY() - ship.getImage().getHeight() + tileHeight, this);
 					
-					// draw the username associated with the ship
 					bufferGraphics.setColor(Color.WHITE);
+					//bufferGraphics.drawRect(ship.getBoundingBox().x, ship.getBoundingBox().y, ship.getBoundingBox().width, ship.getBoundingBox().height);
+					
+					// draw the username associated with the ship
 					bufferGraphics.drawString(ship.getUsername(), ship.getX(), ship.getY() - ship.getImage().getHeight() + tileHeight);
 					
 					// draw all the cannonballs
@@ -451,12 +463,22 @@ public class GamePirates extends InternalGame implements Runnable
 						
 						// draw the cannonball image at its current location
 						bufferGraphics.drawImage(cannonball.getCannonballImage(), cannonball.getX(), cannonball.getY(), this);
+						//bufferGraphics.drawRect(cannonball.getBoundingBox().x, cannonball.getBoundingBox().y, cannonball.getBoundingBox().width, cannonball.getBoundingBox().height);
 						
 						// check to see if it flew off the screen
 						if(cannonball.getX() < 0 || cannonball.getX() > getWidth() || cannonball.getY() < 0 || cannonball.getY() > getHeight())
 						{
 							// remove this cannonball
 							cannonballs.remove(cannonball);
+						}
+						else if(ship.getBoundingBox().intersects(cannonball.getBoundingBox()) && !ship.getUsername().equals(cannonball.getFiredBy())) // is it inside its bounding box of another ship?
+						{
+							// is the ship transparent at the point where the cannonball intersected?
+							if(!ship.isTransparentAt(Math.abs(cannonball.getBoundingBox().x - ship.getBoundingBox().x), Math.abs(cannonball.getBoundingBox().y - ship.getBoundingBox().y)))
+							{
+								// remove this cannonball
+								cannonballs.remove(cannonball);
+							}
 						}
 					}
 				}
