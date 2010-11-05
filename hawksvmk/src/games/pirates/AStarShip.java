@@ -92,6 +92,11 @@ public class AStarShip extends AStarCharacter implements Serializable
 		this.y = y;
 		boundingBox.y = y + tileHeight - shipImage.getImage().getHeight();
 	}
+	
+	public String getShipColor()
+	{
+		return shipColor;
+	}
 
 	public int getRow() {
 		return row;
@@ -127,6 +132,10 @@ public class AStarShip extends AStarCharacter implements Serializable
 		this.ySpeed = ySpeed;
 		
 		changeShipImage(); // change the ship image based on the speeds
+	}
+	
+	public String getCurrentDirection() {
+		return currentDirection;
 	}
 	
 	// change the avatar image based upon the speeds

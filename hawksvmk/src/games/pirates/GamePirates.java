@@ -6,6 +6,7 @@ package games.pirates;
 
 import games.InternalGame;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -44,6 +45,17 @@ public class GamePirates extends InternalGame implements Runnable
 	// HashMap and simple array of ships on the screen
 	private HashMap<String,AStarShip> ships = new HashMap<String,AStarShip>();
 	private AStarShip shipsArray[] = new AStarShip[8];
+	
+	// ArrayList of cannonballs that have been fired
+	private ArrayList<Cannonball> cannonballs = new ArrayList<Cannonball>();
+	private BufferedImage cannonballImage = AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/cannonball.png");
+	private int keysLeft = 0;
+	private int keysRight = 0;
+	
+	// constants for cannonball spread
+	private final int SPREAD_TYPE_VERTICAL = 0;
+	private final int SPREAD_TYPE_HORIZONTAL = 1;
+	private final int SPREAD_TYPE_DIAGONAL = 2;
 	
 	private Image offscreen = null; // offscreen buffer
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
@@ -96,7 +108,7 @@ public class GamePirates extends InternalGame implements Runnable
 			public void mouseReleased(MouseEvent e)
 			{
 				// move the ship to this tile
-				moveShip(ships.get("Default"), (gridX / 2), gridY);
+				moveShip(ships.get(getUIObject().getUsername()), (gridX / 2), gridY);
 			}
 			public void mouseClicked(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
@@ -112,13 +124,29 @@ public class GamePirates extends InternalGame implements Runnable
 				// fire cannons if it's one of the arrow keys
 				if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_KP_LEFT)
 				{
-					// FIRE CANNONS
-					//fireCannons("left");
+					// reset the right arrow presses and increment the left arrow
+					keysRight = 0;
+					keysLeft++;
+					
+					// check to see if the arrow has been pressed twice
+					if(keysLeft >= 2)
+					{
+						// FIRE EVERYTHING
+						fireCannons("left");
+					}
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_KP_RIGHT)
 				{
-					// FIRE CANNONS 
-					//fireCannons("right");
+					// reset the left arrow presses and increment the right arrow
+					keysLeft = 0;
+					keysRight++;
+					
+					// check to see if the arrow has been pressed twice
+					if(keysRight >= 2)
+					{
+						// FIRE EVERYTHING
+						fireCannons("right");
+					}
 				}
 			}
 		});
@@ -182,11 +210,11 @@ public class GamePirates extends InternalGame implements Runnable
 		tilesMap = levelsMap.get(getLevelNum() + "_" + getRoundNum());
 		
 		// add a default ship
-		AStarShip defaultShip = new AStarShip("Default",12,2);
+		AStarShip defaultShip = new AStarShip(getUIObject().getUsername(),12,2);
 		defaultShip.setCurrentTile(tilesMap.get("12-2"));
 		defaultShip.snapToCurrentTile();
 		defaultShip.updateShipImages();
-		ships.put("Default",defaultShip);
+		ships.put(getUIObject().getUsername(),defaultShip);
 		
 		// convert the ships ArrayList to an array
 		convertShipsToArray();
@@ -407,6 +435,30 @@ public class GamePirates extends InternalGame implements Runnable
 
 					// draw the ship
 					bufferGraphics.drawImage(ship.getImage(), ship.getX(), ship.getY() - ship.getImage().getHeight() + tileHeight, this);
+					
+					// draw the username associated with the ship
+					bufferGraphics.setColor(Color.WHITE);
+					bufferGraphics.drawString(ship.getUsername(), ship.getX(), ship.getY() - ship.getImage().getHeight() + tileHeight);
+					
+					// draw all the cannonballs
+					for(int j = 0; j < cannonballs.size(); j++)
+					{
+						// get the next cannonball
+						Cannonball cannonball = cannonballs.get(j);
+						
+						// move the cannonball
+						cannonball.moveCannonball();
+						
+						// draw the cannonball image at its current location
+						bufferGraphics.drawImage(cannonball.getCannonballImage(), cannonball.getX(), cannonball.getY(), this);
+						
+						// check to see if it flew off the screen
+						if(cannonball.getX() < 0 || cannonball.getX() > getWidth() || cannonball.getY() < 0 || cannonball.getY() > getHeight())
+						{
+							// remove this cannonball
+							cannonballs.remove(cannonball);
+						}
+					}
 				}
 			}
 			
@@ -449,5 +501,210 @@ public class GamePirates extends InternalGame implements Runnable
 	 		// create the shipsArray array of ships
 			convertShipsToArray();
  		}
+	}
+	
+	// fire the cannons in the specified direction
+	public void fireCannons(String direction)
+	{
+		// get the ship that the cannon will be fired from
+		AStarShip ship = ships.get(getUIObject().getUsername());
+		
+		// make sure the damn ship exists first
+		if(ship != null)
+		{
+			// fire the cannons to the left
+			if(direction.equals("left"))
+			{
+				// check the current direction of the ship
+				if(ship.getCurrentDirection().equals("e")) // East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY(), -4, SPREAD_TYPE_VERTICAL);
+				}
+				else if(ship.getCurrentDirection().equals("w")) // West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 2), ship.getY(), -4, SPREAD_TYPE_VERTICAL);
+				}
+				else if(ship.getCurrentDirection().equals("n")) // North
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -4, SPREAD_TYPE_HORIZONTAL);
+				}
+				else if(ship.getCurrentDirection().equals("s")) // South
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 4, SPREAD_TYPE_HORIZONTAL);
+				}
+				else if(ship.getCurrentDirection().equals("ne")) // North-East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("nw")) // North-West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("sw")) // South-West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("se")) // South-East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -1, SPREAD_TYPE_DIAGONAL);
+				}
+			}
+			else if(direction.equals("right")) // fire the cannons to the right
+			{
+				// check the current direction of the ship
+				if(ship.getCurrentDirection().equals("e")) // East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY(), 4, SPREAD_TYPE_VERTICAL);
+				}
+				else if(ship.getCurrentDirection().equals("w")) // West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 2), ship.getY(), 4, SPREAD_TYPE_VERTICAL);
+				}
+				else if(ship.getCurrentDirection().equals("n")) // North
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 4, SPREAD_TYPE_HORIZONTAL);
+				}
+				else if(ship.getCurrentDirection().equals("s")) // South
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), -4, SPREAD_TYPE_HORIZONTAL);
+				}
+				else if(ship.getCurrentDirection().equals("ne")) // North-East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("nw")) // North-West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("sw")) // South-West
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 1, SPREAD_TYPE_DIAGONAL);
+				}
+				else if(ship.getCurrentDirection().equals("se")) // South-East
+				{
+					// add the cannonballs
+					addCannonballs(ship, ship.getX() + (ship.getImage().getWidth() / 4), ship.getY() - (ship.getImage().getHeight() / 4), 1, SPREAD_TYPE_DIAGONAL);
+				}
+			}
+		}
+	}
+	
+	// add five cannonballs at the specified X-Y position with the specified directional speed and spread pattern
+	private void addCannonballs(AStarShip ship, int x, int y, int constantSpeed, int spreadType)
+	{
+		int spreadSpeeds[] = {-2,-1,0,1,2}; // the speeds for a spread pattern (vertical and horizontal)
+		
+		int spreadSpeedsDiagX[] = {4,3,2,1,0};
+		int spreadSpeedsDiagY[] = {0,-1,-2,-3,-4};
+		
+		// create and add the cannonballs
+		for(int i = 0; i < spreadSpeeds.length; i++)
+		{
+			// initialize the cannonball with the ship's username and the ship's color
+			Cannonball cannonball = new Cannonball(ship.getUsername(), ship.getShipColor());
+			
+			// set the location of the cannonball
+			cannonball.setX(x);
+			cannonball.setY(y);
+			
+			// set the X-speed and Y-speed for the cannonball depending on the spread pattern
+			if(spreadType == SPREAD_TYPE_VERTICAL)
+			{
+				cannonball.setSpeedX(spreadSpeeds[i]);
+				cannonball.setSpeedY(constantSpeed);
+			}
+			else if(spreadType == SPREAD_TYPE_HORIZONTAL)
+			{
+				cannonball.setSpeedX(constantSpeed);
+				cannonball.setSpeedY(spreadSpeeds[i]);
+			}
+			else if(spreadType == SPREAD_TYPE_DIAGONAL)
+			{
+				if(ship.getCurrentDirection().equals("ne")) // North-East
+				{
+					if(constantSpeed == -1) // fire left
+					{
+						// fire up and to the left
+						cannonball.setSpeedX(spreadSpeedsDiagX[i] * -1);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i]);
+					}
+					else // fire right
+					{
+						// fire down and to the right
+						cannonball.setSpeedX(spreadSpeedsDiagX[i]);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i] * -1);
+					}
+				}
+				else if(ship.getCurrentDirection().equals("nw")) // North-West
+				{
+					if(constantSpeed == -1) // fire left
+					{
+						// fire down and to the left
+						cannonball.setSpeedX(spreadSpeedsDiagX[i] * -1);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i] * -1);
+					}
+					else // fire right
+					{
+						// fire up and to the right
+						cannonball.setSpeedX(spreadSpeedsDiagX[i]);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i]);
+					}
+				}
+				else if(ship.getCurrentDirection().equals("se")) // South-East
+				{
+					if(constantSpeed == -1) // fire left
+					{
+						// fire up and to the right
+						cannonball.setSpeedX(spreadSpeedsDiagX[i]);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i]);
+					}
+					else // fire right
+					{
+						// fire down and to the left
+						cannonball.setSpeedX(spreadSpeedsDiagX[i] * -1);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i] * -1);
+					}
+				}
+				else if(ship.getCurrentDirection().equals("sw")) // South-West
+				{
+					if(constantSpeed == -1) // fire left
+					{
+						// fire down and to the right
+						cannonball.setSpeedX(spreadSpeedsDiagX[i]);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i] * -1);
+					}
+					else // fire right
+					{
+						// fire up and to the left
+						cannonball.setSpeedX(spreadSpeedsDiagX[i] * -1);
+						cannonball.setSpeedY(spreadSpeedsDiagY[i]);
+					}
+				}
+			}
+			
+			// set the image for the cannonball, the type, and add it to the ArrayList
+			cannonball.setCannonballImage(cannonballImage);
+			cannonball.setType(Cannonball.TYPE_CANNONBALL);
+			cannonballs.add(cannonball);
+		}
+		
+		// clear the keys pressed
+		keysLeft = 0;
+		keysRight = 0;
 	}
 }

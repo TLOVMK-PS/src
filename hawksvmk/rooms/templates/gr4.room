@@ -477,7 +477,7 @@ SOUND: sounds/boot_hill_sfx.sound
 @9,7,NOGO,@
 @9,8,NOGO,@
 @9,9,NOGO,@
-@23,2,EXIT,@
+@23,2,EXIT,ms1@
 @22,7,WALK,@
 @23,3,WALK,@
 @22,8,WALK,@
