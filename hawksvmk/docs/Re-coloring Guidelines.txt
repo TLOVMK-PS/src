@@ -110,3 +110,37 @@ Cyan: -48
 Magenta: -41
 Yellow: +100
 Black: +83
+
+================================
+HVMK POTC RE-COLORING GUIDELINES
+================================
+
+In order to make the red sails, start with the blue version.
+
+Create a new Selective Color layer, grouped to the sails layer.
+
+Make sure "Absolute" is selected and then apply the following settings:
+
+-------
+YELLOWS
+-------
+
+Cyan: -100
+Magenta: -100
+Yellow: -100
+Black: -100
+
+-----
+CYANS
+-----
+
+Cyan: -100
+
+-----
+BLUES
+-----
+
+Cyan: -100
+Magenta: +100
+Yellow: +100
+Black: +100

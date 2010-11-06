@@ -9,7 +9,6 @@ import games.InternalGame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -18,8 +17,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import astar.AStarCharacter;
 
 import tiles.Tile;
 import util.AppletResourceLoader;
@@ -58,6 +55,17 @@ public class GamePirates extends InternalGame implements Runnable
 	private final int SPREAD_TYPE_HORIZONTAL = 1;
 	private final int SPREAD_TYPE_DIAGONAL = 2;
 	
+	// ArrayList of explosions that have occurred
+	private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+	
+	// explosion images (cannon fire)
+	private BufferedImage cannonFireImages[] = new BufferedImage[5];
+	private BufferedImage cannonSmokeImages[] = new BufferedImage[8];
+	
+	// explosion images (ship hit)
+	private BufferedImage shipHitFireImages[] = new BufferedImage[5];
+	private BufferedImage shipHitSmokeImages[] = new BufferedImage[0];
+	
 	private Image offscreen = null; // offscreen buffer
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
 	
@@ -73,6 +81,10 @@ public class GamePirates extends InternalGame implements Runnable
 		
 		// set the background images
 		backgroundImages.put("1_1", AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/levels/level_1_1.jpg"));
+		
+		// create the explosion images
+		createExplosionImages(cannonFireImages, cannonSmokeImages, "img/games/pirates/explosions/cannon/");
+		createExplosionImages(shipHitFireImages, shipHitSmokeImages, "img/games/pirates/explosions/cannon/");
 		
 		// create the levels
 		levelsMap.put("1_1",FileOperations.loadPiratesLevelTiles(1,1));
@@ -153,11 +165,24 @@ public class GamePirates extends InternalGame implements Runnable
 		});
 	}
 	
-	// convert the ships HashMap to an array
+	// create fire and smoke explosion images given the two arrays and a directory location from which to pull images
+	private void createExplosionImages(BufferedImage fireImages[], BufferedImage smokeImages[], String directory)
+	{
+		for(int i = 0; i < fireImages.length; i++)
+		{
+			fireImages[i] = AppletResourceLoader.getBufferedImageFromJar(directory + "fire_" + i + ".png");
+		}
+		
+		for(int j = 0; j < smokeImages.length; j++)
+		{
+			smokeImages[j] = AppletResourceLoader.getBufferedImageFromJar(directory + "smoke_" + j + ".png");
+		}
+	}
+	
+	// convert the values in the ships HashMap to an array
 	private void convertShipsToArray()
 	{
 		shipsArray = ships.values().toArray(shipsArray);
-		System.out.println("Ships: " + shipsArray.length);
 	}
 	
 	private void convertMouseToGridCoords()
@@ -223,7 +248,7 @@ public class GamePirates extends InternalGame implements Runnable
 		enemyShip.setCurrentTile(tilesMap.get("14-7"));
 		enemyShip.setShipColor("red");
 		enemyShip.snapToCurrentTile();
-		//enemyShip.updateShipImages();
+		enemyShip.updateShipImages();
 		ships.put("Enemy",enemyShip);
 		
 		// convert the ships ArrayList to an array
@@ -476,11 +501,49 @@ public class GamePirates extends InternalGame implements Runnable
 							// is the ship transparent at the point where the cannonball intersected?
 							if(!ship.isTransparentAt(Math.abs(cannonball.getBoundingBox().x - ship.getBoundingBox().x), Math.abs(cannonball.getBoundingBox().y - ship.getBoundingBox().y)))
 							{
+								// add a ship hit explosion to this spot
+								Explosion expl = new Explosion(cannonball.getBoundingBox().x, cannonball.getBoundingBox().y);
+								expl.setFireImages(shipHitFireImages);
+								expl.setSmokeImages(shipHitSmokeImages);
+								explosions.add(expl);
+								
+								// subtract health from the ship
+								ship.subtractHealth();
+								
 								// remove this cannonball
 								cannonballs.remove(cannonball);
 							}
 						}
 					}
+					
+					// check to see if the ship is exploding
+					if(ship.isExploding())
+					{
+						// make some big-ass explosions
+						makeShipExplode(ship);
+					}
+				}
+			}
+			
+			// draw any explosions
+			for(int i = 0; i < explosions.size(); i++)
+			{
+				// get the next explosion
+				Explosion expl = explosions.get(i);
+				
+				// make sure the explosion is active before any drawing takes place
+				if(expl.isActive())
+				{
+					// draw the next fire frame
+					bufferGraphics.drawImage(expl.getFireFrame(), expl.getX(), expl.getY(), this);
+					
+					// draw the next smoke frame
+					bufferGraphics.drawImage(expl.getSmokeFrame(), expl.getX(), expl.getY(), this);
+				}
+				else
+				{
+					// remove the explosion
+					explosions.remove(expl);
 				}
 			}
 			
@@ -508,6 +571,9 @@ public class GamePirates extends InternalGame implements Runnable
  		// make sure the ship is still in the room
  		if(ship != null)
  		{
+ 			// check to see if the ship is inactive
+ 			if(!ship.isActive()) {return;}
+ 			
  			// get the current room configuration
      		ship.setPathfinderTiles(tilesMap);
      		
@@ -525,6 +591,26 @@ public class GamePirates extends InternalGame implements Runnable
  		}
 	}
 	
+	// make a ship blow the fuck up
+	private void makeShipExplode(AStarShip ship)
+	{
+		// offsets from the center location to create the explosions
+		int offsetsX[] = {-10,-10,0,10,10};
+		int offsetsY[] = {-10,10,0,10,-10};
+		
+		for(int i = 0; i < offsetsX.length; i++)
+		{
+			// create explosions at the center of the ship and add the offset values to create a pattern
+			Explosion expl = new Explosion(ship.getBoundingBox().x + (ship.getImage().getWidth() / 4) + offsetsX[i], ship.getBoundingBox().y + (ship.getImage().getHeight() / 4) + offsetsY[i]);
+			expl.setFireImages(shipHitFireImages);
+			expl.setSmokeImages(shipHitSmokeImages);
+			explosions.add(expl);
+		}
+		
+		// the ship is no longer exploding
+		ship.setExploding(false);
+	}
+	
 	// fire the cannons in the specified direction
 	public void fireCannons(String direction)
 	{
@@ -534,6 +620,9 @@ public class GamePirates extends InternalGame implements Runnable
 		// make sure the damn ship exists first
 		if(ship != null)
 		{
+			// make sure the damn ship has available ammunition and hasn't been destroyed yet
+			if(ship.getAmmo() == 0 || ship.getHealth() == 0) {return;}
+			
 			// fire the cannons to the left
 			if(direction.equals("left"))
 			{
@@ -634,6 +723,12 @@ public class GamePirates extends InternalGame implements Runnable
 		int spreadSpeedsDiagX[] = {4,3,2,1,0};
 		int spreadSpeedsDiagY[] = {0,-1,-2,-3,-4};
 		
+		// add an explosion to the ArrayList
+		Explosion explosion = new Explosion(x,y);
+		explosion.setFireImages(cannonFireImages);
+		explosion.setSmokeImages(cannonSmokeImages);
+		explosions.add(explosion);
+		
 		// create and add the cannonballs
 		for(int i = 0; i < spreadSpeeds.length; i++)
 		{
@@ -724,6 +819,9 @@ public class GamePirates extends InternalGame implements Runnable
 			cannonball.setType(Cannonball.TYPE_CANNONBALL);
 			cannonballs.add(cannonball);
 		}
+		
+		// remove ammunition from the ship
+		ship.subtractAmmo();
 		
 		// clear the keys pressed
 		keysLeft = 0;

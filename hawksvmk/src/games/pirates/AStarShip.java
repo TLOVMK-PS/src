@@ -48,11 +48,25 @@ public class AStarShip extends AStarCharacter implements Serializable
 	
 	private AStarCharacterImage shipImage = shipSouthEast;
 	private String currentDirection = "se"; // the direction the ship is currently facing
+	
+	// image for a destroyed ship
+	private AStarCharacterImage shipDestroyed = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_destroyed.png"));
 
 	private String shipColor = "blue"; // the color of the ship's sails (also the color of the team)
 
 	private Rectangle boundingBox = new Rectangle(x, y, shipImage.getImage().getWidth(), shipImage.getImage().getHeight());
 
+	// constants for the maximum amounts of health and ammunition
+	private final int MAX_HEALTH = 5;
+	private final int MAX_AMMO = 5;
+	
+	// give the player the maximum amount of health and ammunition to start
+	private int health = MAX_HEALTH;
+	private int ammo = MAX_AMMO;
+	
+	private boolean exploding = false; // boolean describing whether the ship is exploding
+	private boolean active = true; // boolean describing whether the ship is active
+	
 	public AStarShip() {}
 	
 	public AStarShip(String username)
@@ -317,5 +331,84 @@ public class AStarShip extends AStarCharacter implements Serializable
 		
 		// figure out what the current avatar image should be
 		shipImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_" + currentDirection + ".png"));
+	}
+
+	public int getHealth() {
+		return health;
+	}
+	
+	public void incrementHealth() {
+		if(health < MAX_HEALTH)
+		{
+			health += 1;
+		}
+	}
+	
+	public void subtractHealth() {
+		if(health > 0)
+		{
+			health -= 1;
+			
+			if(health == 0)
+			{
+				// the ship is exploding
+				exploding = true;
+				
+				// the ship is no longer active
+				active = false;
+				xSpeed = 0;
+				ySpeed = 0;
+				
+				// clear the path
+				clearPath();
+				
+				// set the image to be a destroyed ship
+				shipImage = shipDestroyed;
+				boundingBox.width = shipImage.getImage().getWidth();
+				boundingBox.height = shipImage.getImage().getHeight();
+			}
+		}
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public int getAmmo() {
+		return ammo;
+	}
+	
+	public void incrementAmmo() {
+		if(ammo < MAX_AMMO)
+		{
+			ammo += 1;
+		}
+	}
+	
+	public void subtractAmmo() {
+		if(ammo > 0)
+		{
+			ammo -= 1;
+		}
+	}
+
+	public void setAmmo(int ammo) {
+		this.ammo = ammo;
+	}
+	
+	public boolean isExploding() {
+		return exploding;
+	}
+	
+	public void setExploding(boolean exploding) {
+		this.exploding = exploding;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
