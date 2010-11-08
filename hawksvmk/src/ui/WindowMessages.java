@@ -119,7 +119,13 @@ public class WindowMessages extends JPanel
 		this.x = x;
 		this.y = y;
 		
-		loadWindowMessages();
+		java.awt.EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				loadWindowMessages();
+			}
+		});
 	}
 	
 	@Override

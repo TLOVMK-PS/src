@@ -109,7 +109,13 @@ public class WindowClothing extends JPanel
 		this.x = x;
 		this.y = y;
 		
-		loadWindowInventory();
+		java.awt.EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				loadWindowInventory();
+			}
+		});
 	}
 	
 	public void setUsername(String username) {this.username = username;}

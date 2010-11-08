@@ -350,7 +350,7 @@ public class RoomViewerUI extends Applet
 	public void loadRoomViewerUI()
 	{
 		// start the loader thread so the graphics can be drawn as the loading takes place
-		new RoomViewerLoadingThread(this).start();
+		new RoomViewerLoadingThread(roomViewerUI).start();
 	}
 
 	// set up the fonts

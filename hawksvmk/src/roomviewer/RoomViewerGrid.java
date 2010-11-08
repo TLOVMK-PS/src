@@ -129,7 +129,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	ArrayList<Animation> animations = new ArrayList<Animation>(); // ArrayList of animations
 	//WindmillAnimation windmillAnimation = new WindmillAnimation(); // test animation
 	
-	boolean startSounds = false; // true to start the sounds
+	boolean startSounds = true; // true to start the sounds
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); // ArrayList of sounds
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
@@ -906,78 +906,78 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	private void setupInternalUI()
-	{		
-		 // set up the room description window
-	     roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room. You can try out the features of the game, including chat and walking. Please feel free to wander around.<br><br>- Hawk's VMK: Development Team", 0, 424);
-		 roomDescriptionWindow.setVisible(false);
-		 add(roomDescriptionWindow);
-		 
-		 // set up the edit room description window
-		 editRoomDescriptionWindow = new WindowEditRoomDescription(textFont, textFontBold, "Walk Text", "This is a walk test room.  You can try out the features of the game, including chat and walking.  Please feel free to wander around.<br><br>-Hawk's VMK: Development Team", 0, 272);
-		 editRoomDescriptionWindow.setGridObject(this);
-		 editRoomDescriptionWindow.setVisible(false);
-		 add(editRoomDescriptionWindow);
-		 
-		 // set up the messages window
-		 messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
-		 messagesWindow.setGridObject(this);
-		 messagesWindow.setVisible(false);
-		 add(messagesWindow);
-		 
-		 // set up the inventory window
-		 inventoryWindow = new WindowInventory(textFont, textFontBold, 100, 100);
-		 inventoryWindow.setGridObject(this);
-		 inventoryWindow.setVisible(false);
-		 add(inventoryWindow);
-		 
-		 // set up the shop window
-		 shopWindow = new WindowShop(textFont, textFontBold, 100, 100);
-		 shopWindow.setGridObject(this);
-		 shopWindow.setVisible(false);
-		 add(shopWindow);
-		 
-		 // set up the clothing window
-		 clothingWindow = new WindowClothing(textFont, textFontBold, 200, 50);
-		 clothingWindow.setGridObject(this);
-		 clothingWindow.setUsername(uiObject.getUsername());
-		 clothingWindow.setVisible(false);
-		 add(clothingWindow);
-		 
-		 // set up the settings window
-		 settingsWindow = new WindowSettings(textFont, textFontBold, 200, 50);
-		 settingsWindow.setGridObject(this);
-		 settingsWindow.setVisible(false);
-		 add(settingsWindow);
-		 
-		 // set up the help window
-		 helpWindow = new WindowHelp(textFont, textFontBold, 250, 50);
-		 helpWindow.setGridObject(this);
-		 helpWindow.setVisible(false);
-		 add(helpWindow);
-		 
-		 // set up the avatar information window
-		 avatarInfoWindow = new WindowAvatarInformation(textFont, textFontBold, 616, 306);
-		 avatarInfoWindow.setGridObject(this);
-		 avatarInfoWindow.setVisible(false);
-		 add(avatarInfoWindow);
-		 
-		 // set up the "Design Mode" room item window
-		 designModeItemWindow = new WindowDesignModeItem(textFont, 100, 100);
-		 designModeItemWindow.setGridObject(this);
-		 designModeItemWindow.setVisible(false);
-		 add(designModeItemWindow);
-		 
-		 // set up the "Guest Rooms" window
-		 guestRoomsWindow = new WindowGuestRooms(textFont, textFontBold, 200, 50);
-		 guestRoomsWindow.setGridObject(this);
-		 guestRoomsWindow.setVisible(false);
-		 add(guestRoomsWindow);
-		 
-		 // set up the map
-		 mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
-		 mapWindow.setGridObject(this);
-		 mapWindow.setVisible(true);
-		 add(mapWindow);
+	{	
+		// set up the room description window
+		roomDescriptionWindow = new WindowRoomDescription(textFont, textFontBold, "Walk Test", "This is a walk test room. You can try out the features of the game, including chat and walking. Please feel free to wander around.<br><br>- Hawk's VMK: Development Team", 0, 424);
+		roomDescriptionWindow.setVisible(false);
+		add(roomDescriptionWindow);
+
+		// set up the edit room description window
+		editRoomDescriptionWindow = new WindowEditRoomDescription(textFont, textFontBold, "Walk Text", "This is a walk test room.  You can try out the features of the game, including chat and walking.  Please feel free to wander around.<br><br>-Hawk's VMK: Development Team", 0, 272);
+		editRoomDescriptionWindow.setGridObject(this);
+		editRoomDescriptionWindow.setVisible(false);
+		add(editRoomDescriptionWindow);
+
+		// set up the messages window
+		messagesWindow = new WindowMessages(textFont, textFontBold, 100, 100);
+		messagesWindow.setGridObject(this);
+		messagesWindow.setVisible(false);
+		add(messagesWindow);
+
+		// set up the inventory window
+		inventoryWindow = new WindowInventory(textFont, textFontBold, 100, 100);
+		inventoryWindow.setGridObject(this);
+		inventoryWindow.setVisible(false);
+		add(inventoryWindow);
+
+		// set up the shop window
+		shopWindow = new WindowShop(textFont, textFontBold, 100, 100);
+		shopWindow.setGridObject(this);
+		shopWindow.setVisible(false);
+		add(shopWindow);
+
+		// set up the clothing window
+		clothingWindow = new WindowClothing(textFont, textFontBold, 200, 50);
+		clothingWindow.setGridObject(this);
+		clothingWindow.setUsername(uiObject.getUsername());
+		clothingWindow.setVisible(false);
+		add(clothingWindow);
+
+		// set up the settings window
+		settingsWindow = new WindowSettings(textFont, textFontBold, 200, 50);
+		settingsWindow.setGridObject(this);
+		settingsWindow.setVisible(false);
+		add(settingsWindow);
+
+		// set up the help window
+		helpWindow = new WindowHelp(textFont, textFontBold, 250, 50);
+		helpWindow.setGridObject(this);
+		helpWindow.setVisible(false);
+		add(helpWindow);
+
+		// set up the avatar information window
+		avatarInfoWindow = new WindowAvatarInformation(textFont, textFontBold, 616, 306);
+		avatarInfoWindow.setGridObject(this);
+		avatarInfoWindow.setVisible(false);
+		add(avatarInfoWindow);
+
+		// set up the "Design Mode" room item window
+		designModeItemWindow = new WindowDesignModeItem(textFont, 100, 100);
+		designModeItemWindow.setGridObject(this);
+		designModeItemWindow.setVisible(false);
+		add(designModeItemWindow);
+
+		// set up the "Guest Rooms" window
+		guestRoomsWindow = new WindowGuestRooms(textFont, textFontBold, 200, 50);
+		guestRoomsWindow.setGridObject(this);
+		guestRoomsWindow.setVisible(false);
+		add(guestRoomsWindow);
+
+		// set up the map
+		mapWindow = new WindowMap(textFont, textFontBold, 0, 0);
+		mapWindow.setGridObject(this);
+		mapWindow.setVisible(true);
+		add(mapWindow);
 	}
 	
 	public void graphicsLoop()

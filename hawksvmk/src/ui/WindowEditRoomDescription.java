@@ -72,7 +72,13 @@ public class WindowEditRoomDescription extends JPanel
 		this.x = x;
 		this.y = y;
 		
-		loadEditRoomDescriptionWindow();
+		java.awt.EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				loadEditRoomDescriptionWindow();
+			}
+		});
 	}
 	
 	@Override
