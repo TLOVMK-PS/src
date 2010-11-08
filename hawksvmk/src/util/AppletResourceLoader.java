@@ -4,6 +4,7 @@
 
 package util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -138,7 +139,7 @@ public class AppletResourceLoader implements Serializable
 			try
 			{
 				// try to open an online resource
-				return new URL(path).openStream();
+				return new BufferedInputStream(new URL(path).openStream());
 			}
 			catch(Exception e)
 			{
@@ -155,7 +156,7 @@ public class AppletResourceLoader implements Serializable
 				{
 					// Eclipse development environment
 					//System.out.println("FILE: " + StaticAppletData.getCodeBase() + "../" + path.substring(1));
-					return new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)).openStream();
+					return new BufferedInputStream(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)).openStream());
 				}
 				else
 				{
@@ -165,13 +166,13 @@ public class AppletResourceLoader implements Serializable
 					{
 						// release environment (web server)
 						System.out.println("File web server: " + new URL(StaticAppletData.getCodeBase() + path.substring(1)).toString());
-						return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+						return new BufferedInputStream((new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream());
 					}
 					catch(Exception e)
 					{
 						// release environment (local machine)
 						System.out.println("File local machine: " + (new URL("file:///" + System.getProperty("user.dir") + path).toString()));
-						return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
+						return new BufferedInputStream((new URL("file:///" + System.getProperty("user.dir") + path)).openStream());
 						//return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
 					}
 				}
@@ -194,12 +195,12 @@ public class AppletResourceLoader implements Serializable
 			if(StaticAppletData.getCodeBase().contains("/bin"))
 			{
 				// Eclipse development environment (local machine)
-				return new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)).openStream();
+				return new BufferedInputStream(new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1)).openStream());
 			}
 			else
 			{
 				// release environment (web server)
-				return (new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream();
+				return new BufferedInputStream((new URL(StaticAppletData.getCodeBase() + path.substring(1))).openStream());
 			}
 		}
 		catch(Exception e)
@@ -208,7 +209,7 @@ public class AppletResourceLoader implements Serializable
 			try
 			{
 				// release environment (local machine)
-				return (new URL("file:///" + System.getProperty("user.dir") + path)).openStream();
+				return new BufferedInputStream((new URL("file:///" + System.getProperty("user.dir") + path)).openStream());
 			}
 			catch(Exception ex)
 			{
@@ -230,7 +231,7 @@ public class AppletResourceLoader implements Serializable
 			{
 				// try to get an online sound stream
 				theShittyURL = new URL(path);
-				return new ShittyInputStream(theShittyURL.openStream(), -1);
+				return new ShittyInputStream(new BufferedInputStream(theShittyURL.openStream()), -1);
 			}
 			catch(Exception e)
 			{
@@ -249,14 +250,14 @@ public class AppletResourceLoader implements Serializable
 					// Eclipse development environment (local machine)
 					theShittyURL = new URL(StaticAppletData.getCodeBase() + "../" + path.substring(1));
 	
-					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+					return new ShittyInputStream(new BufferedInputStream(theShittyURL.openStream()), bufferSize);
 				}
 				else
 				{
 					// release environment (web server)
 					theShittyURL = new URL(StaticAppletData.getCodeBase() + path.substring(1));
 	
-					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+					return new ShittyInputStream(new BufferedInputStream(theShittyURL.openStream()), bufferSize);
 				}
 			}
 			catch(Exception e)
@@ -267,7 +268,7 @@ public class AppletResourceLoader implements Serializable
 					// release environment (local machine)
 					theShittyURL = new URL("file:///" + System.getProperty("user.dir") + path);
 	
-					return new ShittyInputStream(theShittyURL.openStream(), bufferSize);
+					return new ShittyInputStream(new BufferedInputStream(theShittyURL.openStream()), bufferSize);
 				}
 				catch(Exception ex)
 				{
