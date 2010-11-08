@@ -25,7 +25,7 @@ public class RepeatingSound extends Thread implements SoundPlayable
 	private boolean playing = false;
 	private boolean useSecondBuffer = false; // TRUE to activate the second sound stream
 	
-	private final int BUFFER_SWITCH_THRESHOLD = 500; // the threshold in milliseconds when the buffer should be switched
+	private final int BUFFER_SWITCH_THRESHOLD = 800; // the threshold in milliseconds when the buffer should be switched
 	
 	public RepeatingSound() {}
 	

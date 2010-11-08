@@ -6,6 +6,7 @@ package roomviewer;
 
 import games.GameScore;
 import games.fireworks.GameFireworks;
+import games.pirates.AStarShip;
 import games.pirates.GamePirates;
 
 import java.applet.Applet;
@@ -58,6 +59,7 @@ import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSendMailToUser;
 import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameMoveCharacter;
 import sockets.messages.games.MessageGameRemoveUserFromRoom;
 import sockets.messages.games.MessageGameScore;
 import ui.WindowLoading;
@@ -493,7 +495,7 @@ public class RoomViewerUI extends Applet
 		theGridView.setInventory(inventory);
 	}
 	
-	// send a message to the server (only used for messages from the grid)
+	// send a message to the server (only used for messages from the grid and game rooms)
 	protected void sendMessageToServer(Message m)
 	{
 		new MessageSenderThread(m).start();
@@ -649,6 +651,31 @@ public class RoomViewerUI extends Applet
 		{
 			gameFireworks.setRoomID(gameRoomID);
 		}
+		else if(gameArea.toLowerCase().equals("pirates"))
+		{
+			gamePirates.setRoomID(gameRoomID);
+		}
+	}
+	
+	// move a character in a game room
+	public void gameMoveCharacter(AStarCharacter character, String gameID, int destGridX, int destGridY)
+	{
+		// make sure we're not moving the current user's character again
+		if(!character.getUsername().equals(username))
+		{
+			// check the game ID
+			if(gameID.toLowerCase().equals("pirates"))
+			{
+				// Pirates of the Caribbean
+				gamePirates.moveShip((AStarShip)character, destGridX, destGridY);
+			}
+		}
+	}
+	
+	// send a Game Move Character message to the server
+	public void sendGameMoveCharacterMessage(AStarCharacter character, String gameID, String gameRoomID, int destGridX, int destGridY)
+	{
+		sendMessageToServer(new MessageGameMoveCharacter(character, gameID, gameRoomID, destGridX, destGridY));
 	}
 	
 	// add a score to the desired game from the server
@@ -657,6 +684,10 @@ public class RoomViewerUI extends Applet
 		if(gameArea.toLowerCase().equals("fireworks"))
 		{
 			gameFireworks.addGameScore(score);
+		}
+		else if(gameArea.toLowerCase().equals("pirates"))
+		{
+			//gamePirates.addGameScore(score);
 		}
 	}
 	

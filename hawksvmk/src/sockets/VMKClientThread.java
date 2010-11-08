@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
@@ -47,6 +48,7 @@ import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameMoveCharacter;
 import sockets.messages.games.MessageGameScore;
 import util.MailMessage;
 import util.StaticAppletData;
@@ -327,6 +329,18 @@ public class VMKClientThread extends Thread
 						System.out.println("Game add user to room response received from server");
 						
 						uiObject.setGameRoomID(gameAddUserMsg.getGameID(), gameAddUserMsg.getRoomID());
+					}
+					else if(outputMessage instanceof MessageGameMoveCharacter)
+					{
+						MessageGameMoveCharacter gameMoveUserMsg = (MessageGameMoveCharacter)outputMessage;
+						System.out.println("Game move user in room response received from server");
+						
+						// check to make sure this is not the client that issued the message
+						if(!gameMoveUserMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+						{
+							// move the character in the game room
+							uiObject.gameMoveCharacter(gameMoveUserMsg.getCharacter(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());
+						}
 					}
 					else if(outputMessage instanceof MessageGameScore)
 					{
@@ -642,6 +656,11 @@ public class VMKClientThread extends Thread
 	    			// try to re-connect to the server
 	    			reconnectToServer();
 	    		}
+	    	}
+	    	catch(ConcurrentModificationException e)
+	    	{
+	    		// cache the message for later sending
+	    		cacheMessage(m);
 	    	}
 	    	catch(IOException e)
 	    	{

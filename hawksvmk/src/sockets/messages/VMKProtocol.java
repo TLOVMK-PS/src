@@ -169,6 +169,12 @@ public class VMKProtocol
         	theOutput = (MessageGameAddUserToRoom)theInput;
         	theOutput.setType("MessageGameAddUserToRoom");
         }
+        else if(theInput instanceof MessageGameMoveCharacter)
+        {
+        	// pass back the request
+        	theOutput = (MessageGameMoveCharacter)theInput;
+        	theOutput.setType("MessageGameMoveCharacter");
+        }
         else if(theInput instanceof MessageGameRemoveUserFromRoom)
         {
         	// pass back the request

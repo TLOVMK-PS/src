@@ -48,6 +48,7 @@ import sockets.messages.MessageUpdateInventory;
 import sockets.messages.MessageUpdateItemInRoom;
 import sockets.messages.VMKProtocol;
 import sockets.messages.games.MessageGameAddUserToRoom;
+import sockets.messages.games.MessageGameMoveCharacter;
 import sockets.messages.games.MessageGameRemoveUserFromRoom;
 import sockets.messages.games.MessageGameScore;
 import util.FileOperations;
@@ -548,6 +549,14 @@ public class VMKServerThread extends Thread
 		    				sendMessageToAllClientsInRoom(addUserMsg, addUserMsg.getRoomID());
 		    			}
 
+		    		}
+		    		else if(outputMessage instanceof MessageGameMoveCharacter)
+		    		{
+		    			// move character in GAME ROOM message received from client
+		    			MessageGameMoveCharacter moveUserGameMsg = (MessageGameMoveCharacter)outputMessage;
+		    			
+		    			// send the message to ALL clients in the game room EXCEPT the one that initiated the request
+		    			sendMessageToAllClientsInRoom(moveUserGameMsg, moveUserGameMsg.getGameRoomID(), this.getName());
 		    		}
 		    		else if(outputMessage instanceof MessageGameScore)
 		    		{

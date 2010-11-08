@@ -122,6 +122,11 @@ public class GamePirates extends InternalGame implements Runnable
 			{
 				// move the ship to this tile
 				moveShip(ships.get(getUIObject().getUsername()), (gridX / 2), gridY);
+				
+				// move the enemy ship to the previously occupied tile
+				Tile currentPlayerTile = ships.get(getUIObject().getUsername()).getCurrentTile();
+				moveShip(ships.get("Enemy"),currentPlayerTile.getColumn(),currentPlayerTile.getRow());
+				//new MoveMessageSenderThread(ships.get("Enemy"), currentPlayerTile.getColumn(), currentPlayerTile.getRow()).start();
 			}
 			public void mouseClicked(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
@@ -826,5 +831,25 @@ public class GamePirates extends InternalGame implements Runnable
 		// clear the keys pressed
 		keysLeft = 0;
 		keysRight = 0;
+	}
+	
+	// send a Game Move Character message to the server
+	class MoveMessageSenderThread extends Thread
+	{
+		private AStarShip ship = null;
+		private int destGridX = 0;
+		private int destGridY = 0;
+		
+		public MoveMessageSenderThread(AStarShip ship, int destGridX, int destGridY)
+		{
+			this.ship = ship;
+			this.destGridX = destGridX;
+			this.destGridY = destGridY;
+		}
+		
+		public void run()
+		{
+			getUIObject().sendGameMoveCharacterMessage(ship, getGameID(), getRoomID(), destGridX, destGridY);
+		}
 	}
 }
