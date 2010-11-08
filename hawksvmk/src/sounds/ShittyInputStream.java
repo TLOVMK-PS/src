@@ -4,10 +4,11 @@
 
 package sounds;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ShittyInputStream extends InputStream
+public class ShittyInputStream extends BufferedInputStream
 {
 	private final InputStream boundStream; // the fucking underlying input stream
 	private int length = 0;
@@ -15,6 +16,8 @@ public class ShittyInputStream extends InputStream
 	// create a new ShittyInputStream with a bound stream and a length of the file
 	public ShittyInputStream(InputStream bound, int length)
 	{
+		super(bound);
+		
 		this.boundStream = bound; // assign the bound stream
 		this.length = length; // assign the buffer length
 		
