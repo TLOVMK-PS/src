@@ -2,9 +2,11 @@
 // November 20, 2009
 // Interpret messages from the server and client
 
-package sockets.messages;
+package sockets;
 
+import sockets.messages.*;
 import sockets.messages.games.*;
+import sockets.messages.games.pirates.*;
 
 public class VMKProtocol
 {
@@ -186,6 +188,12 @@ public class VMKProtocol
         	// pass back the request
         	theOutput = (MessageGameScore)theInput;
         	theOutput.setType("MessageGameScore");
+        }
+        else if(theInput instanceof MessageGamePiratesFireCannons)
+        {
+        	// pass back the request
+        	theOutput = (MessageGamePiratesFireCannons)theInput;
+        	theOutput.setType("MessageGamePiratesFireCannons");
         }
 
         return theOutput;

@@ -6,7 +6,6 @@ package sockets;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
@@ -21,39 +20,13 @@ import java.util.Scanner;
 import astar.AStarCharacter;
 
 import roomobject.RoomItem;
-import sockets.messages.Message;
-import sockets.messages.MessageAddChatToRoom;
-import sockets.messages.MessageAddFriendConfirmation;
-import sockets.messages.MessageAddFriendRequest;
-import sockets.messages.MessageAddInventory;
-import sockets.messages.MessageAddUserToRoom;
-import sockets.messages.MessageAlterFriendStatus;
-import sockets.messages.MessageCreateGuestRoom;
-import sockets.messages.MessageGetCharacterInRoom;
-import sockets.messages.MessageGetFriendsList;
-import sockets.messages.MessageGetInventory;
-import sockets.messages.MessageGetOfflineMailMessages;
-import sockets.messages.MessageLogin;
-import sockets.messages.MessageLogout;
-import sockets.messages.MessageMoveCharacter;
-import sockets.messages.MessageReconnectToServer;
-import sockets.messages.MessageRemoveFriend;
-import sockets.messages.MessageRemoveUserFromRoom;
-import sockets.messages.MessageSaveGuestRoom;
-import sockets.messages.MessageSaveMailMessages;
-import sockets.messages.MessageSendMailToUser;
-import sockets.messages.MessageUpdateCharacterClothing;
-import sockets.messages.MessageUpdateCharacterInRoom;
-import sockets.messages.MessageUpdateInventory;
-import sockets.messages.MessageUpdateItemInRoom;
-import sockets.messages.VMKProtocol;
-import sockets.messages.games.MessageGameAddUserToRoom;
-import sockets.messages.games.MessageGameMoveCharacter;
-import sockets.messages.games.MessageGameRemoveUserFromRoom;
-import sockets.messages.games.MessageGameScore;
+
+import sockets.messages.*;
+import sockets.messages.games.*;
+import sockets.messages.games.pirates.*;
+
 import util.FileOperations;
 import util.FriendsList;
-import util.StaticAppletData;
 import util.VMKRoom;
 
 public class VMKServerThread extends Thread
@@ -566,6 +539,14 @@ public class VMKServerThread extends Thread
 		    			// pass the message back to all clients in the current game room
 		    			sendMessageToAllClientsInRoom(gameScoreMsg, roomID);
 		    		}
+		    		else if(outputMessage instanceof MessageGamePiratesFireCannons)
+		    		{
+		    			// POTC fire cannons message received from client
+		    			MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)outputMessage;
+		    			
+		    			// pass the message back to all clients in the current game room EXCEPT the one that initiated the request
+		    			sendMessageToAllClientsInRoom(fireCannonsMsg, fireCannonsMsg.getGameRoomID(), this.getName());
+		    		}
 		    	}
 		    }
 		    catch(ClassNotFoundException cne)
@@ -638,6 +619,10 @@ public class VMKServerThread extends Thread
 	    		}
 	    		else
 	    		{
+	    			// TODO: Start a timeout here where the socket would be closed after 20 seconds or so, in order
+	    			// to account for occurrences where an EOFException would happen but where it would not necessarily
+	    			// represent a logout.
+	    			
 	    			// most likely caused by a socket error from closing the window/tab,
 	    			// so proceed normally as though it was a logout
 	    			System.out.println("Assuming a logout from the EOFException, so shutting down...");

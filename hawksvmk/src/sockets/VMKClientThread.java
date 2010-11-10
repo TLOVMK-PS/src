@@ -11,10 +11,8 @@ import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -22,34 +20,12 @@ import java.util.ConcurrentModificationException;
 import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
 
-import astar.AStarCharacter;
-
 import roomviewer.RoomViewerUI;
-import sockets.messages.Message;
-import sockets.messages.MessageAddChatToRoom;
-import sockets.messages.MessageAddFriendConfirmation;
-import sockets.messages.MessageAddFriendRequest;
-import sockets.messages.MessageAddUserToRoom;
-import sockets.messages.MessageAlterFriendStatus;
-import sockets.messages.MessageCreateGuestRoom;
-import sockets.messages.MessageGetCharacterInRoom;
-import sockets.messages.MessageGetFriendsList;
-import sockets.messages.MessageGetInventory;
-import sockets.messages.MessageGetOfflineMailMessages;
-import sockets.messages.MessageLogin;
-import sockets.messages.MessageLogout;
-import sockets.messages.MessageMoveCharacter;
-import sockets.messages.MessageReconnectToServer;
-import sockets.messages.MessageRemoveFriend;
-import sockets.messages.MessageRemoveUserFromRoom;
-import sockets.messages.MessageSendMailToUser;
-import sockets.messages.MessageUpdateCharacterClothing;
-import sockets.messages.MessageUpdateCharacterInRoom;
-import sockets.messages.MessageUpdateItemInRoom;
-import sockets.messages.VMKProtocol;
-import sockets.messages.games.MessageGameAddUserToRoom;
-import sockets.messages.games.MessageGameMoveCharacter;
-import sockets.messages.games.MessageGameScore;
+
+import sockets.messages.*;
+import sockets.messages.games.*;
+import sockets.messages.games.pirates.*;
+
 import util.MailMessage;
 import util.StaticAppletData;
 import util.VMKRoom;
@@ -336,10 +312,10 @@ public class VMKClientThread extends Thread
 						System.out.println("Game move user in room response received from server");
 						
 						// check to make sure this is not the client that issued the message
-						if(!gameMoveUserMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+						if(!gameMoveUserMsg.getUsername().equals(uiObject.getUsername()))
 						{
 							// move the character in the game room
-							uiObject.gameMoveCharacter(gameMoveUserMsg.getCharacter(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());
+							uiObject.gameMoveCharacter(gameMoveUserMsg.getUsername(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());
 						}
 					}
 					else if(outputMessage instanceof MessageGameScore)
@@ -348,6 +324,13 @@ public class VMKClientThread extends Thread
 						System.out.println("Game score response received from server");
 						
 						uiObject.addGameScore(gameScoreMsg.getGameScore().getGame(), gameScoreMsg.getGameScore());
+					}
+					else if(outputMessage instanceof MessageGamePiratesFireCannons)
+					{
+						MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)outputMessage;
+						System.out.println("Game fire cannons response received from server");
+						
+						uiObject.gamePiratesFireCannons(fireCannonsMsg.getUsername(), fireCannonsMsg.getDirection());
 					}
 			    }
 		    }

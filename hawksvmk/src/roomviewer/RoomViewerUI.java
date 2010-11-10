@@ -62,6 +62,7 @@ import sockets.messages.games.MessageGameAddUserToRoom;
 import sockets.messages.games.MessageGameMoveCharacter;
 import sockets.messages.games.MessageGameRemoveUserFromRoom;
 import sockets.messages.games.MessageGameScore;
+import sockets.messages.games.pirates.MessageGamePiratesFireCannons;
 import ui.WindowLoading;
 import ui.WindowMap;
 import ui.WindowRoomDescription;
@@ -658,24 +659,24 @@ public class RoomViewerUI extends Applet
 	}
 	
 	// move a character in a game room
-	public void gameMoveCharacter(AStarCharacter character, String gameID, int destGridX, int destGridY)
+	public void gameMoveCharacter(String username, String gameID, int destGridX, int destGridY)
 	{
 		// make sure we're not moving the current user's character again
-		if(!character.getUsername().equals(username))
+		if(!getUsername().equals(username))
 		{
 			// check the game ID
 			if(gameID.toLowerCase().equals("pirates"))
 			{
 				// Pirates of the Caribbean
-				gamePirates.moveShip((AStarShip)character, destGridX, destGridY);
+				gamePirates.moveShip(username, destGridX, destGridY);
 			}
 		}
 	}
 	
 	// send a Game Move Character message to the server
-	public void sendGameMoveCharacterMessage(AStarCharacter character, String gameID, String gameRoomID, int destGridX, int destGridY)
+	public void sendGameMoveCharacterMessage(String username, String gameID, String gameRoomID, int destGridX, int destGridY)
 	{
-		sendMessageToServer(new MessageGameMoveCharacter(character, gameID, gameRoomID, destGridX, destGridY));
+		sendMessageToServer(new MessageGameMoveCharacter(username, gameID, gameRoomID, destGridX, destGridY));
 	}
 	
 	// add a score to the desired game from the server
@@ -689,6 +690,18 @@ public class RoomViewerUI extends Applet
 		{
 			//gamePirates.addGameScore(score);
 		}
+	}
+	
+	// fire the cannons for a ship in Pirates of the Caribbean
+	public void gamePiratesFireCannons(String username, String direction)
+	{
+		gamePirates.fireCannons(username, direction);
+	}
+	
+	// send a Fire Cannons message for a ship in POTC
+	public void sendGamePiratesFireCannonsMessage(String username, String direction, String gameRoomID)
+	{
+		sendMessageToServer(new MessageGamePiratesFireCannons(username, direction, gameRoomID));
 	}
 	
 	public void showChatBox()

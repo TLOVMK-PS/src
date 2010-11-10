@@ -8,11 +8,9 @@ import java.io.Serializable;
 
 import sockets.messages.Message;
 
-import astar.AStarCharacter;
-
 public class MessageGameMoveCharacter extends Message implements Serializable
 {
-	private AStarCharacter character;
+	private String username;
 	private String gameID = "";
 	private String gameRoomID = "";
 	private int destGridX = 0;
@@ -20,23 +18,23 @@ public class MessageGameMoveCharacter extends Message implements Serializable
 	
 	public MessageGameMoveCharacter() {super("MessageGameMoveCharacter");}
 	
-	public MessageGameMoveCharacter(AStarCharacter character, String gameID, String gameRoomID, int destGridX, int destGridY)
+	public MessageGameMoveCharacter(String username, String gameID, String gameRoomID, int destGridX, int destGridY)
 	{
 		super("MessageGameMoveCharacter");
 		
-		this.character = character;
+		this.username = username;
 		this.gameID = gameID;
 		this.gameRoomID = gameRoomID;
 		this.destGridX = destGridX;
 		this.destGridY = destGridY;
 	}
 
-	public AStarCharacter getCharacter() {
-		return character;
+	public String getUsername() {
+		return username;
 	}
 	
-	public void setCharacter(AStarCharacter character) {
-		this.character = character;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getGameID() {

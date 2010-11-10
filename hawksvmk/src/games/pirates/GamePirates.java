@@ -121,8 +121,8 @@ public class GamePirates extends InternalGame implements Runnable
 			public void mouseReleased(MouseEvent e)
 			{
 				// move the ship to this tile
-				new MoveMessageSenderThread(ships.get(getUIObject().getUsername()), (gridX / 2), gridY).start();
-				moveShip(ships.get(getUIObject().getUsername()), (gridX / 2), gridY);
+				new MoveMessageSenderThread(getUIObject().getUsername(), (gridX / 2), gridY).start();
+				moveShip(getUIObject().getUsername(), (gridX / 2), gridY);
 				
 				// move the enemy ship to the previously occupied tile
 				//Tile currentPlayerTile = ships.get(getUIObject().getUsername()).getCurrentTile();
@@ -150,7 +150,8 @@ public class GamePirates extends InternalGame implements Runnable
 					if(keysLeft >= 2)
 					{
 						// FIRE EVERYTHING
-						fireCannons("left");
+						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "left").start();
+						fireCannons(getUIObject().getUsername(), "left");
 					}
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_KP_RIGHT)
@@ -163,7 +164,8 @@ public class GamePirates extends InternalGame implements Runnable
 					if(keysRight >= 2)
 					{
 						// FIRE EVERYTHING
-						fireCannons("right");
+						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "right").start();
+						fireCannons(getUIObject().getUsername(), "right");
 					}
 				}
 			}
@@ -501,7 +503,7 @@ public class GamePirates extends InternalGame implements Runnable
 							// remove this cannonball
 							cannonballs.remove(cannonball);
 						}
-						else if(ship.getBoundingBox().intersects(cannonball.getBoundingBox()) && !ship.getUsername().equals(cannonball.getFiredBy())) // is it inside its bounding box of another ship?
+						else if(ship.getBoundingBox().intersects(cannonball.getBoundingBox()) && !ship.getShipColor().equals(cannonball.getFiredByColor())) // is it inside the bounding box of an enemy ship?
 						{
 							// is the ship transparent at the point where the cannonball intersected?
 							if(!ship.isTransparentAt(Math.abs(cannonball.getBoundingBox().x - ship.getBoundingBox().x), Math.abs(cannonball.getBoundingBox().y - ship.getBoundingBox().y)))
@@ -568,8 +570,10 @@ public class GamePirates extends InternalGame implements Runnable
 	}
 	
 	// move a ship in the current room
-	public void moveShip(AStarShip ship, int destGridX, int destGridY)
+	public void moveShip(String username, int destGridX, int destGridY)
 	{
+		AStarShip ship = ships.get(username);
+		
 		// make sure it's not a nogo tile
 		if(tilesMap.get(destGridY + "-" + destGridX).getType() == Tile.TILE_NOGO) {return;}
 		
@@ -617,10 +621,9 @@ public class GamePirates extends InternalGame implements Runnable
 	}
 	
 	// fire the cannons in the specified direction
-	public void fireCannons(String direction)
-	{
-		// get the ship that the cannon will be fired from
-		AStarShip ship = ships.get(getUIObject().getUsername());
+	public void fireCannons(String username, String direction)
+	{	
+		AStarShip ship = ships.get(username);
 		
 		// make sure the damn ship exists first
 		if(ship != null)
@@ -828,28 +831,54 @@ public class GamePirates extends InternalGame implements Runnable
 		// remove ammunition from the ship
 		ship.subtractAmmo();
 		
-		// clear the keys pressed
-		keysLeft = 0;
-		keysRight = 0;
+		// check to see if this ship is this player's ship
+		if(ship.getUsername().equals(getUIObject().getUsername()))
+		{
+			// clear the keys pressed
+			keysLeft = 0;
+			keysRight = 0;
+		}
 	}
 	
 	// send a Game Move Character message to the server
 	class MoveMessageSenderThread extends Thread
 	{
-		private AStarShip ship = null;
+		private String username = "";
 		private int destGridX = 0;
 		private int destGridY = 0;
 		
-		public MoveMessageSenderThread(AStarShip ship, int destGridX, int destGridY)
+		public MoveMessageSenderThread(String username, int destGridX, int destGridY)
 		{
-			this.ship = ship;
+			this.username = username;
 			this.destGridX = destGridX;
 			this.destGridY = destGridY;
 		}
 		
 		public void run()
 		{
-			getUIObject().sendGameMoveCharacterMessage(ship, getGameID(), getRoomID(), destGridX, destGridY);
+			getUIObject().sendGameMoveCharacterMessage(username, getGameID(), getRoomID(), destGridX, destGridY);
+		}
+	}
+	
+	// send a Fire Cannons message to the server
+	class FireCannonsMessageSenderThread extends Thread
+	{
+		private String username = "";
+		private String direction = "";
+		
+		public FireCannonsMessageSenderThread(String username, String direction)
+		{
+			this.username = username;
+			this.direction = direction;
+		}
+		
+		public void run()
+		{
+			// make sure the ship has available ammunition
+			if(ships.get(getUIObject().getUsername()).getAmmo() > 0)
+			{
+				getUIObject().sendGamePiratesFireCannonsMessage(username, direction, getRoomID());
+			}
 		}
 	}
 }
