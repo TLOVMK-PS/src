@@ -121,12 +121,12 @@ public class GamePirates extends InternalGame implements Runnable
 			public void mouseReleased(MouseEvent e)
 			{
 				// move the ship to this tile
+				new MoveMessageSenderThread(ships.get(getUIObject().getUsername()), (gridX / 2), gridY).start();
 				moveShip(ships.get(getUIObject().getUsername()), (gridX / 2), gridY);
 				
 				// move the enemy ship to the previously occupied tile
-				Tile currentPlayerTile = ships.get(getUIObject().getUsername()).getCurrentTile();
-				moveShip(ships.get("Enemy"),currentPlayerTile.getColumn(),currentPlayerTile.getRow());
-				//new MoveMessageSenderThread(ships.get("Enemy"), currentPlayerTile.getColumn(), currentPlayerTile.getRow()).start();
+				//Tile currentPlayerTile = ships.get(getUIObject().getUsername()).getCurrentTile();
+				//moveShip(ships.get("Enemy"),currentPlayerTile.getColumn(),currentPlayerTile.getRow());
 			}
 			public void mouseClicked(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
