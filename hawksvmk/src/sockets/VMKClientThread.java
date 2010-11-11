@@ -20,6 +20,7 @@ import java.util.ConcurrentModificationException;
 import javax.imageio.IIOException;
 import javax.swing.JOptionPane;
 
+import rooms.VMKRoom;
 import roomviewer.RoomViewerUI;
 
 import sockets.messages.*;
@@ -28,7 +29,6 @@ import sockets.messages.games.pirates.*;
 
 import util.MailMessage;
 import util.StaticAppletData;
-import util.VMKRoom;
 
 public class VMKClientThread extends Thread
 {

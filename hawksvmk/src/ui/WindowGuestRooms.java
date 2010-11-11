@@ -27,12 +27,12 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import comparators.RoomDateCreatedComparator;
 
+import rooms.VMKRoom;
 import roomviewer.RoomViewerGrid;
 
 import ui.WindowInventory.MyScrollBarUI;
 import util.AppletResourceLoader;
 import util.StaticAppletData;
-import util.VMKRoom;
 
 public class WindowGuestRooms extends JPanel
 {

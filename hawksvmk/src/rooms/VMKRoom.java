@@ -2,7 +2,7 @@
 // March 28, 2010
 // Data structure that handles a given VMK room
 
-package util;
+package rooms;
 
 import java.io.Serializable;
 import java.util.HashMap;

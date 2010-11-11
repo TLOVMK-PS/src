@@ -6,8 +6,10 @@ package sockets;
 
 import java.util.HashMap;
 
+import rooms.VMKGameRoom;
+import rooms.VMKRoom;
+
 import util.FriendsList;
-import util.VMKRoom;
 
 import astar.AStarCharacter;
 
@@ -123,12 +125,12 @@ public class VMKServerPlayerData
 	{
 		for(int i = 0; i < MAX_FIREWORKS_ROOMS; i++)
 		{
-			addRoom("fireworks_" + i, new VMKRoom("fireworks_" + i, "Fireworks Game " + i, ""));
+			addRoom("fireworks_" + i, new VMKGameRoom("fireworks_" + i, "Fireworks Game " + i, ""));
 		}
 		
 		for(int i = 0; i < MAX_PIRATES_ROOMS; i++)
 		{
-			addRoom("pirates_" + i, new VMKRoom("pirates_" + i, "Pirates Game " + i, ""));
+			addRoom("pirates_" + i, new VMKGameRoom("pirates_" + i, "Pirates Game " + i, ""));
 		}
 	}
 	
@@ -143,8 +145,8 @@ public class VMKServerPlayerData
 			for(int i = 0; i < MAX_FIREWORKS_ROOMS; i++)
 			{
 				// check the number of players in this room
-				VMKRoom gameRoom = rooms.get(gameID + "_" + i);
-				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_FIREWORKS_ROOM)
+				VMKGameRoom gameRoom = (VMKGameRoom)rooms.get(gameID + "_" + i);
+				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_FIREWORKS_ROOM && !gameRoom.isStarted())
 				{
 					// this will be the room that we put this user into
 					gameRoomID = gameRoom.getRoomID();
@@ -167,8 +169,8 @@ public class VMKServerPlayerData
 			for(int i = 0; i < MAX_PIRATES_ROOMS; i++)
 			{
 				// check the number of players in this room
-				VMKRoom gameRoom = rooms.get(gameID + "_" + i);
-				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_PIRATES_ROOM)
+				VMKGameRoom gameRoom = (VMKGameRoom)rooms.get(gameID + "_" + i);
+				if(gameRoom.countCharacters() < MAX_PLAYERS_PER_PIRATES_ROOM && !gameRoom.isStarted())
 				{
 					// this will be the room that we put this user into
 					gameRoomID = gameRoom.getRoomID();

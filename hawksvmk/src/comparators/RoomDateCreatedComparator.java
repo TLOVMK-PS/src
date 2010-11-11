@@ -6,7 +6,8 @@ package comparators;
 
 import java.util.Comparator;
 
-import util.VMKRoom;
+import rooms.VMKRoom;
+
 
 public class RoomDateCreatedComparator implements Comparator<VMKRoom>
 {

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import rooms.VMKRoom;
+
 public class StaticAppletData
 {
 	private static String codebase = "";

@@ -36,6 +36,7 @@ import astar.AStarCharacter;
 import roomobject.RoomFurniture;
 import roomobject.RoomItem;
 import roomobject.RoomPoster;
+import rooms.VMKRoom;
 import sockets.VMKServerPlayerData;
 import sounds.RepeatingSound;
 import sounds.SingleSound;

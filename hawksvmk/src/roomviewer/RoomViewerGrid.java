@@ -413,8 +413,6 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     		if(currentRoomItem == null)
 	     		{
 	     			moveCharacterInRoom(myCharacter, (gridX / 2), gridY);
-	     			// send a "move character" message to the server to update all clients
-	     			uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
 	     		}
 	     		//System.out.println("CLICK AT Mouse X: " + mouseX + " - Mouse Y: " + mouseY + "Grid X: " + gridX + " - Grid Y: " + gridY);
      		}
@@ -1329,6 +1327,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
  		// make sure the character is still in the room
  		if(character != null)
  		{
+ 			// send a "move character" message to the server to update all clients
+ 			uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
+ 			
  			// get the current room configuration
      		character.setPathfinderTiles(tilesMap);
      		

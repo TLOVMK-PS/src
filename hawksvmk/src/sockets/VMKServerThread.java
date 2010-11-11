@@ -20,6 +20,7 @@ import java.util.Scanner;
 import astar.AStarCharacter;
 
 import roomobject.RoomItem;
+import rooms.VMKRoom;
 
 import sockets.messages.*;
 import sockets.messages.games.*;
@@ -27,7 +28,6 @@ import sockets.messages.games.pirates.*;
 
 import util.FileOperations;
 import util.FriendsList;
-import util.VMKRoom;
 
 public class VMKServerThread extends Thread
 {
