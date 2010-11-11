@@ -19,6 +19,8 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import clickable.ClickableArea;
+
 import animations.Animation;
 import animations.StationaryAnimation;
 
@@ -88,6 +90,7 @@ public class GridView extends JLabel implements GridViewable
 	private boolean loading = false; // true if some kind of loading operation is taking place
 	
 	private HashMap<String,String> roomInfo = new HashMap<String,String>();
+	private ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>();
 	
 	public void loadGridView()
 	{
@@ -508,6 +511,12 @@ public class GridView extends JLabel implements GridViewable
 	}
 	
 	public void setLoadingDescription(String description) {}
+	public void setClickableAreas(ArrayList<ClickableArea> clickableAreas)
+	{
+		this.clickableAreas = clickableAreas;
+	}
+	
+	public ArrayList<ClickableArea> getClickableAreas() {return clickableAreas;}
 }
 
 class GridViewMovementImageObserver implements ImageObserver

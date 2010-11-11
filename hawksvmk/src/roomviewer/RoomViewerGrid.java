@@ -28,6 +28,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import clickable.ClickableArea;
+import clickable.ClickableAreaHandler;
+
 import chat.ChatBubble;
 import chat.ChatBubbles;
 
@@ -195,6 +198,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	boolean suspendMessages = false; // true to prevent the sending of messages
 	
 	RepeatingSound hvmkIntroMusic = null; // the music for the Map screen when it loads for the first time
+	
+	ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>(); // clickable areas for the grid
+	ClickableAreaHandler clickableAreaHandler = new ClickableAreaHandler(); // handler for the ClickableArea actions
 	
 	public RoomViewerGrid()
 	{
@@ -384,6 +390,18 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     				System.out.println("Clicked non-transparent area for character: " + c.getUsername());
 	     				
 	     				convertMouseToGridCoords(); // convert the mouse coords back to grid coords
+	     				
+	     				return;
+	     			}
+	     		}
+	     		
+	     		// check to see if we clicked inside a clickable area
+	     		for(ClickableArea ca : clickableAreas)
+	     		{
+	     			if(ca.contains(mousePoint))
+	     			{
+	     				// handle the action specified by the ClickableArea
+	     				clickableAreaHandler.execute(ca, uiObject.theGridView);
 	     				
 	     				return;
 	     			}
@@ -1729,6 +1747,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	{
 		uiObject.setLoadingDescription(description);
 	}
+	
+	// set the clickable areas for the grid
+	public void setClickableAreas(ArrayList<ClickableArea> clickableAreas)
+	{
+		this.clickableAreas = clickableAreas;
+	}
+	
+	// return the clickable areas for the grid
+	public ArrayList<ClickableArea> getClickableAreas() {return clickableAreas;}
 	
 	// thread that serves as the character updater thread so the character can be updated properly
 	class CharacterUpdaterThread extends Thread

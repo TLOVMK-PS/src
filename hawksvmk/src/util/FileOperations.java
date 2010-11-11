@@ -25,6 +25,8 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import clickable.ClickableArea;
+
 import animations.Animation;
 import animations.MovingAnimation;
 import animations.StationaryAnimation;
@@ -46,7 +48,7 @@ public class FileOperations
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.<br><br>You've been given 1000 Credits, a Dancing Inferno Magic Pin, a Here From Day One Badge, and an HVMK Virtual Pin.";
 	
 	// save a file given a filename and a map of tiles
-	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, String tileSize)
+	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, ArrayList<ClickableArea> clickableAreas, String tileSize)
 	{
 		PrintWriter fileWriter;
 		try
@@ -114,6 +116,17 @@ public class FileOperations
 			}
 			fileWriter.println();
 			
+			// write out the clickable areas
+			fileWriter.println("// Clickable areas");
+			fileWriter.println();
+			for(int k = 0; k < clickableAreas.size(); k++)
+			{
+				ClickableArea area = clickableAreas.get(k);
+				
+				// write out the clickable area
+				fileWriter.println("CLICKABLE AREA: " + area.toString());
+			}
+			
 			fileWriter.println("// Tile map");
 			fileWriter.println();
 			for(Tile t : tiles.values())
@@ -139,6 +152,7 @@ public class FileOperations
 		String[] tileDimensions = null;
 		ArrayList<Animation> animations = new ArrayList<Animation>();
 		ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
+		ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>();
 		
 		Scanner tileScanner;
 		
@@ -233,6 +247,13 @@ public class FileOperations
 						animations.add(loadAnimation(line));
 					}
 				}
+				else if(line.startsWith("CLICKABLE AREA: "))
+				{
+					line = line.replaceAll("CLICKABLE AREA: ", "");
+					
+					// create a new ClickableArea from the String
+					clickableAreas.add(ClickableArea.fromString(line));
+				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
@@ -290,6 +311,9 @@ public class FileOperations
 			
 			// set the sounds
 			gridView.setSounds(sounds);
+			
+			// set the clickable areas
+			gridView.setClickableAreas(clickableAreas);
 			
 			// check to make sure this isn't a guest room since there could be a music override
 			if(!roomID.startsWith("gr"))

@@ -4,9 +4,12 @@
 
 package interfaces;
 
+
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import clickable.ClickableArea;
 
 import animations.Animation;
 import animations.StationaryAnimation;
@@ -52,4 +55,7 @@ public interface GridViewable
 	public void addRoomInfo(String key, String value);
 	
 	public void setLoadingDescription(String description);
+	
+	public void setClickableAreas(ArrayList<ClickableArea> clickableAreas);
+	public ArrayList<ClickableArea> getClickableAreas();
 }
