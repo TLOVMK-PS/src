@@ -559,7 +559,7 @@ public class VMKClientThread extends Thread
     {
     	out.writeUnshared(m);
     	out.reset();
-		//out.flush();
+		out.flush();
     }
     
     // send out the cached messages after a re-connect
