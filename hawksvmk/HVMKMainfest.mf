@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: lib/jl1.0.1_s.jar
+

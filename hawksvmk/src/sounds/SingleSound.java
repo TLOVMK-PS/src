@@ -99,7 +99,7 @@ public class SingleSound extends Thread implements SoundPlayable
 	public void stopSound()
 	{
 		// close the ShittyInputStream manually
-		soundStream.closeManually();
+		//soundStream.closeManually();
 		
 		// interrupt the thread
 		if(!isInterrupted())

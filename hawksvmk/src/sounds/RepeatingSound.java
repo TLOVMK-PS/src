@@ -16,22 +16,25 @@ public class RepeatingSound extends Thread implements SoundPlayable
 	
 	private PlayerThread playerThread;
 	
-	private Player player = null;
-	private Player player2 = null;
+	private Player player;
+	private Player player2;
 	
-	private ShittyInputStream soundStream = null; // sound player stream
-	private ShittyInputStream secondSoundStream = null; // second player sound stream
+	private ShittyInputStream soundStream; // sound player stream
+	private ShittyInputStream secondSoundStream; // second player sound stream
 	
 	private boolean playing = false;
 	private boolean useSecondBuffer = false; // TRUE to activate the second sound stream
 	
 	private final int BUFFER_SWITCH_THRESHOLD = 800; // the threshold in milliseconds when the buffer should be switched
-	
-	public RepeatingSound() {}
+
+	public RepeatingSound()
+	{
+		super();
+	}
 	
 	public RepeatingSound(String name, int length, int delay, String path, ShittyInputStream soundStream)
 	{
-		this();
+		super();
 		
 		// set the name of the thread
 		setName(name);

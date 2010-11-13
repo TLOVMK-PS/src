@@ -11,8 +11,10 @@ import interfaces.GridViewable;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+
+import javazoom.jl.player.Player;
 
 import clickable.ClickableArea;
 
@@ -427,8 +431,12 @@ public class FileOperations
 			// check the type of the sound before we create the object
 			if(type.equals("REPEATING"))
 			{
+				System.out.println("Creating repeating sound (" + name + ")...");
+				
 				// create a repeating sound with dual buffers for an attempt at continuous sound
 				sound = new RepeatingSound(name, length, delay, path, AppletResourceLoader.getSoundFromJar(path, bufferSize));
+				
+				System.out.println("Created repeating sound (" + name + ")!");
 				
 				// add a dual buffer if the buffer size there should be no delay when the sound repeats
 				if(delay == 0 && !path.startsWith("http:"))

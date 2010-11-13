@@ -12,8 +12,8 @@ import java.net.URL;
 public class Downloader
 {
 	// file paths for the remote and local files
-	private String remoteFile = "http://localhost/boot_hill_sfx.mp3";
-	private String localFile = "boot_hill_sfx.mp3";
+	private String remoteFile = "http://hawksvmk.game-host.org:8080/sound/ui/vmk_intro.mp3";
+	private String localFile = "vmk_intro.mp3";
 	
 	// input and output streams, both buffered for performance
 	private BufferedInputStream bis;
@@ -65,7 +65,7 @@ public class Downloader
 	public static void main(String args[])
 	{
 		// initialize the Downloader and grab a file
-		Downloader d = new Downloader("http://localhost/boot_hill_sfx.mp3", "boot_hill_sfx.mp3");
+		Downloader d = new Downloader("http://hawksvmk.game-host.org:8080/sound/ui/vmk_intro.mp3", "vmk_intro.mp3");
 		d.downloadFile();
 	}
 }
