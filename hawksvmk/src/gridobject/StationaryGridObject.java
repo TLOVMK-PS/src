@@ -4,97 +4,40 @@
 
 package gridobject;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
+import util.AppletResourceLoader;
 
-public class StationaryGridObject
+public class StationaryGridObject extends GridObject
 {
-	private int row = 0; // row of the object
-	private int col = 0; // column of the object
-	
-	private int stackLevel = 0; // how high the object is stacked on top of others
-	
-	private String name = ""; // name of the object (objectName-row-col-stackLevel)
-	private String objectName = ""; // name of the object without the full attributes
-	
-	private ImageIcon image;
-	
-	public StationaryGridObject() {}
-	
-	public StationaryGridObject(String objectName, int row, int col, int stackLevel, String imagePath)
+	public StationaryGridObject()
 	{
-		this.name = objectName + "-" + row + "-" + col + "-" + stackLevel;
-		
-		this.objectName = objectName;
-		this.row = row;
-		this.col = col;
-		this.stackLevel = stackLevel;
-		
-		this.image = new ImageIcon(imagePath);
-	}
-
-	public int getRow() {
-		return row;
-	}
-
-	public void setRow(int row) {
-		this.row = row;
-		
-		// set the full object name
-		setName();
-	}
-
-	public int getCol() {
-		return col;
-	}
-
-	public void setCol(int col) {
-		this.col = col;
-		
-		// set the full object name
-		setName();
-	}
-
-	public int getStackLevel() {
-		return stackLevel;
-	}
-
-	public void setStackLevel(int stackLevel) {
-		this.stackLevel = stackLevel;
-		
-		// set the full object name
-		setName();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	private void setName() {
-		this.name = objectName + "-" + row + "-" + col + "-" + stackLevel;
-	}
-
-	public String getObjectName() {
-		return objectName;
-	}
-
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
-		
-		// set the full object name
-		setName();
-	}
-
-	public Image getImage() {
-		return image.getImage();
+		super();
 	}
 	
-	public ImageIcon getImageIcon() {
-		return image;
+	public StationaryGridObject(String name, int x, int y, BufferedImage image)
+	{
+		super(name, x, y, image);
 	}
-
-	public void setImageIcon(ImageIcon image) {
-		this.image = image;
+	
+	// return a new StationaryGridObject given a String input
+	public static StationaryGridObject fromString(String line)
+	{
+		String name = "";
+		int x = 0;
+		int y = 0;
+		BufferedImage image = null;
+		
+		// split the line at the comma characters
+		String[] theArray = line.split(",");
+		
+		// assign all the fields given the elements of the array
+		name = theArray[0];
+		x = Integer.parseInt(theArray[1]);
+		y = Integer.parseInt(theArray[2]);
+		image = AppletResourceLoader.getBufferedImageFromJar(theArray[3]);
+		
+		// return the object
+		return new StationaryGridObject(name,x,y,image);
 	}
 }

@@ -4,6 +4,8 @@ package roomviewer;
 //March 26, 2009
 //Class that implements the grid portion of the Room Viewer
 
+import gridobject.GridObject;
+import interfaces.GridSortable;
 import interfaces.GridViewable;
 
 import java.awt.Color;
@@ -20,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,6 +30,8 @@ import java.util.Iterator;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+
+import comparators.DepthSortComparator;
 
 import clickable.ClickableArea;
 import clickable.ClickableAreaHandler;
@@ -201,6 +206,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>(); // clickable areas for the grid
 	ClickableAreaHandler clickableAreaHandler = new ClickableAreaHandler(); // handler for the ClickableArea actions
+	
+	boolean depthSort = false; // TRUE to enable depth-sorting on the grid objects
+	ArrayList<GridSortable> gridObjects = new ArrayList<GridSortable>(); // grid objects for depth sorting
+	ArrayList<GridSortable> allGridObjects = new ArrayList<GridSortable>(); // grid objects AND characters
+	GridSortable[] gridObjectsArray = new GridSortable[0]; // array for characters and objects to be converted to
 	
 	public RoomViewerGrid()
 	{
@@ -563,124 +573,186 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					}
 				}
 				
-				// draw the path to the target tile for each character
-				//for(int characterCount = 0; characterCount < characters.values().size(); characterCount++)
-				//for(AStarCharacter character : characters.values())
-				for(int characterCount = 0; characterCount < charactersArray.length; characterCount++)
+				// check whether all the grid objects need to be depth sorted again
+				if(depthSort)
 				{
-					// get a character from the array instead of the HashMap to save on memory consumption
-					AStarCharacter character = charactersArray[characterCount];
-
-					if(character.getPath() != null)
+					// depth-sort ALL the grid objects and convert them into an array
+					Collections.sort(allGridObjects, new DepthSortComparator());
+					gridObjectsArray = allGridObjects.toArray(gridObjectsArray);
+					
+					// switch off the depthSort flag
+					depthSort = false;
+				}
+				
+				// draw all the objects and characters on the grid
+				for(int gridObjectCount = 0; gridObjectCount < gridObjectsArray.length; gridObjectCount++)
+				{
+					if(gridObjectsArray[gridObjectCount] instanceof GridObject)
 					{
-						if(character.getPath().size() > 0)
+						// get a grid object from the array
+						GridObject obj = (GridObject)gridObjectsArray[gridObjectCount];
+						
+						// draw the image for the object
+						bufferGraphics.drawImage(obj.getImage(), obj.getX(), obj.getY(), this);
+					}
+					else if(gridObjectsArray[gridObjectCount] instanceof AStarCharacter)
+					{
+						// get a character from the array instead of the HashMap to save on memory consumption
+						AStarCharacter character = (AStarCharacter)gridObjectsArray[gridObjectCount];
+
+						if(character.getPath() != null)
 						{
-							Tile nextTile = character.getPath().get(0); // get the next step in the path
-							
-							// check if movement is necessary
-							character.setColDiff(Math.abs(character.getCol() - nextTile.getColumn()));
-							//System.out.println("COLDIFF: " + character.getColDiff());
-							if(character.getColDiff() > 0) // prevent the back-and-forth movement across the same column
+							if(character.getPath().size() > 0)
 							{
-								if(character.getX() == nextTile.getX())
+								// this shit will need to be depth-sorted again
+								depthSort = true;
+								
+								Tile nextTile = character.getPath().get(0); // get the next step in the path
+								
+								// check if movement is necessary
+								character.setColDiff(Math.abs(character.getCol() - nextTile.getColumn()));
+								//System.out.println("COLDIFF: " + character.getColDiff());
+								if(character.getColDiff() > 0) // prevent the back-and-forth movement across the same column
 								{
-									//System.out.println("Character X speed at 0");
-									character.setxSpeed(0);
-								}
-								else
-								{	
-									// move along the X-axis
 									if(character.getX() == nextTile.getX())
 									{
-										// stay along the same line of movement to prevent
-										// the "back-and-forth" vertical movement
-									}
-									else
-									{
-										if(character.getX() < nextTile.getX())
-										{
-											character.setxSpeed(4);
-											character.setX(character.getX() + character.getxSpeed());
-										}
-										if(character.getX() > nextTile.getX())
-										{
-											character.setxSpeed(-4);
-											character.setX(character.getX() + character.getxSpeed());
-										}
-									}
-								}
-							}
-							else
-							{
-								if(character.getPath().size() == 1)
-								{
-									// move along the X-axis
-									if(character.getX() == nextTile.getX())
-									{
-										// stay along the same line of movement to prevent
-										// the "back-and-forth" vertical movement
-									}
-									else
-									{
-										if(character.getX() < nextTile.getX())
-										{
-											character.setxSpeed(4);
-											character.setX(character.getX() + character.getxSpeed());
-										}
-										if(character.getX() > nextTile.getX())
-										{
-											character.setxSpeed(-4);
-											character.setX(character.getX() + character.getxSpeed());
-										}
-									}
-								}
-								else
-								{
-									if(character.getySpeed() > 0 || character.getySpeed() < 0)
-									{
+										//System.out.println("Character X speed at 0");
 										character.setxSpeed(0);
 									}
-								}
-							}
-							
-							if(character.getY() == nextTile.getY())
-							{
-								//System.out.println("Character Y speed at 0");
-								character.setySpeed(0);
-							}
-							else
-							{
-								// move along the Y-axis
-								if(character.getY() < nextTile.getY())
-								{
-									character.setySpeed(2);
-								}
-								if(character.getY() > nextTile.getY())
-								{
-									character.setySpeed(-2);
-								}
-								character.setY(character.getY() + character.getySpeed());
-							}
-							
-							if(character.getColDiff() == 0)
-							{
-								if(character.getPath() != null)
-								{
-									if(character.getPath().size() > 1)
-									{
-										if(character.getCol() == nextTile.getColumn() && character.getY() == nextTile.getY())
+									else
+									{	
+										// move along the X-axis
+										if(character.getX() == nextTile.getX())
 										{
-											// remove the first step in the path so we can proceed to the next
-											character.setCurrentTile(character.getPath().get(0));
-											//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
-											character.removeTopmostPathStep();
+											// stay along the same line of movement to prevent
+											// the "back-and-forth" vertical movement
+										}
+										else
+										{
+											if(character.getX() < nextTile.getX())
+											{
+												character.setxSpeed(4);
+												character.setX(character.getX() + character.getxSpeed());
+											}
+											if(character.getX() > nextTile.getX())
+											{
+												character.setxSpeed(-4);
+												character.setX(character.getX() + character.getxSpeed());
+											}
+										}
+									}
+								}
+								else
+								{
+									if(character.getPath().size() == 1)
+									{
+										// move along the X-axis
+										if(character.getX() == nextTile.getX())
+										{
+											// stay along the same line of movement to prevent
+											// the "back-and-forth" vertical movement
+										}
+										else
+										{
+											if(character.getX() < nextTile.getX())
+											{
+												character.setxSpeed(4);
+												character.setX(character.getX() + character.getxSpeed());
+											}
+											if(character.getX() > nextTile.getX())
+											{
+												character.setxSpeed(-4);
+												character.setX(character.getX() + character.getxSpeed());
+											}
 										}
 									}
 									else
 									{
-										if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+										if(character.getySpeed() > 0 || character.getySpeed() < 0)
 										{
-											// remove the first step in the path so we can proceed to the next
+											character.setxSpeed(0);
+										}
+									}
+								}
+								
+								if(character.getY() == nextTile.getY())
+								{
+									//System.out.println("Character Y speed at 0");
+									character.setySpeed(0);
+								}
+								else
+								{
+									// move along the Y-axis
+									if(character.getY() < nextTile.getY())
+									{
+										character.setySpeed(2);
+									}
+									if(character.getY() > nextTile.getY())
+									{
+										character.setySpeed(-2);
+									}
+									character.setY(character.getY() + character.getySpeed());
+								}
+								
+								if(character.getColDiff() == 0)
+								{
+									if(character.getPath() != null)
+									{
+										if(character.getPath().size() > 1)
+										{
+											if(character.getCol() == nextTile.getColumn() && character.getY() == nextTile.getY())
+											{
+												// remove the first step in the path so we can proceed to the next
+												character.setCurrentTile(character.getPath().get(0));
+												//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
+												character.removeTopmostPathStep();
+											}
+										}
+										else
+										{
+											if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+											{
+												// remove the first step in the path so we can proceed to the next
+												character.setCurrentTile(character.getPath().get(0));
+												//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
+												character.removeTopmostPathStep();
+												
+												if(character.getPath().size() == 0)
+												{
+													// tell the server to update the final position of the character
+													//System.out.println("Movement finished; updating character position");
+													
+													if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
+													{
+														// exit tile, so change rooms
+														String destination = character.getCurrentTile().getDest();
+														if(!destination.equals("") && destination != null)
+														{
+															// this EXIT tile actually goes somewhere
+															System.out.println("Changing room: " + destination);
+															changeRoom(destination);
+														}
+													}
+													else
+													{
+														// no exit tile, so update the character if it's the myCharacter object
+														if(character.getUsername().equals(myCharacter.getUsername()))
+														{
+															sendUpdateCharacterMessage(character);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+								else
+								{
+									if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
+									{
+										// remove the first step in the path so we can proceed to the next
+										if(character.getPath() != null)
+										{
 											character.setCurrentTile(character.getPath().get(0));
 											//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
 											character.removeTopmostPathStep();
@@ -689,7 +761,6 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											{
 												// tell the server to update the final position of the character
 												//System.out.println("Movement finished; updating character position");
-												
 												if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
 												{
 													// exit tile, so change rooms
@@ -714,51 +785,13 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 									}
 								}
 							}
-							else
-							{
-								if(character.getX() == nextTile.getX() && character.getY() == nextTile.getY())
-								{
-									// remove the first step in the path so we can proceed to the next
-									if(character.getPath() != null)
-									{
-										character.setCurrentTile(character.getPath().get(0));
-										//System.out.println("TILE MOVED: " + character.getCurrentTile().toString());
-										character.removeTopmostPathStep();
-										
-										if(character.getPath().size() == 0)
-										{
-											// tell the server to update the final position of the character
-											//System.out.println("Movement finished; updating character position");
-											if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
-											{
-												// exit tile, so change rooms
-												String destination = character.getCurrentTile().getDest();
-												if(!destination.equals("") && destination != null)
-												{
-													// this EXIT tile actually goes somewhere
-													System.out.println("Changing room: " + destination);
-													changeRoom(destination);
-												}
-											}
-											else
-											{
-												// no exit tile, so update the character if it's the myCharacter object
-												if(character.getUsername().equals(myCharacter.getUsername()))
-												{
-													sendUpdateCharacterMessage(character);
-												}
-											}
-										}
-									}
-								}
-							}
 						}
-					}
-					
-					// draw the character
-					if(character != null)
-					{
-						bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight() + tileHeight, this);
+						
+						// draw the character
+						if(character != null)
+						{
+							bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight() + tileHeight, this);
+						}
 					}
 				}
 			}
@@ -1092,7 +1125,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		characters.put(uiObject.getUsername(), myCharacter);
 		
 		// create the charactersArray array of characters
-		convertCharactersToArray();
+		generateAllGridObjects();
 		
 		this.tilesMap = tilesMap;
 	}
@@ -1196,10 +1229,19 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		avatarInfoWindow.toggleVisibility();
 	}
 	
-	// convert the characters HashMap to a standard array
-	private void convertCharactersToArray()
+	// generate the allGridObjects ArrayList containing the characters and the grid objects
+	private void generateAllGridObjects()
 	{
-		charactersArray = characters.values().toArray(charactersArray);
+		allGridObjects.clear();
+		allGridObjects.addAll(gridObjects);
+		allGridObjects.addAll(characters.values());
+		
+		System.out.println("Shit in characters.values(): " + characters.values().size());
+		System.out.println("Shit in gridObjects: " + gridObjects.size());
+		System.out.println("Shit in allGridObjects: " + allGridObjects.size());
+		
+		// depth-sort the objects again since the collection was modified
+		depthSort = true;
 	}
 	
 	// add a character to the current room
@@ -1303,7 +1345,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			}
 			
 			// create the charactersArray array of characters
-			convertCharactersToArray();
+			generateAllGridObjects();
 		}
 	}
 	
@@ -1313,7 +1355,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		characters.remove(username);
 		
 		// create the charactersArray array of characters
-		convertCharactersToArray();
+		generateAllGridObjects();
 		
 		System.out.println("Character (" + username + ") removed from room");
 	}
@@ -1343,7 +1385,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	 		characters.put(character.getUsername(), character); // put the character back in the HashMap
 	 		
 	 		// create the charactersArray array of characters
-			convertCharactersToArray();
+			generateAllGridObjects();
 	 		
 	 		// check if it's the same character as the current user's
 	 		if(character.getUsername().equals(myCharacter.getUsername()))
@@ -1370,7 +1412,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 				characters.put(character.getUsername(), character); // put the character in the HashMap
 				
 				// create the charactersArray array of characters
-				convertCharactersToArray();
+				generateAllGridObjects();
 			}
 		}
 	}
@@ -1758,6 +1800,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// return the clickable areas for the grid
 	public ArrayList<ClickableArea> getClickableAreas() {return clickableAreas;}
 	
+	// set the objects for the grid
+	public void setGridObjects(ArrayList<GridSortable> gridObjects)
+	{
+		this.gridObjects = gridObjects;
+	}
+	
+	// return the objects for the grid
+	public ArrayList<GridSortable> getGridObjects() {return gridObjects;}
+	
 	// thread that serves as the character updater thread so the character can be updated properly
 	class CharacterUpdaterThread extends Thread
 	{
@@ -1825,6 +1876,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			
 			// remove all chat bubbles from the room
 			theChatBubbles.clearAll();
+			
+			// remove the clickable areas from the room
+			clickableAreas.clear();
+			
+			// remove the grid objects from the room
+			gridObjects.clear();
 			
 			// load the room file
 			if(newRoomID.startsWith("gr"))

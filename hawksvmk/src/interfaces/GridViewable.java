@@ -58,4 +58,7 @@ public interface GridViewable
 	
 	public void setClickableAreas(ArrayList<ClickableArea> clickableAreas);
 	public ArrayList<ClickableArea> getClickableAreas();
+	
+	public void setGridObjects(ArrayList<GridSortable> gridObjects);
+	public ArrayList<GridSortable> getGridObjects();
 }

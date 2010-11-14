@@ -7,6 +7,8 @@
 package util;
 
 import games.fireworks.FireworkEntry;
+import gridobject.StationaryGridObject;
+import interfaces.GridSortable;
 import interfaces.GridViewable;
 
 import java.awt.Graphics;
@@ -158,6 +160,7 @@ public class FileOperations
 		ArrayList<Animation> animations = new ArrayList<Animation>();
 		ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>();
 		ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>();
+		ArrayList<GridSortable> gridObjects = new ArrayList<GridSortable>();
 		
 		Scanner tileScanner;
 		
@@ -259,6 +262,13 @@ public class FileOperations
 					// create a new ClickableArea from the String
 					clickableAreas.add(ClickableArea.fromString(line));
 				}
+				else if(line.startsWith("STATIONARY OBJECT: "))
+				{
+					line = line.replaceAll("STATIONARY OBJECT: ", "");
+					
+					// create a new StationaryObject from the String
+					gridObjects.add(StationaryGridObject.fromString(line));
+				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
 					// comment line or blank line, so ignore
@@ -319,6 +329,9 @@ public class FileOperations
 			
 			// set the clickable areas
 			gridView.setClickableAreas(clickableAreas);
+			
+			// set the grid objects
+			gridView.setGridObjects(gridObjects);
 			
 			// check to make sure this isn't a guest room since there could be a music override
 			if(!roomID.startsWith("gr"))

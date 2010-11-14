@@ -4,6 +4,7 @@
 
 package roomeditor;
 
+import interfaces.GridSortable;
 import interfaces.GridViewable;
 
 import java.awt.Graphics;
@@ -91,6 +92,7 @@ public class GridView extends JLabel implements GridViewable
 	
 	private HashMap<String,String> roomInfo = new HashMap<String,String>();
 	private ArrayList<ClickableArea> clickableAreas = new ArrayList<ClickableArea>();
+	private ArrayList<GridSortable> gridObjects = new ArrayList<GridSortable>();
 	
 	public void loadGridView()
 	{
@@ -517,6 +519,13 @@ public class GridView extends JLabel implements GridViewable
 	}
 	
 	public ArrayList<ClickableArea> getClickableAreas() {return clickableAreas;}
+	
+	public void setGridObjects(ArrayList<GridSortable> gridObjects)
+	{
+		this.gridObjects = gridObjects;
+	}
+	
+	public ArrayList<GridSortable> getGridObjects() {return gridObjects;}
 }
 
 class GridViewMovementImageObserver implements ImageObserver

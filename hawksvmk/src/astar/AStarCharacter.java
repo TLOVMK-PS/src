@@ -5,6 +5,7 @@
 package astar;
 
 import interfaces.ContentRateable;
+import interfaces.GridSortable;
 
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -22,7 +23,7 @@ import util.InventoryInfo;
 import util.RatingSystem;
 import util.StaticAppletData;
 
-public class AStarCharacter implements Serializable, ContentRateable
+public class AStarCharacter implements Serializable, ContentRateable, GridSortable
 {
 	private String username = "";
 	private String email = "";
@@ -121,6 +122,11 @@ public class AStarCharacter implements Serializable, ContentRateable
 	public void setY(int y) {
 		this.y = y;
 		boundingBox.y = y + tileHeight - characterImage.getImage().getHeight();
+	}
+	
+	public int getBaseY()
+	{
+		return y + tileHeight;
 	}
 
 	public int getRow() {
