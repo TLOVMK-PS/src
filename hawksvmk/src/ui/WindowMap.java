@@ -512,8 +512,8 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Pirates of the Caribbean Game room
-				//changeRoom("Pirates of the Caribbean Game");
-				gridObject.showGameArea("pirates");
+				changeRoom("al2o");
+				//gridObject.showGameArea("pirates");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -537,7 +537,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to the Tiki Tiki Island room
-				changeRoom("Tiki Tiki Island");
+				changeRoom("al3");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -561,7 +561,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Forbidden Temple room
-				changeRoom("Forbidden Temple");
+				changeRoom("al4");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -585,7 +585,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Adventureland Bazaar room
-				changeRoom("Adventureland Bazaar");
+				changeRoom("al1");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -633,7 +633,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Elephant Bathing Pool room
-				changeRoom("Elephant Bathing Pool");
+				changeRoom("al6");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -657,7 +657,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Explorer's Tent room
-				changeRoom("Explorer's Tent");
+				changeRoom("al7");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -681,7 +681,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Discovery Island room
-				changeRoom("Discovery Island");
+				changeRoom("al13");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -705,7 +705,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Pirate Treehouse room
-				changeRoom("Pirate Treehouse");
+				changeRoom("al8");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -729,7 +729,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Pirate Treehouse room
-				changeRoom("Jungle Cruise Game");
+				changeRoom("al9");
 			}
 			public void mouseEntered(MouseEvent e)
 			{
@@ -753,7 +753,7 @@ public class WindowMap extends JPanel
 			public void mouseReleased(MouseEvent e)
 			{
 				// change to Pirate Treehouse room
-				changeRoom("Lost Safari Party");
+				changeRoom("al10");
 			}
 			public void mouseEntered(MouseEvent e)
 			{

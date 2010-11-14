@@ -4,8 +4,38 @@
 
 // Adventureland
 
+ID: al1
+PATH: rooms/al1.room
+
+ID: al2o
+PATH: rooms/al2o.room
+
+ID: al3
+PATH: rooms/al3.room
+
+ID: al4
+PATH: rooms/al4.room
+
 ID: al5
 PATH: rooms/al5.room
+
+ID: al6
+PATH: rooms/al6.room
+
+ID: al7
+PATH: rooms/al7.room
+
+ID: al8
+PATH: rooms/al8.room
+
+ID: al9
+PATH: rooms/al9.room
+
+ID: al10
+PATH: rooms/al10.room
+
+ID: al13
+PATH: rooms/al13.room
 
 // Fantasyland
 

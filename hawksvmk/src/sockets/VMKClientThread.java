@@ -512,15 +512,7 @@ public class VMKClientThread extends Thread
     		rebooting = false;
     		
     		// interrupt the thread and CLOSE FUCKING EVERYTHING
-    		this.interrupt();
-    		
-    		try
-    		{
-    			in.close();
-    			out.close();
-    			socket.close();
-    		}
-    		catch(IOException ioe) {}
+    		shutDownConnection();
     	}
     	catch(IOException e)
     	{

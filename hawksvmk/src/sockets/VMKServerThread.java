@@ -48,6 +48,10 @@ public class VMKServerThread extends Thread
     
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
     
+    // timeout functionality for reconnection attempts
+    private ReconnectTimeoutThread reconnectTimeoutThread = null;
+    protected final long TIMEOUT_THRESHOLD = 20000;
+    
     public VMKServerThread(Socket socket, boolean sameIPAddress)
     {	
     	super("VMKServerThread");
@@ -91,6 +95,13 @@ public class VMKServerThread extends Thread
 	    	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
 	
 	    	System.out.println("Client [" + this.getName() + "] re-connected.");
+	    	
+	    	// stop the timeout thread if one exists
+	    	if(reconnectTimeoutThread != null)
+	    	{
+	    		reconnectTimeoutThread.stopThread();
+	    		reconnectTimeoutThread = null;
+	    	}
 	    	
 	    	try
 	    	{
@@ -609,26 +620,21 @@ public class VMKServerThread extends Thread
 	    		System.out.println("Stream corrupted [invalid type code: client-side] on client (" + this.getName() + ")");
 	    		System.out.println();
 	    		
-	    		// check to see what the message was for the exception
-	    		if(eofe.getMessage() != null)
-	    		{
-	    			// try to re-boot this server thread
-		    		rebootSocket();
+	    		// make sure we are waiting for a re-connection
+	    		waitingForReconnect = true;
 
-		    		return;
-	    		}
-	    		else
-	    		{
-	    			// TODO: Start a timeout here where the socket would be closed after 20 seconds or so, in order
-	    			// to account for occurrences where an EOFException would happen but where it would not necessarily
-	    			// represent a logout.
-	    			
-	    			// most likely caused by a socket error from closing the window/tab,
-	    			// so proceed normally as though it was a logout
-	    			System.out.println("Assuming a logout from the EOFException, so shutting down...");
-	    			System.out.println();
-	    			waitingForReconnect = false;
-	    		}
+	    		System.out.println("Starting timeout thread for client [" + this.getName() + "]...");
+	    		
+	    		// Start a timeout here where the socket would be closed after 20 seconds or so, in order
+	    		// to account for occurrences where an EOFException would happen but where it would not necessarily
+	    		// represent a logout.
+	    		reconnectTimeoutThread = new ReconnectTimeoutThread();
+	    		reconnectTimeoutThread.start();
+
+	    		// try to re-boot this server thread
+	    		rebootSocket();
+
+	    		return;
 	    	}
 	    	
 	    	if(!waitingForReconnect)
@@ -637,19 +643,6 @@ public class VMKServerThread extends Thread
 		    	
 		    	// shut down the server thread gracefully
 		    	shutDownServerThreadGracefully();
-		    	
-		    	// close down the socket if it's still connected
-		    	if(socket.isConnected())
-		    	{
-		    		in.close(); // close the input stream
-		    		out.close(); // close the output stream
-		    		socket.close(); // close the socket
-		    	}
-		    	
-		    	if(!this.isInterrupted())
-		    	{
-		    		this.interrupt(); // stop this server thread
-		    	}
 	    	}
 		}
 		catch (SocketException se)
@@ -690,8 +683,11 @@ public class VMKServerThread extends Thread
     }
     
     // shut down the server thread gracefully
-    private void shutDownServerThreadGracefully()
+    protected void shutDownServerThreadGracefully()
     {
+    	// make sure we are not waiting for a re-connection from the client
+    	waitingForReconnect = false;
+    	
     	// check to see if the fucking character exists
     	if(VMKServerPlayerData.getCharacter(this.getName()) == null)
     	{
@@ -714,6 +710,18 @@ public class VMKServerThread extends Thread
 		
 		// remove the character from the room on the server end
 		VMKServerPlayerData.removeCharacter(this.getName(), roomID);
+		
+		// close down the socket if it's still connected
+    	if(socket.isConnected())
+    	{
+    		try
+    		{
+    			in.close(); // close the input stream
+    			out.close(); // close the output stream
+    			socket.close(); // close the socket
+    		}
+    		catch(Exception e) {}
+    	}
 		
 		// update the player's status in the database (offline)
     	updatePlayerStatusInDatabase(this.getName(), "offline");
@@ -915,6 +923,45 @@ public class VMKServerThread extends Thread
     	catch(Exception e)
     	{
     		System.out.println("Could not update player status in database: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+    	}
+    }
+    
+    // set-up timeout functionality for re-connections (especially when an EOFException occurs)
+    class ReconnectTimeoutThread extends Thread
+    {
+    	long startTime = 0; // the time the thread was started, in milliseconds
+    	boolean running = true;
+    	
+    	public void run()
+    	{	
+    		// set the time the thread was started
+    		startTime = System.currentTimeMillis();
+    		
+    		while(running)
+    		{
+    			// check to see if the time spent has reached the maximum threshold
+    			if(System.currentTimeMillis() - startTime >= TIMEOUT_THRESHOLD)
+    			{
+    				// shut down the thread since the request has timed-out
+    				running = false;
+    				shutDownServerThreadGracefully();
+    			}
+    			else
+    			{
+	    			try
+	    			{
+	    				Thread.sleep(1000);
+	    			}
+	    			catch(Exception e) {}
+    			}
+    		}
+    	}
+    	
+    	// stop the timeout thread
+    	public void stopThread()
+    	{
+    		running = false;
+    		interrupt();
     	}
     }
 }

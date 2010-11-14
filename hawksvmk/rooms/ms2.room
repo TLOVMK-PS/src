@@ -142,8 +142,8 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @2,15,NOGO,@
 @46,11,WALK,@
 @46,10,WALK,@
-@46,15,EXIT,al5@
-@46,14,EXIT,al5@
+@46,15,EXIT,al1@
+@46,14,EXIT,al1@
 @46,13,NOGO,@
 @46,12,WALK,@
 @3,1,NOGO,@
@@ -326,7 +326,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @45,10,WALK,@
 @45,12,NOGO,@
 @45,11,WALK,@
-@45,14,EXIT,al5@
+@45,14,EXIT,al1@
 @45,13,WALK,@
 @43,12,WALK,@
 @43,11,WALK,@
@@ -725,7 +725,7 @@ ANIMATION: anims/ms2/Tomorrowland.anim
 @44,16,NOGO,@
 @1,13,NOGO,@
 @1,12,NOGO,@
-@44,15,EXIT,al5@
+@44,15,EXIT,al1@
 @1,11,NOGO,@
 @44,14,WALK,@
 @38,8,WALK,@
