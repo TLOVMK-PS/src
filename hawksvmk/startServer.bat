@@ -1,1 +1,2 @@
-java -classpath ./bin mainProgram.VMKServer
+@echo off
+java -jar HawksVMKServer.jar
