@@ -1,0 +1,86 @@
+==============================
+HVMK COMPILATION DOCUMENTATION
+==============================
+
+-----------------------------------------
+HVMK ROOM EDITOR COMPILATION INSTRUCTIONS
+-----------------------------------------
+
+To compile the Room Editor into a JAR file, it needs the following source packages:
+
+- animations
+- clickable
+- interfaces
+- roomeditor
+- roomobject
+- rooms
+- sounds
+- tiles
+- util
+
+Application entry point: roomeditor/RoomEditor.class
+
+------------------------------------
+HVMK CLIENT COMPILATION INSTRUCTIONS
+------------------------------------
+
+To compile the HVMK Client into a JAR file, it needs the following source packages:
+
+- animations
+- astar
+- chat
+- clickable
+- comparators
+- games
+- games.fireworks
+- games.pirates
+- gridobject
+- interfaces
+- login
+- mainProgram
+  * VMKClient.java
+- roomobject
+- rooms
+- roomviewer
+- sockets
+  * VMKClientThread.java
+  * VMKProtocol.java
+- sockets.messages
+- sockets.messages.games
+- sockets.messages.games.pirates
+- sounds
+- tiles
+- ui
+- util
+
+------------------------------------
+HVMK SERVER COMPILATION INSTRUCTIONS
+------------------------------------
+
+To compile the HVMK Server into a JAR file, it needs the following source packages:
+
+- animations
+- astar
+- chat
+- clickable
+- comparators
+- games
+- games.fireworks
+- games.pirates
+- gridobject
+- interfaces
+- mainProgram
+  * VMKServer.java
+- roomobject
+- rooms
+- roomviewer
+- sockets
+  * VMKProtocol.java
+  * VMKServerThread.java
+  * VMKServerPlayerData.java
+- sockets.messages
+- sockets.messages.games
+- sockets.messages.games.pirates
+- sounds
+- tiles
+- util
