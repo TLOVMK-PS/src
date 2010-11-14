@@ -30,6 +30,7 @@ public class RoomEditorUI extends JFrame
 {
 	private AppletResourceLoader resourceLoader = new AppletResourceLoader(); // JAR resource loader
 	
+	private String windowTitle = "Hawk's VMK Room Editor v12.0";
 	RoomEditorUI myRoomEditorWindow;
 	private String filename = "";
 	private String currentDirectory = System.getProperty("user.dir");
@@ -53,8 +54,8 @@ public class RoomEditorUI extends JFrame
         theGridView.setUIObject(this);
         this.getContentPane().add(theGridView);
         
-        JLabel titleLabel = new JLabel("<html><center>Room Editor v.2<br>by Matt Fritz</center></html>");
-        titleLabel.setBounds(new Rectangle(860, 10, 100, 40));
+        JLabel titleLabel = new JLabel("<html><center>Room Editor v12.0<br>by Matt Fritz</center></html>");
+        titleLabel.setBounds(new Rectangle(845, 10, 130, 40));
         this.getContentPane().add(titleLabel);
         
         JLabel tilesComboBoxLabel = new JLabel("Tile Type");
@@ -174,6 +175,9 @@ public class RoomEditorUI extends JFrame
         	    	
         	    	System.out.println("You chose to load this file: " + filename);
         	    	
+        	    	// append the room's filename to the title bar
+        	    	myRoomEditorWindow.setTitle(windowTitle + " - " + chooser.getSelectedFile().getPath());
+        	    	
         	    	// load the room
         	    	FileOperations.loadFile(AppletResourceLoader.getFileFromJar(filename), theGridView);
         	    }
@@ -289,17 +293,17 @@ public class RoomEditorUI extends JFrame
         tileSize.setBounds(new Rectangle(835, 550, 132, 20));
         this.getContentPane().add(tileSize);
         
+        myRoomEditorWindow = this;
+        
         // pack the window and display it
-        this.setName("Hawk's VMK Room Editor v2.0");
-        this.setTitle("Hawk's VMK Room Editor v2.0");
+        this.setName(windowTitle);
+        this.setTitle(windowTitle);
         this.pack();
         this.setVisible(true);
         
         // set-up the double-buffering objects and start the grid graphics loop
         theGridView.setOffscreenImage(createImage(800, 600));
         theGridView.loadGridView();
-        
-        myRoomEditorWindow = this;
 	}
 	
 	// change the tile information
