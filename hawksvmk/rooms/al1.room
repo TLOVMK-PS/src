@@ -24,6 +24,13 @@ TILES: 48x24
 
 // Clickable areas
 
+// Objects
+
+STATIONARY OBJECT: sign,429,441,img/rooms/al1/obj_sign.gif
+STATIONARY OBJECT: pirates_wall,166,226,img/rooms/al1/obj_pirates_wall.gif
+STATIONARY OBJECT: point_left,580,452,img/rooms/al1/obj_point_left.gif
+STATIONARY OBJECT: point_right,707,388,img/rooms/al1/obj_point_right.gif
+
 // Tile map
 
 @16,15,NOGO,@
