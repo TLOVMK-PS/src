@@ -24,6 +24,17 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects
+
+STATIONARY OBJECT: mast_left,122,207,img/rooms/al13/obj_mast_left.gif
+STATIONARY OBJECT: bridge_front,242,290,img/rooms/al13/obj_bridge_front.gif
+STATIONARY OBJECT: barrel_bridge_rope,154,510,img/rooms/al13/obj_barrel_bridge_rope.gif
+STATIONARY OBJECT: barrels_left,198,180,img/rooms/al13/obj_barrels_left.gif
+STATIONARY OBJECT: barrels_middle,258,158,img/rooms/al13/obj_barrels_middle.gif
+STATIONARY OBJECT: barrels_right,309,126,img/rooms/al13/obj_barrels_right.gif
+STATIONARY OBJECT: chest,450,470,img/rooms/al13/obj_chest.gif
+STATIONARY OBJECT: skull_opening,658,312,img/rooms/al13/obj_skull_opening.gif
+
 // Tile map
 
 @16,15,NOGO,@

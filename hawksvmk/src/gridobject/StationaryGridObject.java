@@ -38,6 +38,8 @@ public class StationaryGridObject extends GridObject
 		image = AppletResourceLoader.getBufferedImageFromJar(theArray[3]);
 		
 		// return the object
-		return new StationaryGridObject(name,x,y,image);
+		StationaryGridObject obj = new StationaryGridObject(name,x,y,image);
+		obj.setImagePath(theArray[3]);
+		return obj;
 	}
 }

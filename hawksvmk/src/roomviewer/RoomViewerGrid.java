@@ -1236,10 +1236,6 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		allGridObjects.addAll(gridObjects);
 		allGridObjects.addAll(characters.values());
 		
-		System.out.println("Shit in characters.values(): " + characters.values().size());
-		System.out.println("Shit in gridObjects: " + gridObjects.size());
-		System.out.println("Shit in allGridObjects: " + allGridObjects.size());
-		
 		// depth-sort the objects again since the collection was modified
 		depthSort = true;
 	}
@@ -1803,7 +1799,15 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	// set the objects for the grid
 	public void setGridObjects(ArrayList<GridSortable> gridObjects)
 	{
+		// clear out the objects structures to prevent artifacts, however funny they may be, from
+		// appearing in the next room
+		this.gridObjects.clear();
+		gridObjectsArray = new GridSortable[0];
+
 		this.gridObjects = gridObjects;
+
+		// re-create the structure of all the items and depth sort them
+		generateAllGridObjects();
 	}
 	
 	// return the objects for the grid
@@ -1881,7 +1885,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 			clickableAreas.clear();
 			
 			// remove the grid objects from the room
-			gridObjects.clear();
+			allGridObjects.clear();
 			
 			// load the room file
 			if(newRoomID.startsWith("gr"))

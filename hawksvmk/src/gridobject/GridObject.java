@@ -17,6 +17,8 @@ public class GridObject implements GridSortable
 	
 	private String name = ""; // name of the object
 	
+	private String imagePath = "";
+	
 	private BufferedImage image;
 	
 	public GridObject() {}
@@ -53,5 +55,13 @@ public class GridObject implements GridSortable
 	public void setX(int x) {this.x = x;}
 	public void setY(int y) {this.y = y;}
 	
+	public void setImagePath(String imagePath) {this.imagePath = imagePath;}
+	public String getImagePath() {return imagePath;}
+	
 	public int getBaseY() {return baseY;}
+	
+	public String toString()
+	{
+		return name + "," + x + "," + y + "," + imagePath;
+	}
 }

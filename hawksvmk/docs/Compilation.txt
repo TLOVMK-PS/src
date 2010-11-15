@@ -10,6 +10,7 @@ To compile the Room Editor into a JAR file, it needs the following source packag
 
 - animations
 - clickable
+- gridobject
 - interfaces
 - roomeditor
 - roomobject
@@ -73,7 +74,6 @@ To compile the HVMK Server into a JAR file, it needs the following source packag
   * VMKServer.java
 - roomobject
 - rooms
-- roomviewer
 - sockets
   * VMKProtocol.java
   * VMKServerThread.java

@@ -24,6 +24,11 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects
+
+STATIONARY OBJECT: skull_left,538,9,img/rooms/al4/obj_skull_left.gif
+STATIONARY OBJECT: skull_right,629,121,img/rooms/al4/obj_skull_right.gif
+
 // Tile map
 
 @16,15,NOGO,@

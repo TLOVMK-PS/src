@@ -7,6 +7,7 @@
 package util;
 
 import games.fireworks.FireworkEntry;
+import gridobject.GridObject;
 import gridobject.StationaryGridObject;
 import interfaces.GridSortable;
 import interfaces.GridViewable;
@@ -55,7 +56,7 @@ public class FileOperations
 	private static String newPlayerMessage = "Welcome to Hawk's Virtual Magic Kingdom! If you played the original Virtual Magic Kingdom, you will already be familiar with the game.  If not, please feel free to ask around!  We hope you enjoy the game.<br><br>You've been given 1000 Credits, a Dancing Inferno Magic Pin, a Here From Day One Badge, and an HVMK Virtual Pin.";
 	
 	// save a file given a filename and a map of tiles
-	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, ArrayList<ClickableArea> clickableAreas, String tileSize)
+	public static void saveFile(String filename, String backgroundImagePath, HashMap<String,String> roomInfo, HashMap<String,Tile> tiles, ArrayList<Animation> animations, ArrayList<SoundPlayable> sounds, ArrayList<RoomItem> roomItems, ArrayList<ClickableArea> clickableAreas, ArrayList<GridSortable> gridObjects, String tileSize)
 	{
 		PrintWriter fileWriter;
 		try
@@ -133,6 +134,22 @@ public class FileOperations
 				// write out the clickable area
 				fileWriter.println("CLICKABLE AREA: " + area.toString());
 			}
+			fileWriter.println();
+			
+			// write out the stationary objects
+			fileWriter.println("// Grid objects ");
+			fileWriter.println();
+			for(int l = 0; l < gridObjects.size(); l++)
+			{
+				GridObject obj = (GridObject)gridObjects.get(l);
+				
+				// write out the object
+				if(obj instanceof StationaryGridObject)
+				{
+					fileWriter.println("STATIONARY OBJECT: " + obj.toString());
+				}
+			}
+			fileWriter.println();
 			
 			fileWriter.println("// Tile map");
 			fileWriter.println();

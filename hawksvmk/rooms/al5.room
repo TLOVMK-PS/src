@@ -17,6 +17,10 @@ TILES: 48x24
 ANIMATION: anims/al5/Cauldron.anim
 ANIMATION: anims/al5/ShrunkenNed.anim
 
+// Grid objects
+
+STATIONARY OBJECT: cooking,369,264,img/rooms/al5/obj_cooking.gif
+
 // Sounds
 
 // Tile map

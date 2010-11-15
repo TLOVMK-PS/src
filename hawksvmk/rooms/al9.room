@@ -1,5 +1,5 @@
 // al9.room
-// Created on Sat Nov 13 15:38:53 PST 2010
+// Created on Sun Nov 14 18:51:54 PST 2010
 
 // Room information
 
@@ -24,6 +24,13 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects 
+
+STATIONARY OBJECT: bridge_front,146,212,img/rooms/al9/obj_bridge_front.gif
+STATIONARY OBJECT: bridge_rear,226,181,img/rooms/al9/obj_bridge_rear.gif
+STATIONARY OBJECT: doorways,274,59,img/rooms/al9/obj_doorways.gif
+STATIONARY OBJECT: post_bottom_right,421,283,img/rooms/al9/obj_post_bottom_right.gif
+
 // Tile map
 
 @16,15,NOGO,@
@@ -38,18 +45,18 @@ TILES: 48x24
 @35,16,NOGO,@
 @27,3,NOGO,@
 @35,12,NOGO,@
-@35,13,NOGO,@
 @27,2,NOGO,@
-@35,14,WALK,@
-@21,1,WALK,@
+@35,13,NOGO,@
 @27,1,NOGO,@
-@35,15,EXIT,al8@
-@27,0,NOGO,@
+@21,1,WALK,@
+@35,14,WALK,@
 @21,0,NOGO,@
-@21,3,WALK,@
+@27,0,NOGO,@
+@35,15,EXIT,al8@
 @27,7,NOGO,@
-@21,2,WALK,@
+@21,3,WALK,@
 @27,6,WALK,@
+@21,2,WALK,@
 @27,5,WALK,@
 @21,5,WALK,@
 @35,10,WALK,@
@@ -57,9 +64,9 @@ TILES: 48x24
 @21,4,NOGO,@
 @35,11,NOGO,@
 @21,7,NOGO,@
-@21,6,WALK,@
+@21,6,NOGO,@
 @21,9,NOGO,@
-@21,8,NOGO,@
+@21,8,WALK,@
 @45,9,WALK,@
 @45,8,NOGO,@
 @45,5,NOGO,@
@@ -81,7 +88,7 @@ TILES: 48x24
 @20,10,NOGO,@
 @20,14,NOGO,@
 @20,15,NOGO,@
-@20,12,NOGO,@
+@20,12,WALK,@
 @20,13,NOGO,@
 @20,16,NOGO,@
 @14,4,NOGO,@
@@ -106,16 +113,16 @@ TILES: 48x24
 @12,9,NOGO,@
 @12,8,NOGO,@
 @46,16,EXIT,al6@
-@42,10,WALK,@
+@18,6,WALK,@
 @16,0,NOGO,@
-@18,6,NOGO,@
-@42,11,WALK,@
+@42,10,WALK,@
+@18,7,WALK,@
 @16,1,NOGO,@
-@18,7,NOGO,@
-@18,8,NOGO,@
+@42,11,WALK,@
 @16,2,NOGO,@
-@18,9,NOGO,@
+@18,8,NOGO,@
 @16,3,NOGO,@
+@18,9,NOGO,@
 @16,4,NOGO,@
 @16,5,NOGO,@
 @16,6,NOGO,@
@@ -201,7 +208,7 @@ TILES: 48x24
 @25,6,NOGO,@
 @25,7,NOGO,@
 @25,8,NOGO,@
-@25,9,NOGO,@
+@25,9,WALK,@
 @27,16,NOGO,@
 @27,15,NOGO,@
 @27,12,NOGO,@
@@ -219,8 +226,8 @@ TILES: 48x24
 @32,8,WALK,@
 @32,7,NOGO,@
 @5,2,NOGO,@
-@5,3,NOGO,@
 @32,6,NOGO,@
+@5,3,NOGO,@
 @32,5,NOGO,@
 @32,4,NOGO,@
 @32,3,NOGO,@
@@ -237,7 +244,7 @@ TILES: 48x24
 @40,1,NOGO,@
 @40,9,WALK,@
 @24,11,NOGO,@
-@24,10,NOGO,@
+@24,10,WALK,@
 @24,13,NOGO,@
 @24,12,NOGO,@
 @24,15,NOGO,@
@@ -256,8 +263,8 @@ TILES: 48x24
 @38,11,WALK,@
 @38,14,WALK,@
 @38,13,WALK,@
-@41,10,WALK,@
 @38,16,NOGO,@
+@41,10,WALK,@
 @38,15,NOGO,@
 @38,10,WALK,@
 @12,13,NOGO,@
@@ -275,12 +282,12 @@ TILES: 48x24
 @15,14,NOGO,@
 @15,15,NOGO,@
 @37,5,NOGO,@
-@35,0,NOGO,@
 @37,6,NOGO,@
-@35,1,NOGO,@
+@35,0,NOGO,@
 @37,7,NOGO,@
-@37,8,NOGO,@
+@35,1,NOGO,@
 @35,2,NOGO,@
+@37,8,NOGO,@
 @37,1,NOGO,@
 @37,2,NOGO,@
 @37,3,NOGO,@
@@ -297,28 +304,28 @@ TILES: 48x24
 @28,11,NOGO,@
 @28,10,NOGO,@
 @5,10,NOGO,@
-@13,16,NOGO,@
-@28,15,NOGO,@
 @5,11,NOGO,@
-@28,14,NOGO,@
+@28,15,NOGO,@
+@13,16,NOGO,@
 @5,12,NOGO,@
-@28,13,NOGO,@
+@28,14,NOGO,@
 @5,13,NOGO,@
-@5,14,NOGO,@
+@28,13,NOGO,@
 @28,12,NOGO,@
+@5,14,NOGO,@
 @5,15,NOGO,@
 @5,16,NOGO,@
 @28,16,NOGO,@
 @19,16,NOGO,@
-@19,14,NOGO,@
 @13,11,NOGO,@
-@19,15,NOGO,@
+@19,14,NOGO,@
 @13,10,NOGO,@
+@19,15,NOGO,@
 @13,13,NOGO,@
 @13,12,NOGO,@
 @13,15,NOGO,@
 @13,14,NOGO,@
-@19,12,NOGO,@
+@19,12,WALK,@
 @19,13,NOGO,@
 @19,10,NOGO,@
 @19,11,NOGO,@
@@ -348,14 +355,14 @@ TILES: 48x24
 @0,0,NOGO,@
 @8,9,NOGO,@
 @0,9,NOGO,@
-@8,5,NOGO,@
 @0,6,NOGO,@
-@0,5,NOGO,@
+@8,5,NOGO,@
 @8,6,NOGO,@
-@8,7,NOGO,@
+@0,5,NOGO,@
 @0,8,NOGO,@
-@0,7,NOGO,@
+@8,7,NOGO,@
 @8,8,NOGO,@
+@0,7,NOGO,@
 @6,16,NOGO,@
 @6,15,NOGO,@
 @6,14,NOGO,@
@@ -370,22 +377,22 @@ TILES: 48x24
 @44,0,NOGO,@
 @39,6,NOGO,@
 @39,5,NOGO,@
-@44,9,WALK,@
 @39,4,NOGO,@
+@44,9,WALK,@
 @39,3,NOGO,@
-@39,2,NOGO,@
 @44,7,NOGO,@
-@44,8,NOGO,@
+@39,2,NOGO,@
 @39,1,NOGO,@
-@39,0,NOGO,@
+@44,8,NOGO,@
 @44,5,NOGO,@
+@39,0,NOGO,@
 @44,6,NOGO,@
 @39,9,WALK,@
 @42,9,WALK,@
-@42,8,NOGO,@
 @39,7,NOGO,@
-@39,8,NOGO,@
+@42,8,NOGO,@
 @42,7,NOGO,@
+@39,8,NOGO,@
 @42,6,NOGO,@
 @42,5,NOGO,@
 @42,4,NOGO,@
@@ -397,7 +404,7 @@ TILES: 48x24
 @22,8,NOGO,@
 @22,5,NOGO,@
 @22,6,WALK,@
-@22,9,NOGO,@
+@22,9,WALK,@
 @22,0,NOGO,@
 @22,3,WALK,@
 @22,4,WALK,@
@@ -408,8 +415,8 @@ TILES: 48x24
 @30,10,NOGO,@
 @30,12,NOGO,@
 @30,11,NOGO,@
-@30,14,NOGO,@
 @17,11,NOGO,@
+@30,14,NOGO,@
 @17,10,NOGO,@
 @30,13,NOGO,@
 @30,16,NOGO,@
@@ -445,7 +452,7 @@ TILES: 48x24
 @8,14,NOGO,@
 @8,15,NOGO,@
 @8,16,NOGO,@
-@26,9,NOGO,@
+@26,9,WALK,@
 @26,0,NOGO,@
 @26,8,NOGO,@
 @26,7,NOGO,@
@@ -458,7 +465,7 @@ TILES: 48x24
 @36,15,WALK,@
 @36,16,NOGO,@
 @21,10,NOGO,@
-@21,11,NOGO,@
+@21,11,WALK,@
 @36,13,WALK,@
 @21,12,NOGO,@
 @36,14,WALK,@
@@ -505,7 +512,7 @@ TILES: 48x24
 @15,8,NOGO,@
 @17,7,NOGO,@
 @15,1,NOGO,@
-@20,8,NOGO,@
+@20,8,WALK,@
 @20,7,NOGO,@
 @15,2,NOGO,@
 @17,8,NOGO,@
@@ -534,7 +541,7 @@ TILES: 48x24
 @10,14,NOGO,@
 @17,4,WALK,@
 @17,3,NOGO,@
-@17,6,NOGO,@
+@17,6,WALK,@
 @17,5,NOGO,@
 @17,0,NOGO,@
 @15,9,NOGO,@
@@ -562,7 +569,7 @@ TILES: 48x24
 @29,15,NOGO,@
 @19,5,WALK,@
 @19,6,NOGO,@
-@19,7,NOGO,@
+@19,7,WALK,@
 @19,8,NOGO,@
 @19,9,NOGO,@
 @6,0,NOGO,@
@@ -630,7 +637,7 @@ TILES: 48x24
 @25,10,NOGO,@
 @25,12,NOGO,@
 @25,11,NOGO,@
-@23,10,NOGO,@
+@23,10,WALK,@
 @23,14,NOGO,@
 @23,13,NOGO,@
 @23,12,NOGO,@
@@ -813,12 +820,12 @@ TILES: 48x24
 @23,0,NOGO,@
 @23,1,NOGO,@
 @23,8,NOGO,@
-@23,9,NOGO,@
+@23,9,WALK,@
 @23,6,NOGO,@
 @23,7,NOGO,@
 @23,4,WALK,@
 @23,5,NOGO,@
-@22,11,NOGO,@
+@22,11,WALK,@
 @22,10,NOGO,@
 @22,13,NOGO,@
 @22,12,NOGO,@

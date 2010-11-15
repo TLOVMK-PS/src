@@ -24,6 +24,15 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects
+
+STATIONARY OBJECT: post_left,60,351,img/rooms/al8/obj_post_left.gif
+STATIONARY OBJECT: plank_rope,112,255,img/rooms/al8/obj_plank_rope.gif
+STATIONARY OBJECT: mast,297,1,img/rooms/al8/obj_mast.gif
+STATIONARY OBJECT: ropes_bottom,252,448,img/rooms/al8/obj_ropes_bottom.gif
+STATIONARY OBJECT: ropes_right,647,279,img/rooms/al8/obj_ropes_right.gif
+STATIONARY OBJECT: lamp_right,757,203,img/rooms/al8/obj_lamp_right.gif
+
 // Tile map
 
 @16,15,NOGO,@

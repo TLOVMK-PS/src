@@ -24,6 +24,12 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects
+
+STATIONARY OBJECT: bridge_front,345,233,img/rooms/al3/obj_bridge_front.gif
+STATIONARY OBJECT: bridge_rear,416,203,img/rooms/al3/obj_bridge_rear.gif
+STATIONARY OBJECT: hut_right,277,70,img/rooms/al3/obj_hut_right.gif
+
 // Tile map
 
 @16,15,NOGO,@

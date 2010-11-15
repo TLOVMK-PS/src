@@ -24,6 +24,16 @@ TILES: 48x24
 
 // Clickable areas
 
+// Grid objects
+
+STATIONARY OBJECT: tent,119,243,img/rooms/al7/obj_tent.gif
+STATIONARY OBJECT: crate,262,465,img/rooms/al7/obj_crate.gif
+STATIONARY OBJECT: stump_left,225,416,img/rooms/al7/obj_stump_left.gif
+STATIONARY OBJECT: suitcase,275,378,img/rooms/al7/obj_suitcase.gif
+STATIONARY OBJECT: campfire,285,382,img/rooms/al7/obj_campfire.gif
+STATIONARY OBJECT: stump_right,376,464,img/rooms/al7/obj_stump_right.gif
+
+
 // Tile map
 
 @16,15,NOGO,@
