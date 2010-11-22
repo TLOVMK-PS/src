@@ -4,6 +4,8 @@
 
 package sockets;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -60,11 +62,8 @@ public class VMKServerThread extends Thread
         	this.remoteAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
         	this.socket = socket;
         	
-    		// TODO: Figure out another way to handle possibly multiple connections
-    		// from the same machine since we can't use the same input stream for the
-    		// same computer, as it corrupts the stream with an invalid header.
-    		out = new ObjectOutputStream(socket.getOutputStream());
-    		in = new ObjectInputStream(socket.getInputStream());
+    		// create the input and output streams for the socket
+    		createSocketStreams();
     		
     		System.out.println("Socket port: " + socket.getPort());
     		System.out.println("Client " + remoteAddress.getAddress().getHostAddress() + ":" + remoteAddress.getPort() + " connected to server");
@@ -74,6 +73,14 @@ public class VMKServerThread extends Thread
     		System.out.println("Could not set up object I/O on the server for client " + socket.getRemoteSocketAddress().toString());
     		e.printStackTrace();
     	}
+    }
+    
+    // create the input and output streams for the socket
+    private void createSocketStreams() throws IOException
+    {
+    	// buffer the streams for faster communication
+    	out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
     }
     
     // check whether this thread is waiting for a socket re-connection from the client
@@ -106,8 +113,7 @@ public class VMKServerThread extends Thread
 	    	try
 	    	{
 	    		// re-create the output and input streams so we can communicate with the client again
-	    		out = new ObjectOutputStream(socket.getOutputStream());
-	    		in = new ObjectInputStream(socket.getInputStream());
+	    		createSocketStreams();
 			
 	    		System.out.println("Streams re-initialized for client [" + this.getName() + "]");
 	    		

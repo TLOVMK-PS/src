@@ -4,6 +4,8 @@
 
 package sockets;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -58,8 +60,8 @@ public class VMKClientThread extends Thread
     	// initialize the object IO
     	try
     	{
-    		out = new ObjectOutputStream(socket.getOutputStream());
-    	    in = new ObjectInputStream(socket.getInputStream());
+    		// create the socket streams
+    		createSocketStreams();
     	}
     	catch(IOException e)
     	{
@@ -69,6 +71,14 @@ public class VMKClientThread extends Thread
     }
     
     public void setUIObject(RoomViewerUI uiObject) {this.uiObject = uiObject;}
+    
+    // create the input and output streams used by the socket connection
+    private void createSocketStreams() throws IOException
+    {
+    	// buffer the streams for faster communication
+    	out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+	    in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+    }
 
     // run the thread and process the responses from the server
     public void run()
@@ -483,13 +493,9 @@ public class VMKClientThread extends Thread
 			
 			System.out.println("Created socket connection");
 			
-			// create the output stream again so we can write to the server
-			out = new ObjectOutputStream(socket.getOutputStream());
-			System.out.println("Created socket output stream");
-    		
-			// create the input stream again so we can read from the server
-			in = new ObjectInputStream(socket.getInputStream());
-    		System.out.println("Created socket input stream");
+			// create the socket streams again
+			createSocketStreams();
+			System.out.println("Created output and input streams");
     		
     		// send a reconnect message to the server to make sure character data isn't lost
     		// we write the output directly since the sendMessageToServer() method is paused
