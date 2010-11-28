@@ -1,0 +1,14 @@
+// Inner-Space Shop Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: inner_space_music
+PATH: sound/public/inner_space_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 158920
+LENGTH: 79000
+DELAY: 0

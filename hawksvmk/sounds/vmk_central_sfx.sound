@@ -1,0 +1,14 @@
+// VMK Central SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: vmk_central_sfx
+PATH: sound/public/vmk_central_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 146632
+LENGTH: 73000
+DELAY: 0

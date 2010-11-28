@@ -1,0 +1,14 @@
+// Tiki Tiki Tiki Room Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: tiki_room_music
+PATH: sound/public/tiki_room_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 27745
+LENGTH: 13000
+DELAY: 120000

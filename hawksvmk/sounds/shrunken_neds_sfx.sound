@@ -1,0 +1,14 @@
+// Shrunken Ned's SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: shrunken_neds_sfx
+PATH: sound/public/shrunken_neds_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 110792
+LENGTH: 55000
+DELAY: 0

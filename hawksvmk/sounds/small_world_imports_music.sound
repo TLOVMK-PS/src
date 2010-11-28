@@ -1,0 +1,14 @@
+// "it's a small world" Imports Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: small_world_imports_music
+PATH: sound/public/small_world_imports_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 36654
+LENGTH: 18000
+DELAY: 60000

@@ -1,0 +1,14 @@
+// Central Plaza SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: central_plaza_sfx
+PATH: sound/public/central_plaza_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 134144
+LENGTH: 67000
+DELAY: 0

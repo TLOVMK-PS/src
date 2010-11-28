@@ -1,0 +1,14 @@
+// Shrunken Ned's Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: shrunken_neds_music
+PATH: sound/public/shrunken_neds_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 64814
+LENGTH: 32000
+DELAY: 60000

@@ -1,0 +1,14 @@
+// Lost Safari Party Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: lost_safari_music
+PATH: sound/public/lost_safari_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 191688
+LENGTH: 95000
+DELAY: 0

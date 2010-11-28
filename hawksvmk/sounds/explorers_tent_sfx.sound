@@ -1,0 +1,14 @@
+// Explorer's Tent SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: explorers_tent_sfx
+PATH: sound/public/explorers_tent_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 183496
+LENGTH: 92000
+DELAY: 0

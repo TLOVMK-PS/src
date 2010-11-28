@@ -1,0 +1,14 @@
+// Forbidden Temple Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: forbidden_temple_music
+PATH: sound/public/forbidden_temple_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 58260
+LENGTH: 29000
+DELAY: 60000

@@ -1,0 +1,14 @@
+// Elephant Bathing Pool SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: elephant_bathing_pool_sfx
+PATH: sound/public/elephant_bathing_pool_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 240840
+LENGTH: 120000
+DELAY: 0

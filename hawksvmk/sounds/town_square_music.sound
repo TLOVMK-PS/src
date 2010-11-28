@@ -1,0 +1,14 @@
+// Town Square Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: town_square_music
+PATH: sound/public/main_street_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 245960
+LENGTH: 61000
+DELAY: 30000

@@ -1,0 +1,14 @@
+// Discovery Island Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: disc_island_music
+PATH: sound/public/disc_island_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 450760
+LENGTH: 112000
+DELAY: 0

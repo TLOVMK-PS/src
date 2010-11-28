@@ -1,0 +1,14 @@
+// Golden Horseshoe SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: golden_horseshoe_sfx
+PATH: sound/public/golden_horseshoe_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 345288
+LENGTH: 86000
+DELAY: 0

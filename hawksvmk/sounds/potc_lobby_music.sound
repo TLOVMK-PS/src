@@ -1,0 +1,14 @@
+// POTC Lobby Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: potc_lobby_music
+PATH: sound/public/potc_lobby_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 155848
+LENGTH: 39000
+DELAY: 60000

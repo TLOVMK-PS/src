@@ -1,0 +1,14 @@
+// Elephant Bathing Pool Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: elephant_bathing_pool_music
+PATH: sound/public/elephant_bathing_pool_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 74542
+LENGTH: 37000
+DELAY: 60000

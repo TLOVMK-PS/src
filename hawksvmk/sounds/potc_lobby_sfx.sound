@@ -1,0 +1,14 @@
+// POTC Lobby SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: potc_lobby_sfx
+PATH: sound/public/potc_lobby_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 450760
+LENGTH: 112000
+DELAY: 0

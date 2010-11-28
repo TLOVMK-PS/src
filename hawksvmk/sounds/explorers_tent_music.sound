@@ -1,0 +1,14 @@
+// Explorer's Tent Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: explorers_tent_music
+PATH: sound/public/explorers_tent_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 56417
+LENGTH: 28000
+DELAY: 60000

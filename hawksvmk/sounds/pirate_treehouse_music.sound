@@ -1,0 +1,14 @@
+// Pirate Treehouse Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: pirate_treehouse_music
+PATH: sound/public/pirate_treehouse_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 139464
+LENGTH: 69000
+DELAY: 0

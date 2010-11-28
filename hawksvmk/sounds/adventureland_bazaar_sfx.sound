@@ -1,0 +1,14 @@
+// Adventureland Bazaar SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: adventureland_bazaar_sfx
+PATH: sound/public/adventureland_bazaar_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 211144
+LENGTH: 105000
+DELAY: 0

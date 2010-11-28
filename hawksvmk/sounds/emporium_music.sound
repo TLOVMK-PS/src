@@ -1,0 +1,14 @@
+// Emporium Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: emporium_music
+PATH: sound/public/emporium_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 434376
+LENGTH: 217000
+DELAY: 0

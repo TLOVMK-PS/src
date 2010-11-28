@@ -1,0 +1,14 @@
+// Forbidden Temple SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: forbidden_temple_sfx
+PATH: sound/public/forbidden_temple_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 212168
+LENGTH: 106000
+DELAY: 0

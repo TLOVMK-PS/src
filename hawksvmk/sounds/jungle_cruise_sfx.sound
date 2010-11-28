@@ -1,0 +1,14 @@
+// Jungle Cruise SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: jungle_cruise_sfx
+PATH: sound/public/jungle_cruise_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 198856
+LENGTH: 99000
+DELAY: 0

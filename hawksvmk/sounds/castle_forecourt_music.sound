@@ -1,0 +1,14 @@
+// Castle Forecourt Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: castle_forecourt_music
+PATH: sound/public/castle_forecourt_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 64200
+LENGTH: 32000
+DELAY: 60000

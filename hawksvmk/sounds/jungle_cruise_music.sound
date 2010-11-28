@@ -1,0 +1,14 @@
+// Jungle Cruise Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: jungle_cruise_music
+PATH: sound/public/jungle_cruise_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 67067
+LENGTH: 33000
+DELAY: 60000

@@ -1,0 +1,14 @@
+// Golden Horseshoe Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: golden_horseshoe_music
+PATH: sound/public/golden_horseshoe_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 187592
+LENGTH: 46000
+DELAY: 60000

@@ -1,0 +1,14 @@
+// Tiki Tiki Tiki Room SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: tiki_room_sfx
+PATH: sound/public/tiki_room_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 239816
+LENGTH: 119000
+DELAY: 0

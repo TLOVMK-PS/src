@@ -1,0 +1,14 @@
+// Central Plaza Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: central_plaza_music
+PATH: sound/public/central_plaza_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 60616
+LENGTH: 30000
+DELAY: 60000

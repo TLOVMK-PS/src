@@ -1,0 +1,14 @@
+// VMK Central Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: vmk_central_music
+PATH: sound/public/vmk_central_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 65940
+LENGTH: 32000
+DELAY: 60000

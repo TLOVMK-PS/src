@@ -1,0 +1,14 @@
+// Castle Forecourt SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: castle_forecourt_sfx
+PATH: sound/public/castle_forecourt_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 241864
+LENGTH: 121000
+DELAY: 0

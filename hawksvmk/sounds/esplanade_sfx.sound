@@ -1,0 +1,14 @@
+// Esplanade SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: esplanade_sfx
+PATH: sound/public/esplanade_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 555208
+LENGTH: 185000
+DELAY: 0

@@ -1,0 +1,14 @@
+// Town Square SFX
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: town_square_sfx
+PATH: sound/public/main_street_sfx.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 448712
+LENGTH: 112000
+DELAY: 0

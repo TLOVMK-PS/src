@@ -1,0 +1,14 @@
+// Adventureland Bazaar Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: adventureland_bazaar_music
+PATH: sound/public/adventureland_bazaar_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 50478
+LENGTH: 25000
+DELAY: 60000

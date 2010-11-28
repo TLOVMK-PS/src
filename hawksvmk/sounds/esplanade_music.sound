@@ -1,0 +1,14 @@
+// Esplanade Music
+
+TYPE: REPEATING
+
+// Sound information
+
+NAME: esplanade_music
+PATH: sound/public/esplanade_music.mp3
+
+// Sound configuration
+
+BUFFER SIZE: 49249
+LENGTH: 16000
+DELAY: 60000
