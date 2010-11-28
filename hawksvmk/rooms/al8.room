@@ -21,6 +21,7 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/pirate_treehouse_music.sound
 
 // Clickable areas
 

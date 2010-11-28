@@ -16,6 +16,8 @@ TILES: 48x24
 // Animations
 
 // Sounds
+SOUND: sounds/vmk_central_sfx.sound
+SOUND: sounds/vmk_central_music.sound
 
 // Tile map
 @16,15,NOGO,@

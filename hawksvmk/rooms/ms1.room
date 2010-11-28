@@ -21,6 +21,9 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/castle_forecourt_sfx.sound
+SOUND: sounds/castle_forecourt_music.sound
+
 
 // Tile map
 

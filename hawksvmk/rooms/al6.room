@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/elephant_bathing_pool_sfx.sound
+SOUND: sounds/elephant_bathing_pool_music.sound
 
 // Clickable areas
 

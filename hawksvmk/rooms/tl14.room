@@ -18,6 +18,7 @@ ANIMATION: anims/tl14/Conveyor.anim
 ANIMATION: anims/tl14/Robot.anim
 
 // Sounds
+SOUND: sounds/inner_space_music.sound
 
 // Tile map
 @16,15,NOGO,@

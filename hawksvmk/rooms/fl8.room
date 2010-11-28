@@ -18,6 +18,8 @@ ANIMATION: anims/fl8/VFlags.anim
 ANIMATION: anims/fl8/HFlags.anim
 
 // Sounds
+SOUND: sounds/small_world_imports_sfx.sound
+SOUND: sounds/small_world_imports_music.sound
 
 // Tile map
 @16,15,NOGO,@

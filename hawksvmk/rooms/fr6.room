@@ -18,6 +18,8 @@ ANIMATION: anims/fr6/Curtain.anim
 ANIMATION: anims/fr6/Mice.anim
 
 // Sounds
+SOUND: sounds/golden_horseshoe_sfx.sound
+SOUND: sounds/golden_horseshoe_music.sound
 
 // Tile map
 @16,15,NOGO,@

@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/tiki_room_sfx.sound
+SOUND: sounds/tiki_room_music.sound
 
 // Clickable areas
 

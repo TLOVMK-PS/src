@@ -17,6 +17,8 @@ TILES: 48x24
 ANIMATION: anims/ms8/Emporium.anim
 
 // Sounds
+SOUND: sounds/town_square_sfx.sound
+SOUND: sounds/town_square_music.sound
 
 // Tile map
 @16,15,NOGO,@

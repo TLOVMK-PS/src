@@ -16,6 +16,8 @@ TILES: 48x24
 // Animations
 
 // Sounds
+SOUND: sounds/esplanade_sfx.sound
+SOUND: sounds/esplanade_music.sound
 
 // Tile map
 @16,15,NOGO,@

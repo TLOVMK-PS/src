@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/adventureland_bazaar_sfx.sound
+SOUND: sounds/adventureland_bazaar_music.sound
 
 // Clickable areas
 

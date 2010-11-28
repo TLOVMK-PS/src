@@ -22,6 +22,8 @@ ANIMATION: anims/al5/ShrunkenNed.anim
 STATIONARY OBJECT: cooking,369,264,img/rooms/al5/obj_cooking.gif
 
 // Sounds
+SOUND: sounds/shrunken_neds_sfx.sound
+SOUND: sounds/shrunken_neds_music.sound
 
 // Tile map
 @16,15,NOGO,@

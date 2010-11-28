@@ -20,6 +20,7 @@ TILES: 48x24
 
 
 // Sounds
+SOUND: sounds/disc_island_music.sound
 
 
 // Clickable areas

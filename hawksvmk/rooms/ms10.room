@@ -17,6 +17,7 @@ TILES: 48x24
 ANIMATION: anims/ms10/Esmerelda.anim
 
 // Sounds
+SOUND: sounds/emporium_music.sound
 
 // Tile map
 @16,15,NOGO,@

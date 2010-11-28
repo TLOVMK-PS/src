@@ -21,6 +21,7 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/lost_safari_music.sound
 
 // Clickable areas
 

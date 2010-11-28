@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/forbidden_temple_sfx.sound
+SOUND: sounds/forbidden_temple_music.sound
 
 // Clickable areas
 

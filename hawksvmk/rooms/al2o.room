@@ -21,6 +21,9 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/potc_lobby_sfx.sound
+SOUND: sounds/potc_lobby_music.sound
+
 
 // Clickable areas
 

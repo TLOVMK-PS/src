@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/jungle_cruise_sfx.sound
+SOUND: sounds/jungle_cruise_music.sound
 
 // Clickable areas
 

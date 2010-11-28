@@ -17,6 +17,8 @@ TILES: 48x24
 ANIMATION: anims/ms6/MusicGame.anim
 
 // Sounds
+SOUND: sounds/main_street_sfx.sound
+SOUND: sounds/main_street_music.sound
 
 // Tile map
 @16,15,NOGO,@

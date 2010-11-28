@@ -21,6 +21,8 @@ TILES: 48x24
 
 // Sounds
 
+SOUND: sounds/explorers_tent_sfx.sound
+SOUND: sounds/explorers_tent_music.sound
 
 // Clickable areas
 
