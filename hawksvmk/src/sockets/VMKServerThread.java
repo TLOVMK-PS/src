@@ -78,9 +78,8 @@ public class VMKServerThread extends Thread
     // create the input and output streams for the socket
     private void createSocketStreams() throws IOException
     {
-    	// buffer the streams for faster communication
-    	out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-		in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+    	out = new ObjectOutputStream(socket.getOutputStream());
+		in = new ObjectInputStream(socket.getInputStream());
     }
     
     // check whether this thread is waiting for a socket re-connection from the client
