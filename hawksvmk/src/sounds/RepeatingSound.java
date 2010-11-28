@@ -103,7 +103,7 @@ public class RepeatingSound extends Thread implements SoundPlayable
 					position = player.getPosition();
 					
 					// check to see if we have hit the buffer switch threshold
-					if((Math.abs(length - position) <= BUFFER_SWITCH_THRESHOLD) && secondSoundStream != null)
+					if((Math.abs(length - position) <= BUFFER_SWITCH_THRESHOLD))
 					{
 						// restart playback to switch the buffers
 						restart();
