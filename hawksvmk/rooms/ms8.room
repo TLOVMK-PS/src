@@ -20,6 +20,18 @@ ANIMATION: anims/ms8/Emporium.anim
 SOUND: sounds/town_square_sfx.sound
 SOUND: sounds/town_square_music.sound
 
+// Grid objects
+STATIONARY OBJECT: obj_overhang,511,84,img/rooms/ms8/obj_overhang.gif
+STATIONARY OBJECT: obj_tree_far_right,747,340,img/rooms/ms8/obj_tree_far_right.gif
+STATIONARY OBJECT: obj_tree_right,438,288,img/rooms/ms8/obj_tree_right.gif
+STATIONARY OBJECT: obj_tree_middle_top,245,191,img/rooms/ms8/obj_tree_middle_top.gif
+STATIONARY OBJECT: obj_tree_middle_bottom,250,401,img/rooms/ms8/obj_tree_middle_bottom.gif
+STATIONARY OBJECT: obj_tree_left,27,290,img/rooms/ms8/obj_tree_left.gif
+STATIONARY OBJECT: obj_flag,181,296,img/rooms/ms8/obj_flag.gif
+STATIONARY OBJECT: obj_cannon,200,501,img/rooms/ms8/obj_cannon.png
+STATIONARY OBJECT: obj_bench_bottom,482,512,img/rooms/ms8/obj_bench_bottom.png
+STATIONARY OBJECT: obj_roof_bottom,496,514,img/rooms/ms8/obj_roof_bottom.gif
+
 // Tile map
 @16,15,NOGO,@
 @16,16,NOGO,@

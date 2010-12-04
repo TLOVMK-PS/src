@@ -19,6 +19,17 @@ TILES: 48x24
 SOUND: sounds/esplanade_sfx.sound
 SOUND: sounds/esplanade_music.sound
 
+// Grid objects
+
+STATIONARY OBJECT: entrance,5,342,img/rooms/ms11/obj_entrance.gif
+STATIONARY OBJECT: bench_left,162,262,img/rooms/ms11/obj_bench_left.gif
+STATIONARY OBJECT: bench_right,554,259,img/rooms/ms11/obj_bench_right.gif
+STATIONARY OBJECT: bench_left2,536,449,img/rooms/ms11/obj_bench_left.gif
+STATIONARY OBJECT: tree_middle,481,114,img/rooms/ms11/obj_tree_middle.gif
+STATIONARY OBJECT: tree_left,240,114,img/rooms/ms11/obj_tree_left.gif
+STATIONARY OBJECT: tree_right,597,293,img/rooms/ms11/obj_tree_right.gif
+STATIONARY OBJECT: tree_bottom,484,439,img/rooms/ms11/obj_tree_bottom.gif
+
 // Tile map
 @16,15,NOGO,@
 @16,16,NOGO,@
