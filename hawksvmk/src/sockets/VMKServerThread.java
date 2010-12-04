@@ -4,8 +4,8 @@
 
 package sockets;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+// TODO: START THE GODDAMN TIMEOUT THREAD FOR ANY SOCKET DISCONNECTION
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -576,6 +576,11 @@ public class VMKServerThread extends Thread
 	    		if(se.getMessage().toLowerCase().contains("socket write error") || se.getMessage().toLowerCase().contains("abort"))
 	    		{
 	    			waitingForReconnect = true;
+	    			
+	    			// start a timeout here where the socket would be closed after 20 seconds or so
+		    		reconnectTimeoutThread = new ReconnectTimeoutThread();
+		    		reconnectTimeoutThread.start();
+	    			
 	    			// try to re-boot this server thread
 		    		rebootSocket();
 
@@ -591,6 +596,10 @@ public class VMKServerThread extends Thread
 	    			}
 	    			else
 	    			{
+	    				// start a timeout here where the socket would be closed after 20 seconds or so
+			    		reconnectTimeoutThread = new ReconnectTimeoutThread();
+			    		reconnectTimeoutThread.start();
+			    		
 	    				// we're waiting for a re-connection, so return
 	    				return;
 	    			}
@@ -600,6 +609,10 @@ public class VMKServerThread extends Thread
 	    	{
 	    		// somehow the stream got corrupted; shut down the thread gracefully so the server doesn't hang
 	    		System.out.println("Stream corrupted on client (" + this.getName() + ")");
+	    		
+	    		// start a timeout here where the socket would be closed after 20 seconds or so
+	    		reconnectTimeoutThread = new ReconnectTimeoutThread();
+	    		reconnectTimeoutThread.start();
 	    		
 	    		// try to re-boot this server thread
 	    		rebootSocket();
@@ -612,6 +625,10 @@ public class VMKServerThread extends Thread
 	    		System.out.println();
 	    		System.out.println("Stream corrupted [optional data] on client (" + this.getName() + ")");
 	    		System.out.println();
+	    		
+	    		// start a timeout here where the socket would be closed after 20 seconds or so
+	    		reconnectTimeoutThread = new ReconnectTimeoutThread();
+	    		reconnectTimeoutThread.start();
 	    		
 	    		// try to re-boot this server thread
 	    		rebootSocket();
@@ -649,16 +666,6 @@ public class VMKServerThread extends Thread
 		    	// shut down the server thread gracefully
 		    	shutDownServerThreadGracefully();
 	    	}
-		}
-		catch (SocketException se)
-		{
-			// check to see if the software caused a connection abort or if there was a socket write error
-			if(se.getMessage().toLowerCase().contains("abort") || se.getMessage().toLowerCase().contains("socket write error"))
-			{
-				// attempt to re-boot the socket
-				rebootSocket();
-			    return;
-			}
 		}
 		catch (IOException e)
 		{
