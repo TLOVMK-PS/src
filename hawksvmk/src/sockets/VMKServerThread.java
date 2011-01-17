@@ -15,7 +15,6 @@ import java.io.StreamCorruptedException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -154,7 +153,7 @@ public class VMKServerThread extends Thread
 		    		inputMessage = (Message)in.readUnshared();
 		    		outputMessage = vmkp.processInput(inputMessage);
 
-		    		System.out.println("Received message (" + outputMessage.getType() + ") from client " + this.getName());
+		    		//System.out.println("Received message (" + outputMessage.getType() + ") from client " + this.getName());
 
 		    		if(outputMessage instanceof MessageLogin)
 		    		{
