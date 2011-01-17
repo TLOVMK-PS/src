@@ -998,6 +998,13 @@ public class FileOperations
 			// inventory file
 			filename = "data/inventory/" + email + ".dat";
 			fileWriter = new PrintWriter(filename);
+			fileWriter.println("// Clothing");
+			fileWriter.println();
+			fileWriter.println("CLOTHING: shirt_0");
+			fileWriter.println("CLOTHING: pants_0");
+			fileWriter.println("CLOTHING: shoes_0");
+			fileWriter.println("CLOTHING: hat_0");
+			fileWriter.println();
 			fileWriter.println("// Furniture");
 			fileWriter.println();
 			fileWriter.println("// Pins");
@@ -1063,13 +1070,13 @@ public class FileOperations
 		
 		long credits = 1000;
 		String signature = "";
-		String contentRating = "";
+		String contentRating = "G";
 		
-		String baseAvatarID = "";
-		String shirtID = "";
-		String shoesID = "";
-		String pantsID = "";
-		String hatID = "";
+		String baseAvatarID = "base_0";
+		String shirtID = "shirt_0";
+		String shoesID = "shoes_0";
+		String pantsID = "pants_0";
+		String hatID = "hat_0";
 		
 		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
 		InventoryInfo displayedPins[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_PINS];

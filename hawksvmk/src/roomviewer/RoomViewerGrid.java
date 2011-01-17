@@ -137,7 +137,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	ArrayList<Animation> animations = new ArrayList<Animation>(); // ArrayList of animations
 	//WindmillAnimation windmillAnimation = new WindmillAnimation(); // test animation
 	
-	boolean startSounds = true; // true to start the sounds
+	boolean startSounds = false; // true to start the sounds
 	ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); // ArrayList of sounds
 	//RepeatingSound theSound = new RepeatingSound(0,"sound/sub_ping.wav"); // test repeating sound
 	
