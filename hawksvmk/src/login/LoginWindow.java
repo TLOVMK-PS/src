@@ -30,8 +30,6 @@ public class LoginWindow extends JFrame
 	private LoginModule loginModule = new LoginModule();
 	RoomViewerUI roomViewerUI = new RoomViewerUI(); // Room Viewer window
 	
-	private JFrame loginWindow;
-	
 	public void loadLoginWindow()
 	{
 		// set general properties of the main window frame
@@ -90,7 +88,7 @@ public class LoginWindow extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				// check the login credentials
-				if(loginModule.login("http://www.burbankparanormal.com/vmk/game/login.php", emailTextBox.getText(), new String(passwordTextBox.getPassword())))
+				if(loginModule.login(emailTextBox.getText(), new String(passwordTextBox.getPassword())))
 				{
 					// correct credentials and authentication
 					errorLabel.setVisible(false);
@@ -125,7 +123,5 @@ public class LoginWindow extends JFrame
 	    this.setTitle("Hawk's Virtual Magic Kingdom");
 	    this.pack();
 	    this.setVisible(true);
-	    
-	    loginWindow = this;
 	}
 }

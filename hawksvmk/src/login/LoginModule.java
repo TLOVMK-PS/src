@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
+import svc.WebService;
 
 public class LoginModule
 {
@@ -17,21 +17,21 @@ public class LoginModule
 	private String staffType = "";
 	private String errorMessage = "";
 	
+	private WebService webServiceModule = new WebService();
+	
 	public LoginModule() {}
 	
 	// login to the game
-	public boolean login(String url, String email, String password)
+	public boolean login(String email, String password)
 	{
-		URL loginURL;
 		InputStream loginStream;
 		Scanner loginScanner;
 		
 		try
 		{
 			// set up the URL and open up a stream to the file
-			loginURL = new URL(url + "?e=" + email + "&p=" + password);
 			System.out.println("Logging in...");
-			loginStream = loginURL.openStream();
+			loginStream = webServiceModule.doLogin(email, password);
 			
 			// set up a scanner for the input stream
 			loginScanner = new Scanner(loginStream);
@@ -78,10 +78,8 @@ public class LoginModule
 			// check first to see if there's an actual username returned from the web service
 			if(!username.equals(""))
 			{
-				String bannedURL = "http://www.burbankparanormal.com/vmk/game/playerControl.php";
-				loginURL = new URL(bannedURL + "?command=getBannedUntil" + "&username=" + username);
 				System.out.println("Checking if " + username + " has been banned...");
-				loginStream = loginURL.openStream();
+				loginStream = webServiceModule.doCheckBanned(username);
 				
 				// set up a scanner for the input stream
 				loginScanner = new Scanner(loginStream);

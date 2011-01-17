@@ -138,8 +138,6 @@ public class RoomViewerUI extends Applet
 	
 	private RoomViewerUI roomViewerUI;
 	
-	private String loginPath = "";
-	
 	// references to game area windows for use with showGameArea()
 	private GameFireworks gameFireworks = null;
 	private GamePirates gamePirates = null;
@@ -150,9 +148,6 @@ public class RoomViewerUI extends Applet
 	{
 		StaticAppletData.setCodeBase(getCodeBase().toString()); // set the code base
 		StaticAppletData.setCodeBaseURL(getCodeBase()); // set the code base URL
-		
-		// set the path to the login script
-		loginPath = "http://www.burbankparanormal.com/vmk/game/login.php";
 		
 		loadLoginUI(); // load the login UI first
 		//loadRoomViewerUI();
@@ -305,7 +300,7 @@ public class RoomViewerUI extends Applet
 				passwordTextBox.setEnabled(false);
 				
 				// check the login credentials
-				if(loginModule.login(loginPath, emailTextBox.getText(), new String(passwordTextBox.getPassword())))
+				if(loginModule.login(emailTextBox.getText(), new String(passwordTextBox.getPassword())))
 				{
 					// correct credentials and authentication
 					errorLabel.setVisible(false);

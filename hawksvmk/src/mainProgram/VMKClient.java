@@ -6,11 +6,9 @@
 package mainProgram;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Scanner;
@@ -21,7 +19,7 @@ import roomviewer.RoomViewerUI;
 import sockets.VMKClientThread;
 import sockets.messages.Message;
 import sockets.messages.MessageLogin;
-import util.StaticAppletData;
+import svc.WebService;
 
 public class VMKClient
 {
@@ -29,6 +27,8 @@ public class VMKClient
 	private String username = "";
 	private VMKClientThread clientThread; // client thread
 	private RoomViewerUI uiObject; // room viewer UI object
+	
+	private WebService webServiceModule = new WebService();
 	
 	public VMKClient(String username) {this.username = username;}
 	
@@ -73,7 +73,7 @@ public class VMKClient
         	try
         	{
         		// get the server IP address from the web service to ensure it's always the most current version
-        		Scanner scan = new Scanner(new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=getGameServerIP").openStream());
+        		Scanner scan = new Scanner(webServiceModule.doGetServerIP());
         		hostname = scan.nextLine();
         		scan.close();
         	}
@@ -84,7 +84,7 @@ public class VMKClient
         		hostname = address.getHostAddress();
         	}
         	
-        	System.out.println("Connecting to VMK server at " + hostname + " on port " + port + "...");
+        	System.out.println("Connecting to HVMK server...");
         	
         	// connect to the server
             vmkSocket = new Socket(hostname, port);

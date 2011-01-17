@@ -15,6 +15,7 @@ import java.util.Date;
 
 import sockets.VMKServerPlayerData;
 import sockets.VMKServerThread;
+import svc.WebService;
 import util.FileOperations;
 import util.StaticAppletData;
 
@@ -25,6 +26,8 @@ public class VMKServer
     private boolean listening = true; // whether the server is listening for new connections
     private ServerSocket serverSocket = null; // server socket that listens for client connections
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
+    
+    private WebService webServiceModule = new WebService();
     
     // start the VMK server
 	public void startServer()
@@ -75,7 +78,7 @@ public class VMKServer
         	
         	// send the IP address to the web service database
         	System.out.println("Sending server IP to web service...");
-        	new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=setGameServerIP&serverIP=" + address.getHostAddress()).openStream().close();
+        	webServiceModule.doSetServerIP(address.getHostAddress()).close();
         	System.out.println("Server IP set");
         	System.out.println();
         }

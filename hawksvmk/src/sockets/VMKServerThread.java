@@ -27,6 +27,7 @@ import rooms.VMKRoom;
 import sockets.messages.*;
 import sockets.messages.games.*;
 import sockets.messages.games.pirates.*;
+import svc.WebService;
 
 import util.FileOperations;
 import util.FriendsList;
@@ -49,6 +50,8 @@ public class VMKServerThread extends Thread
     private String roomName = ""; // name of the current room the user is in
     
     private ArrayList<VMKServerThread> serverThreads = new ArrayList<VMKServerThread>(); // ArrayList of server threads
+    
+    private WebService webServiceModule = new WebService();
     
     // timeout functionality for reconnection attempts
     private ReconnectTimeoutThread reconnectTimeoutThread = null;
@@ -911,22 +914,22 @@ public class VMKServerThread extends Thread
     // update a player's status in the server-side database
     private void updatePlayerStatusInDatabase(String player, String status)
     {
-    	String command = "";
+    	boolean isPlayerOnline = false;
     	
     	// figure out the command to issue
     	if(status.toLowerCase().equals("offline"))
     	{
-    		command = "playerOffline";
+    		isPlayerOnline = false;
     	}
     	else if(status.toLowerCase().equals("online"))
     	{
-    		command = "playerOnline";
+    		isPlayerOnline = true;
     	}
     	
     	// issue the command
     	try
     	{
-    		Scanner s = new Scanner(new URL("http://vmk.burbankparanormal.com/game/playerControl.php?command=" + command + "&player=" + player).openStream());
+    		Scanner s = new Scanner(webServiceModule.doSetPlayerStatus(isPlayerOnline, player));
     		while(s.hasNextLine())
     		{
     			System.out.println(s.nextLine());
