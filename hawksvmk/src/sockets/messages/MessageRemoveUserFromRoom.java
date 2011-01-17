@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageRemoveUserFromRoom extends Message implements Serializable
+public class MessageRemoveUserFromRoom extends MessageSecure
 {
 	private String username = "";
 	private String roomID = "";

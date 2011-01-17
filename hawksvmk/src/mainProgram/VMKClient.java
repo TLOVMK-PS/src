@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 
 import roomviewer.RoomViewerUI;
 import sockets.VMKClientThread;
-import sockets.messages.Message;
+import sockets.messages.MessageSecure;
 import sockets.messages.MessageLogin;
 import svc.WebService;
 
@@ -155,7 +155,7 @@ public class VMKClient
     }
     
     // send a message to the client thread to route to the server
-    public void sendMessageToServer(Message m)
+    public void sendMessageToServer(MessageSecure m)
     {
     	if(clientThread != null)
     	{

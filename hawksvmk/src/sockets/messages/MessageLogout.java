@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageLogout extends Message implements Serializable
+public class MessageLogout extends MessageSecure
 {
 	public MessageLogout()
 	{

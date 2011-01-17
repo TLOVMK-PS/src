@@ -4,11 +4,9 @@
 
 package sockets.messages.games.pirates;
 
-import java.io.Serializable;
+import sockets.messages.MessageSecure;
 
-import sockets.messages.Message;
-
-public class MessageGamePiratesFireCannons extends Message implements Serializable
+public class MessageGamePiratesFireCannons extends MessageSecure
 {
 	private String username = "";
 	private String direction = "";

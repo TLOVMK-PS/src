@@ -4,10 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class MessageSendMailToUser extends Message implements Serializable
+public class MessageSendMailToUser extends MessageSecure
 {
 	private String sender = ""; // who sent the message
 	private String recipient = ""; // who received the message

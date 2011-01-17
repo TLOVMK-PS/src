@@ -4,13 +4,11 @@
 
 package sockets.messages.games;
 
-import java.io.Serializable;
-
 import astar.AStarCharacter;
 
-import sockets.messages.Message;
+import sockets.messages.MessageSecure;
 
-public class MessageGameRemoveUserFromRoom extends Message implements Serializable
+public class MessageGameRemoveUserFromRoom extends MessageSecure
 {
 	private String username = "";
 	private AStarCharacter character = null;

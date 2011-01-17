@@ -4,13 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import roomobject.RoomItem;
-
-public class MessageCreateGuestRoom extends Message implements Serializable
+public class MessageCreateGuestRoom extends MessageSecure
 {
 	private HashMap<String,String> roomInfo = new HashMap<String,String>();
 	

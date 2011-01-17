@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageChangeName extends Message implements Serializable
+public class MessageChangeName extends MessageSecure
 {
 	private String name = ""; // new name
 	

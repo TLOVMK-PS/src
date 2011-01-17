@@ -6,11 +6,9 @@ package sockets.messages.games;
 
 import games.GameScore;
 
-import java.io.Serializable;
+import sockets.messages.MessageSecure;
 
-import sockets.messages.Message;
-
-public class MessageGameScore extends Message implements Serializable
+public class MessageGameScore extends MessageSecure
 {
 	private GameScore gameScore = null; // the game score object
 	

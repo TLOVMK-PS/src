@@ -52,7 +52,7 @@ import login.LoginModule;
 import mainProgram.VMKClient;
 
 import roomobject.RoomItem;
-import sockets.messages.Message;
+import sockets.messages.MessageSecure;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
 import sockets.messages.MessageRemoveUserFromRoom;
@@ -492,7 +492,7 @@ public class RoomViewerUI extends Applet
 	}
 	
 	// send a message to the server (only used for messages from the grid and game rooms)
-	protected void sendMessageToServer(Message m)
+	protected void sendMessageToServer(MessageSecure m)
 	{
 		new MessageSenderThread(m).start();
 	}
@@ -735,9 +735,9 @@ public class RoomViewerUI extends Applet
 	// thread to handle sending messages
 	class MessageSenderThread extends Thread
 	{
-		private Message m = null;
+		private MessageSecure m = null;
 		
-		public MessageSenderThread(Message m) {this.m = m;}
+		public MessageSenderThread(MessageSecure m) {this.m = m;}
 		
 		public void run()
 		{

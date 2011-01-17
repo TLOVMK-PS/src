@@ -4,12 +4,11 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import util.MailMessage;
 
-public class MessageSaveMailMessages extends Message implements Serializable
+public class MessageSaveMailMessages extends MessageSecure
 {
 	private String sender = "";
 	private ArrayList<MailMessage> messages = new ArrayList<MailMessage>();

@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageAddFriendRequest extends Message implements Serializable
+public class MessageAddFriendRequest extends MessageSecure
 {
 	private String sender = "";
 	private String recipient = "";

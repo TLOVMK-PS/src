@@ -4,12 +4,11 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import util.MailMessage;
 
-public class MessageGetOfflineMailMessages extends Message implements Serializable
+public class MessageGetOfflineMailMessages extends MessageSecure
 {
 	private String recipient = "";
 	private ArrayList<MailMessage> messages = new ArrayList<MailMessage>();

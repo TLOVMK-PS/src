@@ -4,11 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
 import util.InventoryItem;
 
-public class MessageAddInventory extends Message implements Serializable
+public class MessageAddInventory extends MessageSecure
 {
 	private String username = "";
 	private InventoryItem item;

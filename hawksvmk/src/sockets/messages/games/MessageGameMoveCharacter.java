@@ -4,11 +4,9 @@
 
 package sockets.messages.games;
 
-import java.io.Serializable;
+import sockets.messages.MessageSecure;
 
-import sockets.messages.Message;
-
-public class MessageGameMoveCharacter extends Message implements Serializable
+public class MessageGameMoveCharacter extends MessageSecure
 {
 	private String username;
 	private String gameID = "";

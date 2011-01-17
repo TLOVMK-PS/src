@@ -4,11 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
 import util.FriendsList;
 
-public class MessageGetFriendsList extends Message implements Serializable
+public class MessageGetFriendsList extends MessageSecure
 {
 	private FriendsList friendsList;
 	

@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageAlterFriendStatus extends Message implements Serializable 
+public class MessageAlterFriendStatus extends MessageSecure
 {
 	private String friend = "";
 	private boolean online = false;

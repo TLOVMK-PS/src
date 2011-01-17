@@ -4,9 +4,7 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
-public class MessageAddChatToRoom extends Message implements Serializable
+public class MessageAddChatToRoom extends MessageSecure
 {
 	private String username = "";
 	private String roomID = "";

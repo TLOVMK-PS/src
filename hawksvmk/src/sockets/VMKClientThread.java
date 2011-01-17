@@ -28,6 +28,7 @@ import roomviewer.RoomViewerUI;
 import sockets.messages.*;
 import sockets.messages.games.*;
 import sockets.messages.games.pirates.*;
+import svc.WebService;
 
 import util.MailMessage;
 import util.StaticAppletData;
@@ -41,16 +42,16 @@ public class VMKClientThread extends Thread
     ObjectOutputStream out;
     ObjectInputStream in;
 
-    Message inputMessage; // input message sent from server
-    Message outputMessage; // output message sent to server
-    VMKProtocol vmkp = new VMKProtocol(); // message handler protocol
+    MessageSecure inputMessage; // input message received from server
     
     private String roomID = "";
     private String roomName = "";
     RoomViewerUI uiObject; // reference to the client UI
     
-    private ArrayList<Message> cachedMessages = new ArrayList<Message>(); // ArrayList of cached messages to send to the server after a re-connect
+    private ArrayList<MessageSecure> cachedMessages = new ArrayList<MessageSecure>(); // ArrayList of cached messages to send to the server after a re-connect
 
+    private WebService webServiceModule = new WebService();
+    
     public VMKClientThread(Socket socket)
     {
     	super("VMKClientThread");
@@ -95,251 +96,253 @@ public class VMKClientThread extends Thread
 		    	// process message input from the server
 			    while (!isInterrupted())
 			    {
-			    	// process message input from the server
-			    	inputMessage = (Message)in.readUnshared();
-			    	
-			    	// get the response from an input message
-					outputMessage = vmkp.processInput(inputMessage);
+			    	// read the message sent by the server
+					inputMessage = (MessageSecure)in.readUnshared();
 
-					if(outputMessage instanceof MessageLogin)
+					// perform a validity check on the message before proceeding further
+					if(webServiceModule.isMessageValid(inputMessage))
 					{
-						// update the description in the loading window
-						uiObject.setLoadingDescription("Logging you into HVMK...");
-						
-						// login response from server
-						MessageLogin loginMessage = (MessageLogin)outputMessage;
-						System.out.println("Login response received from server");
-						System.out.println("Changing thread name: " + ((MessageLogin)outputMessage).getName());
-						
-						// change the thread name
-						this.setName(loginMessage.getName());
-						
-						// send an "Add To Room" message
-						roomID = "template_gr4";
-						roomName = "Boot Hill Shooting Gallery Guest Room";
-						uiObject.setRoomInformation(roomID, roomName);
-						sendMessageToServer(new MessageAddUserToRoom(loginMessage.getCharacter(), roomID, roomName));
-					}
-					else if (outputMessage instanceof MessageLogout)
-					{
-						// logout/shutdown response received from server
-						System.out.println("Logout response received from server for thread: " + this.getName());
-
-					    break;
-					}
-					else if (outputMessage instanceof MessageGetCharacterInRoom)
-					{
-						MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom)outputMessage;
-						
-						// get character in room response received from server
-						System.out.println("Get character in room response received from server for thread: " + this.getName());
-						
-						// add the character to the current room
-						uiObject.addCharacterToRoom(userMsg.getCharacter());
-
-						// make the chat text box visible if necessary
-						uiObject.showChatBox();
-					}
-					else if (outputMessage instanceof MessageAddUserToRoom)
-					{
-						MessageAddUserToRoom addMsg = (MessageAddUserToRoom)outputMessage;
-						
-						// update the description in the loading window
-						uiObject.setLoadingDescription("Adding you to the HVMK map...");
-						
-						// user response received from server
-						roomID = addMsg.getRoomID();
-						roomName = addMsg.getRoomName();
-						uiObject.setRoomInformation(roomID, roomName);
-						System.out.println("Add user to room response received from server for thread: " + this.getName());
-						
-						// get all characters currently in the room
-						sendMessageToServer(new MessageGetCharacterInRoom(roomID));
-					}
-					else if(outputMessage instanceof MessageRemoveUserFromRoom)
-					{
-						MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)outputMessage;
-						
-						// user response received from server
-						System.out.println("Remove user from room response received from server for thread: " + this.getName());
-						
-						// remove the user from the current room
-						uiObject.removeUserFromRoom(userMsg.getUsername());
-					}
-					else if(outputMessage instanceof MessageAddChatToRoom)
-					{
-						MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)outputMessage;
-						
-						// user chat response received from server
-						System.out.println("Add chat to room response received from server for thread: " + this.getName());
-						
-						// add the chat to the current room
-						uiObject.addChatToRoom(chatMsg.getUsername(), chatMsg.getText());
-					}
-					else if(outputMessage instanceof MessageMoveCharacter)
-					{
-						MessageMoveCharacter moveMsg = (MessageMoveCharacter)outputMessage;
-						
-						// move character response received from server
-						System.out.println("Move character response received from server for thread: " + this.getName());
-					
-						// move the character in the current room (if it's not user that issued the instruction)
-						if(!moveMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+						// figure out the message type and perform the respective operation
+						if(inputMessage instanceof MessageLogin)
 						{
-							uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
+							// update the description in the loading window
+							uiObject.setLoadingDescription("Logging you into HVMK...");
+							
+							// login response from server
+							MessageLogin loginMessage = (MessageLogin)inputMessage;
+							System.out.println("Login response received from server");
+							System.out.println("Changing thread name: " + ((MessageLogin)inputMessage).getName());
+							
+							// change the thread name
+							this.setName(loginMessage.getName());
+							
+							// send an "Add To Room" message
+							roomID = "template_gr4";
+							roomName = "Boot Hill Shooting Gallery Guest Room";
+							uiObject.setRoomInformation(roomID, roomName);
+							sendMessageToServer(new MessageAddUserToRoom(loginMessage.getCharacter(), roomID, roomName));
 						}
-					}
-					else if(outputMessage instanceof MessageAddFriendRequest)
-					{
-						// add friend response received from server
-						MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)outputMessage;
-						
-						System.out.println("Add friend request response received from server");
-						
-						// add the friend request to the user's UI
-						uiObject.addFriendRequest(requestMsg.getSender());
-					}
-					else if(outputMessage instanceof MessageAddFriendConfirmation)
-					{
-						MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)outputMessage;
-						
-						// add friend response received from server
-						System.out.println("Add friend confirmation response (" + confirmMsg.isAccepted() + ") received from server for thread: " + this.getName());
-						
-						// add the new friend to the user's UI if the request was accepted
-						if(confirmMsg.isAccepted())
+						else if (inputMessage instanceof MessageLogout)
 						{
-							uiObject.addFriendToList(confirmMsg.getSender());
+							// logout/shutdown response received from server
+							System.out.println("Logout response received from server for thread: " + this.getName());
+	
+						    break;
 						}
-					}
-					else if(outputMessage instanceof MessageGetFriendsList)
-					{
-						// update the description in the loading window
-						uiObject.setLoadingDescription("Receiving your friends list...");
-						
-						MessageGetFriendsList getFriendsMsg = (MessageGetFriendsList)outputMessage;
-						
-						// get friends list message received from server
-						System.out.println("Get friends list message received from server");
-						
-						// set the friends list
-						uiObject.setFriendsList(getFriendsMsg.getFriendsList());
-					}
-					else if(outputMessage instanceof MessageRemoveFriend)
-					{
-						MessageRemoveFriend removeMsg = (MessageRemoveFriend)outputMessage;
-						
-						// remove friend message received from server
-						System.out.println("Remove friend message received from server");
-						
-						// remove the friend from the list
-						uiObject.removeFriendFromList(removeMsg.getSender());
-					}
-					else if(outputMessage instanceof MessageSendMailToUser)
-					{
-						MessageSendMailToUser mailMsg = (MessageSendMailToUser)outputMessage;
-						
-						// mail message received from server
-						System.out.println("Mail message received from server");
-						
-						// add the message to the user's mail messages
-						uiObject.addMailMessage(new MailMessage(mailMsg.getSender(), mailMsg.getRecipient(), mailMsg.getMessage(), mailMsg.getDateSent().toString()));
-					}
-					else if(outputMessage instanceof MessageGetOfflineMailMessages)
-					{
-						// update the description in the loading window
-						uiObject.setLoadingDescription("Receiving your offline mail messages...");
-						
-						MessageGetOfflineMailMessages offlineMsg = (MessageGetOfflineMailMessages)outputMessage;
-						
-						// offline mail messages received from server
-						System.out.println("Offline mail messages received from server");
-						
-						// set the user's mail messages
-						uiObject.setMailMessages(offlineMsg.getMessages());
-					}
-					else if(outputMessage instanceof MessageAlterFriendStatus)
-					{
-						MessageAlterFriendStatus alterStatusMsg = (MessageAlterFriendStatus)outputMessage;
-						
-						// alter friend status message received from server
-						System.out.println("Alter friend status message received for friend: " + alterStatusMsg.getFriend() + " (" + alterStatusMsg.isOnline() + ")");
-						uiObject.setFriendOnline(alterStatusMsg.getFriend(), alterStatusMsg.isOnline());
-					}
-					else if(outputMessage instanceof MessageGetInventory)
-					{
-						// update the description in the loading window
-						uiObject.setLoadingDescription("Receiving your inventory...");
-						
-						MessageGetInventory getInvMsg = (MessageGetInventory)outputMessage;
-						
-						// get inventory message received from server
-						System.out.println("Player inventory received from server");
-						uiObject.setInventory(getInvMsg.getInventory());
-					}
-					else if(outputMessage instanceof MessageUpdateItemInRoom)
-					{
-						MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)outputMessage;
-						
-						// update item in room message received from server (if it's not from the user that issued it)
-						if(!updateItemMsg.getItem().getOwner().equals(uiObject.getUsername()))
+						else if (inputMessage instanceof MessageGetCharacterInRoom)
 						{
-							uiObject.updateRoomItem(updateItemMsg.getItem());
+							MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom)inputMessage;
+							
+							// get character in room response received from server
+							System.out.println("Get character in room response received from server for thread: " + this.getName());
+							
+							// add the character to the current room
+							uiObject.addCharacterToRoom(userMsg.getCharacter());
+	
+							// make the chat text box visible if necessary
+							uiObject.showChatBox();
 						}
-					}
-					else if(outputMessage instanceof MessageCreateGuestRoom)
-					{
-						MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)outputMessage;
-						
-						// add the room mapping to the list for this user
-						VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
-						room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
-						room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
-						room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
-						StaticAppletData.addRoomMapping(createRoomMsg.getRoomInfo().get("ID"), room);
-						
-						// set the newly-created room ID client-side
-						uiObject.setNewlyCreatedRoomID(createRoomMsg.getRoomInfo().get("ID"));
-					}
-					else if(outputMessage instanceof MessageUpdateCharacterClothing)
-					{
-						MessageUpdateCharacterClothing updateClothingMsg = (MessageUpdateCharacterClothing)outputMessage;
-						System.out.println("Update clothing response received from server");
-						
-						uiObject.updateCharacterClothing(updateClothingMsg.getCharacter());
-					}
-					else if(outputMessage instanceof MessageGameAddUserToRoom)
-					{
-						MessageGameAddUserToRoom gameAddUserMsg = (MessageGameAddUserToRoom)outputMessage;
-						System.out.println("Game add user to room response received from server");
-						
-						uiObject.setGameRoomID(gameAddUserMsg.getGameID(), gameAddUserMsg.getRoomID());
-					}
-					else if(outputMessage instanceof MessageGameMoveCharacter)
-					{
-						MessageGameMoveCharacter gameMoveUserMsg = (MessageGameMoveCharacter)outputMessage;
-						System.out.println("Game move user in room response received from server");
-						
-						// check to make sure this is not the client that issued the message
-						if(!gameMoveUserMsg.getUsername().equals(uiObject.getUsername()))
+						else if (inputMessage instanceof MessageAddUserToRoom)
 						{
-							// move the character in the game room
-							uiObject.gameMoveCharacter(gameMoveUserMsg.getUsername(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());
+							MessageAddUserToRoom addMsg = (MessageAddUserToRoom)inputMessage;
+							
+							// update the description in the loading window
+							uiObject.setLoadingDescription("Adding you to the HVMK map...");
+							
+							// user response received from server
+							roomID = addMsg.getRoomID();
+							roomName = addMsg.getRoomName();
+							uiObject.setRoomInformation(roomID, roomName);
+							System.out.println("Add user to room response received from server for thread: " + this.getName());
+							
+							// get all characters currently in the room
+							sendMessageToServer(new MessageGetCharacterInRoom(roomID));
 						}
-					}
-					else if(outputMessage instanceof MessageGameScore)
-					{
-						MessageGameScore gameScoreMsg = (MessageGameScore)outputMessage;
-						System.out.println("Game score response received from server");
+						else if(inputMessage instanceof MessageRemoveUserFromRoom)
+						{
+							MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)inputMessage;
+							
+							// user response received from server
+							System.out.println("Remove user from room response received from server for thread: " + this.getName());
+							
+							// remove the user from the current room
+							uiObject.removeUserFromRoom(userMsg.getUsername());
+						}
+						else if(inputMessage instanceof MessageAddChatToRoom)
+						{
+							MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)inputMessage;
+							
+							// user chat response received from server
+							System.out.println("Add chat to room response received from server for thread: " + this.getName());
+							
+							// add the chat to the current room
+							uiObject.addChatToRoom(chatMsg.getUsername(), chatMsg.getText());
+						}
+						else if(inputMessage instanceof MessageMoveCharacter)
+						{
+							MessageMoveCharacter moveMsg = (MessageMoveCharacter)inputMessage;
+							
+							// move character response received from server
+							System.out.println("Move character response received from server for thread: " + this.getName());
 						
-						uiObject.addGameScore(gameScoreMsg.getGameScore().getGame(), gameScoreMsg.getGameScore());
-					}
-					else if(outputMessage instanceof MessageGamePiratesFireCannons)
-					{
-						MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)outputMessage;
-						System.out.println("Game fire cannons response received from server");
-						
-						uiObject.gamePiratesFireCannons(fireCannonsMsg.getUsername(), fireCannonsMsg.getDirection());
+							// move the character in the current room (if it's not user that issued the instruction)
+							if(!moveMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+							{
+								uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
+							}
+						}
+						else if(inputMessage instanceof MessageAddFriendRequest)
+						{
+							// add friend response received from server
+							MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)inputMessage;
+							
+							System.out.println("Add friend request response received from server");
+							
+							// add the friend request to the user's UI
+							uiObject.addFriendRequest(requestMsg.getSender());
+						}
+						else if(inputMessage instanceof MessageAddFriendConfirmation)
+						{
+							MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)inputMessage;
+							
+							// add friend response received from server
+							System.out.println("Add friend confirmation response (" + confirmMsg.isAccepted() + ") received from server for thread: " + this.getName());
+							
+							// add the new friend to the user's UI if the request was accepted
+							if(confirmMsg.isAccepted())
+							{
+								uiObject.addFriendToList(confirmMsg.getSender());
+							}
+						}
+						else if(inputMessage instanceof MessageGetFriendsList)
+						{
+							// update the description in the loading window
+							uiObject.setLoadingDescription("Receiving your friends list...");
+							
+							MessageGetFriendsList getFriendsMsg = (MessageGetFriendsList)inputMessage;
+							
+							// get friends list message received from server
+							System.out.println("Get friends list message received from server");
+							
+							// set the friends list
+							uiObject.setFriendsList(getFriendsMsg.getFriendsList());
+						}
+						else if(inputMessage instanceof MessageRemoveFriend)
+						{
+							MessageRemoveFriend removeMsg = (MessageRemoveFriend)inputMessage;
+							
+							// remove friend message received from server
+							System.out.println("Remove friend message received from server");
+							
+							// remove the friend from the list
+							uiObject.removeFriendFromList(removeMsg.getSender());
+						}
+						else if(inputMessage instanceof MessageSendMailToUser)
+						{
+							MessageSendMailToUser mailMsg = (MessageSendMailToUser)inputMessage;
+							
+							// mail message received from server
+							System.out.println("Mail message received from server");
+							
+							// add the message to the user's mail messages
+							uiObject.addMailMessage(new MailMessage(mailMsg.getSender(), mailMsg.getRecipient(), mailMsg.getMessage(), mailMsg.getDateSent().toString()));
+						}
+						else if(inputMessage instanceof MessageGetOfflineMailMessages)
+						{
+							// update the description in the loading window
+							uiObject.setLoadingDescription("Receiving your offline mail messages...");
+							
+							MessageGetOfflineMailMessages offlineMsg = (MessageGetOfflineMailMessages)inputMessage;
+							
+							// offline mail messages received from server
+							System.out.println("Offline mail messages received from server");
+							
+							// set the user's mail messages
+							uiObject.setMailMessages(offlineMsg.getMessages());
+						}
+						else if(inputMessage instanceof MessageAlterFriendStatus)
+						{
+							MessageAlterFriendStatus alterStatusMsg = (MessageAlterFriendStatus)inputMessage;
+							
+							// alter friend status message received from server
+							System.out.println("Alter friend status message received for friend: " + alterStatusMsg.getFriend() + " (" + alterStatusMsg.isOnline() + ")");
+							uiObject.setFriendOnline(alterStatusMsg.getFriend(), alterStatusMsg.isOnline());
+						}
+						else if(inputMessage instanceof MessageGetInventory)
+						{
+							// update the description in the loading window
+							uiObject.setLoadingDescription("Receiving your inventory...");
+							
+							MessageGetInventory getInvMsg = (MessageGetInventory)inputMessage;
+							
+							// get inventory message received from server
+							System.out.println("Player inventory received from server");
+							uiObject.setInventory(getInvMsg.getInventory());
+						}
+						else if(inputMessage instanceof MessageUpdateItemInRoom)
+						{
+							MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)inputMessage;
+							
+							// update item in room message received from server (if it's not from the user that issued it)
+							if(!updateItemMsg.getItem().getOwner().equals(uiObject.getUsername()))
+							{
+								uiObject.updateRoomItem(updateItemMsg.getItem());
+							}
+						}
+						else if(inputMessage instanceof MessageCreateGuestRoom)
+						{
+							MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)inputMessage;
+							
+							// add the room mapping to the list for this user
+							VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
+							room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
+							room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
+							room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
+							StaticAppletData.addRoomMapping(createRoomMsg.getRoomInfo().get("ID"), room);
+							
+							// set the newly-created room ID client-side
+							uiObject.setNewlyCreatedRoomID(createRoomMsg.getRoomInfo().get("ID"));
+						}
+						else if(inputMessage instanceof MessageUpdateCharacterClothing)
+						{
+							MessageUpdateCharacterClothing updateClothingMsg = (MessageUpdateCharacterClothing)inputMessage;
+							System.out.println("Update clothing response received from server");
+							
+							uiObject.updateCharacterClothing(updateClothingMsg.getCharacter());
+						}
+						else if(inputMessage instanceof MessageGameAddUserToRoom)
+						{
+							MessageGameAddUserToRoom gameAddUserMsg = (MessageGameAddUserToRoom)inputMessage;
+							System.out.println("Game add user to room response received from server");
+							
+							uiObject.setGameRoomID(gameAddUserMsg.getGameID(), gameAddUserMsg.getRoomID());
+						}
+						else if(inputMessage instanceof MessageGameMoveCharacter)
+						{
+							MessageGameMoveCharacter gameMoveUserMsg = (MessageGameMoveCharacter)inputMessage;
+							System.out.println("Game move user in room response received from server");
+							
+							// check to make sure this is not the client that issued the message
+							if(!gameMoveUserMsg.getUsername().equals(uiObject.getUsername()))
+							{
+								// move the character in the game room
+								uiObject.gameMoveCharacter(gameMoveUserMsg.getUsername(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());
+							}
+						}
+						else if(inputMessage instanceof MessageGameScore)
+						{
+							MessageGameScore gameScoreMsg = (MessageGameScore)inputMessage;
+							System.out.println("Game score response received from server");
+							
+							uiObject.addGameScore(gameScoreMsg.getGameScore().getGame(), gameScoreMsg.getGameScore());
+						}
+						else if(inputMessage instanceof MessageGamePiratesFireCannons)
+						{
+							MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)inputMessage;
+							System.out.println("Game fire cannons response received from server");
+							
+							uiObject.gamePiratesFireCannons(fireCannonsMsg.getUsername(), fireCannonsMsg.getDirection());
+						}
 					}
 			    }
 		    }
@@ -552,7 +555,7 @@ public class VMKClientThread extends Thread
     }
     
     // write a message to the output buffer to be sent to the server
-    private synchronized void writeOutputToServer(Message m) throws SocketException, IOException
+    private synchronized void writeOutputToServer(MessageSecure m) throws SocketException, IOException
     {
     	out.writeUnshared(m);
     	out.reset();
@@ -569,7 +572,7 @@ public class VMKClientThread extends Thread
     		for(int i = 0; i < cachedMessages.size(); i++)
     		{
     			// get the next cached message
-    			Message cachedMessage = cachedMessages.remove(0);
+    			MessageSecure cachedMessage = cachedMessages.remove(0);
     			
     			try
     			{
@@ -594,7 +597,7 @@ public class VMKClientThread extends Thread
     }
     
     // add a message to the messages cache for later sending
-    private synchronized void cacheMessage(Message m)
+    private synchronized void cacheMessage(MessageSecure m)
     {
     	// check the type of message to see if it needs to be cached
     	if(m instanceof MessageLogout)
@@ -612,7 +615,7 @@ public class VMKClientThread extends Thread
     }
     
     // send a message to the server
-    public synchronized void sendMessageToServer(Message m)
+    public synchronized void sendMessageToServer(MessageSecure m)
     {
     	// check to see if we're currently re-booting the socket
     	if(!rebooting)

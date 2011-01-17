@@ -4,11 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
 import roomobject.RoomItem;
 
-public class MessageUpdateItemInRoom extends Message implements Serializable
+public class MessageUpdateItemInRoom extends MessageSecure
 {
 	private String roomID = "";
 	private RoomItem item;

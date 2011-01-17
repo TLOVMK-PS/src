@@ -4,11 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
 import astar.AStarCharacter;
 
-public class MessageLogin extends Message implements Serializable
+public class MessageLogin extends MessageSecure
 {
 	private String name = "";
 	private String email = "";

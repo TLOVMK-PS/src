@@ -40,10 +40,9 @@ public class VMKServerThread extends Thread
     ObjectOutputStream out;
     ObjectInputStream in;
     
-    Message inputMessage; // input message sent from client
-    Message outputMessage; // output message sent to client
-    VMKProtocol vmkp = new VMKProtocol(); // message handler protocol
-    private ArrayList<Message> cachedMessages = new ArrayList<Message>(); // cached list of messages to be sent after the client re-connects
+    MessageSecure inputMessage; // input message received from client
+
+    private ArrayList<MessageSecure> cachedMessages = new ArrayList<MessageSecure>(); // cached list of messages to be sent after the client re-connects
     
     private String roomID = ""; // ID of the current room the user is in
     private String roomName = ""; // name of the current room the user is in
@@ -149,421 +148,425 @@ public class VMKServerThread extends Thread
 		    {
 		    	while (!isInterrupted())
 		    	{
-		    		// create a response from an input message
-		    		inputMessage = (Message)in.readUnshared();
-		    		outputMessage = vmkp.processInput(inputMessage);
+		    		// read the message sent by the client
+		    		inputMessage = (MessageSecure)in.readUnshared();
 
 		    		//System.out.println("Received message (" + outputMessage.getType() + ") from client " + this.getName());
 
-		    		if(outputMessage instanceof MessageLogin)
+		    		// perform a validity check on the message before proceeding further
+		    		if(webServiceModule.isMessageValid(inputMessage))
 		    		{
-		    			MessageLogin loginMessage = (MessageLogin)outputMessage;
-		    			System.out.println("Login message received from client");
-
-		    			// change the thread name
-		    			if(!loginMessage.getName().trim().equals(""))
-		    			{
-		    				this.setName(loginMessage.getName());
-		    			}
-		    			else
-		    			{
-		    				this.setName("VMK Player");
-		    				loginMessage.setName("VMK Player");
-		    			}
-
-		    			System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + loginMessage.getName());
-
-		    			// load the character from a file
-		    			loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getName(), loginMessage.getEmail()));
-
-		    			// set the username for the first time if necessary
-		    			if(loginMessage.getCharacter().getUsername().equals(""))
-		    			{
-		    				AStarCharacter character = loginMessage.getCharacter();
-		    				character.setUsername(this.getName());
-		    				loginMessage.setCharacter(character);
-		    			}
-
-		    			// make sure we have an actual email address
-		    			if(!loginMessage.getEmail().equals(""))
-		    			{
-		    				// update the username:email mapping file
-		    				if(!VMKServerPlayerData.containsUsernameEmailMapping(this.getName()))
-		    				{
-		    					FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
-		    				}
-
-		    				// add the username:email mapping
-		    				VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
-		    			}
-
-		    			// send the login message back to the client
-		    			sendMessageToClient(loginMessage);
-
-		    			// update the player's status in the database (online)
-		    			updatePlayerStatusInDatabase(this.getName(), "online");
-
-		    			// load up the friends list in the VMKServerPlayerData class
-		    			VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
-
-		    			// send the player's friends list to him
-		    			FriendsList playerFriends = VMKServerPlayerData.getFriendsList(this.getName());
-		    			sendMessageToClient(new MessageGetFriendsList(playerFriends));
-
-		    			// send the user's online friends to him by iterating through active users
-		    			for(int i = 0; i < serverThreads.size(); i++)
-		    			{
-		    				// get the friend's name
-		    				String friendName = serverThreads.get(i).getName();
-
-		    				if(playerFriends.contains(friendName))
-		    				{
-		    					// send a message to the client showing that this friend is online
-		    					sendMessageToClient(new MessageAlterFriendStatus(friendName, true));
-
-		    					// send a message to the friend showing that this player is online
-		    					sendMessageToClient(friendName, new MessageAlterFriendStatus(this.getName(), true));
-		    				}
-		    			}
-
-		    			// load a user's offline messages and send them to him
-		    			sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
-
-		    			// load a user's inventory and send it to him
-		    			sendMessageToClient(new MessageGetInventory(FileOperations.loadInventory(loginMessage.getEmail())));
-		    		}
-		    		else if (outputMessage instanceof MessageLogout)
-		    		{
-		    			// logout/shutdown message received from client
-		    			System.out.println("Logout message received from client for thread: " + this.getName());
-
-		    			// break out of the loop to execute the centralized shutdown code
-		    			break;
-		    		}
-		    		else if(outputMessage instanceof MessageGetCharacterInRoom)
-		    		{
-		    			// get server threads for room message received from client
-		    			//System.out.println("Get characters in room message received from client for thread: " + this.getName());
-
-		    			// set the characters in the room
-		    			MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom) outputMessage;
-
-		    			// return all the characters in the room with a separate message for each in order to
-		    			// prevent an IllegalStateException with "unread block data"
-		    			for(int i = 0; i < serverThreads.size(); i++)
-		    			{
-		    				if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), roomID))
-		    				{
-		    					// send a "Get Character" message to the client for each character in the room
-		    					userMsg.setCharacter(VMKServerPlayerData.getCharacter(serverThreads.get(i).getName()));
-		    					sendMessageToClient(userMsg);
-		    				}
-		    			}
-		    		}
-		    		else if(outputMessage instanceof MessageUpdateCharacterInRoom)
-		    		{
-		    			// update character in room message received from client
-		    			//System.out.println("Update character in room message received from client for thread: " + this.getName());
-
-		    			// update the character in the room HashMap
-		    			MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)outputMessage;
-		    			roomID = userMsg.getRoomID();
-		    			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageUpdateCharacterClothing)
-		    		{
-		    			// update character clothing message received from client
-		    			MessageUpdateCharacterClothing userMsg = (MessageUpdateCharacterClothing)outputMessage;
-
-		    			// re-create the character's avatar rotations from the clothing images
-		    			FileOperations.buildAvatarImages(userMsg.getCharacter());
-
-		    			// save the character since the clothing IDs have been changed
-		    			FileOperations.saveCharacter(userMsg.getCharacter());
-
-		    			// tell the character to update the images
-		    			userMsg.getCharacter().updateAvatarImages();
-
-		    			// update the character in the room HashMap
-		    			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
-
-		    			// send the message back out to the clients to update the character's clothing on their end
-		    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageAddUserToRoom)
-		    		{
-		    			// add user to room message received from client
-		    			//System.out.println("Add user to room message received from client for thread: " + this.getName());
-
-		    			// put the character into the static server HashMap
-		    			MessageAddUserToRoom userMsg = (MessageAddUserToRoom)outputMessage;
-
-		    			// set the room ID and room name properties and then add the character into the HashMap
-		    			roomID = userMsg.getRoomID();
-		    			roomName = userMsg.getRoomName();
-		    			VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
-
-		    			// send the message to ALL clients in the room he's in
-		    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageRemoveUserFromRoom)
-		    		{
-		    			// remove user from room message received from client
-		    			//System.out.println("Remove user from room message received from client for thread: " + this.getName());
-
-		    			// remove the character from the static server HashMap
-		    			MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)outputMessage;
-		    			VMKServerPlayerData.removeCharacter(userMsg.getUsername(), userMsg.getRoomID());
-		    			System.out.println("Characters in " + userMsg.getRoomID() + ": " + VMKServerPlayerData.getRoom(userMsg.getRoomID()).countCharacters());
-
-		    			// send the message to ALL clients
-		    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageAddChatToRoom)
-		    		{
-		    			// add chat to room message received from client
-		    			//System.out.println("Add chat to room message received from client for thread: " + this.getName());
-
-		    			// send the message to ALL clients
-		    			MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)outputMessage;
-		    			sendMessageToAllClientsInRoom(chatMsg, chatMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageMoveCharacter)
-		    		{
-		    			// move character message received from client
-		    			//System.out.println("Move character message received from client for thread: " + this.getName());
-
-		    			// send the message to ALL clients EXCEPT the client that issued the message
-		    			MessageMoveCharacter moveMsg = (MessageMoveCharacter)outputMessage;
-		    			sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomID(), this.getName());
-		    		}
-		    		else if(outputMessage instanceof MessageAddFriendRequest)
-		    		{
-		    			// add friend request message received from client
-		    			MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)outputMessage;
-
-		    			// send the message to the recipient client
-		    			sendMessageToClient(requestMsg.getRecipient(), requestMsg);
-		    		}
-		    		else if(outputMessage instanceof MessageAddFriendConfirmation)
-		    		{
-		    			// add friend confirmation message received from client
-		    			MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)outputMessage;
-
-		    			// check if the request has been accepted
-		    			if(confirmMsg.isAccepted())
-		    			{
-		    				// update the sender's friends list to include the new friend
-		    				VMKServerPlayerData.addFriendToList(confirmMsg.getSender(), confirmMsg.getRecipient());
-
-		    				// update the recipient's friends list to include the new friend
-		    				VMKServerPlayerData.addFriendToList(confirmMsg.getRecipient(), confirmMsg.getSender());
-
-		    				// update the sender's friends list file to include the new friend
-		    				FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getSender()), VMKServerPlayerData.getFriendsList(confirmMsg.getSender()));
-
-		    				// udpate the recipient's friends list file to include the new friend
-		    				FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getRecipient()), VMKServerPlayerData.getFriendsList(confirmMsg.getRecipient()));
-		    			}
-
-		    			// send the message back to the recipient
-		    			sendMessageToClient(confirmMsg.getRecipient(), confirmMsg);
-		    		}
-		    		else if(outputMessage instanceof MessageRemoveFriend)
-		    		{
-		    			// remove friend message received from client
-		    			MessageRemoveFriend removeMsg = (MessageRemoveFriend)outputMessage;
-
-		    			// load the recipient's friend list from the file, if necessary (handles offline cases)
-		    			if(!VMKServerPlayerData.containsFriendsList(removeMsg.getRecipient()))
-		    			{
-		    				// load up the recipient's friends list in the VMKServerPlayerData class
-		    				VMKServerPlayerData.addFriendsList(removeMsg.getRecipient(), FileOperations.loadFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient())));
-		    			}
-
-		    			// remove the sender and recipient from each other's lists
-		    			VMKServerPlayerData.removeFriendFromList(removeMsg.getSender(), removeMsg.getRecipient());
-		    			VMKServerPlayerData.removeFriendFromList(removeMsg.getRecipient(), removeMsg.getSender());
-
-		    			// update the friends list files to reflect the changes
-		    			FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getSender()), VMKServerPlayerData.getFriendsList(removeMsg.getSender()));
-		    			FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient()), VMKServerPlayerData.getFriendsList(removeMsg.getRecipient()));
-
-		    			// send the message to the recipient client
-		    			sendMessageToClient(removeMsg.getRecipient(), removeMsg);
-		    		}
-		    		else if(outputMessage instanceof MessageSendMailToUser)
-		    		{
-		    			// mail message to user message received from client
-		    			MessageSendMailToUser mailMsg = (MessageSendMailToUser)outputMessage;
-
-		    			// make sure the user is online
-		    			if(VMKServerPlayerData.containsFriendsList(mailMsg.getRecipient()))
-		    			{
-		    				// send the mail message to the recipient client
-		    				sendMessageToClient(mailMsg.getRecipient(), mailMsg);
-		    			}
-
-		    			// save the message to hard storage
-		    			FileOperations.addMailMessage(VMKServerPlayerData.getEmailFromUsername(mailMsg.getRecipient()), mailMsg.getSender(), mailMsg.getMessage(), mailMsg.getDateSent().toString());
-		    		}
-		    		else if(outputMessage instanceof MessageSaveMailMessages)
-		    		{
-		    			// save mail message received from client
-		    			MessageSaveMailMessages saveMailMsg = (MessageSaveMailMessages)outputMessage;
-
-		    			// save the messages to hard storage
-		    			FileOperations.saveMailMessages(VMKServerPlayerData.getEmailFromUsername(saveMailMsg.getSender()), saveMailMsg.getMessages());
-		    		}
-		    		else if(outputMessage instanceof MessageUpdateItemInRoom)
-		    		{
-		    			// update item in room message received from client
-		    			MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)outputMessage;
-
-		    			// send the message to all characters in the given room
-		    			sendMessageToAllClientsInRoom(updateItemMsg, updateItemMsg.getRoomID());
-		    		}
-		    		else if(outputMessage instanceof MessageSaveGuestRoom)
-		    		{
-		    			// save guest room message received from client
-		    			MessageSaveGuestRoom saveRoomMsg = (MessageSaveGuestRoom)outputMessage;
-
-		    			// save the guest room
-		    			FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(saveRoomMsg.getRoomInfo().get("OWNER")), saveRoomMsg.getRoomInfo(), saveRoomMsg.getRoomItems(), false);
-		    		}
-		    		else if(outputMessage instanceof MessageCreateGuestRoom)
-		    		{
-		    			// create guest room message received from client
-		    			MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)outputMessage;
-
-		    			// figure out the room ID
-		    			VMKServerPlayerData.incrementGuestRoomCount();
-		    			createRoomMsg.addRoomInfo("ID", "gr" + VMKServerPlayerData.getGuestRoomCount());
-
-		    			// create the guest room
-		    			String savedPath = FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(createRoomMsg.getRoomInfo().get("OWNER")), createRoomMsg.getRoomInfo(), new ArrayList<RoomItem>(), true);
-
-		    			// add the saved room path to the message
-		    			createRoomMsg.addRoomInfo("PATH", savedPath);
-
-		    			// add the new room to the VMKServerPlayerData class
-		    			VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
-		    			room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
-		    			room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
-		    			room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
-		    			VMKServerPlayerData.addRoom(createRoomMsg.getRoomInfo().get("ID"), room);
-
-		    			// pass the message along to the player to affect the listing client-side as well
-		    			sendMessageToClient(createRoomMsg.getRoomInfo().get("OWNER"), createRoomMsg);
-		    		}
-		    		else if(outputMessage instanceof MessageUpdateInventory)
-		    		{
-		    			// update inventory message received from client
-		    			MessageUpdateInventory updateInvMsg = (MessageUpdateInventory)outputMessage;
-
-		    			// resolve the player's email address
-		    			String email = VMKServerPlayerData.getEmailFromUsername(updateInvMsg.getUsername());
-
-		    			// update the player's inventory file
-		    			FileOperations.saveInventory(email, updateInvMsg.getInventory());
-		    		}
-		    		else if(outputMessage instanceof MessageAddInventory)
-		    		{
-		    			// add inventory message received from client
-		    			MessageAddInventory addInvMsg = (MessageAddInventory)outputMessage;
-
-		    			// resolve the player's email address
-		    			String email = VMKServerPlayerData.getEmailFromUsername(addInvMsg.getUsername());
-
-		    			// update the player's inventory file
-		    			FileOperations.appendInventory(email, addInvMsg.getItem());
-		    		}
-		    		else if(outputMessage instanceof MessageReconnectToServer)
-		    		{
-		    			// reconnect to server message received from client
-		    			MessageReconnectToServer reconnectMsg = (MessageReconnectToServer)outputMessage;
-
-		    			// update the character in the HashMap so we don't lose information
-		    			roomID = reconnectMsg.getRoomID();
-		    			VMKServerPlayerData.addCharacter(reconnectMsg.getCharacter().getUsername(), reconnectMsg.getCharacter(), reconnectMsg.getRoomID());
-
-		    			// send the cached messages back to the client since he's re-connected now
-		    			sendCachedMessages();
-		    		}
-		    		else if(outputMessage instanceof MessageGameAddUserToRoom)
-		    		{
-		    			//System.out.println("Game add user to room message received from client");
-
-		    			// add user to GAME ROOM message received from client
-		    			MessageGameAddUserToRoom addUserGameMsg = (MessageGameAddUserToRoom)outputMessage;
-
-		    			// check to make sure the character is still logged-in
-		    			if(VMKServerPlayerData.getCharacter(addUserGameMsg.getCharacter().getUsername()) != null)
-		    			{
-		    				// remove the character from the current room he's in
-		    				VMKServerPlayerData.removeCharacter(addUserGameMsg.getCharacter().getUsername(), roomID);
-
-		    				// send the message to ALL clients in the room he's in
-		    				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(addUserGameMsg.getCharacter().getUsername(), roomID), roomID);
-
-		    				// figure out the game room to which the user should be added
-		    				String gameID = addUserGameMsg.getGameID();
-		    				roomID = VMKServerPlayerData.addCharacterToGameRoom(gameID, addUserGameMsg.getCharacter());
-
-		    				System.out.println("Added user to game room: " + roomID);
-
-		    				// pass the message back to the client with the new roomID
-		    				addUserGameMsg.setRoomID(roomID);
-		    				sendMessageToClient(addUserGameMsg);
-		    			}
-		    		}
-		    		else if(outputMessage instanceof MessageGameRemoveUserFromRoom)
-		    		{
-		    			// remove user from GAME ROOM message received from client
-		    			MessageGameRemoveUserFromRoom removeUserGameMsg = (MessageGameRemoveUserFromRoom)outputMessage;
-
-		    			// remove the character from the current room he's in
-		    			VMKServerPlayerData.removeCharacter(removeUserGameMsg.getCharacter().getUsername(), roomID);
-
-		    			// send the message to ALL clients in the room he's in
-		    			sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(removeUserGameMsg.getCharacter().getUsername(), roomID), roomID);
-
-		    			// check to make sure the character is still logged-in
-		    			if(VMKServerPlayerData.getCharacter(removeUserGameMsg.getCharacter().getUsername()) != null)
-		    			{
-		    				// add him back to the original room he came from before the game
-		    				roomID = removeUserGameMsg.getDestRoomID();
-		    				VMKServerPlayerData.addCharacter(removeUserGameMsg.getUsername(), removeUserGameMsg.getCharacter(), roomID);
-
-		    				// send an add character message to ALL clients in the specified destination room
-		    				MessageAddUserToRoom addUserMsg = new MessageAddUserToRoom(removeUserGameMsg.getCharacter(), roomID, VMKServerPlayerData.getRoom(roomID).getRoomName());
-		    				sendMessageToAllClientsInRoom(addUserMsg, addUserMsg.getRoomID());
-		    			}
-
-		    		}
-		    		else if(outputMessage instanceof MessageGameMoveCharacter)
-		    		{
-		    			// move character in GAME ROOM message received from client
-		    			MessageGameMoveCharacter moveUserGameMsg = (MessageGameMoveCharacter)outputMessage;
-		    			
-		    			// send the message to ALL clients in the game room EXCEPT the one that initiated the request
-		    			sendMessageToAllClientsInRoom(moveUserGameMsg, moveUserGameMsg.getGameRoomID(), this.getName());
-		    		}
-		    		else if(outputMessage instanceof MessageGameScore)
-		    		{
-		    			// add game score message received from client
-		    			MessageGameScore gameScoreMsg = (MessageGameScore)outputMessage;
-
-		    			// pass the message back to all clients in the current game room
-		    			sendMessageToAllClientsInRoom(gameScoreMsg, roomID);
-		    		}
-		    		else if(outputMessage instanceof MessageGamePiratesFireCannons)
-		    		{
-		    			// POTC fire cannons message received from client
-		    			MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)outputMessage;
-		    			
-		    			// pass the message back to all clients in the current game room EXCEPT the one that initiated the request
-		    			sendMessageToAllClientsInRoom(fireCannonsMsg, fireCannonsMsg.getGameRoomID(), this.getName());
+		    			// figure out the type of the message and perform the respective operation
+			    		if(inputMessage instanceof MessageLogin)
+			    		{
+			    			MessageLogin loginMessage = (MessageLogin)inputMessage;
+			    			System.out.println("Login message received from client");
+	
+			    			// change the thread name
+			    			if(!loginMessage.getName().trim().equals(""))
+			    			{
+			    				this.setName(loginMessage.getName());
+			    			}
+			    			else
+			    			{
+			    				this.setName("VMK Player");
+			    				loginMessage.setName("VMK Player");
+			    			}
+	
+			    			System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + loginMessage.getName());
+	
+			    			// load the character from a file
+			    			loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getName(), loginMessage.getEmail()));
+	
+			    			// set the username for the first time if necessary
+			    			if(loginMessage.getCharacter().getUsername().equals(""))
+			    			{
+			    				AStarCharacter character = loginMessage.getCharacter();
+			    				character.setUsername(this.getName());
+			    				loginMessage.setCharacter(character);
+			    			}
+	
+			    			// make sure we have an actual email address
+			    			if(!loginMessage.getEmail().equals(""))
+			    			{
+			    				// update the username:email mapping file
+			    				if(!VMKServerPlayerData.containsUsernameEmailMapping(this.getName()))
+			    				{
+			    					FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+			    				}
+	
+			    				// add the username:email mapping
+			    				VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+			    			}
+	
+			    			// send the login message back to the client
+			    			sendMessageToClient(loginMessage);
+	
+			    			// update the player's status in the database (online)
+			    			updatePlayerStatusInDatabase(this.getName(), "online");
+	
+			    			// load up the friends list in the VMKServerPlayerData class
+			    			VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
+	
+			    			// send the player's friends list to him
+			    			FriendsList playerFriends = VMKServerPlayerData.getFriendsList(this.getName());
+			    			sendMessageToClient(new MessageGetFriendsList(playerFriends));
+	
+			    			// send the user's online friends to him by iterating through active users
+			    			for(int i = 0; i < serverThreads.size(); i++)
+			    			{
+			    				// get the friend's name
+			    				String friendName = serverThreads.get(i).getName();
+	
+			    				if(playerFriends.contains(friendName))
+			    				{
+			    					// send a message to the client showing that this friend is online
+			    					sendMessageToClient(new MessageAlterFriendStatus(friendName, true));
+	
+			    					// send a message to the friend showing that this player is online
+			    					sendMessageToClient(friendName, new MessageAlterFriendStatus(this.getName(), true));
+			    				}
+			    			}
+	
+			    			// load a user's offline messages and send them to him
+			    			sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
+	
+			    			// load a user's inventory and send it to him
+			    			sendMessageToClient(new MessageGetInventory(FileOperations.loadInventory(loginMessage.getEmail())));
+			    		}
+			    		else if (inputMessage instanceof MessageLogout)
+			    		{
+			    			// logout/shutdown message received from client
+			    			System.out.println("Logout message received from client for thread: " + this.getName());
+	
+			    			// break out of the loop to execute the centralized shutdown code
+			    			break;
+			    		}
+			    		else if(inputMessage instanceof MessageGetCharacterInRoom)
+			    		{
+			    			// get server threads for room message received from client
+			    			//System.out.println("Get characters in room message received from client for thread: " + this.getName());
+	
+			    			// set the characters in the room
+			    			MessageGetCharacterInRoom userMsg = (MessageGetCharacterInRoom) inputMessage;
+	
+			    			// return all the characters in the room with a separate message for each in order to
+			    			// prevent an IllegalStateException with "unread block data"
+			    			for(int i = 0; i < serverThreads.size(); i++)
+			    			{
+			    				if(VMKServerPlayerData.roomContainsUser(serverThreads.get(i).getName(), roomID))
+			    				{
+			    					// send a "Get Character" message to the client for each character in the room
+			    					userMsg.setCharacter(VMKServerPlayerData.getCharacter(serverThreads.get(i).getName()));
+			    					sendMessageToClient(userMsg);
+			    				}
+			    			}
+			    		}
+			    		else if(inputMessage instanceof MessageUpdateCharacterInRoom)
+			    		{
+			    			// update character in room message received from client
+			    			//System.out.println("Update character in room message received from client for thread: " + this.getName());
+	
+			    			// update the character in the room HashMap
+			    			MessageUpdateCharacterInRoom userMsg = (MessageUpdateCharacterInRoom)inputMessage;
+			    			roomID = userMsg.getRoomID();
+			    			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageUpdateCharacterClothing)
+			    		{
+			    			// update character clothing message received from client
+			    			MessageUpdateCharacterClothing userMsg = (MessageUpdateCharacterClothing)inputMessage;
+	
+			    			// re-create the character's avatar rotations from the clothing images
+			    			FileOperations.buildAvatarImages(userMsg.getCharacter());
+	
+			    			// save the character since the clothing IDs have been changed
+			    			FileOperations.saveCharacter(userMsg.getCharacter());
+	
+			    			// tell the character to update the images
+			    			userMsg.getCharacter().updateAvatarImages();
+	
+			    			// update the character in the room HashMap
+			    			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+	
+			    			// send the message back out to the clients to update the character's clothing on their end
+			    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageAddUserToRoom)
+			    		{
+			    			// add user to room message received from client
+			    			//System.out.println("Add user to room message received from client for thread: " + this.getName());
+	
+			    			// put the character into the static server HashMap
+			    			MessageAddUserToRoom userMsg = (MessageAddUserToRoom)inputMessage;
+	
+			    			// set the room ID and room name properties and then add the character into the HashMap
+			    			roomID = userMsg.getRoomID();
+			    			roomName = userMsg.getRoomName();
+			    			VMKServerPlayerData.addCharacter(userMsg.getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+	
+			    			// send the message to ALL clients in the room he's in
+			    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageRemoveUserFromRoom)
+			    		{
+			    			// remove user from room message received from client
+			    			//System.out.println("Remove user from room message received from client for thread: " + this.getName());
+	
+			    			// remove the character from the static server HashMap
+			    			MessageRemoveUserFromRoom userMsg = (MessageRemoveUserFromRoom)inputMessage;
+			    			VMKServerPlayerData.removeCharacter(userMsg.getUsername(), userMsg.getRoomID());
+			    			System.out.println("Characters in " + userMsg.getRoomID() + ": " + VMKServerPlayerData.getRoom(userMsg.getRoomID()).countCharacters());
+	
+			    			// send the message to ALL clients
+			    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageAddChatToRoom)
+			    		{
+			    			// add chat to room message received from client
+			    			//System.out.println("Add chat to room message received from client for thread: " + this.getName());
+	
+			    			// send the message to ALL clients
+			    			MessageAddChatToRoom chatMsg = (MessageAddChatToRoom)inputMessage;
+			    			sendMessageToAllClientsInRoom(chatMsg, chatMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageMoveCharacter)
+			    		{
+			    			// move character message received from client
+			    			//System.out.println("Move character message received from client for thread: " + this.getName());
+	
+			    			// send the message to ALL clients EXCEPT the client that issued the message
+			    			MessageMoveCharacter moveMsg = (MessageMoveCharacter)inputMessage;
+			    			sendMessageToAllClientsInRoom(moveMsg, moveMsg.getRoomID(), this.getName());
+			    		}
+			    		else if(inputMessage instanceof MessageAddFriendRequest)
+			    		{
+			    			// add friend request message received from client
+			    			MessageAddFriendRequest requestMsg = (MessageAddFriendRequest)inputMessage;
+	
+			    			// send the message to the recipient client
+			    			sendMessageToClient(requestMsg.getRecipient(), requestMsg);
+			    		}
+			    		else if(inputMessage instanceof MessageAddFriendConfirmation)
+			    		{
+			    			// add friend confirmation message received from client
+			    			MessageAddFriendConfirmation confirmMsg = (MessageAddFriendConfirmation)inputMessage;
+	
+			    			// check if the request has been accepted
+			    			if(confirmMsg.isAccepted())
+			    			{
+			    				// update the sender's friends list to include the new friend
+			    				VMKServerPlayerData.addFriendToList(confirmMsg.getSender(), confirmMsg.getRecipient());
+	
+			    				// update the recipient's friends list to include the new friend
+			    				VMKServerPlayerData.addFriendToList(confirmMsg.getRecipient(), confirmMsg.getSender());
+	
+			    				// update the sender's friends list file to include the new friend
+			    				FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getSender()), VMKServerPlayerData.getFriendsList(confirmMsg.getSender()));
+	
+			    				// udpate the recipient's friends list file to include the new friend
+			    				FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(confirmMsg.getRecipient()), VMKServerPlayerData.getFriendsList(confirmMsg.getRecipient()));
+			    			}
+	
+			    			// send the message back to the recipient
+			    			sendMessageToClient(confirmMsg.getRecipient(), confirmMsg);
+			    		}
+			    		else if(inputMessage instanceof MessageRemoveFriend)
+			    		{
+			    			// remove friend message received from client
+			    			MessageRemoveFriend removeMsg = (MessageRemoveFriend)inputMessage;
+	
+			    			// load the recipient's friend list from the file, if necessary (handles offline cases)
+			    			if(!VMKServerPlayerData.containsFriendsList(removeMsg.getRecipient()))
+			    			{
+			    				// load up the recipient's friends list in the VMKServerPlayerData class
+			    				VMKServerPlayerData.addFriendsList(removeMsg.getRecipient(), FileOperations.loadFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient())));
+			    			}
+	
+			    			// remove the sender and recipient from each other's lists
+			    			VMKServerPlayerData.removeFriendFromList(removeMsg.getSender(), removeMsg.getRecipient());
+			    			VMKServerPlayerData.removeFriendFromList(removeMsg.getRecipient(), removeMsg.getSender());
+	
+			    			// update the friends list files to reflect the changes
+			    			FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getSender()), VMKServerPlayerData.getFriendsList(removeMsg.getSender()));
+			    			FileOperations.saveFriendsList(VMKServerPlayerData.getEmailFromUsername(removeMsg.getRecipient()), VMKServerPlayerData.getFriendsList(removeMsg.getRecipient()));
+	
+			    			// send the message to the recipient client
+			    			sendMessageToClient(removeMsg.getRecipient(), removeMsg);
+			    		}
+			    		else if(inputMessage instanceof MessageSendMailToUser)
+			    		{
+			    			// mail message to user message received from client
+			    			MessageSendMailToUser mailMsg = (MessageSendMailToUser)inputMessage;
+	
+			    			// make sure the user is online
+			    			if(VMKServerPlayerData.containsFriendsList(mailMsg.getRecipient()))
+			    			{
+			    				// send the mail message to the recipient client
+			    				sendMessageToClient(mailMsg.getRecipient(), mailMsg);
+			    			}
+	
+			    			// save the message to hard storage
+			    			FileOperations.addMailMessage(VMKServerPlayerData.getEmailFromUsername(mailMsg.getRecipient()), mailMsg.getSender(), mailMsg.getMessage(), mailMsg.getDateSent().toString());
+			    		}
+			    		else if(inputMessage instanceof MessageSaveMailMessages)
+			    		{
+			    			// save mail message received from client
+			    			MessageSaveMailMessages saveMailMsg = (MessageSaveMailMessages)inputMessage;
+	
+			    			// save the messages to hard storage
+			    			FileOperations.saveMailMessages(VMKServerPlayerData.getEmailFromUsername(saveMailMsg.getSender()), saveMailMsg.getMessages());
+			    		}
+			    		else if(inputMessage instanceof MessageUpdateItemInRoom)
+			    		{
+			    			// update item in room message received from client
+			    			MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)inputMessage;
+	
+			    			// send the message to all characters in the given room
+			    			sendMessageToAllClientsInRoom(updateItemMsg, updateItemMsg.getRoomID());
+			    		}
+			    		else if(inputMessage instanceof MessageSaveGuestRoom)
+			    		{
+			    			// save guest room message received from client
+			    			MessageSaveGuestRoom saveRoomMsg = (MessageSaveGuestRoom)inputMessage;
+	
+			    			// save the guest room
+			    			FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(saveRoomMsg.getRoomInfo().get("OWNER")), saveRoomMsg.getRoomInfo(), saveRoomMsg.getRoomItems(), false);
+			    		}
+			    		else if(inputMessage instanceof MessageCreateGuestRoom)
+			    		{
+			    			// create guest room message received from client
+			    			MessageCreateGuestRoom createRoomMsg = (MessageCreateGuestRoom)inputMessage;
+	
+			    			// figure out the room ID
+			    			VMKServerPlayerData.incrementGuestRoomCount();
+			    			createRoomMsg.addRoomInfo("ID", "gr" + VMKServerPlayerData.getGuestRoomCount());
+	
+			    			// create the guest room
+			    			String savedPath = FileOperations.saveGuestRoom(VMKServerPlayerData.getEmailFromUsername(createRoomMsg.getRoomInfo().get("OWNER")), createRoomMsg.getRoomInfo(), new ArrayList<RoomItem>(), true);
+	
+			    			// add the saved room path to the message
+			    			createRoomMsg.addRoomInfo("PATH", savedPath);
+	
+			    			// add the new room to the VMKServerPlayerData class
+			    			VMKRoom room = new VMKRoom(createRoomMsg.getRoomInfo().get("ID"), createRoomMsg.getRoomInfo().get("NAME"), createRoomMsg.getRoomInfo().get("PATH"));
+			    			room.setRoomOwner(createRoomMsg.getRoomInfo().get("OWNER"));
+			    			room.setRoomDescription(createRoomMsg.getRoomInfo().get("DESCRIPTION"));
+			    			room.setRoomTimestamp(Long.parseLong(createRoomMsg.getRoomInfo().get("TIMESTAMP")));
+			    			VMKServerPlayerData.addRoom(createRoomMsg.getRoomInfo().get("ID"), room);
+	
+			    			// pass the message along to the player to affect the listing client-side as well
+			    			sendMessageToClient(createRoomMsg.getRoomInfo().get("OWNER"), createRoomMsg);
+			    		}
+			    		else if(inputMessage instanceof MessageUpdateInventory)
+			    		{
+			    			// update inventory message received from client
+			    			MessageUpdateInventory updateInvMsg = (MessageUpdateInventory)inputMessage;
+	
+			    			// resolve the player's email address
+			    			String email = VMKServerPlayerData.getEmailFromUsername(updateInvMsg.getUsername());
+	
+			    			// update the player's inventory file
+			    			FileOperations.saveInventory(email, updateInvMsg.getInventory());
+			    		}
+			    		else if(inputMessage instanceof MessageAddInventory)
+			    		{
+			    			// add inventory message received from client
+			    			MessageAddInventory addInvMsg = (MessageAddInventory)inputMessage;
+	
+			    			// resolve the player's email address
+			    			String email = VMKServerPlayerData.getEmailFromUsername(addInvMsg.getUsername());
+	
+			    			// update the player's inventory file
+			    			FileOperations.appendInventory(email, addInvMsg.getItem());
+			    		}
+			    		else if(inputMessage instanceof MessageReconnectToServer)
+			    		{
+			    			// reconnect to server message received from client
+			    			MessageReconnectToServer reconnectMsg = (MessageReconnectToServer)inputMessage;
+	
+			    			// update the character in the HashMap so we don't lose information
+			    			roomID = reconnectMsg.getRoomID();
+			    			VMKServerPlayerData.addCharacter(reconnectMsg.getCharacter().getUsername(), reconnectMsg.getCharacter(), reconnectMsg.getRoomID());
+	
+			    			// send the cached messages back to the client since he's re-connected now
+			    			sendCachedMessages();
+			    		}
+			    		else if(inputMessage instanceof MessageGameAddUserToRoom)
+			    		{
+			    			//System.out.println("Game add user to room message received from client");
+	
+			    			// add user to GAME ROOM message received from client
+			    			MessageGameAddUserToRoom addUserGameMsg = (MessageGameAddUserToRoom)inputMessage;
+	
+			    			// check to make sure the character is still logged-in
+			    			if(VMKServerPlayerData.getCharacter(addUserGameMsg.getCharacter().getUsername()) != null)
+			    			{
+			    				// remove the character from the current room he's in
+			    				VMKServerPlayerData.removeCharacter(addUserGameMsg.getCharacter().getUsername(), roomID);
+	
+			    				// send the message to ALL clients in the room he's in
+			    				sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(addUserGameMsg.getCharacter().getUsername(), roomID), roomID);
+	
+			    				// figure out the game room to which the user should be added
+			    				String gameID = addUserGameMsg.getGameID();
+			    				roomID = VMKServerPlayerData.addCharacterToGameRoom(gameID, addUserGameMsg.getCharacter());
+	
+			    				System.out.println("Added user to game room: " + roomID);
+	
+			    				// pass the message back to the client with the new roomID
+			    				addUserGameMsg.setRoomID(roomID);
+			    				sendMessageToClient(addUserGameMsg);
+			    			}
+			    		}
+			    		else if(inputMessage instanceof MessageGameRemoveUserFromRoom)
+			    		{
+			    			// remove user from GAME ROOM message received from client
+			    			MessageGameRemoveUserFromRoom removeUserGameMsg = (MessageGameRemoveUserFromRoom)inputMessage;
+	
+			    			// remove the character from the current room he's in
+			    			VMKServerPlayerData.removeCharacter(removeUserGameMsg.getCharacter().getUsername(), roomID);
+	
+			    			// send the message to ALL clients in the room he's in
+			    			sendMessageToAllClientsInRoom(new MessageRemoveUserFromRoom(removeUserGameMsg.getCharacter().getUsername(), roomID), roomID);
+	
+			    			// check to make sure the character is still logged-in
+			    			if(VMKServerPlayerData.getCharacter(removeUserGameMsg.getCharacter().getUsername()) != null)
+			    			{
+			    				// add him back to the original room he came from before the game
+			    				roomID = removeUserGameMsg.getDestRoomID();
+			    				VMKServerPlayerData.addCharacter(removeUserGameMsg.getUsername(), removeUserGameMsg.getCharacter(), roomID);
+	
+			    				// send an add character message to ALL clients in the specified destination room
+			    				MessageAddUserToRoom addUserMsg = new MessageAddUserToRoom(removeUserGameMsg.getCharacter(), roomID, VMKServerPlayerData.getRoom(roomID).getRoomName());
+			    				sendMessageToAllClientsInRoom(addUserMsg, addUserMsg.getRoomID());
+			    			}
+	
+			    		}
+			    		else if(inputMessage instanceof MessageGameMoveCharacter)
+			    		{
+			    			// move character in GAME ROOM message received from client
+			    			MessageGameMoveCharacter moveUserGameMsg = (MessageGameMoveCharacter)inputMessage;
+			    			
+			    			// send the message to ALL clients in the game room EXCEPT the one that initiated the request
+			    			sendMessageToAllClientsInRoom(moveUserGameMsg, moveUserGameMsg.getGameRoomID(), this.getName());
+			    		}
+			    		else if(inputMessage instanceof MessageGameScore)
+			    		{
+			    			// add game score message received from client
+			    			MessageGameScore gameScoreMsg = (MessageGameScore)inputMessage;
+	
+			    			// pass the message back to all clients in the current game room
+			    			sendMessageToAllClientsInRoom(gameScoreMsg, roomID);
+			    		}
+			    		else if(inputMessage instanceof MessageGamePiratesFireCannons)
+			    		{
+			    			// POTC fire cannons message received from client
+			    			MessageGamePiratesFireCannons fireCannonsMsg = (MessageGamePiratesFireCannons)inputMessage;
+			    			
+			    			// pass the message back to all clients in the current game room EXCEPT the one that initiated the request
+			    			sendMessageToAllClientsInRoom(fireCannonsMsg, fireCannonsMsg.getGameRoomID(), this.getName());
+			    		}
 		    		}
 		    	}
 		    }
@@ -571,6 +574,11 @@ public class VMKServerThread extends Thread
 		    {
 		    	System.out.println("VMKServerThread - Class not found");
 		    	cne.printStackTrace();
+		    }
+		    catch(ClassCastException cce)
+		    {
+		    	System.out.println("VMKServerThread [" + this.getName() + "] - Class Cast Exception (" + cce.getMessage() + ")");
+		    	cce.printStackTrace();
 		    }
 	    	catch(SocketException se)
 	    	{
@@ -744,7 +752,7 @@ public class VMKServerThread extends Thread
     }
     
     // write a message to the output buffer to be sent to the client
-    private synchronized void writeOutputToClient(Message m) throws SocketException, IOException
+    private synchronized void writeOutputToClient(MessageSecure m) throws SocketException, IOException
     {
     	out.writeUnshared(m);
     	out.reset();
@@ -761,7 +769,7 @@ public class VMKServerThread extends Thread
     		for(int i = 0; i < cachedMessages.size(); i++)
     		{
     			// get the next cached message
-    			Message cachedMessage = cachedMessages.remove(0);
+    			MessageSecure cachedMessage = cachedMessages.remove(0);
     			
     			try
     			{
@@ -788,7 +796,7 @@ public class VMKServerThread extends Thread
     }
     
     // add a message to the messages cache for later sending
-    private synchronized void cacheMessage(Message m)
+    private synchronized void cacheMessage(MessageSecure m)
     {
     	// add the message to the cache
     	cachedMessages.add(m);
@@ -797,7 +805,7 @@ public class VMKServerThread extends Thread
     }
     
     // send a message to the client
-    public synchronized void sendMessageToClient(Message m)
+    public synchronized void sendMessageToClient(MessageSecure m)
     {
     	// check to see if we're waiting for the client to re-connect
     	if(!waitingForReconnect)
@@ -852,7 +860,7 @@ public class VMKServerThread extends Thread
     }
     
     // send a message to a specific client
-    public synchronized void sendMessageToClient(String client, Message m)
+    public synchronized void sendMessageToClient(String client, MessageSecure m)
     {
     	for(int i = 0; i < serverThreads.size(); i++)
     	{
@@ -866,7 +874,7 @@ public class VMKServerThread extends Thread
     }
     
     // send a message to ALL clients
-    public synchronized void sendMessageToAllClients(Message m)
+    public synchronized void sendMessageToAllClients(MessageSecure m)
     {
     	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
     	
@@ -878,7 +886,7 @@ public class VMKServerThread extends Thread
     }
     
     // send a message to ALL clients in a given room
-    public synchronized void sendMessageToAllClientsInRoom(Message m, String room)
+    public synchronized void sendMessageToAllClientsInRoom(MessageSecure m, String room)
     {
     	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
     	
@@ -893,7 +901,7 @@ public class VMKServerThread extends Thread
     }
     
  // send a message to ALL clients in a given room EXCEPT a specified user
-    public synchronized void sendMessageToAllClientsInRoom(Message m, String room, String exemptedUser)
+    public synchronized void sendMessageToAllClientsInRoom(MessageSecure m, String room, String exemptedUser)
     {
     	//System.out.println("Sending message (" + m.getType() + ") to ALL clients...");
     	

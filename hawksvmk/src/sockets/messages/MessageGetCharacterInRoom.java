@@ -4,14 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import astar.AStarCharacter;
 
-import sockets.VMKServerThread;
-
-public class MessageGetCharacterInRoom extends Message implements Serializable
+public class MessageGetCharacterInRoom extends MessageSecure
 {
 	private String roomID = "";
 	private AStarCharacter character = new AStarCharacter(); // character to add

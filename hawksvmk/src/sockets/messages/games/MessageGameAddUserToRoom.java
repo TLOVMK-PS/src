@@ -4,15 +4,11 @@
 
 package sockets.messages.games;
 
-import games.GameScore;
-
-import java.io.Serializable;
-
 import astar.AStarCharacter;
 
-import sockets.messages.Message;
+import sockets.messages.MessageSecure;
 
-public class MessageGameAddUserToRoom extends Message implements Serializable
+public class MessageGameAddUserToRoom extends MessageSecure
 {
 	private String roomID = ""; // BLANK STRING until it's passed back to the client from the server
 	private String gameID = "";

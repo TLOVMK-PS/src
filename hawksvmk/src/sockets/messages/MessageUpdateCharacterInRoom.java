@@ -4,11 +4,9 @@
 
 package sockets.messages;
 
-import java.io.Serializable;
-
 import astar.AStarCharacter;
 
-public class MessageUpdateCharacterInRoom extends Message implements Serializable
+public class MessageUpdateCharacterInRoom extends MessageSecure
 {
 	private AStarCharacter character;
 	private String roomID = "";
