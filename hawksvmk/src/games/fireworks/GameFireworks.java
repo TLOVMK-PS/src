@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import util.AppletResourceLoader;
 import util.FileOperations;
+import util.GameConstants;
 
 public class GameFireworks extends InternalGame implements Runnable
 {	
@@ -37,11 +38,11 @@ public class GameFireworks extends InternalGame implements Runnable
 	private Image offscreen = null; // offscreen buffer
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
 	
-	private BufferedImage scene1_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_1.jpg");
-	private BufferedImage scene2_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_2.jpg");
-	private BufferedImage scene3_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_3.jpg");
-	private BufferedImage scene4_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_4.jpg");
-	private BufferedImage scene5_background = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/scene_5.jpg");
+	private BufferedImage scene1_background = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "scene_1.jpg");
+	private BufferedImage scene2_background = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "scene_2.jpg");
+	private BufferedImage scene3_background = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "scene_3.jpg");
+	private BufferedImage scene4_background = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "scene_4.jpg");
+	private BufferedImage scene5_background = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "scene_5.jpg");
 	private BufferedImage backgroundImage = scene1_background;
 	private long fireworkScore = 0;
 	
@@ -60,62 +61,62 @@ public class GameFireworks extends InternalGame implements Runnable
 	private final int LEVEL6_RETICLES = 7; // level 5-3
 	private int reticleNumber = 1; // the number of the currently-displayed reticle
 	private int maxReticles = LEVEL1_RETICLES; // how many reticles are currently available
-	private BufferedImage reticle1 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_1.png");
-	private BufferedImage reticle2 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_2.png");
-	private BufferedImage reticle3 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_3.png");
-	private BufferedImage reticle4 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_4.png");
-	private BufferedImage reticle5 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_5.png");
-	private BufferedImage reticle6 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_6.png");
-	private BufferedImage reticle7 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/reticle_7.png");
+	private BufferedImage reticle1 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_1.png");
+	private BufferedImage reticle2 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_2.png");
+	private BufferedImage reticle3 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_3.png");
+	private BufferedImage reticle4 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_4.png");
+	private BufferedImage reticle5 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_5.png");
+	private BufferedImage reticle6 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_6.png");
+	private BufferedImage reticle7 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "reticle_7.png");
 	private BufferedImage reticleImage = reticle1;
 	private Rectangle reticleBounds = new Rectangle();
 	
-	private BufferedImage fireworkImage1 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_1.png");
-	private BufferedImage fireworkImage2 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_2.png");
-	private BufferedImage fireworkImage3 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_3.png");
-	private BufferedImage fireworkImage4 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_4.png");
-	private BufferedImage fireworkImage5 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_5.png");
-	private BufferedImage fireworkImage6 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_6.png");
-	private BufferedImage fireworkImage7 = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework_7.png");
-	private BufferedImage flawlessStarImage = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/flawless_star.png");
+	private BufferedImage fireworkImage1 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_1.png");
+	private BufferedImage fireworkImage2 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_2.png");
+	private BufferedImage fireworkImage3 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_3.png");
+	private BufferedImage fireworkImage4 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_4.png");
+	private BufferedImage fireworkImage5 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_5.png");
+	private BufferedImage fireworkImage6 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_6.png");
+	private BufferedImage fireworkImage7 = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework_7.png");
+	private BufferedImage flawlessStarImage = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "flawless_star.png");
 	
 	// the actual explosions that are displayed when a firework is burst
 	private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
-	private BufferedImage firework1_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework1_explo.png");
+	private BufferedImage firework1_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework1_explo.png");
 	private BufferedImage firework1_explo[] = new BufferedImage[10]; // array of explosion images
 	
-	private BufferedImage firework2_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework2_explo.png");
+	private BufferedImage firework2_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework2_explo.png");
 	private BufferedImage firework2_explo[] = new BufferedImage[10];
 	
-	private BufferedImage firework3_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework3_explo.png");
+	private BufferedImage firework3_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework3_explo.png");
 	private BufferedImage firework3_explo[] = new BufferedImage[10];
 	
-	private BufferedImage firework4_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework4_explo.png");
+	private BufferedImage firework4_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework4_explo.png");
 	private BufferedImage firework4_explo[] = new BufferedImage[10];
 	
-	private BufferedImage firework5_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework5_explo.png");
+	private BufferedImage firework5_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework5_explo.png");
 	private BufferedImage firework5_explo[] = new BufferedImage[10];
 	
-	private BufferedImage firework6_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework6_explo.png");
+	private BufferedImage firework6_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework6_explo.png");
 	private BufferedImage firework6_explo[] = new BufferedImage[10];
 	
-	private BufferedImage firework7_e = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/firework7_explo.png");
+	private BufferedImage firework7_e = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "firework7_explo.png");
 	private BufferedImage firework7_explo[] = new BufferedImage[10];
 	
-	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level1_reticles.jpg");
-	private BufferedImage level2_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level2_reticles.jpg");
-	private BufferedImage level3_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level3_reticles.jpg");
-	private BufferedImage level4_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level4_reticles.jpg");
-	private BufferedImage level5_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level5_reticles.jpg");
-	private BufferedImage level6_reticles = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/level6_reticles.jpg");
+	private BufferedImage level1_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level1_reticles.jpg");
+	private BufferedImage level2_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level2_reticles.jpg");
+	private BufferedImage level3_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level3_reticles.jpg");
+	private BufferedImage level4_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level4_reticles.jpg");
+	private BufferedImage level5_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level5_reticles.jpg");
+	private BufferedImage level6_reticles = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "level6_reticles.jpg");
 	private BufferedImage reticles_chooser = level1_reticles;
 	
 	// text images to display based upon the player's score when a firework explodes
-	private BufferedImage text_oops = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/text_oops.png");
-	private BufferedImage text_ok = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/text_ok.png");
-	private BufferedImage text_good = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/text_good.png");
-	private BufferedImage text_awesome = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/text_awesome.png");
-	private BufferedImage text_flawless = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/text_flawless.png");
+	private BufferedImage text_oops = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "text_oops.png");
+	private BufferedImage text_ok = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "text_ok.png");
+	private BufferedImage text_good = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "text_good.png");
+	private BufferedImage text_awesome = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "text_awesome.png");
+	private BufferedImage text_flawless = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "text_flawless.png");
 	
 	// starting ranges for a firework's score
 	private final int SCORE_OOPS = 0;
@@ -135,7 +136,7 @@ public class GameFireworks extends InternalGame implements Runnable
 	private HashMap<String,Long> targetScores = new HashMap<String,Long>();
 	private long targetScore = 0;
 	
-	private BufferedImage gameResultsBackground = AppletResourceLoader.getBufferedImageFromJar("img/games/fireworks/game_results.png");
+	private BufferedImage gameResultsBackground = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_FIREWORKS_IMAGES + "game_results.png");
 	
 	public GameFireworks()
 	{

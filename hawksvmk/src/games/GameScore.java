@@ -6,7 +6,7 @@ package games;
 
 import java.io.Serializable;
 
-public class GameScore implements Serializable, Comparable
+public class GameScore implements Serializable, Comparable<GameScore>
 {
 	private String game = "";
 	private String username = "";
@@ -43,10 +43,8 @@ public class GameScore implements Serializable, Comparable
 		this.score = score;
 	}
 	
-	public int compareTo(Object o)
+	public int compareTo(GameScore g2)
 	{
-		GameScore g2 = (GameScore)o;
-		
 		// higher scores appear higher on the list
 		if(score > g2.getScore()) {return -1;}
 		if(score == g2.getScore()) {return 0;}

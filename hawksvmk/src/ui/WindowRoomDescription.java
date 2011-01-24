@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowRoomDescription extends JPanel
 {
@@ -35,8 +36,8 @@ public class WindowRoomDescription extends JPanel
 	private int height = 148;
 	
 	private Rectangle exitButtonRect = new Rectangle(301, 5, 16, 18); // bounds of the "X" button relative to the image
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/room_description_window.png");
-	private ImageIcon windowImageGr = AppletResourceLoader.getImageFromJar("img/ui/room_description_window_gr.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "room_description_window.png");
+	private ImageIcon windowImageGr = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "room_description_window_gr.png");
 	
 	private JLabel roomNameLabel = new JLabel("");
 	private JLabel descriptionLabel = new JLabel("");

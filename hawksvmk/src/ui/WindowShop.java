@@ -31,6 +31,8 @@ import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
 import util.FileOperations;
+import util.GameConstants;
+import util.InventoryInfo;
 import util.InventoryItem;
 import util.StaticAppletData;
 
@@ -46,11 +48,11 @@ public class WindowShop extends JPanel
 	
 	private int width = 559;
 	private int height = 405;
-	private ImageIcon tabRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_rooms.png");
+	private ImageIcon tabRoomsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_rooms.png");
 	private ImageIcon windowImage = tabRoomsImage;
 	
-	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar("img/ui/inventory_square.png");
-	private ImageIcon shopSquareHighlight = AppletResourceLoader.getImageFromJar("img/ui/inventory_square_highlight.png");
+	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_square.png");
+	private ImageIcon shopSquareHighlight = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_square_highlight.png");
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	
 	private WindowShop shopWindow;
@@ -61,7 +63,7 @@ public class WindowShop extends JPanel
 	private JLabel roomCreatedName = new JLabel("");
 	private JLabel roomCreatedOwner = new JLabel("");
 	private JLabel roomCreatedDescription = new JLabel("");
-	private JLabel roomCreatedWindowBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/room_created_window.png"));
+	private JLabel roomCreatedWindowBackground = new JLabel(AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "room_created_window.png"));
 	private Rectangle continueRectangle = new Rectangle(12, 288, 128, 20);
 	private Rectangle enterRoomRectangle = new Rectangle(145, 288, 128, 19);
 	
@@ -78,11 +80,11 @@ public class WindowShop extends JPanel
 	private JLabel roomCostLabel = new JLabel();
 	private JLabel myCreditsLabel = new JLabel();
 	
-	private ImageIcon tabFurnishingsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_furnishings.png");
-	private ImageIcon tabPinsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_pins.png");
-	private ImageIcon tabClothingImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_clothing.png");
-	private ImageIcon tabPostersImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_posters.png");
-	private ImageIcon tabSpecialsImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_specials.png");
+	private ImageIcon tabFurnishingsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_furnishings.png");
+	private ImageIcon tabPinsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_pins.png");
+	private ImageIcon tabClothingImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_clothing.png");
+	private ImageIcon tabPostersImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_posters.png");
+	private ImageIcon tabSpecialsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_specials.png");
 	
 	private Rectangle tabFurnishings = new Rectangle(99, 46, 75, 21);
 	private Rectangle tabPins = new Rectangle(190, 46, 33, 21);
@@ -90,16 +92,16 @@ public class WindowShop extends JPanel
 	private Rectangle tabPosters = new Rectangle(311, 47, 50, 22);
 	private Rectangle tabSpecials = new Rectangle(377, 46, 54, 20);
 	
-	private ImageIcon shopSmallWorldImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_small_world.jpg");
-	private ImageIcon shopEmporiumImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_emporium.jpg");
-	private ImageIcon shopShrunkenNedImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_shrunken_ned.jpg");
-	private ImageIcon shopGoldenHorseshoeImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_golden_horseshoe.jpg");
-	private ImageIcon shopStarTradersImg = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_inner_space.jpg");
-	private ImageIcon shopSmallWorldImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_small_world_lit.jpg");
-	private ImageIcon shopEmporiumImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_emporium_lit.jpg");
-	private ImageIcon shopShrunkenNedImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_shrunken_ned_lit.jpg");
-	private ImageIcon shopGoldenHorseshoeImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_golden_horseshoe_lit.jpg");
-	private ImageIcon shopStarTradersImgLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_category_inner_space_lit.jpg");
+	private ImageIcon shopSmallWorldImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_small_world.jpg");
+	private ImageIcon shopEmporiumImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_emporium.jpg");
+	private ImageIcon shopShrunkenNedImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_shrunken_ned.jpg");
+	private ImageIcon shopGoldenHorseshoeImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_golden_horseshoe.jpg");
+	private ImageIcon shopStarTradersImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_inner_space.jpg");
+	private ImageIcon shopSmallWorldImgLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_small_world_lit.jpg");
+	private ImageIcon shopEmporiumImgLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_emporium_lit.jpg");
+	private ImageIcon shopShrunkenNedImgLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_shrunken_ned_lit.jpg");
+	private ImageIcon shopGoldenHorseshoeImgLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_golden_horseshoe_lit.jpg");
+	private ImageIcon shopStarTradersImgLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_category_inner_space_lit.jpg");
 	
 	private JLabel shopSmallWorld = new JLabel(shopSmallWorldImg);
 	private JLabel shopEmporium = new JLabel(shopEmporiumImg);
@@ -107,25 +109,25 @@ public class WindowShop extends JPanel
 	private JLabel shopGoldenHorseshoe = new JLabel(shopGoldenHorseshoeImg);
 	private JLabel shopStarTraders = new JLabel(shopStarTradersImg);
 	
-	private ImageIcon shopCardImage = AppletResourceLoader.getImageFromJar("img/furniture/card_template.png");
+	private ImageIcon shopCardImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_FURNITURE_IMAGES + "card_template.png");
 	private JLabel shopCardLabel = new JLabel(shopCardImage);
 	
 	private JLabel shopSquareHighlightLabel = new JLabel(shopSquareHighlight);
 	private JPanel shopItemsPanel = new JPanel();
 	private JScrollPane shopItemsScrollPane;
 	
-	private ImageIcon shopAdventurelandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_adventureland_items.jpg");
-	private ImageIcon shopFantasylandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_fantasyland_items.jpg");
-	private ImageIcon shopFrontierlandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_frontierland_items.jpg");
-	private ImageIcon shopMainStreetItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_main_street_items.jpg");
-	private ImageIcon shopTomorrowlandItems = AppletResourceLoader.getImageFromJar("img/ui/shopping_tomorrowland_items.jpg");
+	private ImageIcon shopAdventurelandItems = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_adventureland_items.jpg");
+	private ImageIcon shopFantasylandItems = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_fantasyland_items.jpg");
+	private ImageIcon shopFrontierlandItems = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_frontierland_items.jpg");
+	private ImageIcon shopMainStreetItems = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_main_street_items.jpg");
+	private ImageIcon shopTomorrowlandItems = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_tomorrowland_items.jpg");
 	private JLabel shopItemsLand = new JLabel(shopMainStreetItems);
 	
 	private JLabel shopItemName = new JLabel();
 	private JLabel shopItemPrice = new JLabel();
 	
-	private ImageIcon shopItemBuyImage = AppletResourceLoader.getImageFromJar("img/ui/shopping_buy_button_off.png");
-	private ImageIcon shopItemBuyImageLit = AppletResourceLoader.getImageFromJar("img/ui/shopping_buy_button_on.png");
+	private ImageIcon shopItemBuyImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_buy_button_off.png");
+	private ImageIcon shopItemBuyImageLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "shopping_buy_button_on.png");
 	
 	private JLabel shopItemBuyBtn = new JLabel(shopItemBuyImage);
 	
@@ -906,7 +908,7 @@ public class WindowShop extends JPanel
 		}
 		
 		// display the preview image
-		roomPreviewLabel.setIcon(AppletResourceLoader.getImageFromJar("img/rooms/" + roomTemplates.get(selectedRoomPreview) + "/" + roomTemplates.get(selectedRoomPreview) + "_small.jpg"));
+		roomPreviewLabel.setIcon(AppletResourceLoader.getImageFromJar(GameConstants.PATH_ROOMS_IMAGES + roomTemplates.get(selectedRoomPreview) + "/" + roomTemplates.get(selectedRoomPreview) + "_small.jpg"));
 		
 		// set the name and description labels for the room
 		roomNameLabel.setText("<html><center>" + StaticAppletData.getRoomMapping("template_" + roomTemplates.get(selectedRoomPreview)).getRoomName() + "</center></html>");
@@ -986,6 +988,7 @@ class ShopItemSquare extends JLabel
 	private ImageIcon iconImage = null;
 	private String itemID = "";
 	private int itemType = 0;
+	private InventoryInfo invInfo = null;
 	
 	public ShopItemSquare()
 	{
@@ -1002,13 +1005,14 @@ class ShopItemSquare extends JLabel
 		this.itemType = itemType;
 		
 		// get the pin information
-		if(!StaticAppletData.getInvInfo(itemID).getID().equals(""))
+		invInfo = StaticAppletData.getInvInfo(itemID);
+		if(!invInfo.getID().equals(""))
 		{
-			this.itemName = StaticAppletData.getInvInfo(itemID).getName();
-			this.itemPrice = StaticAppletData.getInvInfo(itemID).getPrice();
-			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getPath());
-			this.cardImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getCardPath());
-			this.iconImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(itemID).getIconPath());
+			this.itemName = invInfo.getName();
+			this.itemPrice = invInfo.getPrice();
+			this.image = AppletResourceLoader.getImageFromJar(invInfo.getPath());
+			this.cardImage = AppletResourceLoader.getImageFromJar(invInfo.getCardPath());
+			this.iconImage = AppletResourceLoader.getImageFromJar(invInfo.getIconPath());
 		}
 	}
 	

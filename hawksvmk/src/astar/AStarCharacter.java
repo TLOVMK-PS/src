@@ -7,18 +7,15 @@ package astar;
 import interfaces.ContentRateable;
 import interfaces.GridSortable;
 
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.ImageIcon;
-
 import tiles.Tile;
 import util.AppletResourceLoader;
+import util.GameConstants;
 import util.InventoryInfo;
 import util.RatingSystem;
 import util.StaticAppletData;
@@ -47,14 +44,14 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	// TODO: Change these objects to use the current avatar's own images instead of the template images
 	// avatar images for the eight directions
-	private AStarCharacterImage avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_n_64.png"));
-	private AStarCharacterImage avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_nw_64.png"));
-	private AStarCharacterImage avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_w_64.png"));
-	private AStarCharacterImage avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_sw_64.png"));
-	private AStarCharacterImage avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_s_64.png"));
-	private AStarCharacterImage avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_se_64.png"));
-	private AStarCharacterImage avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_e_64.png"));
-	private AStarCharacterImage avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/male/male_avatar_ne_64.png"));
+	private AStarCharacterImage avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_n_64.png"));
+	private AStarCharacterImage avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_nw_64.png"));
+	private AStarCharacterImage avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_w_64.png"));
+	private AStarCharacterImage avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_sw_64.png"));
+	private AStarCharacterImage avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_s_64.png"));
+	private AStarCharacterImage avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_se_64.png"));
+	private AStarCharacterImage avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_e_64.png"));
+	private AStarCharacterImage avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_ne_64.png"));
 	
 	private AStarCharacterImage characterImage = avatarSouthEast;
 	private String currentDirection = "se"; // the direction the avatar is currently facing
@@ -393,16 +390,16 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 		// check to see if the email exists and assign the default address if it doesn't
 		if(email.equals("")) {email = "default";}
 		
-		avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_n_" + tileWidth + ".png"));
-		avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_nw_" + tileWidth + ".png"));
-		avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_w_" + tileWidth + ".png"));
-		avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_sw_" + tileWidth + ".png"));
-		avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_s_" + tileWidth + ".png"));
-		avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_se_" + tileWidth + ".png"));
-		avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_e_" + tileWidth + ".png"));
-		avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_ne_" + tileWidth + ".png"));
+		avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_n_" + tileWidth + ".png"));
+		avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_nw_" + tileWidth + ".png"));
+		avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_w_" + tileWidth + ".png"));
+		avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_sw_" + tileWidth + ".png"));
+		avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_s_" + tileWidth + ".png"));
+		avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_se_" + tileWidth + ".png"));
+		avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_e_" + tileWidth + ".png"));
+		avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_ne_" + tileWidth + ".png"));
 		
 		// figure out what the current avatar image should be
-		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/avatars/" + email + "/avatar_" + currentDirection + "_" + tileWidth + ".png"));
+		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_" + currentDirection + "_" + tileWidth + ".png"));
 	}
 }

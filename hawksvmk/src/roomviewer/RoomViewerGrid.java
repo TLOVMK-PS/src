@@ -79,6 +79,7 @@ import util.AppletResourceLoader;
 import util.Dictionary;
 import util.FileOperations;
 import util.FriendsList;
+import util.GameConstants;
 import util.InventoryInfo;
 import util.InventoryItem;
 import util.MailMessage;
@@ -90,7 +91,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	private Thread gridThread;
 	private int graphicsDelay = 20; // milliseconds between each frame
 	
-	final String LOADING_BACKGROUND_PATH = "img/ui/loading_room_vmk.png";
+	final String LOADING_BACKGROUND_PATH = GameConstants.PATH_UI_IMAGES + "loading_room_vmk.png";
 	String backgroundImagePath = LOADING_BACKGROUND_PATH;
 	
 	//String backgroundImagePath = "tiles_img/test_room_image.png";
@@ -102,9 +103,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	
 	Tile currentTile = new Tile(0,0,Tile.TILE_WALK, ""); // currently selected tile type
 	
-	ImageIcon reticleExit = AppletResourceLoader.getImageFromJar("tiles_img/exit_reticle_64.png"); // "walk" reticle
-	ImageIcon reticleNogo = AppletResourceLoader.getImageFromJar("tiles_img/nogo_reticle_64.png"); // "nogo" reticle
-	ImageIcon reticleWalk = AppletResourceLoader.getImageFromJar("tiles_img/walk_reticle_64.png"); // "exit" reticle
+	ImageIcon reticleExit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "exit_reticle_64.png"); // "walk" reticle
+	ImageIcon reticleNogo = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "nogo_reticle_64.png"); // "nogo" reticle
+	ImageIcon reticleWalk = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "walk_reticle_64.png"); // "exit" reticle
 	
 	ImageIcon reticleTile = reticleWalk; // currently displayed reticle
 	
@@ -1144,7 +1145,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void playIntroMusic()
 	{
 		// play the intro music for the Map screen
-		hvmkIntroMusic = (RepeatingSound)FileOperations.loadSound("sounds/hvmk_intro_music.sound");
+		hvmkIntroMusic = (RepeatingSound)FileOperations.loadSound(GameConstants.PATH_SOUNDS + "hvmk_intro_music.sound");
 		sounds.add(hvmkIntroMusic);
 		sounds.get(0).playSound();
 	}
@@ -1597,9 +1598,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		tileHeight = height;
 		
 		// set the paths and image icons
-		reticleExit = AppletResourceLoader.getImageFromJar("tiles_img/exit_reticle_" + width + ".png"); // "walk" reticle
-		reticleNogo = AppletResourceLoader.getImageFromJar("tiles_img/nogo_reticle_" + width + ".png"); // "nogo" reticle
-		reticleWalk = AppletResourceLoader.getImageFromJar("tiles_img/walk_reticle_" + width + ".png"); // "exit" reticle
+		reticleExit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "exit_reticle_" + width + ".png"); // "walk" reticle
+		reticleNogo = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "nogo_reticle_" + width + ".png"); // "nogo" reticle
+		reticleWalk = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "walk_reticle_" + width + ".png"); // "exit" reticle
 		
 		// initialize the tiles
 		initTilesMap();

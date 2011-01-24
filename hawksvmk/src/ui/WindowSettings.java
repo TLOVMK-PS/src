@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowSettings extends JPanel implements ActionListener
 {
@@ -40,8 +41,8 @@ public class WindowSettings extends JPanel implements ActionListener
 	private int width = 334;
 	private int height = 434;
 	
-	private ImageIcon settingsImage = AppletResourceLoader.getImageFromJar("img/ui/settings.png");
-	private ImageIcon ratingImage = AppletResourceLoader.getImageFromJar("img/ui/rating.png");
+	private ImageIcon settingsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "settings.png");
+	private ImageIcon ratingImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "rating.png");
 	private ImageIcon windowImage = settingsImage;
 	
 	private JLabel backgroundLabel = new JLabel(windowImage);

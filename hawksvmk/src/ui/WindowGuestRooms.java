@@ -32,6 +32,7 @@ import roomviewer.RoomViewerGrid;
 
 import ui.WindowInventory.MyScrollBarUI;
 import util.AppletResourceLoader;
+import util.GameConstants;
 import util.StaticAppletData;
 
 public class WindowGuestRooms extends JPanel
@@ -46,10 +47,10 @@ public class WindowGuestRooms extends JPanel
 	
 	private int width = 470;
 	private int height = 486;
-	private ImageIcon ownRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_own.png");
-	private ImageIcon friendsRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_friends.png");
-	private ImageIcon popularRoomsImage = AppletResourceLoader.getImageFromJar("img/ui/guest_rooms_popular.png");
-	private ImageIcon enterRoomLitImage = AppletResourceLoader.getImageFromJar("img/ui/enter_room_lit.png");
+	private ImageIcon ownRoomsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "guest_rooms_own.png");
+	private ImageIcon friendsRoomsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "guest_rooms_friends.png");
+	private ImageIcon popularRoomsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "guest_rooms_popular.png");
+	private ImageIcon enterRoomLitImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "enter_room_lit.png");
 	
 	private JLabel backgroundLabel = new JLabel(popularRoomsImage);
 	
@@ -364,8 +365,8 @@ public class WindowGuestRooms extends JPanel
 // inner class to represent a Guest Room listing within the window
 class GuestRoomLabel extends JLabel
 {
-	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar("img/ui/guest_room_listing_background.png");
-	ImageIcon backgroundImageLit = AppletResourceLoader.getImageFromJar("img/ui/guest_room_listing_background_lit.png");
+	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "guest_room_listing_background.png");
+	ImageIcon backgroundImageLit = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "guest_room_listing_background_lit.png");
 	
 	JLabel guestRoomText;
 	String roomID = "";

@@ -6,7 +6,7 @@ package util;
 
 import java.io.Serializable;
 
-public class InventoryItem implements Serializable, Comparable
+public class InventoryItem implements Serializable, Comparable<InventoryItem>
 {
 	// constants for types of inventory
 	public static final int FURNITURE = 0;
@@ -50,9 +50,8 @@ public class InventoryItem implements Serializable, Comparable
 	}
 	
 	// compare inventory items by name
-	public int compareTo(Object o)
+	public int compareTo(InventoryItem otherItem)
 	{
-		InventoryItem otherItem = (InventoryItem)o;
 		return name.compareTo(otherItem.getName());
 	}
 }

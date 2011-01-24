@@ -70,6 +70,7 @@ import util.Dictionary;
 import util.FileOperations;
 import util.AppletResourceLoader;
 import util.FriendsList;
+import util.GameConstants;
 import util.InventoryItem;
 import util.MailMessage;
 import util.StaticAppletData;
@@ -83,7 +84,7 @@ public class RoomViewerUI extends Applet
 	
 	private String email = "";
 
-	private String filename = "rooms/templates/gr4.room";
+	private String filename = GameConstants.PATH_ROOMS_TEMPLATES + "gr4.room";
 	private String username = "VMK Player"; // username of the avatar
 	
 	private JTextField chatTextBox;
@@ -234,10 +235,10 @@ public class RoomViewerUI extends Applet
 	// load the Login UI
 	public void loadLoginUI()
 	{
-		String logoImagePath = "img/ui/hawkstersvmk_100px.png";
-		String emailImagePath = "img/ui/email.png";
-		String passwordImagePath = "img/ui/password.png";
-		String loginImagePath = "img/ui/login.png";
+		String logoImagePath = GameConstants.PATH_UI_IMAGES + "hawkstersvmk_100px.png";
+		String emailImagePath = GameConstants.PATH_UI_IMAGES + "email.png";
+		String passwordImagePath = GameConstants.PATH_UI_IMAGES + "password.png";
+		String loginImagePath = GameConstants.PATH_UI_IMAGES + "login.png";
 		
 		final LoginModule loginModule = new LoginModule();
 		
@@ -357,7 +358,7 @@ public class RoomViewerUI extends Applet
 		// set up the text fonts
 		try
 		{
-			textFont = Font.createFont(Font.TRUETYPE_FONT, AppletResourceLoader.getFileFromJar("fonts/FOXLEY8_.ttf"));
+			textFont = Font.createFont(Font.TRUETYPE_FONT, AppletResourceLoader.getFileFromJar(GameConstants.PATH_FONTS + "FOXLEY8_.ttf"));
 			textFont = textFont.deriveFont(16.0f);
 			textFontBold = textFont.deriveFont(Font.BOLD, 16.0f);
 		}
@@ -885,7 +886,7 @@ public class RoomViewerUI extends Applet
 			add(loadingWindow);
 
 			// set up the "Loading" window background
-			loadingBackground = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/loading_room_vmk.png"));
+			loadingBackground = new JLabel(AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "loading_room_vmk.png"));
 			loadingBackground.setBounds(0,0,800,600);
 			loadingBackground.setVisible(true);
 			add(loadingBackground);
@@ -1023,13 +1024,13 @@ public class RoomViewerUI extends Applet
 			add(toolbar_right);
 
 			// add the "New Mail" animation
-			messagesAnimationLabel = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/mail_anim.gif"));
+			messagesAnimationLabel = new JLabel(AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "mail_anim.gif"));
 			messagesAnimationLabel.setBounds(100, 574, 32, 23);
 			messagesAnimationLabel.setVisible(false);
 			add(messagesAnimationLabel);
 
 			// Toolbar image
-			toolbar = new JLabel(AppletResourceLoader.getImageFromJar("img/ui/toolbar.png"));
+			toolbar = new JLabel(AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "toolbar.png"));
 			toolbar.setBounds(new Rectangle(0, 572, 800, 28));
 			add(toolbar);
 

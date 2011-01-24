@@ -21,6 +21,7 @@ import java.util.HashMap;
 import tiles.Tile;
 import util.AppletResourceLoader;
 import util.FileOperations;
+import util.GameConstants;
 
 public class GamePirates extends InternalGame implements Runnable
 {	
@@ -46,7 +47,7 @@ public class GamePirates extends InternalGame implements Runnable
 	
 	// ArrayList of cannonballs that have been fired
 	private ArrayList<Cannonball> cannonballs = new ArrayList<Cannonball>();
-	private BufferedImage cannonballImage = AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/cannonball.png");
+	private BufferedImage cannonballImage = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "cannonball.png");
 	private int keysLeft = 0;
 	private int keysRight = 0;
 	
@@ -70,7 +71,7 @@ public class GamePirates extends InternalGame implements Runnable
 	private Graphics bufferGraphics = null; // graphics object for the offscreen buffer
 	
 	// images used by the Pirates game
-	private BufferedImage move_reticle = AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/move_reticle.png");
+	private BufferedImage move_reticle = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "move_reticle.png");
 	private HashMap<String,BufferedImage> backgroundImages = new HashMap<String,BufferedImage>();
 	private BufferedImage backgroundImage = null;
 	
@@ -80,11 +81,11 @@ public class GamePirates extends InternalGame implements Runnable
 		super("pirates", "Pirates of the Caribbean", 3, 3);
 		
 		// set the background images
-		backgroundImages.put("1_1", AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/levels/level_1_1.jpg"));
+		backgroundImages.put("1_1", AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_LEVELS_IMAGES + "level_1_1.jpg"));
 		
 		// create the explosion images
-		createExplosionImages(cannonFireImages, cannonSmokeImages, "img/games/pirates/explosions/cannon/");
-		createExplosionImages(shipHitFireImages, shipHitSmokeImages, "img/games/pirates/explosions/cannon/");
+		createExplosionImages(cannonFireImages, cannonSmokeImages, GameConstants.PATH_GAMES_PIRATES_EXPLOSIONS_CANNON_IMAGES);
+		createExplosionImages(shipHitFireImages, shipHitSmokeImages, GameConstants.PATH_GAMES_PIRATES_EXPLOSIONS_CANNON_IMAGES);
 		
 		// create the levels
 		levelsMap.put("1_1",FileOperations.loadPiratesLevelTiles(1,1));
@@ -149,7 +150,7 @@ public class GamePirates extends InternalGame implements Runnable
 					// check to see if the arrow has been pressed twice
 					if(keysLeft >= 2)
 					{
-						// FIRE EVERYTHING
+						// FIRE FUCKING EVERYTHING
 						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "left").start();
 						fireCannons(getUIObject().getUsername(), "left");
 					}
@@ -163,7 +164,7 @@ public class GamePirates extends InternalGame implements Runnable
 					// check to see if the arrow has been pressed twice
 					if(keysRight >= 2)
 					{
-						// FIRE EVERYTHING
+						// FIRE FUCKING EVERYTHING
 						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "right").start();
 						fireCannons(getUIObject().getUsername(), "right");
 					}

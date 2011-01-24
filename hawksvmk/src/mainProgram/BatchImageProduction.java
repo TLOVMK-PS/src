@@ -4,6 +4,7 @@
 
 package mainProgram;
 
+import util.GameConstants;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -17,7 +18,8 @@ public class BatchImageProduction
 {
 	String directory = ""; // concatenated directory String from multiple sources
 	int startingSize = 64; // size of the source image to pull from
-	String directions[] = {"n","ne","e","se","s","sw","w","nw"}; // the image rotations to create
+	String directions[] = GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY; // the image rotations to create
+	String animations[] = GameConstants.CONST_CHARACTER_ANIMS_ARRAY; // the image animations to create at the specified rotations
 	String sizes[] = {"48","32"}; // the TILE WIDTH sizes of the new images to create
 	
 	// start accepting input and producing the images
@@ -66,62 +68,65 @@ public class BatchImageProduction
 		// iterate through the specified directions for the image
 		for(String direction : directions)
 		{
-			try
+			for(String animation : animations)
 			{
-				// read the image from the disk into the sourceImageFile object
-				sourceImageFile = collectionName + "_" + direction + "_" + startingSize + ".png";
-				source = ImageIO.read(new File(initialDirectory + sourceImageFile));
-			}
-			catch(Exception e) {e.printStackTrace();}
-
-			// iterate through the specified sizes for the image
-			for(String size : sizes)
-			{
-				System.out.println("Source: " + sourceImageFile);
-				
-				// figure out what the new height needs to be given the TILE WIDTH for the image
-				if(Integer.parseInt(size) == 48)
-				{
-					height = 87;
-				}
-				else if(Integer.parseInt(size) == 32)
-				{
-					height = 58;
-				}
-				
-				// calculate the proportion of the new height to the original height
-				proportion = (double)(height) / source.getHeight();
-				
-				// apply the calculated proportion to figure out the width of the produced image
-				width = (int)(source.getWidth() * proportion);
-				
-				// print out some image debugging info
-				System.out.println("Source size: " + source.getWidth() + "x" + source.getHeight());
-				System.out.println("Proportion: " + proportion);
-				System.out.println("Produced size: " + width + "x" + height);
-
-				// create a new BufferedImage of the new width and height with alpha support
-				BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-				// create a Graphics instance, a scaling/rendering hint set, and then scale the original image onto
-				// the newly-created scaledImage BufferedImage object
-				Graphics2D graphics2D = scaledImage.createGraphics();
-				graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-				graphics2D.drawImage(source, 0, 0, width, height, null);
-				
 				try
-				{	
-					// write the produced image to the disk in the same original working directory
-					ImageIO.write(scaledImage, "png", new File(initialDirectory + collectionName + "_" + direction + "_" + size + ".png"));
-					
-					// print out some debugging info
-					System.out.println("Produced " + collectionName + "_" + direction + "_" + size + ".png");
-					System.out.println();
+				{
+					// read the image from the disk into the sourceImageFile object
+					sourceImageFile = collectionName + "_" + direction + animation + startingSize + ".png";
+					source = ImageIO.read(new File(initialDirectory + sourceImageFile));
 				}
 				catch(Exception e) {e.printStackTrace();}
-				
-				// destroy the Graphics2D object
-				graphics2D.dispose();
+	
+				// iterate through the specified sizes for the image
+				for(String size : sizes)
+				{
+					System.out.println("Source: " + sourceImageFile);
+					
+					// figure out what the new height needs to be given the TILE WIDTH for the image
+					if(Integer.parseInt(size) == 48)
+					{
+						height = 87;
+					}
+					else if(Integer.parseInt(size) == 32)
+					{
+						height = 58;
+					}
+					
+					// calculate the proportion of the new height to the original height
+					proportion = (double)(height) / source.getHeight();
+					
+					// apply the calculated proportion to figure out the width of the produced image
+					width = (int)(source.getWidth() * proportion);
+					
+					// print out some image debugging info
+					System.out.println("Source size: " + source.getWidth() + "x" + source.getHeight());
+					System.out.println("Proportion: " + proportion);
+					System.out.println("Produced size: " + width + "x" + height);
+	
+					// create a new BufferedImage of the new width and height with alpha support
+					BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	
+					// create a Graphics instance, a scaling/rendering hint set, and then scale the original image onto
+					// the newly-created scaledImage BufferedImage object
+					Graphics2D graphics2D = scaledImage.createGraphics();
+					graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+					graphics2D.drawImage(source, 0, 0, width, height, null);
+					
+					try
+					{	
+						// write the produced image to the disk in the same original working directory
+						ImageIO.write(scaledImage, "png", new File(initialDirectory + collectionName + "_" + direction + animation + size + ".png"));
+						
+						// print out some debugging info
+						System.out.println("Produced " + collectionName + "_" + direction + animation + size + ".png");
+						System.out.println();
+					}
+					catch(Exception e) {e.printStackTrace();}
+					
+					// destroy the Graphics2D object
+					graphics2D.dispose();
+				}
 			}
 		}
 		

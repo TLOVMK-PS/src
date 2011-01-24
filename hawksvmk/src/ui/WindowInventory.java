@@ -32,6 +32,7 @@ import roomobject.RoomPoster;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 import util.InventoryInfo;
 import util.InventoryItem;
 import util.RatingSystem;
@@ -49,21 +50,21 @@ public class WindowInventory extends JPanel
 	
 	private int width = 439;
 	private int height = 397;
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/inventory.png");
-	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar("img/ui/inventory_square.png");
-	private ImageIcon inventorySquareHighlight = AppletResourceLoader.getImageFromJar("img/ui/inventory_square_highlight.png");
-	private ImageIcon inventoryCardImage = AppletResourceLoader.getImageFromJar("img/furniture/card_template.png");
-	private ImageIcon wearImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_wear_off.png");
-	private ImageIcon wearImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_wear_on.png");
-	private ImageIcon takeOffImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_off.png");
-	private ImageIcon takeOffImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_take_off_on.png");
-	private ImageIcon sellImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_off.png");
-	private ImageIcon sellImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_sell_on.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory.png");
+	private ImageIcon inventorySquare = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_square.png");
+	private ImageIcon inventorySquareHighlight = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_square_highlight.png");
+	private ImageIcon inventoryCardImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_FURNITURE_IMAGES + "card_template.png");
+	private ImageIcon wearImageOff = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_wear_off.png");
+	private ImageIcon wearImageOn = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_wear_on.png");
+	private ImageIcon takeOffImageOff = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_take_off_off.png");
+	private ImageIcon takeOffImageOn = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_take_off_on.png");
+	private ImageIcon sellImageOff = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_sell_off.png");
+	private ImageIcon sellImageOn = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_sell_on.png");
 	
-	private ImageIcon placeFurnitureImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_off.png");
-	private ImageIcon placeFurnitureImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_place_on.png");
-	private ImageIcon sellFurnitureImageOff = AppletResourceLoader.getImageFromJar("img/ui/inventory_furni_sell_off.png");
-	private ImageIcon sellFurnitureImageOn = AppletResourceLoader.getImageFromJar("img/ui/inventory_furni_sell_on.png");
+	private ImageIcon placeFurnitureImageOff = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_place_off.png");
+	private ImageIcon placeFurnitureImageOn = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_place_on.png");
+	private ImageIcon sellFurnitureImageOff = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_furni_sell_off.png");
+	private ImageIcon sellFurnitureImageOn = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "inventory_furni_sell_on.png");
 	
 	// structure to hold a player's inventory items
 	private ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
@@ -95,7 +96,7 @@ public class WindowInventory extends JPanel
 	private int furniPanelHeight = 0;
 	private JPanel inventoryFurniturePanel = new JPanel();
 	private JScrollPane inventoryFurnitureScrollPane;
-	private ImageIcon furnitureWindowImage = AppletResourceLoader.getImageFromJar("img/ui/furniture.png");
+	private ImageIcon furnitureWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "furniture.png");
 	private JLabel furnitureSquareHighlightLabel = new JLabel(inventorySquareHighlight);
 	private JLabel placeFurnitureButton = new JLabel(placeFurnitureImageOff);
 	private JLabel sellFurnitureButton = new JLabel(sellFurnitureImageOff);
@@ -103,13 +104,13 @@ public class WindowInventory extends JPanel
 	private int posterPanelHeight = 0;
 	private JPanel inventoryPostersPanel = new JPanel();
 	private JScrollPane inventoryPostersScrollPane;
-	private ImageIcon postersWindowImage = AppletResourceLoader.getImageFromJar("img/ui/posters.png");
+	private ImageIcon postersWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "posters.png");
 	private JLabel postersSquareHighlightLabel = new JLabel(inventorySquareHighlight);
 	
 	private int clothingPanelHeight = 0;
 	private JPanel inventoryClothingPanel = new JPanel();
 	private JScrollPane inventoryClothingScrollPane;
-	private ImageIcon clothingWindowImage = AppletResourceLoader.getImageFromJar("img/ui/clothing.png");
+	private ImageIcon clothingWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "clothing.png");
 	private JLabel clothingSquareHighlightLabel = new JLabel(inventorySquareHighlight);
 	
 	private final int INVENTORY_PANEL_WIDTH = 262;
@@ -125,7 +126,7 @@ public class WindowInventory extends JPanel
 	private int originalPinIndices[] = new int[MAX_WORN_PINS];
 	
 	private JLabel creditsLabel = new JLabel("");
-	private ImageIcon creditsWindowImage = AppletResourceLoader.getImageFromJar("img/ui/credits.png");
+	private ImageIcon creditsWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "credits.png");
 	
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	
@@ -1256,6 +1257,7 @@ class InventoryPinSquare extends JLabel
 	private ImageIcon cardImage = null;
 	private ImageIcon iconImage = null;
 	private String pinID = "";
+	private InventoryInfo invInfo = null;
 	
 	public InventoryPinSquare()
 	{
@@ -1271,13 +1273,14 @@ class InventoryPinSquare extends JLabel
 		this.pinID = pinID;
 		
 		// get the pin information
-		if(!StaticAppletData.getInvInfo(pinID).getID().equals(""))
+		invInfo = StaticAppletData.getInvInfo(pinID);
+		if(!invInfo.getID().equals(""))
 		{
-			this.pinName = StaticAppletData.getInvInfo(pinID).getName();
-			this.price = StaticAppletData.getInvInfo(pinID).getPrice();
-			this.image = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getPath());
-			this.cardImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getCardPath());
-			this.iconImage = AppletResourceLoader.getImageFromJar(StaticAppletData.getInvInfo(pinID).getIconPath());
+			this.pinName = invInfo.getName();
+			this.price = invInfo.getPrice();
+			this.image = AppletResourceLoader.getImageFromJar(invInfo.getPath());
+			this.cardImage = AppletResourceLoader.getImageFromJar(invInfo.getCardPath());
+			this.iconImage = AppletResourceLoader.getImageFromJar(invInfo.getIconPath());
 		}
 	}
 	

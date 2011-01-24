@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowHelp extends JPanel
 {
@@ -33,7 +34,7 @@ public class WindowHelp extends JPanel
 	
 	private int width = 353;
 	private int height = 497;
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/help_inactive.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "help_inactive.png");
 	
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	

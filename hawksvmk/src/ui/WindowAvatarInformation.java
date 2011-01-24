@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 import util.InventoryInfo;
 import util.RatingSystem;
 import util.StaticAppletData;
@@ -38,8 +39,8 @@ public class WindowAvatarInformation extends JPanel
 	
 	private int width = 185;
 	private int height = 268;
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/avatar_info_window.png");
-	private ImageIcon windowImageInactive = AppletResourceLoader.getImageFromJar("img/ui/avatar_info_window_inactive.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "avatar_info_window.png");
+	private ImageIcon windowImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "avatar_info_window_inactive.png");
 	
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	private JLabel usernameLabel = new JLabel("");
@@ -60,16 +61,16 @@ public class WindowAvatarInformation extends JPanel
 	private Rectangle ignoreRectangle = new Rectangle(19, 245, 67, 14);
 	private Rectangle bootRectangle = new Rectangle(97, 246, 65, 13);
 	
-	private ImageIcon askFriendImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ask_active.png");
-	private ImageIcon askFriendImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ask_inactive.png");
-	private ImageIcon tradeImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_trade_active.png");
-	private ImageIcon tradeImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_trade_inactive.png");
-	private ImageIcon reportImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_report_active.png");
-	private ImageIcon reportImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_report_inactive.png");
-	private ImageIcon ignoreImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ignore_active.png");
-	private ImageIcon ignoreImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_ignore_inactive.png");
-	private ImageIcon bootImageActive = AppletResourceLoader.getImageFromJar("img/ui/av_info_boot_active.png");
-	private ImageIcon bootImageInactive = AppletResourceLoader.getImageFromJar("img/ui/av_info_boot_inactive.png");
+	private ImageIcon askFriendImageActive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_ask_active.png");
+	private ImageIcon askFriendImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_ask_inactive.png");
+	private ImageIcon tradeImageActive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_trade_active.png");
+	private ImageIcon tradeImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_trade_inactive.png");
+	private ImageIcon reportImageActive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_report_active.png");
+	private ImageIcon reportImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_report_inactive.png");
+	private ImageIcon ignoreImageActive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_ignore_active.png");
+	private ImageIcon ignoreImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_ignore_inactive.png");
+	private ImageIcon bootImageActive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_boot_active.png");
+	private ImageIcon bootImageInactive = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "av_info_boot_inactive.png");
 	
 	private JLabel askFriendLabel = new JLabel(askFriendImageActive);
 	private JLabel tradeLabel = new JLabel(tradeImageActive);

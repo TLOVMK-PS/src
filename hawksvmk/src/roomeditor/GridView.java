@@ -29,24 +29,26 @@ import roomobject.RoomItem;
 import sounds.SoundPlayable;
 import tiles.Tile;
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class GridView extends JLabel implements GridViewable
 {
 	private int graphicsDelay = 20; // milliseconds between each frame
 	
-	String backgroundImagePath = "tiles_img/test_room_image.png";
+	String backgroundImagePath = GameConstants.PATH_TILE_IMAGES + "test_room_image.png";
 	ImageIcon backgroundImage = AppletResourceLoader.getImageFromJar(backgroundImagePath);
 	
-	String nogoTileImagePath = "tiles_img/tile_nogo_64.png";
-	String walkTileImagePath = "tiles_img/tile_walk_64.png";
-	String exitTileImagePath = "tiles_img/tile_exit_64.png";
+	String nogoTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_nogo_64.png";
+	String walkTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_walk_64.png";
+	String exitTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_exit_64.png";
+	
 	ImageIcon nogoTileImage = AppletResourceLoader.getImageFromJar(nogoTileImagePath);
 	ImageIcon walkTileImage = AppletResourceLoader.getImageFromJar(walkTileImagePath);
 	ImageIcon exitTileImage = AppletResourceLoader.getImageFromJar(exitTileImagePath);
 	
 	Tile currentTile = new Tile(0,0,Tile.TILE_WALK, ""); // currently selected tile type
 	
-	ImageIcon reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector_64.png");
+	ImageIcon reticleTile = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "tile_selector_64.png");
 	//ImageIcon reticleTile = new ImageIcon("img/furniture/beta/furni_0/furni_0_A.png");
 	
 	int tileWidth = 64;
@@ -457,15 +459,15 @@ public class GridView extends JLabel implements GridViewable
 		tileHeight = height;
 		
 		// set the paths and image icons
-		nogoTileImagePath = "tiles_img/tile_nogo_" + width + ".png";
-		walkTileImagePath = "tiles_img/tile_walk_" + width + ".png";
-		exitTileImagePath = "tiles_img/tile_exit_" + width + ".png";
+		nogoTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_nogo_" + width + ".png";
+		walkTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_walk_" + width + ".png";
+		exitTileImagePath = GameConstants.PATH_TILE_IMAGES + "tile_exit_" + width + ".png";
 		nogoTileImage = AppletResourceLoader.getImageFromJar(nogoTileImagePath);
 		walkTileImage = AppletResourceLoader.getImageFromJar(walkTileImagePath);
 		exitTileImage = AppletResourceLoader.getImageFromJar(exitTileImagePath);
 		
 		// set the tile selector
-		reticleTile = AppletResourceLoader.getImageFromJar("tiles_img/tile_selector_" + width + ".png");
+		reticleTile = AppletResourceLoader.getImageFromJar(GameConstants.PATH_TILE_IMAGES + "tile_selector_" + width + ".png");
 		
 		// initialize the tiles
 		initTilesMap();

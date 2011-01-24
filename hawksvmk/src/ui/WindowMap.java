@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 
 import roomviewer.RoomViewerGrid;
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 // TODO: Change all the changeRoom() instructions to use room IDs instead of room names
 public class WindowMap extends JPanel
@@ -32,76 +33,76 @@ public class WindowMap extends JPanel
 	private int width = 800;
 	private int height = 600;
 	
-	private ImageIcon tabVMKImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_vmk.jpg");
-	private ImageIcon tabAdventurelandImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_adventureland.jpg");
-	private ImageIcon tabFrontierlandImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_frontierland_closed.jpg");
-	private ImageIcon tabFantasylandImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_fantasyland.jpg");
-	private ImageIcon tabTomorrowlandImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_tomorrowland_closed.jpg");
-	private ImageIcon tabMainStreetImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_main_street.jpg");
-	private ImageIcon tabNewOrleansSquareImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_new_orleans_square_closed.jpg");
+	private ImageIcon tabVMKImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_vmk.jpg");
+	private ImageIcon tabAdventurelandImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_adventureland.jpg");
+	private ImageIcon tabFrontierlandImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_frontierland_closed.jpg");
+	private ImageIcon tabFantasylandImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_fantasyland.jpg");
+	private ImageIcon tabTomorrowlandImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_tomorrowland_closed.jpg");
+	private ImageIcon tabMainStreetImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_main_street.jpg");
+	private ImageIcon tabNewOrleansSquareImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_new_orleans_square_closed.jpg");
 	
-	private ImageIcon exitHelpImage = AppletResourceLoader.getImageFromJar("img/ui/map/map_exit_help.jpg");
+	private ImageIcon exitHelpImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_exit_help.jpg");
 	
 	// VMK tab images
-	private ImageIcon litFrontierlandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_frontierland_lit.jpg");
-	private ImageIcon litNewOrleansSquareImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_new_orleans_square_lit.jpg");
-	private ImageIcon litAdventurelandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_adventureland_lit.jpg");
-	private ImageIcon litMainStreetImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_main_street_lit.jpg");
-	private ImageIcon litTomorrowlandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_tomorrowland_lit.jpg");
-	private ImageIcon litFantasylandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_fantasyland_lit.jpg");
-	private ImageIcon litGuestRoomsImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_guest_rooms_lit.jpg");
+	private ImageIcon litFrontierlandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_frontierland_lit.jpg");
+	private ImageIcon litNewOrleansSquareImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_new_orleans_square_lit.jpg");
+	private ImageIcon litAdventurelandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_adventureland_lit.jpg");
+	private ImageIcon litMainStreetImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_main_street_lit.jpg");
+	private ImageIcon litTomorrowlandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_tomorrowland_lit.jpg");
+	private ImageIcon litFantasylandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_fantasyland_lit.jpg");
+	private ImageIcon litGuestRoomsImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_guest_rooms_lit.jpg");
 	
 	// Adventureland tab images
-	private ImageIcon litPiratesGameImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_pirates_of_the_caribbean_lit.jpg");
-	private ImageIcon litTikiTikiIslandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_tiki_tiki_island_lit.jpg");
-	private ImageIcon litForbiddenTempleImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_forbidden_temple_lit.jpg");
-	private ImageIcon litAdventurelandBazaarImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_adventureland_bazaar_lit.jpg");
-	private ImageIcon litShrunkenNedsShopImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_shrunken_neds_shop_lit.jpg");
-	private ImageIcon litElephantBathingPoolImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_elephant_bathing_pool_lit.jpg");
-	private ImageIcon litExplorersTentImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_explorers_tent_lit.jpg");
-	private ImageIcon litDiscoveryIslandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_discovery_island_lit.png");
-	private ImageIcon litPirateTreehouseImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_pirate_treehouse_lit.jpg");
-	private ImageIcon litJungleCruiseGameImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_jungle_cruise_game_lit.jpg");
-	private ImageIcon litLostSafariPartyImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_lost_safari_party_lit.jpg");
+	private ImageIcon litPiratesGameImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_pirates_of_the_caribbean_lit.jpg");
+	private ImageIcon litTikiTikiIslandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_tiki_tiki_island_lit.jpg");
+	private ImageIcon litForbiddenTempleImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_forbidden_temple_lit.jpg");
+	private ImageIcon litAdventurelandBazaarImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_adventureland_bazaar_lit.jpg");
+	private ImageIcon litShrunkenNedsShopImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_shrunken_neds_shop_lit.jpg");
+	private ImageIcon litElephantBathingPoolImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_elephant_bathing_pool_lit.jpg");
+	private ImageIcon litExplorersTentImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_explorers_tent_lit.jpg");
+	private ImageIcon litDiscoveryIslandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_discovery_island_lit.png");
+	private ImageIcon litPirateTreehouseImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_pirate_treehouse_lit.jpg");
+	private ImageIcon litJungleCruiseGameImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_jungle_cruise_game_lit.jpg");
+	private ImageIcon litLostSafariPartyImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_lost_safari_party_lit.jpg");
 	
 	// Frontierland tab images (not open yet)
-	/*private ImageIcon litSplashMountainImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_splash_mountain_lit.jpg");
-	private ImageIcon litMarkTwainImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_mark_twain_lit.jpg");
-	private ImageIcon litTomSawyersIslandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_tom_sawyers_island_lit.jpg");
-	private ImageIcon litFrontierlandDockImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_frontierland_dock_lit.jpg");
-	private ImageIcon litBigThunderMountainImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_big_thunder_mountain_lit.jpg");
-	private ImageIcon litGoldenHorseshoeImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_golden_horseshoe_mercantile_shop_lit.jpg");
-	private ImageIcon litFrontierlandHubImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_frontierland_hub_lit.jpg");
+	/*private ImageIcon litSplashMountainImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_splash_mountain_lit.jpg");
+	private ImageIcon litMarkTwainImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_mark_twain_lit.jpg");
+	private ImageIcon litTomSawyersIslandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_tom_sawyers_island_lit.jpg");
+	private ImageIcon litFrontierlandDockImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_frontierland_dock_lit.jpg");
+	private ImageIcon litBigThunderMountainImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_big_thunder_mountain_lit.jpg");
+	private ImageIcon litGoldenHorseshoeImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_golden_horseshoe_mercantile_shop_lit.jpg");
+	private ImageIcon litFrontierlandHubImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_frontierland_hub_lit.jpg");
 	*/
 	
 	// Fantasyland tab images
-	private ImageIcon litFireworksGameImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_castle_fireworks_remixed_lit.jpg");
-	private ImageIcon litGalleryImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_gallery_lit.jpg");
-	private ImageIcon litCastleGardensImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_castle_gardens_lit.jpg");
-	private ImageIcon litBanquetHallImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_banquet_hall_lit.jpg");
-	private ImageIcon litDungeonImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_dungeon_lit.jpg");
-	private ImageIcon litFantasylandCourtyardImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_fantasyland_courtyard_lit.jpg");
-	private ImageIcon litSnowWhiteForestImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_snow_white_hide_n_seek_forest_lit.jpg");
-	private ImageIcon litSmallWorldImportsImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_its_a_small_world_imports_lit.jpg");
-	private ImageIcon litStorybooklandImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_storybookland_lit.jpg");
-	private ImageIcon litMatterhornImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_matterhorn_lit.jpg");
-	private ImageIcon litFantasylandInTheSkyImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_fantasyland_in_the_sky_lit.jpg");
-	private ImageIcon litSpellRoomImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_spell_room_lit.png");
+	private ImageIcon litFireworksGameImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_castle_fireworks_remixed_lit.jpg");
+	private ImageIcon litGalleryImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_gallery_lit.jpg");
+	private ImageIcon litCastleGardensImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_castle_gardens_lit.jpg");
+	private ImageIcon litBanquetHallImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_banquet_hall_lit.jpg");
+	private ImageIcon litDungeonImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_dungeon_lit.jpg");
+	private ImageIcon litFantasylandCourtyardImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_fantasyland_courtyard_lit.jpg");
+	private ImageIcon litSnowWhiteForestImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_snow_white_hide_n_seek_forest_lit.jpg");
+	private ImageIcon litSmallWorldImportsImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_its_a_small_world_imports_lit.jpg");
+	private ImageIcon litStorybooklandImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_storybookland_lit.jpg");
+	private ImageIcon litMatterhornImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_matterhorn_lit.jpg");
+	private ImageIcon litFantasylandInTheSkyImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_fantasyland_in_the_sky_lit.jpg");
+	private ImageIcon litSpellRoomImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_spell_room_lit.png");
 	
 	// Tomorrowland images (not open yet)
 	
 	// Main Street images
-	private ImageIcon litCastleForecourtImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_castle_forecourt_lit.jpg");
-	private ImageIcon litCentralPlazaImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_central_plaza_lit.jpg");
-	private ImageIcon litMagicShopImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_main_street_magic_shop_lit.jpg");
-	private ImageIcon litVMKCentralImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_vmk_central_lit.jpg");
-	private ImageIcon litMainStreetRoomImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_main_street_room_lit.jpg");
-	private ImageIcon litSciFiDineInImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_sci_fi_dine_in_lit.jpg");
-	private ImageIcon litPennyArcadeImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_penny_arcade_lit.jpg");
-	private ImageIcon litTownSquareImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_town_square_lit.jpg");
-	private ImageIcon litEmporiumImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_emporium_lit.jpg");
-	private ImageIcon litMusicGameImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_music_game_lit.jpg");
-	private ImageIcon litEsplanadeImg = AppletResourceLoader.getImageFromJar("img/ui/map/map_esplanade_lit.jpg");
+	private ImageIcon litCastleForecourtImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_castle_forecourt_lit.jpg");
+	private ImageIcon litCentralPlazaImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_central_plaza_lit.jpg");
+	private ImageIcon litMagicShopImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_main_street_magic_shop_lit.jpg");
+	private ImageIcon litVMKCentralImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_vmk_central_lit.jpg");
+	private ImageIcon litMainStreetRoomImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_main_street_room_lit.jpg");
+	private ImageIcon litSciFiDineInImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_sci_fi_dine_in_lit.jpg");
+	private ImageIcon litPennyArcadeImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_penny_arcade_lit.jpg");
+	private ImageIcon litTownSquareImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_town_square_lit.jpg");
+	private ImageIcon litEmporiumImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_emporium_lit.jpg");
+	private ImageIcon litMusicGameImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_music_game_lit.jpg");
+	private ImageIcon litEsplanadeImg = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_MAP_IMAGES + "map_esplanade_lit.jpg");
 	
 	// New Orleans Square images (not open yet)
 	

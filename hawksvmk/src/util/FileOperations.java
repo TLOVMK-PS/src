@@ -746,12 +746,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// use the email specified
-			filename = "rooms/guest/" + email + "/" + roomInfo.get("ID") + ".room";
+			filename = GameConstants.PATH_GUEST_ROOMS + email + "/" + roomInfo.get("ID") + ".room";
 		}
 		else
 		{
 			// no email, so use the default account
-			filename = "rooms/guest/default/" + roomInfo.get("ID") + ".room";
+			filename = GameConstants.PATH_GUEST_ROOMS_DEFAULT + roomInfo.get("ID") + ".room";
 		}
 		
 		PrintWriter fileWriter;
@@ -959,7 +959,7 @@ public class FileOperations
 		try
 		{
 			// character file
-			filename = "data/characters/" + email + ".dat";
+			filename = GameConstants.PATH_CHARACTERS + email + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("USERNAME: " + username);
 			fileWriter.println("CREDITS: " + credits);
@@ -967,7 +967,7 @@ public class FileOperations
 			fileWriter.println("RATING: G"); // assign a default content rating of General
 			
 			// assign some default clothing
-			fileWriter.println("BASE AVATAR: base_0");
+			fileWriter.println("BASE AVATAR: base_0_0");
 			fileWriter.println("SHIRT: shirt_0");
 			fileWriter.println("SHOES: shoes_0");
 			fileWriter.println("PANTS: pants_0");
@@ -996,7 +996,7 @@ public class FileOperations
 			fileWriter.close();
 			
 			// inventory file
-			filename = "data/inventory/" + email + ".dat";
+			filename = GameConstants.PATH_INVENTORY + email + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("// Clothing");
 			fileWriter.println();
@@ -1016,13 +1016,13 @@ public class FileOperations
 			fileWriter.close();
 			
 			// friends file
-			filename = "data/friends/" + email + ".dat";
+			filename = GameConstants.PATH_FRIENDS + email + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println(); // blank friends file
 			fileWriter.close();
 			
 			// messages file (give them one new message from VMK Staff)
-			filename = "data/messages/" + email + ".dat";
+			filename = GameConstants.PATH_MESSAGES + email + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("SENDER: HVMK Staff");
 			fileWriter.println("DATE: " + new Date().toString());
@@ -1031,10 +1031,10 @@ public class FileOperations
 			fileWriter.close();
 			
 			// create the new user's Guest Rooms folder
-			new File("rooms/guest/" + email).mkdir();
+			new File(GameConstants.PATH_GUEST_ROOMS + email).mkdir();
 			
 			// create the new user's Avatar folder
-			new File("img/avatars/" + email).mkdir();
+			new File(GameConstants.PATH_AVATAR_IMAGES + email).mkdir();
 		}
 		catch(Exception e)
 		{
@@ -1051,11 +1051,11 @@ public class FileOperations
 		
 		if(!email.equals(""))
 		{
-			filename = "data/characters/" + email + ".dat"; // filename of the character file
+			filename = GameConstants.PATH_CHARACTERS + email + ".dat"; // filename of the character file
 		}
 		else
 		{
-			filename = "data/characters/default.dat"; // load default character file
+			filename = GameConstants.PATH_CHARACTERS_DEFAULT; // load default character file
 		}
 		
 		// make sure the files exist; if not, create the necessary files
@@ -1223,12 +1223,12 @@ public class FileOperations
 		if(!character.getEmail().equals(""))
 		{
 			// save the character file
-			filename = "data/characters/" + character.getEmail() + ".dat";
+			filename = GameConstants.PATH_CHARACTERS + character.getEmail() + ".dat";
 		}
 		else
 		{
 			// save the default character file
-			filename = "data/characters/default.dat";
+			filename = GameConstants.PATH_CHARACTERS_DEFAULT;
 		}
 		
 		try
@@ -1295,7 +1295,10 @@ public class FileOperations
 		AStarCharacter theCharacter = character;
 		
 		// directions that the character needs
-		String directions[] = {"n","ne","e","se","s","sw","w","nw"};
+		String directions[] = GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY;
+		
+		// animations that the character needs
+		String animations[] = GameConstants.CONST_CHARACTER_ANIMS_ARRAY;
 		
 		// sizes that the character needs
 		String sizes[] = {"64","48","32"};
@@ -1312,43 +1315,47 @@ public class FileOperations
 			// iterate through the necessary directions
 			for(String direction : directions)
 			{
-				// iterate through the necessary sizes
-				for(String size: sizes)
+				// iterate through the necessary animations
+				for(String animation: animations)
 				{
-					// get the respective images given the clothing IDs
-					base = AppletResourceLoader.getBufferedImageFromJar("img/clothing/base/" + character.getBaseAvatarID() + "/" + character.getBaseAvatarID() + "_" + direction + "_" + size + ".png");
-					shirt = AppletResourceLoader.getBufferedImageFromJar("img/clothing/shirts/" + character.getShirtID() + "/" + character.getShirtID() + "_" + direction + "_" + size + ".png");
-					shoes = AppletResourceLoader.getBufferedImageFromJar("img/clothing/shoes/" + character.getShoesID() + "/" + character.getShoesID() + "_" + direction + "_" + size + ".png");
-					pants = AppletResourceLoader.getBufferedImageFromJar("img/clothing/pants/" + character.getPantsID() + "/" + character.getPantsID() + "_" + direction + "_" + size + ".png");
-					
-					// check to see if there is actually a hat specified
-					if(!character.getHatID().equals(""))
+					// iterate through the necessary sizes
+					for(String size: sizes)
 					{
-						hat = AppletResourceLoader.getBufferedImageFromJar("img/clothing/hats/" + character.getHatID() + "/" + character.getHatID() + "_" + direction + "_" + size + ".png");
+						// get the respective images given the clothing IDs
+						base = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_BASE_IMAGES + character.getBaseAvatarID() + "/" + character.getBaseAvatarID() + "_" + direction + animation + size + ".png");
+						shirt = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_SHIRTS_IMAGES + character.getShirtID() + "/" + character.getShirtID() + "_" + direction + animation + size + ".png");
+						shoes = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_SHOES_IMAGES + character.getShoesID() + "/" + character.getShoesID() + "_" + direction + animation + size + ".png");
+						pants = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_PANTS_IMAGES + character.getPantsID() + "/" + character.getPantsID() + "_" + direction + animation + size + ".png");
+						
+						// check to see if there is actually a hat specified
+						if(!character.getHatID().equals(""))
+						{
+							hat = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_HATS_IMAGES + character.getHatID() + "/" + character.getHatID() + "_" + direction + "_" + size + ".png");
+						}
+						
+						// create the combined BufferedImage object and allow for transparency
+						BufferedImage combined = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
+						
+						// create the Graphics instance so we can draw on the canvas
+						Graphics g = combined.getGraphics();
+						
+						// apply all the clothing images in the necessary order so they layer properly
+						g.drawImage(base,0,0,null);
+						g.drawImage(shirt,0,0,null);
+						g.drawImage(shoes,0,0,null);
+						g.drawImage(pants,0,0,null);
+						
+						// check to see if a hat has been specified
+						if(!character.getHatID().equals(""))
+						{
+							g.drawImage(hat,0,0,null);
+						}
+						
+						g.dispose();
+						
+						// write the generated image back out to the player's avatar folder
+						ImageIO.write(combined,"png",new File(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_" + direction + animation + size + ".png"));
 					}
-					
-					// create the combined BufferedImage object and allow for transparency
-					BufferedImage combined = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
-					
-					// create the Graphics instance so we can draw on the canvas
-					Graphics g = combined.getGraphics();
-					
-					// apply all the clothing images in the necessary order so they layer properly
-					g.drawImage(base,0,0,null);
-					g.drawImage(shirt,0,0,null);
-					g.drawImage(shoes,0,0,null);
-					g.drawImage(pants,0,0,null);
-					
-					// check to see if a hat has been specified
-					if(!character.getHatID().equals(""))
-					{
-						g.drawImage(hat,0,0,null);
-					}
-					
-					g.dispose();
-					
-					// write the generated image back out to the player's avatar folder
-					ImageIO.write(combined,"png",new File("img/avatars/" + email + "/avatar_" + direction + "_" + size + ".png"));
 				}
 			}
 		}
@@ -1369,11 +1376,11 @@ public class FileOperations
 		
 		if(!email.equals(""))
 		{
-			filename = "data/friends/" + email + ".dat"; // filename of the character file
+			filename = GameConstants.PATH_FRIENDS + email + ".dat"; // filename of the character file
 		}
 		else
 		{
-			filename = "data/friends/default.dat"; // load default character file
+			filename = GameConstants.PATH_FRIENDS_DEFAULT; // load default character file
 		}
 		
 		Scanner fileReader;
@@ -1441,12 +1448,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the friends list file
-			filename = "data/friends/" + email + ".dat";
+			filename = GameConstants.PATH_FRIENDS + email + ".dat";
 		}
 		else
 		{
 			// save the default friends list file
-			filename = "data/friends/default.dat";
+			filename = GameConstants.PATH_FRIENDS_DEFAULT;
 		}
 		
 		System.out.println("Saving friends list: " + filename);
@@ -1474,7 +1481,7 @@ public class FileOperations
 	// load username:email mappings
 	public static synchronized HashMap<String,String> loadUsernameEmailMappings()
 	{
-		String filename = "data/mappings/usernameToEmail.dat";
+		String filename = GameConstants.PATH_MAPPING_USERNAME_EMAIL;
 		HashMap<String,String> usernameEmailMappings = new HashMap<String,String>();
 		
 		Scanner fileReader;
@@ -1527,12 +1534,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the mail messages file
-			filename = "data/messages/" + email + ".dat";
+			filename = GameConstants.PATH_MESSAGES + email + ".dat";
 		}
 		else
 		{
 			// save the default mail messages file
-			filename = "data/messages/default.dat";
+			filename = GameConstants.PATH_MESSAGES_DEFAULT;
 		}
 		
 		ArrayList<MailMessage> messages = new ArrayList<MailMessage>();
@@ -1608,12 +1615,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the mail messages file
-			filename = "data/messages/" + email + ".dat";
+			filename = GameConstants.PATH_MESSAGES + email + ".dat";
 		}
 		else
 		{
 			// save the default mail messages file
-			filename = "data/messages/default.dat";
+			filename = GameConstants.PATH_MESSAGES_DEFAULT;
 		}
 		
 		try
@@ -1644,12 +1651,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the mail messages file
-			filename = "data/messages/" + email + ".dat";
+			filename = GameConstants.PATH_MESSAGES + email + ".dat";
 		}
 		else
 		{
 			// save the default mail messages file
-			filename = "data/messages/default.dat";
+			filename = GameConstants.PATH_MESSAGES_DEFAULT;
 		}
 		
 		try
@@ -1680,7 +1687,7 @@ public class FileOperations
 	// append a new username:email mapping to the mappings file
 	public static void addUsernameEmailMapping(String username, String email)
 	{
-		String filename = "data/mappings/usernameToEmail.dat";
+		String filename = GameConstants.PATH_MAPPING_USERNAME_EMAIL;
 		
 		try
 		{	
@@ -1702,7 +1709,7 @@ public class FileOperations
 	// load the item mappings for a given shop
 	public static HashMap<String,ArrayList<InventoryItem>> loadShopMappings(String shopName)
 	{
-		String filename = "data/shops/" + shopName + ".dat";
+		String filename = GameConstants.PATH_SHOPS + shopName + ".dat";
 		
 		HashMap<String, ArrayList<InventoryItem>> items = new HashMap<String, ArrayList<InventoryItem>>();
 		ArrayList<InventoryItem> furniture = new ArrayList<InventoryItem>();
@@ -1830,7 +1837,7 @@ public class FileOperations
 	// load the pin and badge mappings
 	public static HashMap<String,InventoryInfo> loadInventoryMappings()
 	{
-		String filename = "data/mappings/inventoryMappings.dat";
+		String filename = GameConstants.PATH_MAPPING_INVENTORY;
 		HashMap<String,InventoryInfo> inventoryMappings = new HashMap<String,InventoryInfo>();
 		
 		Scanner fileReader;
@@ -1941,12 +1948,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// load the inventory file
-			filename = "data/inventory/" + email + ".dat";
+			filename = GameConstants.PATH_INVENTORY + email + ".dat";
 		}
 		else
 		{
 			// load the default inventory file
-			filename = "data/inventory/default.dat";
+			filename = GameConstants.PATH_INVENTORY_DEFAULT;
 		}
 		
 		ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
@@ -2028,12 +2035,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the inventory file
-			filename = "data/inventory/" + email + ".dat";
+			filename = GameConstants.PATH_INVENTORY + email + ".dat";
 		}
 		else
 		{
 			// save the default inventory file
-			filename = "data/inventory/default.dat";
+			filename = GameConstants.PATH_INVENTORY_DEFAULT;
 		}
 		
 		PrintWriter fileWriter;
@@ -2085,12 +2092,12 @@ public class FileOperations
 		if(!email.equals(""))
 		{
 			// save the inventory file
-			filename = "data/inventory/" + email + ".dat";
+			filename = GameConstants.PATH_INVENTORY + email + ".dat";
 		}
 		else
 		{
 			// save the default inventory file
-			filename = "data/inventory/default.dat";
+			filename = GameConstants.PATH_INVENTORY_DEFAULT;
 		}
 		
 		try
@@ -2211,7 +2218,7 @@ public class FileOperations
 	// TODO: HERE'S WHERE THE PROBLEM ARISES
 	public static HashMap<String,VMKRoom> loadRoomMappings(boolean fromServer)
 	{
-		String filename = "data/mappings/roomNames.dat";
+		String filename = GameConstants.PATH_MAPPING_ROOMS;
 		HashMap<String,VMKRoom> roomMappings = new HashMap<String,VMKRoom>();
 		
 		Scanner fileReader;
@@ -2313,7 +2320,7 @@ public class FileOperations
 	// append a room mapping to the file
 	private static void addRoomMapping(String path, String id)
 	{
-		String filename = "data/mappings/roomNames.dat";
+		String filename = GameConstants.PATH_MAPPING_ROOMS;
 		
 		try
 		{	
@@ -2338,7 +2345,7 @@ public class FileOperations
 	// load the tile destinations for the Room Editor
 	public static String[] loadEditorTileDestinations()
 	{
-		String filename = "tileDestinations.dat";
+		String filename = GameConstants.PATH_TILE_DESTINATIONS;
 		ArrayList<String> destinations = new ArrayList<String>();
 		String[] destinationArray;
 		
@@ -2402,7 +2409,7 @@ public class FileOperations
 	// load a dictionary given a content rating (G, PG, PG13)
 	public static ArrayList<String> loadDictionary(String contentRating)
 	{
-		String filename = "data/mappings/" + contentRating.toLowerCase().replace("-", "") + "Dictionary.dat";
+		String filename = GameConstants.PATH_MAPPINGS + contentRating.toLowerCase().replace("-", "") + "Dictionary.dat";
 		ArrayList<String> dictionary = new ArrayList<String>();
 		
 		Scanner fileReader;
@@ -2450,7 +2457,7 @@ public class FileOperations
 	// load the fireworks entries for a given level number
 	public static ArrayList<FireworkEntry> loadFireworksEntries(int levelNum, int roundNum)
 	{
-		String filename = "data/games/fireworks/level_" + levelNum + "_" + roundNum + ".dat";
+		String filename = GameConstants.PATH_GAMES_FIREWORKS + "level_" + levelNum + "_" + roundNum + ".dat";
 		ArrayList<FireworkEntry> entries = new ArrayList<FireworkEntry>();
 		
 		Scanner fileReader;
@@ -2514,7 +2521,7 @@ public class FileOperations
 	// return the tiles for a specific level and round in the POTC game
 	public static HashMap<String, Tile> loadPiratesLevelTiles(int levelNum, int roundNum)
 	{
-		String filename = "data/games/pirates/level_" + levelNum + "_" + roundNum + ".room";
+		String filename = GameConstants.PATH_GAMES_PIRATES + "level_" + levelNum + "_" + roundNum + ".room";
 		HashMap<String,Tile> tiles = new HashMap<String,Tile>();
 		
 		Scanner fileReader;

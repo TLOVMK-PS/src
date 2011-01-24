@@ -14,6 +14,7 @@ import astar.*;
 
 import tiles.Tile;
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class AStarShip extends AStarCharacter implements Serializable
 {
@@ -37,20 +38,20 @@ public class AStarShip extends AStarCharacter implements Serializable
 	private Tile currentTile;
 	
 	// Define the images for this ship
-	private AStarCharacterImage shipNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_n.png"));
-	private AStarCharacterImage shipNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_nw.png"));
-	private AStarCharacterImage shipWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_w.png"));
-	private AStarCharacterImage shipSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_sw.png"));
-	private AStarCharacterImage shipSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_s.png"));
-	private AStarCharacterImage shipSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_se.png"));
-	private AStarCharacterImage shipEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_e.png"));
-	private AStarCharacterImage shipNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_blue_ne.png"));
+	private AStarCharacterImage shipNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_n.png"));
+	private AStarCharacterImage shipNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_nw.png"));
+	private AStarCharacterImage shipWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_w.png"));
+	private AStarCharacterImage shipSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_sw.png"));
+	private AStarCharacterImage shipSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_s.png"));
+	private AStarCharacterImage shipSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_se.png"));
+	private AStarCharacterImage shipEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_e.png"));
+	private AStarCharacterImage shipNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_blue_ne.png"));
 	
 	private AStarCharacterImage shipImage = shipSouthEast;
 	private String currentDirection = "se"; // the direction the ship is currently facing
 	
 	// image for a destroyed ship
-	private AStarCharacterImage shipDestroyed = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_destroyed.png"));
+	private AStarCharacterImage shipDestroyed = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_destroyed.png"));
 
 	private String shipColor = "blue"; // the color of the ship's sails (also the color of the team)
 
@@ -320,17 +321,17 @@ public class AStarShip extends AStarCharacter implements Serializable
 	// update the ship images
 	public void updateShipImages()
 	{
-		shipNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_n.png"));
-		shipNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_nw.png"));
-		shipWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_w.png"));
-		shipSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_sw.png"));
-		shipSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_s.png"));
-		shipSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_se.png"));
-		shipEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_e.png"));
-		shipNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_ne.png"));
+		shipNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_n.png"));
+		shipNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_nw.png"));
+		shipWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_w.png"));
+		shipSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_sw.png"));
+		shipSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_s.png"));
+		shipSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_se.png"));
+		shipEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_e.png"));
+		shipNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_ne.png"));
 		
 		// figure out what the current avatar image should be
-		shipImage.setImage(AppletResourceLoader.getBufferedImageFromJar("img/games/pirates/ship_" + shipColor + "_" + currentDirection + ".png"));
+		shipImage.setImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_GAMES_PIRATES_IMAGES + "ship_" + shipColor + "_" + currentDirection + ".png"));
 	}
 
 	public int getHealth() {

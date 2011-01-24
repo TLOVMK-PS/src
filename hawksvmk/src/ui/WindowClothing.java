@@ -30,6 +30,7 @@ import comparators.InventoryItemNameComparator;
 import roomviewer.RoomViewerGrid;
 import sockets.messages.MessageAddChatToRoom;
 import util.AppletResourceLoader;
+import util.GameConstants;
 import util.InventoryInfo;
 import util.InventoryItem;
 import util.StaticAppletData;
@@ -44,7 +45,7 @@ public class WindowClothing extends JPanel
 	
 	private int width = 338;
 	private int height = 483;
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/preferences.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "preferences.png");
 	
 	int signatureCharacterLimit = 74;
 	
@@ -325,7 +326,7 @@ public class WindowClothing extends JPanel
 		hats.add(new InventoryItem("","",InventoryItem.CLOTHING));
 		
 		// add a new base
-		bases.add(new InventoryItem("base_0","base_0",InventoryItem.CLOTHING));
+		bases.add(new InventoryItem("base_0_0","base_0_0",InventoryItem.CLOTHING));
 	}
 	
 	// toggle the visibility of this window

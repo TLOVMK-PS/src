@@ -22,13 +22,14 @@ import javax.swing.SwingUtilities;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowDesignModeItem extends JPanel
 {
 	private int x = 0;
 	private int y = 0;
 	
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/design_mode_item.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "design_mode_item.png");
 	private JLabel backgroundLabel = new JLabel(windowImage);
 	
 	private JLabel itemNameLabel = new JLabel();

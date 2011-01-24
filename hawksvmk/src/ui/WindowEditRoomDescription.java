@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import roomviewer.RoomViewerGrid;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowEditRoomDescription extends JPanel
 {
@@ -45,7 +46,7 @@ public class WindowEditRoomDescription extends JPanel
 	private int height = 300;
 	
 	private Rectangle exitButtonRect = new Rectangle(301, 6, 16, 16); // bounds of the "X" button relative to the image
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/room_description_window_edit.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "room_description_window_edit.png");
 
 	private JTextField roomNameBox = new JTextField("");
 	private JTextArea descriptionBox = new JTextArea("");

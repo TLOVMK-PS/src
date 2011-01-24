@@ -39,6 +39,7 @@ import roomviewer.RoomViewerGrid;
 import util.AppletResourceLoader;
 import util.Dictionary;
 import util.FriendsList;
+import util.GameConstants;
 import util.MailMessage;
 
 public class WindowMessages extends JPanel
@@ -53,10 +54,10 @@ public class WindowMessages extends JPanel
 	
 	private int width = 351;
 	private int height = 427;
-	private ImageIcon messagesWindowImage = AppletResourceLoader.getImageFromJar("img/ui/messages.png");
-	private ImageIcon noMessagesWindowImage = AppletResourceLoader.getImageFromJar("img/ui/no_messages.png");
-	private ImageIcon sendMessageWindowImage = AppletResourceLoader.getImageFromJar("img/ui/send_message.png");
-	private ImageIcon friendsWindowImage = AppletResourceLoader.getImageFromJar("img/ui/friends.png");
+	private ImageIcon messagesWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "messages.png");
+	private ImageIcon noMessagesWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "no_messages.png");
+	private ImageIcon sendMessageWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "send_message.png");
+	private ImageIcon friendsWindowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "friends.png");
 	
 	// images/strings for viewing and replying to messages
 	private String noNewMessages = "You have no new messages.";
@@ -75,9 +76,9 @@ public class WindowMessages extends JPanel
 	private ArrayList<String> onlineFriends = new ArrayList<String>();
 	private ArrayList<String> friendRequests = new ArrayList<String>();
 	private String noNewFriends = "You have no new friend requests.";
-	private ImageIcon friendsWindowHeaderOffImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_header_off.png");
-	private ImageIcon friendsWindowHeaderOnImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_header_on.png");
-	private ImageIcon friendsWindowConfirmButtonsImage = AppletResourceLoader.getImageFromJar("img/ui/friends_window_confirm_buttons.png");
+	private ImageIcon friendsWindowHeaderOffImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "friends_window_header_off.png");
+	private ImageIcon friendsWindowHeaderOnImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "friends_window_header_on.png");
+	private ImageIcon friendsWindowConfirmButtonsImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "friends_window_confirm_buttons.png");
 	
 	private boolean deleteMode = false; // TRUE if we're deleting a friend
 	
@@ -355,7 +356,7 @@ public class WindowMessages extends JPanel
 				else if(reportRectangle.contains(e.getPoint()) && messageText.isVisible())
 				{
 					// make sure this isn't an automated message from VMK Staff
-					if(!messageSender.getText().equals("VMK Staff"))
+					if(!messageSender.getText().equals("HVMK Staff"))
 					{
 						// report the message
 					}

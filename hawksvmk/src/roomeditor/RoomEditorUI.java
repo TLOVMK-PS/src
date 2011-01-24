@@ -28,8 +28,6 @@ import util.AppletResourceLoader;
 
 public class RoomEditorUI extends JFrame
 {
-	private AppletResourceLoader resourceLoader = new AppletResourceLoader(); // JAR resource loader
-	
 	private String windowTitle = "Hawk's VMK Room Editor v12.0";
 	RoomEditorUI myRoomEditorWindow;
 	private String filename = "";

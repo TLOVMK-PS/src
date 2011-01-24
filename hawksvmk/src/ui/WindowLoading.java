@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import roomviewer.RoomViewerGrid;
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class WindowLoading extends JPanel
 {
@@ -28,9 +29,9 @@ public class WindowLoading extends JPanel
 	private int width = 363;
 	private int height = 241;
 	
-	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar("img/ui/logo_loading_background.png");
-	private ImageIcon loadingImage = AppletResourceLoader.getImageFromJar("img/ui/loading_bar_anim.gif");
-	private ImageIcon gradient = AppletResourceLoader.getImageFromJar("img/ui/loading_bar_gradient.png");
+	private ImageIcon windowImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "logo_loading_background.png");
+	private ImageIcon loadingImage = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "loading_bar_anim.gif");
+	private ImageIcon gradient = AppletResourceLoader.getImageFromJar(GameConstants.PATH_UI_IMAGES + "loading_bar_gradient.png");
 	
 	private JLabel loadingBarGradient = new JLabel(gradient);
 	private JLabel loadingBarLabel = new JLabel(loadingImage);
