@@ -1044,8 +1044,9 @@ public class FileOperations
 	}
 	
 	// load a character given an email address
-	public static synchronized AStarCharacter loadCharacter(String username, String email)
+	public static synchronized AStarCharacter loadCharacter(String email)
 	{
+		String username = "";
 		boolean isNewPlayer = false;
 		String filename = "";
 		
@@ -1478,54 +1479,6 @@ public class FileOperations
 		}
 	}
 	
-	// load username:email mappings
-	public static synchronized HashMap<String,String> loadUsernameEmailMappings()
-	{
-		String filename = GameConstants.PATH_MAPPING_USERNAME_EMAIL;
-		HashMap<String,String> usernameEmailMappings = new HashMap<String,String>();
-		
-		Scanner fileReader;
-		
-		try
-		{
-			InputStream is = AppletResourceLoader.getCharacterFromJar(filename);
-
-			if(is != null) // file exists
-			{
-				fileReader = new Scanner(is);
-				while(fileReader.hasNextLine())
-				{
-					String line = fileReader.nextLine();
-					
-					if(line.startsWith(commentDelimeter))
-					{
-						// comment line, so ignore
-					}
-					else if(!line.equals("")) // username:email
-					{
-						String dataArray[] = line.split(":");
-						usernameEmailMappings.put(dataArray[0], dataArray[1]);
-					}
-				}
-				
-				fileReader.close();
-			}
-			else
-			{
-				// file doesn't exist
-				// return the default empty mappings list
-				return usernameEmailMappings;
-			}
-		}
-		catch(Exception e)
-		{
-			System.out.println("ERROR IN loadUsernameEmailMappings(): " + e.getClass().getName() + " - " + e.getMessage());
-		}
-
-		// create a new mappings list from the file data
-		return usernameEmailMappings;
-	}
-	
 	// load a user's mail messages
 	public static ArrayList<MailMessage> loadMailMessages(String username, String email)
 	{
@@ -1680,28 +1633,6 @@ public class FileOperations
 		catch(Exception e)
 		{
 			System.out.println("ERROR IN saveMailMessages()");
-			e.printStackTrace();
-		}
-	}
-	
-	// append a new username:email mapping to the mappings file
-	public static void addUsernameEmailMapping(String username, String email)
-	{
-		String filename = GameConstants.PATH_MAPPING_USERNAME_EMAIL;
-		
-		try
-		{	
-			// open the file for appending
-			FileOutputStream appendedFile = new FileOutputStream(filename, true);
-			PrintWriter writer = new PrintWriter(appendedFile);
-			
-			// write the mapping to the file
-			writer.println(username + ":" + email);
-			writer.flush();
-		}
-		catch(Exception e)
-		{
-			System.out.println("ERROR IN saveUsernameEmailMappings()");
 			e.printStackTrace();
 		}
 	}

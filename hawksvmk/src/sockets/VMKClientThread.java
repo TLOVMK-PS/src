@@ -113,8 +113,9 @@ public class VMKClientThread extends Thread
 							System.out.println("Login response received from server");
 							System.out.println("Changing thread name: " + ((MessageLogin)inputMessage).getName());
 							
-							// change the thread name
+							// change the thread name and the UI object name
 							this.setName(loginMessage.getName());
+							uiObject.setUsername(loginMessage.getName());
 							
 							// send an "Add To Room" message
 							roomID = "template_gr4";

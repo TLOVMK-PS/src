@@ -82,18 +82,17 @@ public class VMKServer
         	System.out.println("Server IP set");
         	System.out.println();
         }
-        catch(Exception e) {}
+        catch(Exception e)
+        {
+        	// make sure the console's spacing doesn't get fucked up
+        	System.out.println();
+        }
 
         // load up the pin mappings
         StaticAppletData.createInvMappings();
         
-        // load the username:email mappings
-        System.out.println("Loading username:email mappings...");
-        VMKServerPlayerData.setUsernameEmailMappings(FileOperations.loadUsernameEmailMappings());
-        System.out.println("Username:email mappings loaded");
-        System.out.println();
-        
         // load the room mappings
+        System.out.println();
         System.out.println("Loading room mappings...");
         VMKServerPlayerData.setRooms(FileOperations.loadRoomMappings(true));
         System.out.println("Room mappings loaded");

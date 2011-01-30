@@ -162,41 +162,30 @@ public class VMKServerThread extends Thread
 			    			MessageLogin loginMessage = (MessageLogin)inputMessage;
 			    			System.out.println("Login message received from client");
 	
-			    			// change the thread name
-			    			if(!loginMessage.getName().trim().equals(""))
-			    			{
-			    				this.setName(loginMessage.getName());
-			    			}
-			    			else
-			    			{
-			    				this.setName("VMK Player");
-			    				loginMessage.setName("VMK Player");
-			    			}
-	
-			    			System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + loginMessage.getName());
-	
 			    			// load the character from a file
-			    			loginMessage.setCharacter(FileOperations.loadCharacter(loginMessage.getName(), loginMessage.getEmail()));
+			    			AStarCharacter authCharacter = FileOperations.loadCharacter(loginMessage.getEmail());
 	
 			    			// set the username for the first time if necessary
-			    			if(loginMessage.getCharacter().getUsername().equals(""))
+			    			if(authCharacter.getUsername().equals(""))
 			    			{
-			    				AStarCharacter character = loginMessage.getCharacter();
-			    				character.setUsername(this.getName());
-			    				loginMessage.setCharacter(character);
+			    				// probably in development mode if the username wasn't set properly (also: FUCK!)
+			    				authCharacter.setUsername("VMK Player");
 			    			}
+			    			
+			    			// set the thread and message names depending on the character that was loaded
+			    			loginMessage.setName(authCharacter.getUsername());
+			    			this.setName(authCharacter.getUsername());
+	
+			    			System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + authCharacter.getUsername());
+			    			
+			    			// set the character for the login message
+			    			loginMessage.setCharacter(authCharacter);
 	
 			    			// make sure we have an actual email address
 			    			if(!loginMessage.getEmail().equals(""))
 			    			{
-			    				// update the username:email mapping file
-			    				if(!VMKServerPlayerData.containsUsernameEmailMapping(this.getName()))
-			    				{
-			    					FileOperations.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
-			    				}
-	
 			    				// add the username:email mapping
-			    				VMKServerPlayerData.addUsernameEmailMapping(this.getName(), loginMessage.getEmail());
+			    				VMKServerPlayerData.addUsernameEmailMapping(authCharacter.getUsername(), loginMessage.getEmail());
 			    			}
 	
 			    			// send the login message back to the client
