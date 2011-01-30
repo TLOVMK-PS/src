@@ -1072,7 +1072,7 @@ public class FileOperations
 		String signature = "";
 		String contentRating = "G";
 		
-		String baseAvatarID = "base_0";
+		String baseAvatarID = "base_0_0";
 		String shirtID = "shirt_0";
 		String shoesID = "shoes_0";
 		String pantsID = "pants_0";

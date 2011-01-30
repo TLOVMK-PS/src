@@ -632,12 +632,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 										{
 											if(character.getX() < nextTile.getX())
 											{
-												character.setxSpeed(4);
+												character.setxSpeed(GameConstants.CONST_CHARACTER_SPEED_X);
 												character.setX(character.getX() + character.getxSpeed());
 											}
 											if(character.getX() > nextTile.getX())
 											{
-												character.setxSpeed(-4);
+												character.setxSpeed(-GameConstants.CONST_CHARACTER_SPEED_X);
 												character.setX(character.getX() + character.getxSpeed());
 											}
 										}
@@ -657,12 +657,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 										{
 											if(character.getX() < nextTile.getX())
 											{
-												character.setxSpeed(4);
+												character.setxSpeed(GameConstants.CONST_CHARACTER_SPEED_X);
 												character.setX(character.getX() + character.getxSpeed());
 											}
 											if(character.getX() > nextTile.getX())
 											{
-												character.setxSpeed(-4);
+												character.setxSpeed(-GameConstants.CONST_CHARACTER_SPEED_X);
 												character.setX(character.getX() + character.getxSpeed());
 											}
 										}
@@ -686,11 +686,11 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 									// move along the Y-axis
 									if(character.getY() < nextTile.getY())
 									{
-										character.setySpeed(2);
+										character.setySpeed(GameConstants.CONST_CHARACTER_SPEED_Y);
 									}
 									if(character.getY() > nextTile.getY())
 									{
-										character.setySpeed(-2);
+										character.setySpeed(-GameConstants.CONST_CHARACTER_SPEED_Y);
 									}
 									character.setY(character.getY() + character.getySpeed());
 								}
@@ -722,6 +722,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 												{
 													// tell the server to update the final position of the character
 													//System.out.println("Movement finished; updating character position");
+													
+													// stop the animation for the character
+													character.stopAnimation();
 													
 													if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
 													{
@@ -760,6 +763,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 											
 											if(character.getPath().size() == 0)
 											{
+												// stop the animation for the character
+												character.stopAnimation();
+												
 												// tell the server to update the final position of the character
 												//System.out.println("Movement finished; updating character position");
 												if(character.getCurrentTile().getType() == Tile.TILE_EXIT && character.getUsername().equals(myCharacter.getUsername()))
@@ -1365,7 +1371,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		
  		// make sure the character is still in the room
  		if(character != null)
- 		{
+ 		{	
  			// send a "move character" message to the server to update all clients
  			uiObject.sendMessageToServer(new MessageMoveCharacter(myCharacter, roomID, (gridX / 2), gridY));
  			
@@ -1378,6 +1384,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	 		character.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
 	 		character.clearPath();
 	 		character.setPath(character.getPathfinder().getPath(character.getCurrentTile(), tilesMap.get(destGridY + "-" + destGridX)));
+	 		
+	 		// start the walk animation for this character
+ 			character.startAnimation(GameConstants.CONST_WALK_ANIMATION);
 	 		
 	 		characters.put(character.getUsername(), character); // put the character back in the HashMap
 	 		

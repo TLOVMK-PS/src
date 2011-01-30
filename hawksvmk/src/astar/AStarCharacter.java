@@ -42,22 +42,30 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	private Tile currentTile;
 	
-	// TODO: Change these objects to use the current avatar's own images instead of the template images
-	// avatar images for the eight directions
-	private AStarCharacterImage avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_n_64.png"));
-	private AStarCharacterImage avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_nw_64.png"));
-	private AStarCharacterImage avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_w_64.png"));
-	private AStarCharacterImage avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_sw_64.png"));
-	private AStarCharacterImage avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_s_64.png"));
-	private AStarCharacterImage avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_se_64.png"));
-	private AStarCharacterImage avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_e_64.png"));
-	private AStarCharacterImage avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_ne_64.png"));
+	// avatar image arrays for the animations
+	// Index 0 : stand pose for avatar direction
+	// Indices 1 - 4 : walk frames for that avatar direction
+	private AStarCharacterImage[] avatarAnimsNorth = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsNorthWest = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsWest = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsSouthWest = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsSouth = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsSouthEast = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsEast = new AStarCharacterImage[5];
+	private AStarCharacterImage[] avatarAnimsNorthEast = new AStarCharacterImage[5];
 	
-	private AStarCharacterImage characterImage = avatarSouthEast;
+	private final int ANIMATION_DELAY = 200; // delay (in milliseconds) between animation frames
+	private String currentAnimationName = "stand"; // the current animation's name
+	private int currentAnimationFrame = 0; // the current frame in the specified animation array
+	private AvatarMovementAnimationThread movementThread = null; // the thread to handle avatar animations
+	private boolean animating = false; // true if the avatar is currently running an animation
+	
+	private AStarCharacterImage[] animationImages = avatarAnimsSouthEast;
+	private AStarCharacterImage characterImage = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_se_64.png"));
 	private String currentDirection = "se"; // the direction the avatar is currently facing
 	
 	// Strings for clothing IDs
-	private String baseAvatarID = "base_0";
+	private String baseAvatarID = "base_0_0";
 	private String shirtID = "shirt_0";
 	private String shoesID = "shoes_0";
 	private String pantsID = "pants_0";
@@ -165,50 +173,63 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	// change the avatar image based upon the speeds
 	private void changeAvatarImage()
 	{
-		if(xSpeed == 0 && ySpeed < 0) // north
+		// check to see which animation needs to be applied
+		if(currentAnimationName.equals(GameConstants.CONST_WALK_ANIMATION))
 		{
-			characterImage = avatarNorth;
-			currentDirection = "n";
+			if(xSpeed == 0 && ySpeed < 0) // north
+			{
+				animationImages = avatarAnimsNorth;
+				currentDirection = "n";
+			}
+			else if(xSpeed < 0 && ySpeed < 0) // north-west
+			{
+				animationImages = avatarAnimsNorthWest;
+				currentDirection = "nw";
+			}
+			else if(xSpeed < 0 && ySpeed == 0) // west
+			{
+				animationImages = avatarAnimsWest;
+				currentDirection = "w";
+			}
+			else if(xSpeed < 0 && ySpeed > 0) // south-west
+			{
+				animationImages = avatarAnimsSouthWest;
+				currentDirection = "sw";
+			}
+			else if(xSpeed == 0 && ySpeed > 0) // south
+			{
+				animationImages = avatarAnimsSouth;
+				currentDirection = "s";
+			}
+			else if(xSpeed > 0 && ySpeed > 0) // south-east
+			{
+				animationImages = avatarAnimsSouthEast;
+				currentDirection = "se";
+			}
+			else if(xSpeed > 0 && ySpeed == 0) // east
+			{
+				animationImages = avatarAnimsEast;
+				currentDirection = "e";
+			}
+			else if(xSpeed > 0 && ySpeed < 0) // north-east
+			{
+				animationImages = avatarAnimsNorthEast;
+				currentDirection = "ne";
+			}
 		}
-		else if(xSpeed < 0 && ySpeed < 0) // north-west
+		else if(currentAnimationName.equals(GameConstants.CONST_STAND_ANIMATION))
 		{
-			characterImage = avatarNorthWest;
-			currentDirection = "nw";
-		}
-		else if(xSpeed < 0 && ySpeed == 0) // west
-		{
-			characterImage = avatarWest;
-			currentDirection = "w";
-		}
-		else if(xSpeed < 0 && ySpeed > 0) // south-west
-		{
-			characterImage = avatarSouthWest;
-			currentDirection = "sw";
-		}
-		else if(xSpeed == 0 && ySpeed > 0) // south
-		{
-			characterImage = avatarSouth;
-			currentDirection = "s";
-		}
-		else if(xSpeed > 0 && ySpeed > 0) // south-east
-		{
-			characterImage = avatarSouthEast;
-			currentDirection = "se";
-		}
-		else if(xSpeed > 0 && ySpeed == 0) // east
-		{
-			characterImage = avatarEast;
-			currentDirection = "e";
-		}
-		else if(xSpeed > 0 && ySpeed < 0) // north-east
-		{
-			characterImage = avatarNorthEast;
-			currentDirection = "ne";
+			// set the character's image to be the same direction, but standing
+			//characterImage.setImage(animationImages[0].getImage());
 		}
 		
-		// change the bounding box width and height
-		boundingBox.width = characterImage.getImage().getWidth();
-		boundingBox.height = characterImage.getImage().getHeight();
+		// check to make sure the character image exists
+		if(characterImage != null)
+		{
+			// change the bounding box width and height
+			boundingBox.width = characterImage.getImage().getWidth();
+			boundingBox.height = characterImage.getImage().getHeight();
+		}
 	}
 	
 	public String getBaseAvatarID() {
@@ -388,18 +409,134 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 		int tileWidth = tileHeight * 2;
 		
 		// check to see if the email exists and assign the default address if it doesn't
-		if(email.equals("")) {email = "default";}
+		if(email.equals("")) {email = GameConstants.CONST_DEFAULT_EMAIL;}
 		
-		avatarNorth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_n_" + tileWidth + ".png"));
-		avatarNorthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_nw_" + tileWidth + ".png"));
-		avatarWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_w_" + tileWidth + ".png"));
-		avatarSouthWest = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_sw_" + tileWidth + ".png"));
-		avatarSouth = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_s_" + tileWidth + ".png"));
-		avatarSouthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_se_" + tileWidth + ".png"));
-		avatarEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_e_" + tileWidth + ".png"));
-		avatarNorthEast = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_ne_" + tileWidth + ".png"));
+		// re-build the animation images for the specified directions
+		avatarAnimsNorth = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[0], tileWidth);
+		avatarAnimsNorthEast = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[1], tileWidth);
+		avatarAnimsEast = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[2], tileWidth);
+		avatarAnimsSouthEast = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[3], tileWidth);
+		avatarAnimsSouth = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[4], tileWidth);
+		avatarAnimsSouthWest = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[5], tileWidth);
+		avatarAnimsWest = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[6], tileWidth);
+		avatarAnimsNorthWest = updateAnimationImagesGroup(GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY[7], tileWidth);
 		
 		// figure out what the current avatar image should be
-		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/avatar_" + currentDirection + "_" + tileWidth + ".png"));
+		characterImage.setImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/" + GameConstants.PATH_AVATAR_IMAGES_PREFIX + "_" + currentDirection + "_" + tileWidth + ".png"));
+	}
+	
+	// re-build a set of avatar animation images given the specified direction
+	private AStarCharacterImage[] updateAnimationImagesGroup(String direction, int tileWidth)
+	{
+		int arraySize = GameConstants.CONST_CHARACTER_ANIMS_ARRAY.length; // figure out the array size
+		AStarCharacterImage[] animationImages = new AStarCharacterImage[arraySize]; // create the initial array
+		
+		// iterate through the character anims constants array
+		String animation = "_";
+		for(int i = 0; i < arraySize; i++)
+		{
+			// get the next animation from the constants array
+			animation = GameConstants.CONST_CHARACTER_ANIMS_ARRAY[i];
+			
+			// add the image to the animation images array
+			animationImages[i] = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + email + "/" + GameConstants.PATH_AVATAR_IMAGES_PREFIX + "_" + direction + animation + tileWidth + ".png"));
+		}
+		
+		// return the images
+		return animationImages;
+	}
+	
+	// start the avatar's animation thread with the specified animation set
+	public void startAnimation(String animationName)
+	{	
+		// check to make sure an animation is not currently running
+		if(!animating)
+		{
+			// set the animation name
+			currentAnimationName = animationName;
+			
+			// set the current frame depending on the animation
+			if(animationName.equals(GameConstants.CONST_STAND_ANIMATION))
+			{
+				// start right at the beginning of the animation frames
+				currentAnimationFrame = 0;
+			}
+			else if(animationName.equals(GameConstants.CONST_WALK_ANIMATION))
+			{
+				// start right after the stand animation
+				currentAnimationFrame = GameConstants.CONST_STAND_ANIMATION_FRAMES;
+			}
+
+			// an animation is now running
+			animating = true;
+
+			// start the thread
+			movementThread = new AvatarMovementAnimationThread(animationName);
+			movementThread.start();
+		}
+	}
+	
+	// stop the avatar's animation thread
+	public void stopAnimation()
+	{
+		// check to make sure an animation is running
+		if(animating)
+		{
+			// the animation is no longer running
+			animating = false;
+			
+			// interrupt the thread
+			movementThread.interrupt();
+			movementThread = null;
+			
+			// set the proper image for the stand frame
+			currentAnimationName = GameConstants.CONST_STAND_ANIMATION;
+			//characterImage.setImage(animationImages[0].getImage());
+		}
+	}
+	
+	// define a class to handle the avatar's animation sequences
+	class AvatarMovementAnimationThread extends Thread implements Serializable
+	{
+		private String animationName = ""; // the name of the animation
+		
+		public AvatarMovementAnimationThread(String animationName)
+		{
+			this.animationName = animationName;
+		}
+		
+		public void run()
+		{
+			while(animating)
+			{
+				// check the animation name first
+				if(animationName.equals(GameConstants.CONST_WALK_ANIMATION))
+				{
+					// check to make sure the animation hasn't gone over the frame index boundary
+					if(currentAnimationFrame == (GameConstants.CONST_STAND_ANIMATION_FRAMES + GameConstants.CONST_WALK_ANIMATION_FRAMES - 1))
+					{
+						// reset the animation frame to the beginning of the animation (right after the stand animation)
+						currentAnimationFrame = GameConstants.CONST_STAND_ANIMATION_FRAMES;
+					}
+					else
+					{
+						// increment the current animation frame
+						currentAnimationFrame++;
+					}
+					
+					System.out.println("WALK FRAME: " + currentAnimationFrame);
+					
+					// set the current character image for the current animation
+					characterImage.setImage(animationImages[currentAnimationFrame].getImage());
+				}
+				
+				// sleep the thread for the specified amount of time
+				try
+				{
+					Thread.sleep(ANIMATION_DELAY);
+				}
+				catch(InterruptedException e) {}
+			}
+		}
 	}
 }

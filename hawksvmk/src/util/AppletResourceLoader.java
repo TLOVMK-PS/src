@@ -180,7 +180,7 @@ public class AppletResourceLoader implements Serializable
 			catch(Exception ex)
 			{
 				System.out.println("Problem loading file from local file system: " + ex.getClass().getName() + " - " + ex.getMessage());
-				ex.printStackTrace();
+				//ex.printStackTrace();
 				return null;
 			}
 		}
@@ -214,7 +214,7 @@ public class AppletResourceLoader implements Serializable
 			catch(Exception ex)
 			{
 				System.out.println("Problem loading character from local file system");
-				ex.printStackTrace();
+				//ex.printStackTrace();
 				return null;
 			}
 		}
@@ -272,7 +272,7 @@ public class AppletResourceLoader implements Serializable
 				catch(Exception ex)
 				{
 					System.out.println("Problem loading ShittyInputStream from local file system");
-					ex.printStackTrace();
+					//ex.printStackTrace();
 					return null;
 				}
 			}
