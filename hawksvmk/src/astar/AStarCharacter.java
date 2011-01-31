@@ -38,9 +38,11 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	private AStarPathfinder pathfinder = new AStarPathfinder(); // pathfinder
 	private ArrayList<Tile> path = new ArrayList<Tile>(); // path to walk
+	private int rowDiff = 0; // 1 or greater if vertical movement is necessary
 	private int colDiff = 0; // 1 or greater if horizontal movement is necessary
 	
-	private Tile currentTile;
+	private Tile lastTile = null; // the last tile the player was on
+	private Tile currentTile = null; // the current tile the player is on
 	
 	// avatar image arrays for the animations
 	// Index 0 : stand pose for avatar direction
@@ -62,7 +64,7 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	private AStarCharacterImage[] animationImages = avatarAnimsSouthEast;
 	private AStarCharacterImage characterImage = new AStarCharacterImage(AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_AVATAR_IMAGES + "male/male_avatar_se_64.png"));
-	private String currentDirection = "se"; // the direction the avatar is currently facing
+	private String currentDirection = GameConstants.CONST_DIRECTION_SOUTH_EAST; // the direction the avatar is currently facing
 	
 	// Strings for clothing IDs
 	private String baseAvatarID = "base_0_0";
@@ -179,42 +181,42 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 			if(xSpeed == 0 && ySpeed < 0) // north
 			{
 				animationImages = avatarAnimsNorth;
-				currentDirection = "n";
+				currentDirection = GameConstants.CONST_DIRECTION_NORTH;
 			}
 			else if(xSpeed < 0 && ySpeed < 0) // north-west
 			{
 				animationImages = avatarAnimsNorthWest;
-				currentDirection = "nw";
+				currentDirection = GameConstants.CONST_DIRECTION_NORTH_WEST;
 			}
 			else if(xSpeed < 0 && ySpeed == 0) // west
 			{
 				animationImages = avatarAnimsWest;
-				currentDirection = "w";
+				currentDirection = GameConstants.CONST_DIRECTION_WEST;
 			}
 			else if(xSpeed < 0 && ySpeed > 0) // south-west
 			{
 				animationImages = avatarAnimsSouthWest;
-				currentDirection = "sw";
+				currentDirection = GameConstants.CONST_DIRECTION_SOUTH_WEST;
 			}
 			else if(xSpeed == 0 && ySpeed > 0) // south
 			{
 				animationImages = avatarAnimsSouth;
-				currentDirection = "s";
+				currentDirection = GameConstants.CONST_DIRECTION_SOUTH;
 			}
 			else if(xSpeed > 0 && ySpeed > 0) // south-east
 			{
 				animationImages = avatarAnimsSouthEast;
-				currentDirection = "se";
+				currentDirection = GameConstants.CONST_DIRECTION_SOUTH_EAST;
 			}
 			else if(xSpeed > 0 && ySpeed == 0) // east
 			{
 				animationImages = avatarAnimsEast;
-				currentDirection = "e";
+				currentDirection = GameConstants.CONST_DIRECTION_EAST;
 			}
 			else if(xSpeed > 0 && ySpeed < 0) // north-east
 			{
 				animationImages = avatarAnimsNorthEast;
-				currentDirection = "ne";
+				currentDirection = GameConstants.CONST_DIRECTION_NORTH_EAST;
 			}
 		}
 		else if(currentAnimationName.equals(GameConstants.CONST_STAND_ANIMATION))
@@ -279,6 +281,14 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	public int getColDiff() {
 		return colDiff;
 	}
+	
+	public void setRowDiff(int rowDiff) {
+		this.rowDiff = rowDiff;
+	}
+	
+	public int getRowDiff() {
+		return rowDiff;
+	}
 
 	public ArrayList<Tile> getPath() {
 		return path;
@@ -306,7 +316,59 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 			//this.x = currentTile.getX();
 			//this.y = currentTile.getY();
 		}
+		
+		// set the previous tile visited
+		this.lastTile = this.currentTile;
+		
+		// set the player's current tile
 		this.currentTile = currentTile;
+		
+		if(lastTile != null && currentTile != null) // make sure there is a valid path between these tiles
+		{
+			String direction = "";
+			
+			// check the X-speed of the avatar
+			/*if(xSpeed > 0)
+			{
+				// there is eastward movement, so we need to flip the relative coordinates
+				direction = currentTile.getDirectionRelativeToTile(lastTile, true);
+			}
+			else
+			{
+				// get the direction without flipping the relative coordinates
+				direction = currentTile.getDirectionRelativeToTile(lastTile, false);
+			}*/
+			direction = currentTile.getDirectionRelativeToTile(lastTile,false);
+			
+			/*
+			 * TODO: FIGURE OUT WHAT THE GODDAMN MOTHERFUCKING HELL IS WRONG WITH THIS WHERE IT HAS
+			 * ISSUES DETECTING DIAGONAL MOTION.
+			 */
+			
+			if(colDiff == 0 && rowDiff == 1)
+			{
+				if(lastTile.getX() != currentTile.getX() && lastTile.getY() != currentTile.getY())
+				{
+					System.out.println("Direction: Diagonal motion " + direction);
+				}
+				else
+				{
+					System.out.println("Direction: Vertical motion " + direction.charAt(0));
+				}
+			}
+			else if(colDiff == 1 && rowDiff == 0)
+			{
+				System.out.println("Direction: Horizontal motion " + direction.charAt(0));
+			}
+			else if(colDiff == 1 && rowDiff == 1)
+			{
+				System.out.println("Direction: Diagonal motion " + direction);
+			}
+			else
+			{
+				System.out.println("Direction: " + direction + " [ColDiff: " + colDiff + " - RowDiff: " + rowDiff + "]");
+			}
+		}
 	}
 	
 	// snap the character's position to that of the current tile
@@ -524,10 +586,12 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 						currentAnimationFrame++;
 					}
 					
-					System.out.println("WALK FRAME: " + currentAnimationFrame);
-					
-					// set the current character image for the current animation
-					characterImage.setImage(animationImages[currentAnimationFrame].getImage());
+					try
+					{
+						// set the current character image for the current animation
+						characterImage.setImage(animationImages[currentAnimationFrame].getImage());
+					}
+					catch(NullPointerException npe) {}
 				}
 				
 				// sleep the thread for the specified amount of time

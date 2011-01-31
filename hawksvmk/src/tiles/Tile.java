@@ -10,6 +10,7 @@ import java.io.Serializable;
 import javax.swing.ImageIcon;
 
 import util.AppletResourceLoader;
+import util.GameConstants;
 
 public class Tile implements Serializable
 {
@@ -17,10 +18,6 @@ public class Tile implements Serializable
 	public static final int TILE_EXIT = 0;
 	public static final int TILE_NOGO = 1;
 	public static final int TILE_WALK = 2;
-	
-	//private ImageIcon nogoTileImage = AppletResourceLoader.getImageFromJar("tiles_img/tile_nogo.png");
-	//private ImageIcon walkTileImage = AppletResourceLoader.getImageFromJar("tiles_img/tile_walk.png");
-	//private ImageIcon exitTileImage = AppletResourceLoader.getImageFromJar("tiles_img/tile_exit.png");
 	
 	private int width = 64; // tile width
 	private int height = 32; // tile height
@@ -35,11 +32,13 @@ public class Tile implements Serializable
 	private int x = 0; // absolute x-coordinate on the screen
 	private int y = 0; // absolute y-coordinate on the screen
 	
-	private Tile parent;
+	private Tile parent = null;
 	private int g = 0; // 10 for an orthogonal move, 14 for a diagonal move
 	private int h = 0; // distance to the target
 	
 	private ImageIcon image; // the image file for the tile
+	
+	private String directionRelativeToParent = GameConstants.CONST_DIRECTION_SOUTH_EAST; // the direction that the player would face when walking to this tile
 	
 	public Tile() {}
 	
@@ -49,9 +48,6 @@ public class Tile implements Serializable
 		this.col = col;
 		this.type = type;
 		this.dest = dest;
-		
-		// set the tile image
-		setImageFromType();
 		
 		// set the absolute coordinates
 		setAbsoluteCoordinates();
@@ -104,7 +100,11 @@ public class Tile implements Serializable
 	public int getH() {return h;}
 	public void setH(int h) {this.h = h;}
 	
-	public void setParent(Tile parent) {this.parent = parent;}
+	public void setParent(Tile parent)
+	{
+		this.parent = parent;
+	}
+	
 	public Tile getParent() {return parent;}
 
 	public int getWidth() {
@@ -161,9 +161,6 @@ public class Tile implements Serializable
 
 	public void setType(int type) {
 		this.type = type;
-		
-		// set the tile image
-		setImageFromType();
 	}
 	
 	// return a String version of the "type" integer variable
@@ -195,30 +192,71 @@ public class Tile implements Serializable
 		{
 			type = Tile.TILE_NOGO;
 		}
-		
-		// set the tile image
-		setImageFromType();
 	}
 	
-	// set the tile image from the "type" integer variable
-	private void setImageFromType()
+	// return the direction of this tile relative to another tile
+	public String getDirectionRelativeToTile(Tile relTile, boolean flipDirection)
 	{
-		//if(type == Tile.TILE_EXIT) {image = exitTileImage;}
-		//if(type == Tile.TILE_NOGO) {image = nogoTileImage;}
-		//if(type == Tile.TILE_WALK) {image = walkTileImage;}
+		// set the proper X and Y coordinates for this tile and the relative tile
+		int myX = getX(), myY = getY();
+		int yourX = relTile.getX(), yourY = relTile.getY();
+		
+		// check to see if the direction needs to be flipped
+		if(flipDirection)
+		{
+			// reverse the X coordinates
+			myX = relTile.getX();
+			yourX = getX();
+		}
+		
+		// check to make sure the parent tile exists
+		if(relTile != null)
+		{
+			if(myX < yourX)
+			{
+				if(myY < yourY) // north-west
+				{
+					return GameConstants.CONST_DIRECTION_NORTH_WEST;
+				}
+				else if(myY > yourY) // south-west
+				{
+					return GameConstants.CONST_DIRECTION_SOUTH_WEST;
+				}
+				else // west
+				{
+					return GameConstants.CONST_DIRECTION_WEST;
+				}
+			}
+			else if(myX > yourX)
+			{
+				if(myY < yourY) // north-east
+				{
+					return GameConstants.CONST_DIRECTION_NORTH_EAST;
+				}
+				else if(myY > yourY) // south-east
+				{
+					return GameConstants.CONST_DIRECTION_SOUTH_EAST;
+				}
+				else // west
+				{
+					return GameConstants.CONST_DIRECTION_EAST;
+				}
+			}
+			else
+			{
+				if(myY < yourY) // north
+				{
+					return GameConstants.CONST_DIRECTION_NORTH;
+				}
+				else // south
+				{
+					return GameConstants.CONST_DIRECTION_SOUTH;
+				}
+			}
+		}
+		
+		return "";
 	}
-	
-	/*public ImageIcon getNogoTileImage() {
-		return nogoTileImage;
-	}
-
-	public ImageIcon getWalkTileImage() {
-		return walkTileImage;
-	}
-
-	public ImageIcon getExitTileImage() {
-		return exitTileImage;
-	}*/
 
 	public String toString()
 	{

@@ -612,6 +612,8 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 								
 								// check if movement is necessary
 								character.setColDiff(Math.abs(character.getCol() - nextTile.getColumn()));
+								character.setRowDiff(Math.abs(character.getRow() - nextTile.getRow()));
+								
 								//System.out.println("COLDIFF: " + character.getColDiff());
 								if(character.getColDiff() > 0) // prevent the back-and-forth movement across the same column
 								{
