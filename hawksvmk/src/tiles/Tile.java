@@ -198,8 +198,8 @@ public class Tile implements Serializable
 	public String getDirectionRelativeToTile(Tile relTile, boolean flipDirection)
 	{
 		// set the proper X and Y coordinates for this tile and the relative tile
-		int myX = getX(), myY = getY();
-		int yourX = relTile.getX(), yourY = relTile.getY();
+		int myX = getColumn(), myY = getRow();
+		int yourX = relTile.getColumn(), yourY = relTile.getRow();
 		
 		// check to see if the direction needs to be flipped
 		if(flipDirection)
@@ -261,5 +261,11 @@ public class Tile implements Serializable
 	public String toString()
 	{
 		return "@" + row + "," + col + "," + getTypeString() + "," + dest + "@";
+	}
+	
+	// check to see whether this tile is the same as another tile
+	public boolean equals(Object o)
+	{
+		return ((Tile)o).toString().equals(this.toString());
 	}
 }

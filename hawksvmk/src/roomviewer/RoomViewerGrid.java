@@ -801,6 +801,19 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 						{
 							bufferGraphics.drawImage(character.getImage(), character.getX(), character.getY() - character.getImage().getHeight() + tileHeight, this);
 						}
+						
+						// draw the character's tile path as he's walking
+						/*if(character != null)
+						{
+							try
+							{
+								for(Tile t : character.getPath())
+								{
+									bufferGraphics.drawImage(reticleWalk.getImage(), t.getX(), t.getY(), new GridViewMovementImageObserver(this));
+								}
+							}
+							catch(Exception e) {}
+						}*/
 					}
 				}
 			}
@@ -1383,9 +1396,9 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	 		// process a pathfinding operation for the character
 	 		//System.out.println("Setting current tile: " + character.getRow() + "-" + character.getCol());
 	 		//System.out.println("Tile type: " + tilesMap.get(character.getRow() + "-" + character.getCol()).getTypeString());
-	 		character.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
 	 		character.clearPath();
 	 		character.setPath(character.getPathfinder().getPath(character.getCurrentTile(), tilesMap.get(destGridY + "-" + destGridX)));
+	 		character.setCurrentTile(tilesMap.get(character.getRow() + "-" + character.getCol()));
 	 		
 	 		// start the walk animation for this character
  			character.startAnimation(GameConstants.CONST_WALK_ANIMATION);

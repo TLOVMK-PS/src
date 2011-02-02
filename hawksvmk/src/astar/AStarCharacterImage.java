@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
@@ -37,6 +38,11 @@ public class AStarCharacterImage implements Serializable
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	{
 		in.defaultReadObject();
-		setImage(ImageIO.read(new MemoryCacheImageInputStream(in)));
+		
+		try
+		{
+			setImage(ImageIO.read(new MemoryCacheImageInputStream(in)));
+		}
+		catch(IIOException iioe) {}
 	} 
 }

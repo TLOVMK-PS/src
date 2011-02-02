@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import tiles.Tile;
+import util.GameConstants;
 
 public class AStarPathfinder implements Serializable
 {
@@ -74,7 +75,7 @@ public class AStarPathfinder implements Serializable
 			// 5. Check all the adjacent squares
 			addAdjacentTilesToOpenList(lowestCostTile);
 		}
-		while(!lowestCostTile.toString().equals(targetTile.toString()));
+		while(!lowestCostTile.equals(targetTile));
 		
 		return closedList;
 	}
@@ -108,14 +109,16 @@ public class AStarPathfinder implements Serializable
 		int row = theTile.getRow();
 		int col = theTile.getColumn();
 		
-		addTile(tiles.get((row-1) + "-" + col), theTile, 10); // north
-		addTile(tiles.get((row-1) + "-" + (col-1)), theTile, 10); // north-west
-		addTile(tiles.get(row + "-" + (col-1)), theTile, 10); // west
-		addTile(tiles.get((row+1) + "-" + (col-1)), theTile, 10); // south-west
-		addTile(tiles.get((row+1) + "-" + col), theTile, 10); // south
-		addTile(tiles.get((row+1) + "-" + (col+1)), theTile, 10); // south-east
-		addTile(tiles.get(row + "-" + (col+1)), theTile, 10); // east
-		addTile(tiles.get((row-1) + "-" + (col+1)), theTile, 10); // north-east
+		// Since we're working with an isometric grid, the north and south adjacent tiles are going to have greater
+		// row values in order to preserve the projection angle.
+		addTile(tiles.get((row-2) + "-" + col), theTile, GameConstants.CONST_MOVEMENT_COST_ORTHOGONAL); // north
+		addTile(tiles.get((row-1) + "-" + (col-1)), theTile, GameConstants.CONST_MOVEMENT_COST_DIAGONAL); // north-west
+		addTile(tiles.get(row + "-" + (col-1)), theTile, GameConstants.CONST_MOVEMENT_COST_ORTHOGONAL); // west
+		addTile(tiles.get((row+1) + "-" + (col-1)), theTile, GameConstants.CONST_MOVEMENT_COST_DIAGONAL); // south-west
+		addTile(tiles.get((row+2) + "-" + col), theTile, GameConstants.CONST_MOVEMENT_COST_ORTHOGONAL); // south
+		addTile(tiles.get((row+1) + "-" + (col+1)), theTile, GameConstants.CONST_MOVEMENT_COST_DIAGONAL); // south-east
+		addTile(tiles.get(row + "-" + (col+1)), theTile, GameConstants.CONST_MOVEMENT_COST_ORTHOGONAL); // east
+		addTile(tiles.get((row-1) + "-" + (col+1)), theTile, GameConstants.CONST_MOVEMENT_COST_DIAGONAL); // north-east
 	}
 	
 	// add a tile to the open list
@@ -124,18 +127,22 @@ public class AStarPathfinder implements Serializable
 		if(theTile != null && theTile.getType() != Tile.TILE_NOGO && !closedList.contains(theTile))
 		{
 			if(!openList.contains(theTile)) // check to see if the open list already contains the tile
-			{
+			{	
 				theTile.setG(parentTile.getG() + gScore); // set the orthogonal/diagonal movement cost
-				theTile.setH(Math.abs(theTile.getRow() - targetTile.getRow()) + Math.abs(theTile.getColumn() - targetTile.getColumn()));
+				
+				// set the distance from this tile to the target if all movement were done orthogonally
+				theTile.setH(Math.abs(theTile.getY() - targetTile.getY()) + Math.abs(theTile.getX() - targetTile.getX()));
+				
+				// set the parent tile for this tile and add it to the open list
 				theTile.setParent(parentTile);
 				openList.add(theTile);
 			}
 			else
-			{
+			{	
 				// open list already contains tile, so check G values
 				int index = openList.indexOf(theTile);
 				Tile existingTile = openList.get(index);
-				if(gScore < existingTile.getG())
+				if((gScore + parentTile.getG()) < existingTile.getG())
 				{
 					// change the tile to point at the last tile in the closed list
 					existingTile.setParent(closedList.get(closedList.size() - 1));

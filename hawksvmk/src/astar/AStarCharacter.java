@@ -41,8 +41,8 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	private int rowDiff = 0; // 1 or greater if vertical movement is necessary
 	private int colDiff = 0; // 1 or greater if horizontal movement is necessary
 	
-	private Tile lastTile = null; // the last tile the player was on
 	private Tile currentTile = null; // the current tile the player is on
+	private Tile nextTile = null; // the next tile the player should go to
 	
 	// avatar image arrays for the animations
 	// Index 0 : stand pose for avatar direction
@@ -158,8 +158,6 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 
 	public void setxSpeed(int xSpeed) {
 		this.xSpeed = xSpeed;
-		
-		changeAvatarImage(); // change the avatar image based on the speeds
 	}
 
 	public int getySpeed() {
@@ -168,61 +166,56 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 
 	public void setySpeed(int ySpeed) {
 		this.ySpeed = ySpeed;
-		
-		changeAvatarImage(); // change the avatar image based on the speeds
 	}
 	
-	// change the avatar image based upon the speeds
+	// change the avatar image based upon the direction of his movement
 	private void changeAvatarImage()
 	{
 		// check to see which animation needs to be applied
 		if(currentAnimationName.equals(GameConstants.CONST_WALK_ANIMATION))
 		{
-			if(xSpeed == 0 && ySpeed < 0) // north
+			// check the avatar's current traversing direction
+			if(checkCurrentDirection(GameConstants.CONST_DIRECTION_NORTH)) // north
 			{
 				animationImages = avatarAnimsNorth;
-				currentDirection = GameConstants.CONST_DIRECTION_NORTH;
 			}
-			else if(xSpeed < 0 && ySpeed < 0) // north-west
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_NORTH_WEST)) // north-west
 			{
 				animationImages = avatarAnimsNorthWest;
-				currentDirection = GameConstants.CONST_DIRECTION_NORTH_WEST;
 			}
-			else if(xSpeed < 0 && ySpeed == 0) // west
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_WEST)) // west
 			{
 				animationImages = avatarAnimsWest;
-				currentDirection = GameConstants.CONST_DIRECTION_WEST;
 			}
-			else if(xSpeed < 0 && ySpeed > 0) // south-west
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_SOUTH_WEST)) // south-west
 			{
 				animationImages = avatarAnimsSouthWest;
-				currentDirection = GameConstants.CONST_DIRECTION_SOUTH_WEST;
 			}
-			else if(xSpeed == 0 && ySpeed > 0) // south
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_SOUTH)) // south
 			{
 				animationImages = avatarAnimsSouth;
-				currentDirection = GameConstants.CONST_DIRECTION_SOUTH;
 			}
-			else if(xSpeed > 0 && ySpeed > 0) // south-east
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_SOUTH_EAST)) // south-east
 			{
 				animationImages = avatarAnimsSouthEast;
-				currentDirection = GameConstants.CONST_DIRECTION_SOUTH_EAST;
 			}
-			else if(xSpeed > 0 && ySpeed == 0) // east
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_EAST)) // east
 			{
 				animationImages = avatarAnimsEast;
-				currentDirection = GameConstants.CONST_DIRECTION_EAST;
 			}
-			else if(xSpeed > 0 && ySpeed < 0) // north-east
+			else if(checkCurrentDirection(GameConstants.CONST_DIRECTION_NORTH_EAST)) // north-east
 			{
 				animationImages = avatarAnimsNorthEast;
-				currentDirection = GameConstants.CONST_DIRECTION_NORTH_EAST;
 			}
 		}
 		else if(currentAnimationName.equals(GameConstants.CONST_STAND_ANIMATION))
 		{
-			// set the character's image to be the same direction, but standing
-			//characterImage.setImage(animationImages[0].getImage());
+			try
+			{
+				// set the character's image to be the same direction, but standing
+				characterImage.setImage(animationImages[0].getImage());
+			}
+			catch(NullPointerException npe) {}
 		}
 		
 		// check to make sure the character image exists
@@ -317,57 +310,41 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 			//this.y = currentTile.getY();
 		}
 		
-		// set the previous tile visited
-		this.lastTile = this.currentTile;
-		
 		// set the player's current tile
 		this.currentTile = currentTile;
 		
-		if(lastTile != null && currentTile != null) // make sure there is a valid path between these tiles
-		{
-			String direction = "";
+		// set the next tile to visit
+		this.nextTile = getNextTileInPath();
+		
+		if(nextTile != null && currentTile != null) // make sure there is a valid path between these tiles
+		{	
+			// get the direction of the next tile relative to this tile
+			currentDirection = nextTile.getDirectionRelativeToTile(currentTile,false);
 			
-			// check the X-speed of the avatar
-			/*if(xSpeed > 0)
-			{
-				// there is eastward movement, so we need to flip the relative coordinates
-				direction = currentTile.getDirectionRelativeToTile(lastTile, true);
-			}
-			else
-			{
-				// get the direction without flipping the relative coordinates
-				direction = currentTile.getDirectionRelativeToTile(lastTile, false);
-			}*/
-			direction = currentTile.getDirectionRelativeToTile(lastTile,false);
+			// change the avatar animation images depending on the direction of motion
+			changeAvatarImage();
 			
 			/*
-			 * TODO: FIGURE OUT WHAT THE GODDAMN MOTHERFUCKING HELL IS WRONG WITH THIS WHERE IT HAS
-			 * ISSUES DETECTING DIAGONAL MOTION.
-			 */
-			
-			if(colDiff == 0 && rowDiff == 1)
+			if(colDiff == 0 && rowDiff == 2)
 			{
-				if(lastTile.getX() != currentTile.getX() && lastTile.getY() != currentTile.getY())
-				{
-					System.out.println("Direction: Diagonal motion " + direction);
-				}
-				else
-				{
-					System.out.println("Direction: Vertical motion " + direction.charAt(0));
-				}
+				System.out.println("Direction to next: Vertical motion " + currentDirection);
 			}
 			else if(colDiff == 1 && rowDiff == 0)
 			{
-				System.out.println("Direction: Horizontal motion " + direction.charAt(0));
+				System.out.println("Direction to next: Horizontal motion " + currentDirection);
 			}
 			else if(colDiff == 1 && rowDiff == 1)
 			{
-				System.out.println("Direction: Diagonal motion " + direction);
+				System.out.println("Direction to next: Diagonal motion " + currentDirection);
 			}
 			else
 			{
-				System.out.println("Direction: " + direction + " [ColDiff: " + colDiff + " - RowDiff: " + rowDiff + "]");
+				if(colDiff != 0 && rowDiff != 0)
+				{
+					System.out.println("Direction to next: " + currentDirection + " [ColDiff: " + colDiff + " - RowDiff: " + rowDiff + "]");
+				}
 			}
+			*/
 		}
 	}
 	
@@ -383,6 +360,22 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	public Tile getCurrentTile() {
 		return currentTile;
+	}
+	
+	// check to see if the passed parameter is the current direction
+	private boolean checkCurrentDirection(String direction)
+	{
+		return currentDirection.equals(direction);
+	}
+	
+	// get the tile AFTER the current tile in the walkable path
+	private Tile getNextTileInPath()
+	{
+		try
+		{
+			return path.get(1); // get the next tile in the path
+		}
+		catch(IndexOutOfBoundsException e) {return null;}
 	}
 	
 	public void removeTopmostPathStep()
@@ -553,7 +546,9 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 			
 			// set the proper image for the stand frame
 			currentAnimationName = GameConstants.CONST_STAND_ANIMATION;
-			//characterImage.setImage(animationImages[0].getImage());
+			
+			// change the avatar image for the standing pose
+			changeAvatarImage();
 		}
 	}
 	
@@ -590,6 +585,14 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 					{
 						// set the current character image for the current animation
 						characterImage.setImage(animationImages[currentAnimationFrame].getImage());
+						
+						// check to make sure the character image exists
+						if(characterImage != null)
+						{
+							// change the bounding box width and height
+							boundingBox.width = characterImage.getImage().getWidth();
+							boundingBox.height = characterImage.getImage().getHeight();
+						}
 					}
 					catch(NullPointerException npe) {}
 				}
