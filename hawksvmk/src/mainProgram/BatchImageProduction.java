@@ -44,7 +44,6 @@ public class BatchImageProduction
 		String workingDirectory = "";
 		String collectionName = "";
 		String initialDirectory = "";
-		String initialType = "";
 		
 		try
 		{
