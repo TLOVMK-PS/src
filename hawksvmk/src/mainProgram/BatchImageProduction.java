@@ -44,6 +44,8 @@ public class BatchImageProduction
 		String workingDirectory = "";
 		String collectionName = "";
 		String initialDirectory = "";
+		String initialType = "";
+		
 		try
 		{
 			// e.g. "img/clothing/shirts/
@@ -53,6 +55,9 @@ public class BatchImageProduction
 			// e.g. "shirt_0"
 			System.out.print("Enter a collection name (e.g. \"shirt_0\"): ");
 			collectionName = input.readLine();
+			
+			// attempt to figure out the collection type by checking the collection folder name
+			animations = getAnimsFromCollectionType(collectionName);
 			
 			// set the full directory from which to produce images
 			initialDirectory = directory + "/" + workingDirectory + "/" + collectionName + "/";
@@ -156,6 +161,23 @@ public class BatchImageProduction
 			}
 		}
 		catch(Exception e) {e.printStackTrace();}
+	}
+	
+	// figure out which animations will be used by checking the image collection type
+	private String[] getAnimsFromCollectionType(String collectionName)
+	{
+		if(collectionName.startsWith(GameConstants.COLLECTION_BASE)) {return GameConstants.CONST_CHARACTER_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_EYES)) {return GameConstants.CONST_EYES_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_FACIAL_HAIR)) {return GameConstants.CONST_FACIAL_HAIR_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_HAIR)) {return GameConstants.CONST_HAIR_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_HAT)) {return GameConstants.CONST_HAT_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_HEAD)) {return GameConstants.CONST_HEAD_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_MOUTH)) {return GameConstants.CONST_MOUTH_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_PANTS)) {return GameConstants.CONST_PANTS_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_SHIRT)) {return GameConstants.CONST_SHIRT_ANIMS_ARRAY;}
+		if(collectionName.startsWith(GameConstants.COLLECTION_SHOES)) {return GameConstants.CONST_SHOES_ANIMS_ARRAY;}
+		
+		return GameConstants.CONST_CHARACTER_ANIMS_ARRAY;
 	}
 	
 	public static void main(String args[])
