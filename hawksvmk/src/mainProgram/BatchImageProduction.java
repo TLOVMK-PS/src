@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
@@ -56,7 +57,10 @@ public class BatchImageProduction
 			collectionName = input.readLine();
 			
 			// attempt to figure out the collection type by checking the collection folder name
-			animations = getAnimsFromCollectionType(collectionName);
+			animations = GameConstants.getAnimsFromCollectionType(collectionName);
+			
+			// attempt to figure out the necessary directions by checking the collection folder name
+			directions = GameConstants.getDirectionsFromCollectionType(collectionName);
 			
 			// set the full directory from which to produce images
 			initialDirectory = directory + "/" + workingDirectory + "/" + collectionName + "/";
@@ -79,6 +83,14 @@ public class BatchImageProduction
 					// read the image from the disk into the sourceImageFile object
 					sourceImageFile = collectionName + "_" + direction + animation + startingSize + ".png";
 					source = ImageIO.read(new File(initialDirectory + sourceImageFile));
+				}
+				catch(FileNotFoundException fe)
+				{
+					// the file could not be located
+					System.out.println("Source image [" + sourceImageFile + "] could not be found.");
+					
+					// proceed to the next animation
+					continue;
 				}
 				catch(Exception e) {e.printStackTrace();}
 	
@@ -160,23 +172,6 @@ public class BatchImageProduction
 			}
 		}
 		catch(Exception e) {e.printStackTrace();}
-	}
-	
-	// figure out which animations will be used by checking the image collection type
-	private String[] getAnimsFromCollectionType(String collectionName)
-	{
-		if(collectionName.startsWith(GameConstants.COLLECTION_BASE)) {return GameConstants.CONST_CHARACTER_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_EYES)) {return GameConstants.CONST_EYES_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_FACIAL_HAIR)) {return GameConstants.CONST_FACIAL_HAIR_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_HAIR)) {return GameConstants.CONST_HAIR_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_HAT)) {return GameConstants.CONST_HAT_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_HEAD)) {return GameConstants.CONST_HEAD_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_MOUTH)) {return GameConstants.CONST_MOUTH_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_PANTS)) {return GameConstants.CONST_PANTS_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_SHIRT)) {return GameConstants.CONST_SHIRT_ANIMS_ARRAY;}
-		if(collectionName.startsWith(GameConstants.COLLECTION_SHOES)) {return GameConstants.CONST_SHOES_ANIMS_ARRAY;}
-		
-		return GameConstants.CONST_CHARACTER_ANIMS_ARRAY;
 	}
 	
 	public static void main(String args[])
