@@ -6,10 +6,11 @@ package sockets;
 
 // TODO: START THE GODDAMN TIMEOUT THREAD FOR ANY SOCKET DISCONNECTION
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.InetSocketAddress;
@@ -37,9 +38,11 @@ public class VMKServerThread extends Thread
     private InetSocketAddress remoteAddress = null;
     private boolean waitingForReconnect = false;
     
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    DataOutputStream out;
+    DataInputStream in;
     
+    int objectHeader = -1; // integer header (size of the next object in bytes) in the stream
+    byte[] objectBytes; // the byte array that will store the specified number of bytes above
     MessageSecure inputMessage; // input message received from client
 
     private ArrayList<MessageSecure> cachedMessages = new ArrayList<MessageSecure>(); // cached list of messages to be sent after the client re-connects
@@ -79,8 +82,8 @@ public class VMKServerThread extends Thread
     // create the input and output streams for the socket
     private void createSocketStreams() throws IOException
     {
-    	out = new ObjectOutputStream(socket.getOutputStream());
-		in = new ObjectInputStream(socket.getInputStream());
+    	out = new DataOutputStream(socket.getOutputStream());
+		in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     }
     
     // check whether this thread is waiting for a socket re-connection from the client
@@ -148,8 +151,15 @@ public class VMKServerThread extends Thread
 		    {
 		    	while (!isInterrupted())
 		    	{
+		    		// grab the integer header to denote the size in bytes of the next object
+		    		objectHeader = in.readInt();
+		    		
+		    		// grab the specified number of bytes specified by the received header
+		    		objectBytes = new byte[objectHeader];
+		    		in.readFully(objectBytes);
+		    		
 		    		// read the message sent by the client
-		    		inputMessage = (MessageSecure)in.readUnshared();
+		    		inputMessage = MessageSecure.getMessageFromBytes(objectBytes);
 
 		    		//System.out.println("Received message (" + outputMessage.getType() + ") from client " + this.getName());
 
@@ -636,7 +646,8 @@ public class VMKServerThread extends Thread
 	    	}
 	    	catch(EOFException eofe)
 	    	{
-	    		// somehow the client-side stream got corrupted with an EOF exception; shut down the thread gracefully so the server doesn't hang
+	    		// somehow the client-side stream got corrupted with an EOF exception or did not receive a header it
+	    		// was expecting from in.readInt(); shut down the thread gracefully so the server doesn't hang
 	    		System.out.println();
 	    		System.out.println("Stream corrupted [invalid type code: client-side] on client (" + this.getName() + ")");
 	    		System.out.println();
@@ -743,9 +754,12 @@ public class VMKServerThread extends Thread
     // write a message to the output buffer to be sent to the client
     private synchronized void writeOutputToClient(MessageSecure m) throws SocketException, IOException
     {
-    	out.writeUnshared(m);
-    	out.reset();
-		out.flush();
+    	// convert the object to a byte array
+    	byte[] bytes = MessageSecure.getBytesFromMessage(m);
+    	
+    	// write the header (size of next object in bytes) and then the object's byte array
+    	out.writeInt(bytes.length);
+    	out.write(bytes);
     }
     
     // send out the cached messages after a re-connect

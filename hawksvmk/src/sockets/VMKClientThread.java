@@ -5,11 +5,10 @@
 package sockets;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.ConnectException;
@@ -39,9 +38,11 @@ public class VMKClientThread extends Thread
     private InetSocketAddress remoteAddress = null;
     private boolean rebooting = false;
     
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    DataOutputStream out;
+    DataInputStream in;
 
+    int objectHeader = -1; // integer header (size of the next object in bytes) in the stream
+    byte[] objectBytes; // the byte array that will store the specified number of bytes above
     MessageSecure inputMessage; // input message received from server
     
     private String roomID = "";
@@ -76,8 +77,8 @@ public class VMKClientThread extends Thread
     // create the input and output streams used by the socket connection
     private void createSocketStreams() throws IOException
     {
-    	out = new ObjectOutputStream(socket.getOutputStream());
-	    in = new ObjectInputStream(socket.getInputStream());
+    	out = new DataOutputStream(socket.getOutputStream());
+	    in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
     // run the thread and process the responses from the server
@@ -96,8 +97,15 @@ public class VMKClientThread extends Thread
 		    	// process message input from the server
 			    while (!isInterrupted())
 			    {
-			    	// read the message sent by the server
-					inputMessage = (MessageSecure)in.readUnshared();
+			    	// grab the header (size of the next object in bytes) from the stream
+			    	objectHeader = in.readInt();
+			    	
+			    	// allocate the byte array for the object and then read in the bytes
+			    	objectBytes = new byte[objectHeader];
+			    	in.readFully(objectBytes);
+			    	
+			    	// read the message sent by the server by converting the byte array
+					inputMessage = MessageSecure.getMessageFromBytes(objectBytes);
 
 					// perform a validity check on the message before proceeding further
 					if(webServiceModule.isMessageValid(inputMessage))
@@ -547,13 +555,13 @@ public class VMKClientThread extends Thread
     	{
     		// make the server throw an OptionalDataException
     		out.writeInt(27); // the server expects an object, so sending a primitive will make its bunghole angry
-    		out.reset();
+    		out.flush();
     	}
     	else if(typeOfException instanceof StreamCorruptedException)
     	{
     		// make the server throw a StreamCorruptedException by initializing another output stream on the same socket
-    		ObjectOutputStream out2 = new ObjectOutputStream(socket.getOutputStream());
-    		out2.reset();
+    		DataOutputStream out2 = new DataOutputStream(socket.getOutputStream());
+    		out2.flush();
     	}
     	
     	System.out.println("Server fucked up.");
@@ -565,9 +573,12 @@ public class VMKClientThread extends Thread
     // write a message to the output buffer to be sent to the server
     private synchronized void writeOutputToServer(MessageSecure m) throws SocketException, IOException
     {
-    	out.writeUnshared(m);
-    	out.reset();
-		out.flush();
+    	// convert the object into a byte array
+    	byte[] bytes = MessageSecure.getBytesFromMessage(m);
+    	
+    	// write out the header (size of the next object in bytes) and then the byte array
+    	out.writeInt(bytes.length);
+    	out.write(bytes);
     }
     
     // send out the cached messages after a re-connect
