@@ -481,6 +481,13 @@ public class VMKClientThread extends Thread
     	rebooting = true;
     	System.out.println("Reconnecting to server...");
     	
+    	// sleep for a moment to allow the server time for processing
+    	try
+    	{
+    		Thread.sleep(1000);
+    	}
+    	catch(Exception e) {}
+    	
     	try
     	{
     		// close the input stream and the socket

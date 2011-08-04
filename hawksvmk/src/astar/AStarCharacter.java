@@ -68,9 +68,13 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	// Strings for clothing IDs
 	private String baseAvatarID = "base_0_0";
-	private String shirtID = "shirt_0";
-	private String shoesID = "shoes_0";
-	private String pantsID = "pants_0";
+	private String hairID = "hair_0_0";
+	private String eyesID = "eyes_0_0";
+	private String mouthID = "mouth_0_0";
+	private String facialhairID = "";
+	private String shirtID = "shirt_0_0";
+	private String shoesID = "shoes_0_0";
+	private String pantsID = "pants_0_0";
 	private String hatID = "hat_0";
 	
 	private Rectangle boundingBox = new Rectangle(x, y, characterImage.getImage().getWidth(), characterImage.getImage().getHeight());
@@ -233,6 +237,44 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 
 	public void setBaseAvatarID(String baseAvatarID) {
 		this.baseAvatarID = baseAvatarID;
+	}
+	
+	// resolve the ID of the head from the ID of the base for consistency
+	public String getHeadID()
+	{
+		return baseAvatarID.replaceFirst("base_", "head_");
+	}
+
+	public String getHairID() {
+		return hairID;
+	}
+
+	public void setHairID(String hairID) {
+		this.hairID = hairID;
+	}
+
+	public String getEyesID() {
+		return eyesID;
+	}
+
+	public void setEyesID(String eyesID) {
+		this.eyesID = eyesID;
+	}
+
+	public String getMouthID() {
+		return mouthID;
+	}
+
+	public void setMouthID(String mouthID) {
+		this.mouthID = mouthID;
+	}
+
+	public String getFacialhairID() {
+		return facialhairID;
+	}
+
+	public void setFacialhairID(String facialhairID) {
+		this.facialhairID = facialhairID;
 	}
 
 	public String getShirtID() {

@@ -14,13 +14,12 @@ import interfaces.GridViewable;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,8 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-
-import javazoom.jl.player.Player;
 
 import clickable.ClickableArea;
 
@@ -193,18 +190,17 @@ public class FileOperations
 				
 				if(line.startsWith("ID: "))
 				{
-					line = line.replaceAll("ID: ", "");
-					roomID = line;
+					roomID = line.replaceFirst("ID: ", "");
 					
 					// set the room ID if it isn't a guest room
 					if(!roomID.startsWith("gr"))
 					{
-						gridView.addRoomInfo("ID", line);
+						gridView.addRoomInfo("ID", roomID);
 					}
 				}
 				else if(line.startsWith("NAME: "))
 				{
-					line = line.replaceAll("NAME: ", "");
+					line = line.replaceFirst("NAME: ", "");
 					
 					// set the room name
 					if(!roomID.startsWith("gr"))
@@ -214,7 +210,7 @@ public class FileOperations
 				}
 				else if(line.startsWith("OWNER: "))
 				{
-					line = line.replaceAll("OWNER: ", "");
+					line = line.replaceFirst("OWNER: ", "");
 					
 					// set the room owner
 					if(!roomID.startsWith("gr"))
@@ -224,7 +220,7 @@ public class FileOperations
 				}
 				else if(line.startsWith("DESCRIPTION: "))
 				{
-					line = line.replaceAll("DESCRIPTION: ", "");
+					line = line.replaceFirst("DESCRIPTION: ", "");
 					
 					// set the room description
 					if(!roomID.startsWith("gr"))
@@ -234,25 +230,18 @@ public class FileOperations
 				}
 				else if(line.startsWith("IMAGE: "))
 				{
-					line = line.replaceAll("IMAGE: ", "");
-					
 					// set the background image path
-					backgroundImagePath = line;
+					backgroundImagePath = line.replaceFirst("IMAGE: ", "");
 				}
 				else if(line.startsWith("TILES: "))
 				{
 					// get the size of the tiles
-					line = line.replaceAll("TILES: ", "");
-					
-					tileDimensions = line.split("x"); // split at the "x"
+					tileDimensions = line.replaceFirst("TILES: ", "").split("x"); // split at the "x"
 				}
 				else if(line.startsWith("SOUND: "))
 				{
-					// get the sound from the file
-					line = line.replaceAll("SOUND: ", "");
-					
 					// load the sound and it to the ArrayList
-					SoundPlayable sound = loadSound(line);
+					SoundPlayable sound = loadSound(line.replaceFirst("SOUND: ", ""));
 					if(sound != null)
 					{
 						// only add the sound if it returned a valid resource
@@ -261,7 +250,7 @@ public class FileOperations
 				}
 				else if(line.startsWith("ANIMATION: "))
 				{
-					line = line.replaceAll("ANIMATION: ", "");
+					line = line.replaceFirst("ANIMATION: ", "");
 					
 					// make sure an animation exists
 					if(!line.equals("none"))
@@ -274,17 +263,13 @@ public class FileOperations
 				}
 				else if(line.startsWith("CLICKABLE AREA: "))
 				{
-					line = line.replaceAll("CLICKABLE AREA: ", "");
-					
 					// create a new ClickableArea from the String
-					clickableAreas.add(ClickableArea.fromString(line));
+					clickableAreas.add(ClickableArea.fromString(line.replaceFirst("CLICKABLE AREA: ", "")));
 				}
 				else if(line.startsWith("STATIONARY OBJECT: "))
 				{
-					line = line.replaceAll("STATIONARY OBJECT: ", "");
-					
 					// create a new StationaryObject from the String
-					gridObjects.add(StationaryGridObject.fromString(line));
+					gridObjects.add(StationaryGridObject.fromString(line.replaceFirst("STATIONARY OBJECT: ", "")));
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
@@ -397,38 +382,32 @@ public class FileOperations
 				if(line.startsWith("TYPE: "))
 				{
 					// get the sound type
-					line = line.replaceAll("TYPE: ", "");
-					type = line;
+					type = line.replaceFirst("TYPE: ", "");
 				}
 				else if(line.startsWith("NAME: "))
 				{
 					// get the sound name
-					line = line.replaceAll("NAME: ", "");
-					name = line;
+					name = line.replaceFirst("NAME: ", "");
 				}
 				else if(line.startsWith("PATH: "))
 				{
 					// get the sound path
-					line = line.replaceAll("PATH: ", "");
-					path = line;
+					path = line.replaceFirst("PATH: ", "");
 				}
 				else if(line.startsWith("BUFFER SIZE: "))
 				{
 					// get the sound buffer size
-					line = line.replaceAll("BUFFER SIZE: ", "");
-					bufferSize = Integer.parseInt(line);
+					bufferSize = Integer.parseInt(line.replaceFirst("BUFFER SIZE: ", ""));
 				}
 				else if(line.startsWith("LENGTH: "))
 				{
 					// get the sound length
-					line = line.replaceAll("LENGTH: ", "");
-					length = Integer.parseInt(line);
+					length = Integer.parseInt(line.replaceFirst("LENGTH: ", ""));
 				}
 				else if(line.startsWith("DELAY: "))
 				{
 					// get the sound delay
-					line = line.replaceAll("DELAY: ", "");
-					delay = Integer.parseInt(line);
+					delay = Integer.parseInt(line.replaceFirst("DELAY: ", ""));
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
@@ -602,7 +581,7 @@ public class FileOperations
 				if(line.startsWith("TEMPLATE: "))
 				{
 					// load the template room file
-					line = line.replaceAll("TEMPLATE: ", "");
+					line = line.replaceFirst("TEMPLATE: ", "");
 					loadFile(AppletResourceLoader.getCharacterFromJar(line), gridView);
 					
 					// get the tiles back
@@ -666,8 +645,7 @@ public class FileOperations
 				else if(line.startsWith("MUSIC: "))
 				{
 					// a music override has been specified
-					line = line.replaceAll("MUSIC: ", "");
-					musicPath = line;
+					musicPath = line.replaceFirst("MUSIC: ", "");
 				}
 				else if(line.startsWith(commentDelimeter) || line.equals(""))
 				{
@@ -847,8 +825,7 @@ public class FileOperations
 				if(line.startsWith("TYPE: "))
 				{
 					// figure out the animation type
-					line = line.replaceAll("TYPE: ", "");
-					animationType = line;
+					animationType = line.replaceFirst("TYPE: ", "");
 					if(animationType.equals("stationary"))
 					{
 						animation = new StationaryAnimation();
@@ -860,34 +837,30 @@ public class FileOperations
 				}
 				else if(line.startsWith("ANIMATION NAME: "))
 				{
-					line = line.replaceAll("ANIMATION NAME: ", "");
+					animationName = line.replaceFirst("ANIMATION NAME: ", "");
 					
 					// set the animation name
-					animationName = line;
 					animation.setName(animationName);
 				}
 				else if(line.startsWith("TOTAL FRAMES: "))
 				{
-					line = line.replaceAll("TOTAL FRAMES: ", "");
+					totalFrames = Integer.parseInt(line.replaceFirst("TOTAL FRAMES: ", ""));
 					
 					// set the total number of frames
-					totalFrames = Integer.parseInt(line);
 					animation.setTotalFrames(totalFrames);
 				}
 				else if(line.startsWith("X-COORD: "))
 				{
-					line = line.replaceAll("X-COORD: ", "");
+					x_coord = Integer.parseInt(line.replaceFirst("X-COORD: ", ""));
 					
 					// set the x-coordinate
-					x_coord = Integer.parseInt(line);
 					animation.setX(x_coord);
 				}
 				else if(line.startsWith("Y-COORD: "))
 				{
-					line = line.replaceAll("Y-COORD: ", "");
+					y_coord = Integer.parseInt(line.replaceFirst("Y-COORD: ", ""));
 					
 					// set the y-coordinate
-					y_coord = Integer.parseInt(line);
 					animation.setY(y_coord);
 				}
 				else if(line.startsWith(commentDelimeter))
@@ -968,9 +941,13 @@ public class FileOperations
 			
 			// assign some default clothing
 			fileWriter.println("BASE AVATAR: base_0_0");
-			fileWriter.println("SHIRT: shirt_0");
-			fileWriter.println("SHOES: shoes_0");
-			fileWriter.println("PANTS: pants_0");
+			fileWriter.println("HAIR: hair_0_0");
+			fileWriter.println("EYES: eyes_0_0");
+			fileWriter.println("MOUTH: mouth_0_0");
+			fileWriter.println("FACIALHAIR: ");
+			fileWriter.println("SHIRT: shirt_0_0");
+			fileWriter.println("SHOES: shoes_0_0");
+			fileWriter.println("PANTS: pants_0_0");
 			fileWriter.println("HAT: hat_0");
 			
 			if(username.startsWith("QA_") || username.startsWith("HOST_") || username.startsWith("VMK_"))
@@ -1000,9 +977,9 @@ public class FileOperations
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("// Clothing");
 			fileWriter.println();
-			fileWriter.println("CLOTHING: shirt_0");
-			fileWriter.println("CLOTHING: pants_0");
-			fileWriter.println("CLOTHING: shoes_0");
+			fileWriter.println("CLOTHING: shirt_0_0");
+			fileWriter.println("CLOTHING: pants_0_0");
+			fileWriter.println("CLOTHING: shoes_0_0");
 			fileWriter.println("CLOTHING: hat_0");
 			fileWriter.println();
 			fileWriter.println("// Furniture");
@@ -1074,9 +1051,13 @@ public class FileOperations
 		String contentRating = "G";
 		
 		String baseAvatarID = "base_0_0";
-		String shirtID = "shirt_0";
-		String shoesID = "shoes_0";
-		String pantsID = "pants_0";
+		String hairID = "hair_0_0";
+		String eyesID = "eyes_0_0";
+		String mouthID = "mouth_0_0";
+		String facialhairID = "";
+		String shirtID = "shirt_0_0";
+		String shoesID = "shoes_0_0";
+		String pantsID = "pants_0_0";
 		String hatID = "hat_0";
 		
 		InventoryInfo displayedBadges[] = new InventoryInfo[StaticAppletData.MAX_DISPLAYABLE_BADGES];
@@ -1097,59 +1078,64 @@ public class FileOperations
 					
 					if(line.startsWith("USERNAME: ")) // username
 					{
-						line = line.replaceAll("USERNAME: ", "");
-						username = line;
+						username = line.replaceFirst("USERNAME: ", "");
 					}
 					else if(line.startsWith("CREDITS: ")) // credits
 					{
-						line = line.replaceAll("CREDITS: ", "");
-						credits = Long.parseLong(line);
+						credits = Long.parseLong(line.replaceFirst("CREDITS: ", ""));
 					}
 					else if(line.startsWith("SIGNATURE: ")) // signature
 					{
-						line = line.replaceAll("SIGNATURE: ", "");
-						signature = line;
+						signature = line.replaceFirst("SIGNATURE: ", "");
 					}
 					else if(line.startsWith("RATING: ")) // content rating
 					{
-						line = line.replaceAll("RATING: ", "");
-						contentRating = line;
+						contentRating = line.replaceFirst("RATING: ", "");
 					}
 					else if(line.startsWith("BASE AVATAR: ")) // base avatar ID
 					{
-						line = line.replaceAll("BASE AVATAR: ", "");
-						baseAvatarID = line;
+						baseAvatarID = line.replaceFirst("BASE AVATAR: ", "");
+					}
+					else if(line.startsWith("HAIR: ")) // hair ID
+					{
+						hairID = line.replaceFirst("HAIR: ", "");
+					}
+					else if(line.startsWith("EYES: ")) // eyes ID
+					{
+						eyesID = line.replaceFirst("EYES: ", "");
+					}
+					else if(line.startsWith("MOUTH: ")) // mouth ID
+					{
+						mouthID = line.replaceFirst("MOUTH: ", "");
+					}
+					else if(line.startsWith("FACIALHAIR: ")) // facial-hair ID
+					{
+						facialhairID = line.replaceFirst("FACIALHAIR: ", "");
 					}
 					else if(line.startsWith("SHIRT: ")) // shirt ID
 					{
-						line = line.replaceAll("SHIRT: ", "");
-						shirtID = line;
+						shirtID = line.replaceFirst("SHIRT: ", "");
 					}
 					else if(line.startsWith("SHOES: ")) // shoes ID
 					{
-						line = line.replaceAll("SHOES: ", "");
-						shoesID = line;
+						shoesID = line.replaceFirst("SHOES: ", "");
 					}
 					else if(line.startsWith("PANTS: ")) // pants ID
 					{
-						line = line.replaceAll("PANTS: ", "");
-						pantsID = line;
+						pantsID = line.replaceFirst("PANTS: ", "");
 					}
 					else if(line.startsWith("HAT: ")) // hat ID
 					{
-						line = line.replaceAll("HAT: ", "");
-						hatID = line;
+						hatID = line.replaceFirst("HAT: ", "");
 					}
 					else if(line.startsWith("BADGE: ")) // badge
 					{
-						line = line.replaceAll("BADGE: ", "");
-						displayedBadges[badgeNum] = StaticAppletData.getInvInfo(line);
+						displayedBadges[badgeNum] = StaticAppletData.getInvInfo(line.replaceFirst("BADGE: ", ""));
 						badgeNum++;
 					}
 					else if(line.startsWith("PIN: ")) // pin
 					{
-						line = line.replaceAll("PIN: ", "");
-						displayedPins[pinNum] = StaticAppletData.getInvInfo(line);
+						displayedPins[pinNum] = StaticAppletData.getInvInfo(line.replaceFirst("PIN: ", ""));
 						pinNum++;
 					}
 					else if(line.startsWith(commentDelimeter))
@@ -1198,6 +1184,10 @@ public class FileOperations
 		newCharacter.setSignature(signature);
 		newCharacter.setContentRating(contentRating);
 		newCharacter.setBaseAvatarID(baseAvatarID);
+		newCharacter.setHairID(hairID);
+		newCharacter.setEyesID(eyesID);
+		newCharacter.setMouthID(mouthID);
+		newCharacter.setFacialhairID(facialhairID);
 		newCharacter.setShirtID(shirtID);
 		newCharacter.setShoesID(shoesID);
 		newCharacter.setPantsID(pantsID);
@@ -1250,6 +1240,10 @@ public class FileOperations
 			
 			// write out the clothing information
 			fileWriter.println("BASE AVATAR: " + character.getBaseAvatarID());
+			fileWriter.println("HAIR: " + character.getHairID());
+			fileWriter.println("EYES: " + character.getEyesID());
+			fileWriter.println("MOUTH: " + character.getMouthID());
+			fileWriter.println("FACIALHAIR: " + character.getFacialhairID());
 			fileWriter.println("SHIRT: " + character.getShirtID());
 			fileWriter.println("SHOES: " + character.getShoesID());
 			fileWriter.println("PANTS: " + character.getPantsID());
@@ -1285,7 +1279,7 @@ public class FileOperations
 		String email = "";
 		if(character.getEmail().equals(""))
 		{
-			email = "default";
+			email = GameConstants.CONST_DEFAULT_EMAIL;
 		}
 		else
 		{
@@ -1298,6 +1292,9 @@ public class FileOperations
 		// directions that the character needs
 		String directions[] = GameConstants.CONST_CHARACTER_DIRECTIONS_ARRAY;
 		
+		// resolve the forward-facing directions as an ArrayList for comparisons
+		ArrayList<String> forwardDirections = new ArrayList<String>(Arrays.asList(GameConstants.CONST_CHARACTER_DIRECTIONS_FORWARD_ARRAY));
+		
 		// animations that the character needs
 		String animations[] = GameConstants.CONST_CHARACTER_ANIMS_ARRAY;
 		
@@ -1306,6 +1303,11 @@ public class FileOperations
 		
 		// image objects for the avatar compositions
 		BufferedImage base = null;
+		BufferedImage head = null;
+		BufferedImage hair = null;
+		BufferedImage eyes = null;
+		BufferedImage mouth = null;
+		BufferedImage facialhair = null;
 		BufferedImage shirt = null;
 		BufferedImage shoes = null;
 		BufferedImage pants = null;
@@ -1322,7 +1324,7 @@ public class FileOperations
 					// iterate through the necessary sizes
 					for(String size: sizes)
 					{
-						// get the respective images given the clothing IDs
+						// get the respective images given the clothing IDs for elements that share the same animation names
 						base = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_BASE_IMAGES + character.getBaseAvatarID() + "/" + character.getBaseAvatarID() + "_" + direction + animation + size + ".png");
 						shirt = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_SHIRTS_IMAGES + character.getShirtID() + "/" + character.getShirtID() + "_" + direction + animation + size + ".png");
 						shoes = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_SHOES_IMAGES + character.getShoesID() + "/" + character.getShoesID() + "_" + direction + animation + size + ".png");
@@ -1334,14 +1336,53 @@ public class FileOperations
 							hat = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_HATS_IMAGES + character.getHatID() + "/" + character.getHatID() + "_" + direction + "_" + size + ".png");
 						}
 						
+						// resolve the head from the base
+						head = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_HEAD_IMAGES + character.getHeadID() + "/" + character.getHeadID() + "_" + direction + "_" + size + ".png");
+						
+						// resolve the hair
+						hair = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_HAIR_IMAGES + character.getHairID() + "/" + character.getHairID() + "_" + direction + "_" + size + ".png");
+						
+						// should we construct any forward-facing elements?
+						if(forwardDirections.contains(direction))
+						{
+							// also build the exclusively-forward-facing elements
+							eyes = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_EYES_IMAGES + character.getEyesID() + "/" + character.getEyesID() + "_" + direction + "_" + size + ".png");
+							mouth = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_MOUTH_IMAGES + character.getMouthID() + "/" + character.getMouthID() + "_" + direction + "_" + size + ".png");
+							
+							// make sure the avatar actually has some facial-hair
+							if(!character.getFacialhairID().equals(""))
+							{
+								facialhair = AppletResourceLoader.getBufferedImageFromJar(GameConstants.PATH_CLOTHING_FACIAL_HAIR_IMAGES + character.getFacialhairID() + "/" + character.getFacialhairID() + "_" + direction + "_" + size + ".png");
+							}
+						}
+						
 						// create the combined BufferedImage object and allow for transparency
 						BufferedImage combined = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
 						
 						// create the Graphics instance so we can draw on the canvas
 						Graphics g = combined.getGraphics();
 						
-						// apply all the clothing images in the necessary order so they layer properly
+						// apply all the base images in the necessary order so they layer properly
 						g.drawImage(base,0,0,null);
+						g.drawImage(head,0,0,null);
+						g.drawImage(hair,0,0,null);
+						
+						// check to see if we need to draw the forward-facing images
+						if(eyes != null)
+						{
+							// we need to draw the forward-facing images
+							g.drawImage(eyes,0,0,null);
+							g.drawImage(mouth,0,0,null);
+							
+							// facial-hair is optional, so we have to check that separately
+							if(facialhair != null)
+							{
+								// draw the facial-hair
+								g.drawImage(facialhair,0,0,null);
+							}
+						}
+						
+						// draw the clothing images
 						g.drawImage(shirt,0,0,null);
 						g.drawImage(shoes,0,0,null);
 						g.drawImage(pants,0,0,null);
@@ -1401,8 +1442,7 @@ public class FileOperations
 					
 					if(line.startsWith("FRIEND: ")) // username
 					{
-						line = line.replaceAll("FRIEND: ", "");
-						friend = line;
+						friend = line.replaceFirst("FRIEND: ", "");
 						
 						// add the friend to the list
 						friendsList.add(friend);
@@ -1517,20 +1557,17 @@ public class FileOperations
 						if(line.startsWith("SENDER: "))
 						{
 							// get the sender
-							line = line.replaceAll("SENDER: ", "");
-							sender = line;
+							sender = line.replaceFirst("SENDER: ", "");
 						}
 						else if(line.startsWith("DATE: "))
 						{
 							// get the date sent
-							line = line.replaceAll("DATE: ", "");
-							dateSent = line;
+							dateSent = line.replaceFirst("DATE: ", "");
 						}
 						else if(line.startsWith("BODY: "))
 						{
 							// get the body text
-							line = line.replaceAll("BODY: ", "");
-							bodyText = line;
+							bodyText = line.replaceFirst("BODY: ", "");
 							
 							// add a new mail message to the array list
 							messages.add(new MailMessage(sender, username, bodyText, dateSent));
@@ -1673,8 +1710,7 @@ public class FileOperations
 					else if(line.startsWith("ID: "))
 					{
 						// inventory ID
-						line = line.replaceAll("ID: ", "");
-						invID = line;
+						invID = line.replaceFirst("ID: ", "");
 					}
 					else if(line.startsWith("TYPE: "))
 					{
@@ -1800,50 +1836,42 @@ public class FileOperations
 					else if(line.startsWith("ID: "))
 					{
 						// get the inventory ID
-						line = line.replaceAll("ID: ", "");
-						invID = line;
+						invID = line.replaceFirst("ID: ", "");
 					}
 					else if(line.startsWith("NAME: "))
 					{
 						// get the inventory name
-						line = line.replaceAll("NAME: ", "");
-						invName = line;
+						invName = line.replaceFirst("NAME: ", "");
 					}
 					else if(line.startsWith("PATH: "))
 					{
 						// get the inventory path
-						line = line.replaceAll("PATH: ", "");
-						invPath = line;
+						invPath = line.replaceFirst("PATH: ", "");
 					}
 					else if(line.startsWith("CARD: "))
 					{
 						// get the inventory card path
-						line = line.replaceAll("CARD: ", "");
-						invCardPath = line;
+						invCardPath = line.replaceFirst("CARD: ", "");
 					}
 					else if(line.startsWith("ICON: "))
 					{
 						// get the inventory icon path (used in the Inventory window)
-						line = line.replaceAll("ICON: ", "");
-						invIconPath = line;
+						invIconPath = line.replaceFirst("ICON: ", "");
 					}
 					else if(line.startsWith("TILES: "))
 					{
 						// get the inventory tiles
-						line = line.replaceAll("TILES: ", "");
-						invTiles = Integer.parseInt(line);
+						invTiles = Integer.parseInt(line.replaceFirst("TILES: ", ""));
 					}
 					else if(line.startsWith("PRICE: "))
 					{
 						// get the inventory price
-						line = line.replaceAll("PRICE: ", "");
-						invPrice = Integer.parseInt(line);
+						invPrice = Integer.parseInt(line.replaceFirst("PRICE: ", ""));
 					}
 					else if(line.startsWith("RATING: "))
 					{
 						// get the content rating
-						line = line.replaceAll("RATING: ", "");
-						invRatingIndex = RatingSystem.getContentRatingIndex(line);
+						invRatingIndex = RatingSystem.getContentRatingIndex(line.replaceFirst("RATING: ", ""));
 					}
 					else if(line.startsWith("@END@"))
 					{
@@ -1907,29 +1935,25 @@ public class FileOperations
 						if(line.startsWith("FURNITURE: "))
 						{
 							// get the furniture item
-							line = line.replaceAll("FURNITURE: ", "");
-							inventoryID = line;
+							inventoryID = line.replaceFirst("FURNITURE: ", "");
 							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.FURNITURE));
 						}
 						else if(line.startsWith("PIN: "))
 						{
 							// get the pin item
-							line = line.replaceAll("PIN: ", "");
-							inventoryID = line;
+							inventoryID = line.replaceFirst("PIN: ", "");
 							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.PIN));
 						}
 						else if(line.startsWith("POSTER: "))
 						{
 							// get the poster item
-							line = line.replaceAll("POSTER: ", "");
-							inventoryID = line;
+							inventoryID = line.replaceFirst("POSTER: ", "");
 							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.POSTER));
 						}
 						else if(line.startsWith("CLOTHING: "))
 						{
 							// get the clothing item
-							line = line.replaceAll("CLOTHING: ", "");
-							inventoryID = line;
+							inventoryID = line.replaceFirst("CLOTHING: ", "");
 							inventoryItems.add(new InventoryItem(StaticAppletData.getInvInfo(inventoryID).getName(), inventoryID, InventoryItem.CLOTHING));
 						}
 						else if(line.startsWith(commentDelimeter))
@@ -2090,38 +2114,32 @@ public class FileOperations
 					else if(line.startsWith("ID: "))
 					{
 						// get the room ID
-						line = line.replaceAll("ID: ", "");
-						infoMap.put("ID", line);
+						infoMap.put("ID", line.replaceFirst("ID: ", ""));
 					}
 					else if(line.startsWith("NAME: "))
 					{
 						// get the room name
-						line = line.replaceAll("NAME: ", "");
-						infoMap.put("NAME", line);
+						infoMap.put("NAME", line.replaceFirst("NAME: ", ""));
 					}
 					else if(line.startsWith("OWNER: "))
 					{
 						// get the room owner
-						line = line.replaceAll("OWNER: ", "");
-						infoMap.put("OWNER", line);
+						infoMap.put("OWNER", line.replaceFirst("OWNER: ", ""));
 					}
 					else if(line.startsWith("DESCRIPTION: "))
 					{
 						// get the room description
-						line = line.replaceAll("DESCRIPTION: ", "");
-						infoMap.put("DESCRIPTION", line);
+						infoMap.put("DESCRIPTION", line.replaceFirst("DESCRIPTION: ", ""));
 					}
 					else if(line.startsWith("COST: "))
 					{
 						// get the room cost (guest rooms only)
-						line = line.replaceAll("COST: ", "");
-						infoMap.put("COST", line);
+						infoMap.put("COST", line.replaceFirst("COST: ", ""));
 					}
 					else if(line.startsWith("TIMESTAMP: "))
 					{
 						// get the room timestamp (guest rooms only)
-						line = line.replaceAll("TIMESTAMP: ", "");
-						infoMap.put("TIMESTAMP", line);
+						infoMap.put("TIMESTAMP", line.replaceFirst("TIMESTAMP: ", ""));
 					}
 				}
 				
@@ -2178,8 +2196,7 @@ public class FileOperations
 					else if(line.startsWith("ID: "))
 					{
 						// get the room ID
-						line = line.replaceAll("ID: ", "");
-						roomID = line;
+						roomID = line.replaceFirst("ID: ", "");
 						
 						// check if it's a guest room template
 						if(roomID.startsWith("template_"))
@@ -2202,8 +2219,7 @@ public class FileOperations
 					else if(line.startsWith("PATH: "))
 					{
 						// get the room path
-						line = line.replaceAll("PATH: ", "");
-						roomPath = line;
+						roomPath = line.replaceFirst("PATH: ", "");
 						
 						// get the information map from the room
 						HashMap<String,String> infoMap = getInfoFromRoom(roomPath);
@@ -2302,8 +2318,7 @@ public class FileOperations
 					else if(line.startsWith("DEST: "))
 					{
 						// get the room ID
-						line = line.replaceAll("DEST: ", "");
-						dest = line;
+						dest = line.replaceFirst("DEST: ", "");
 						
 						if(dest == null)
 						{

@@ -53,7 +53,7 @@ public class BatchImageProduction
 			workingDirectory = input.readLine();
 			
 			// e.g. "shirt_0"
-			System.out.print("Enter a collection name (e.g. \"shirt_0\"): ");
+			System.out.print("Enter a collection name (e.g. \"shirt_0_0\"): ");
 			collectionName = input.readLine();
 			
 			// attempt to figure out the collection type by checking the collection folder name
