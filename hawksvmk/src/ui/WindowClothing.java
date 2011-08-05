@@ -273,11 +273,11 @@ public class WindowClothing extends JPanel
 					// set the hat information
 					if(hats.size() > 0) {hatID = hats.get(selectedHatIndex).getId();}
 					
-					// apply the signature and clothing
-					gridObject.updateUserSignatureAndClothing(signatureBox.getText(), baseID, hairID, eyesID, mouthID, facialhairID, shirtID, shoesID, pantsID, hatID);
-					
 					// close the window
 					setVisible(false);
+					
+					// apply the signature and clothing
+					gridObject.updateUserSignatureAndClothing(signatureBox.getText(), baseID, hairID, eyesID, mouthID, facialhairID, shirtID, shoesID, pantsID, hatID);
 				}
 				else if(nextShirtRect.contains(e.getPoint()))
 				{

@@ -275,21 +275,10 @@ public class VMKServerThread extends Thread
 			    		{
 			    			// update character clothing message received from client
 			    			MessageUpdateCharacterClothing userMsg = (MessageUpdateCharacterClothing)inputMessage;
-	
-			    			// re-create the character's avatar rotations from the clothing images
-			    			FileOperations.buildAvatarImages(userMsg.getCharacter());
-	
-			    			// save the character since the clothing IDs have been changed
-			    			FileOperations.saveCharacter(userMsg.getCharacter());
-	
-			    			// tell the character to update the images
-			    			userMsg.getCharacter().updateAvatarImages();
-	
-			    			// update the character in the room HashMap
-			    			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
-	
-			    			// send the message back out to the clients to update the character's clothing on their end
-			    			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
+			    			
+			    			// start up an update thread to make sure we can still process other operations
+			    			Thread updateThread = new Thread(new UpdateClothingRunnable(userMsg));
+			    			updateThread.start();
 			    		}
 			    		else if(inputMessage instanceof MessageAddUserToRoom)
 			    		{
@@ -987,6 +976,32 @@ public class VMKServerThread extends Thread
     	{
     		running = false;
     		interrupt();
+    	}
+    }
+    
+    // update a character's clothing in a separate thread so other actions (such as chat) can still be
+    // processed while this happens
+    class UpdateClothingRunnable implements Runnable
+    {
+    	private MessageUpdateCharacterClothing userMsg;
+    	public UpdateClothingRunnable(MessageUpdateCharacterClothing userMsg) {this.userMsg = userMsg;}
+    	
+    	public void run()
+    	{
+    		// re-create the character's avatar rotations from the clothing images
+			FileOperations.buildAvatarImages(userMsg.getCharacter());
+
+			// save the character since the clothing IDs have been changed
+			FileOperations.saveCharacter(userMsg.getCharacter());
+
+			// tell the character to update the images
+			userMsg.getCharacter().updateAvatarImages();
+
+			// update the character in the room HashMap
+			VMKServerPlayerData.addCharacter(userMsg.getCharacter().getUsername(), userMsg.getCharacter(), userMsg.getRoomID());
+
+			// send the message back out to the clients to update the character's clothing on their end
+			sendMessageToAllClientsInRoom(userMsg, userMsg.getRoomID());
     	}
     }
 }
