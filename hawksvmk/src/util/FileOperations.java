@@ -1364,6 +1364,13 @@ public class FileOperations
 						
 						// apply all the base images in the necessary order so they layer properly
 						g.drawImage(base,0,0,null);
+						
+						// draw the clothing images before the head so the head can layer on top of the clothes
+						g.drawImage(shirt,0,0,null);
+						g.drawImage(shoes,0,0,null);
+						g.drawImage(pants,0,0,null);
+						
+						// draw the head and hair on top of the clothing elements
 						g.drawImage(head,0,0,null);
 						g.drawImage(hair,0,0,null);
 						
@@ -1381,11 +1388,6 @@ public class FileOperations
 								g.drawImage(facialhair,0,0,null);
 							}
 						}
-						
-						// draw the clothing images
-						g.drawImage(shirt,0,0,null);
-						g.drawImage(shoes,0,0,null);
-						g.drawImage(pants,0,0,null);
 						
 						// check to see if a hat has been specified
 						if(!character.getHatID().equals(""))
@@ -1832,6 +1834,41 @@ public class FileOperations
 					if(line.equals("") || line.startsWith(commentDelimeter))
 					{
 						// reached a blank line/comment line, so ignore
+					}
+					else if(line.startsWith("BASES: ")) // preliminary total (bases)
+					{
+						// break the reading into an array and set the totals
+						String[] items = line.replaceFirst("BASES: ", "").split("x");
+						GameConstants.CONST_BASES_TOTAL = Integer.parseInt(items[0]);
+						GameConstants.CONST_BASE_COLORS_TOTAL = Integer.parseInt(items[1]);
+					}
+					else if(line.startsWith("HAIR: ")) // preliminary total (hair)
+					{
+						// break the reading into an array and set the totals
+						String[] items = line.replaceFirst("HAIR: ", "").split("x");
+						GameConstants.CONST_HAIR_TOTAL = Integer.parseInt(items[0]);
+						GameConstants.CONST_HAIR_COLORS_TOTAL = Integer.parseInt(items[1]);
+					}
+					else if(line.startsWith("EYES: ")) // preliminary total (eyes)
+					{
+						// break the reading into an array and set the totals
+						String[] items = line.replaceFirst("EYES: ", "").split("x");
+						GameConstants.CONST_EYES_TOTAL = Integer.parseInt(items[0]);
+						GameConstants.CONST_EYE_COLORS_TOTAL = Integer.parseInt(items[1]);
+					}
+					else if(line.startsWith("MOUTHS: ")) // preliminary total (mouths)
+					{
+						// break the reading into an array and set the totals
+						String[] items = line.replaceFirst("MOUTHS: ", "").split("x");
+						GameConstants.CONST_MOUTHS_TOTAL = Integer.parseInt(items[0]);
+						GameConstants.CONST_MOUTH_COLORS_TOTAL = Integer.parseInt(items[1]);
+					}
+					else if(line.startsWith("FACIALHAIR: ")) // preliminary total (facialhair)
+					{
+						// break the reading into an array and set the totals
+						String[] items = line.replaceFirst("FACIALHAIR: ", "").split("x");
+						GameConstants.CONST_FACIALHAIR_TOTAL = Integer.parseInt(items[0]);
+						GameConstants.CONST_FACIALHAIR_COLORS_TOTAL = Integer.parseInt(items[1]);
 					}
 					else if(line.startsWith("ID: "))
 					{
@@ -2284,7 +2321,7 @@ public class FileOperations
 		}
 		catch(Exception e)
 		{
-			System.out.println("ERROR IN saveUsernameEmailMappings()");
+			System.out.println("ERROR IN addRoomMapping()");
 			e.printStackTrace();
 		}
 	}

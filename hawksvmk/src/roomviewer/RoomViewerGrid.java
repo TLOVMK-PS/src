@@ -1439,7 +1439,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	}
 	
 	// update the signature and clothing items of myCharacter
-	public void updateUserSignatureAndClothing(String signature, String shirtID, String shoesID, String pantsID, String hatID)
+	public void updateUserSignatureAndClothing(String signature, String baseID, String hairID, String eyesID, String mouthID, String facialhairID, String shirtID, String shoesID, String pantsID, String hatID)
 	{	
 		// check to see if the signature needs to be updated
 		if(!myCharacter.getSignature().equals(signature))
@@ -1452,13 +1452,23 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		}
 		
 		// check to see if at least one clothing item has changed in order to send the Update Clothing message
-		if(!shirtID.equals(myCharacter.getShirtID()) ||
+		if(!baseID.equals(myCharacter.getBaseAvatarID()) ||
+		   !hairID.equals(myCharacter.getHairID()) ||
+		   !eyesID.equals(myCharacter.getEyesID()) ||
+		   !mouthID.equals(myCharacter.getMouthID()) ||
+		   !facialhairID.equals(myCharacter.getFacialhairID()) ||
+		   !shirtID.equals(myCharacter.getShirtID()) ||
 		   !shoesID.equals(myCharacter.getShoesID()) ||
 		   !pantsID.equals(myCharacter.getPantsID()) ||
 		   !hatID.equals(myCharacter.getHatID()))
 		{
 			
-			// update the clothing information first
+			// update the base information and then the clothing information
+			if(!baseID.equals("")) {myCharacter.setBaseAvatarID(baseID);}
+			if(!hairID.equals("")) {myCharacter.setHairID(hairID);}
+			if(!eyesID.equals("")) {myCharacter.setEyesID(eyesID);}
+			if(!mouthID.equals("")) {myCharacter.setMouthID(mouthID);}
+			myCharacter.setFacialhairID(facialhairID);
 			if(!shirtID.equals("")) {myCharacter.setShirtID(shirtID);}
 			if(!shoesID.equals("")) {myCharacter.setShoesID(shoesID);}
 			if(!pantsID.equals("")) {myCharacter.setPantsID(pantsID);}
