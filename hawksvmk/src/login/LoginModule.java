@@ -5,7 +5,6 @@
 package login;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -14,6 +13,7 @@ import svc.WebService;
 public class LoginModule
 {
 	private String username = "";
+	private String gender = "";
 	private String staffType = "";
 	private String errorMessage = "";
 	
@@ -45,12 +45,17 @@ public class LoginModule
 				if(line.startsWith("USERNAME: "))
 				{
 					// get the username from the connection
-					username = line.replaceAll("USERNAME: ", "");
+					username = line.replaceFirst("USERNAME: ", "");
+				}
+				else if(line.startsWith("GENDER: "))
+				{
+					// get the gender from the connection
+					gender = line.replaceFirst("GENDER: ", "");
 				}
 				else if(line.startsWith("STAFF: "))
 				{
 					// get the staff type from the connection
-					staffType = line.replaceAll("STAFF: ", "");
+					staffType = line.replaceFirst("STAFF: ", "");
 				}
 			}
 			
@@ -121,6 +126,11 @@ public class LoginModule
 	// return the username
 	public String getUsername() {
 		return username;
+	}
+	
+	// return the gender
+	public String getGender() {
+		return gender;
 	}
 	
 	// return the staff type
