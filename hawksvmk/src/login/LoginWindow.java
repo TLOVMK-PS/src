@@ -105,7 +105,7 @@ public class LoginWindow extends JFrame
 					catch(Exception ex) {}
 					
 					// load up the Room Viewer window
-					roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender()));
+					roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender(), loginModule.getCredits()));
 					roomViewerUI.loadRoomViewerUI();
 				}
 				else

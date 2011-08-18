@@ -14,6 +14,7 @@ public class LoginModule
 {
 	private String username = "";
 	private String gender = "";
+	private long credits = -1L;
 	private String staffType = "";
 	private String errorMessage = "";
 	
@@ -51,6 +52,11 @@ public class LoginModule
 				{
 					// get the gender from the connection
 					gender = line.replaceFirst("GENDER: ", "");
+				}
+				else if(line.startsWith("CREDITS: "))
+				{
+					// get the credits from the connection
+					credits = Long.parseLong(line.replaceFirst("CREDITS: ", ""));
 				}
 				else if(line.startsWith("STAFF: "))
 				{
@@ -131,6 +137,11 @@ public class LoginModule
 	// return the gender
 	public String getGender() {
 		return gender;
+	}
+	
+	// return the credits
+	public long getCredits() {
+		return credits;
 	}
 	
 	// return the staff type

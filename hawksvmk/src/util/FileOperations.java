@@ -1085,6 +1085,14 @@ public class FileOperations
 					else if(line.startsWith("CREDITS: ")) // credits
 					{
 						credits = Long.parseLong(line.replaceFirst("CREDITS: ", ""));
+						
+						// make sure the amount of credits is correct
+						if(credits > basicData.getCredits())
+						{
+							// the web-service database says there are less credits than the file does,
+							// so default to the amount specified by the web server instead
+							credits = basicData.getCredits();
+						}
 					}
 					else if(line.startsWith("SIGNATURE: ")) // signature
 					{

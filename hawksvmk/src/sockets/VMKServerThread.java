@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import astar.AStarCharacter;
+import astar.AStarCharacterBasicData;
 
 import roomobject.RoomItem;
 import rooms.VMKRoom;
@@ -698,16 +699,25 @@ public class VMKServerThread extends Thread
     	// make sure we are not waiting for a re-connection from the client
     	waitingForReconnect = false;
     	
+    	// get the character from the mapping
+    	AStarCharacter theCharacter = VMKServerPlayerData.getCharacter(this.getName());
+    	
     	// check to see if the fucking character exists
-    	if(VMKServerPlayerData.getCharacter(this.getName()) == null)
+    	if(theCharacter == null)
     	{
     		System.out.println("THE FUCKING CHARACTER IS NULL.  WHY IS THE CHARACTER FUCKING NULL? [" + this.getName() + "]");
     	}
-    	
-    	// save the character to file
-    	FileOperations.saveCharacter(VMKServerPlayerData.getCharacter(this.getName()));
-		
-		System.out.println("Saved character (" + this.getName() + ") to file");
+    	else
+    	{
+	    	// perform a web-service call to update the data on the web-server
+	    	AStarCharacterBasicData data = new AStarCharacterBasicData(theCharacter.getUsername(), theCharacter.getEmail(), theCharacter.getGender(), theCharacter.getCredits());
+	    	updatePlayerDataInDatabase(data);
+	    	
+	    	// save the character to file
+	    	FileOperations.saveCharacter(theCharacter);
+			
+			System.out.println("Saved character (" + this.getName() + ") to file");
+    	}
 		
 		// remove the character's server thread
 		serverThreads.remove(this);
@@ -906,6 +916,20 @@ public class VMKServerThread extends Thread
 	    			serverThreads.get(i).sendMessageToClient(m);
 	    		}
     		}
+    	}
+    }
+    
+    // update a player's data in the server-side database
+    private void updatePlayerDataInDatabase(AStarCharacterBasicData basicData)
+    {
+    	// issue the command
+    	try
+    	{
+    		webServiceModule.doUpdatePlayerData(basicData);
+    	}
+    	catch(Exception e)
+    	{
+    		System.out.println("Could not update basic player data in database: " + e.getClass().getSimpleName() + " - " + e.getMessage());
     	}
     }
     

@@ -292,7 +292,7 @@ public class RoomViewerUI extends Applet
 					if(!loginModule.getUsername().trim().equals(""))
 					{
 						// set basic properties based upon the login result
-						roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender()));
+						roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender(), loginModule.getCredits()));
 					}
 					
 					// close the login window
