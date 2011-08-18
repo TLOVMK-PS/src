@@ -36,6 +36,7 @@ import animations.MovingAnimation;
 import animations.StationaryAnimation;
 import animations.AnimationFrame;
 import astar.AStarCharacter;
+import astar.AStarCharacterBasicData;
 
 import roomobject.RoomFurniture;
 import roomobject.RoomItem;
@@ -920,7 +921,7 @@ public class FileOperations
 	}
 	
 	// create a new player with blank data files
-	private static synchronized void createNewPlayerFiles(String username, String email)
+	private static synchronized void createNewPlayerFiles(AStarCharacterBasicData basicData)
 	{
 		PrintWriter fileWriter = null;
 		String filename = "";
@@ -932,11 +933,12 @@ public class FileOperations
 		try
 		{
 			// character file
-			filename = GameConstants.PATH_CHARACTERS + email + ".dat";
+			filename = GameConstants.PATH_CHARACTERS + basicData.getEmail() + ".dat";
 			fileWriter = new PrintWriter(filename);
-			fileWriter.println("USERNAME: " + username);
+			fileWriter.println("USERNAME: " + basicData.getUsername());
+			fileWriter.println("GENDER: " + basicData.getGender());
 			fileWriter.println("CREDITS: " + credits);
-			fileWriter.println("SIGNATURE: " + username); // give the player a default signature with only his username
+			fileWriter.println("SIGNATURE: " + basicData.getUsername()); // give the player a default signature with only his username
 			fileWriter.println("RATING: G"); // assign a default content rating of General
 			
 			// assign some default clothing
@@ -950,7 +952,7 @@ public class FileOperations
 			fileWriter.println("PANTS: pants_0_0");
 			fileWriter.println("HAT: hat_0");
 			
-			if(username.startsWith("QA_") || username.startsWith("HOST_") || username.startsWith("VMK_"))
+			if(basicData.getUsername().startsWith("QA_") || basicData.getUsername().startsWith("HOST_") || basicData.getUsername().startsWith("VMK_"))
 			{
 				defaultBadges++; // staff get one extra badge when they create their account
 				fileWriter.println("BADGE: badge_0"); // HVMK Staff badge
@@ -973,7 +975,7 @@ public class FileOperations
 			fileWriter.close();
 			
 			// inventory file
-			filename = GameConstants.PATH_INVENTORY + email + ".dat";
+			filename = GameConstants.PATH_INVENTORY + basicData.getEmail() + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("// Clothing");
 			fileWriter.println();
@@ -993,13 +995,13 @@ public class FileOperations
 			fileWriter.close();
 			
 			// friends file
-			filename = GameConstants.PATH_FRIENDS + email + ".dat";
+			filename = GameConstants.PATH_FRIENDS + basicData.getEmail() + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println(); // blank friends file
 			fileWriter.close();
 			
 			// messages file (give them one new message from VMK Staff)
-			filename = GameConstants.PATH_MESSAGES + email + ".dat";
+			filename = GameConstants.PATH_MESSAGES + basicData.getEmail() + ".dat";
 			fileWriter = new PrintWriter(filename);
 			fileWriter.println("SENDER: HVMK Staff");
 			fileWriter.println("DATE: " + new Date().toString());
@@ -1008,10 +1010,10 @@ public class FileOperations
 			fileWriter.close();
 			
 			// create the new user's Guest Rooms folder
-			new File(GameConstants.PATH_GUEST_ROOMS + email).mkdir();
+			new File(GameConstants.PATH_GUEST_ROOMS + basicData.getEmail()).mkdir();
 			
 			// create the new user's Avatar folder
-			new File(GameConstants.PATH_AVATAR_IMAGES + email).mkdir();
+			new File(GameConstants.PATH_AVATAR_IMAGES + basicData.getEmail()).mkdir();
 		}
 		catch(Exception e)
 		{
@@ -1021,15 +1023,15 @@ public class FileOperations
 	}
 	
 	// load a character given an email address
-	public static synchronized AStarCharacter loadCharacter(String email)
+	public static synchronized AStarCharacter loadCharacter(AStarCharacterBasicData basicData)
 	{
 		String username = "";
 		boolean isNewPlayer = false;
 		String filename = "";
 		
-		if(!email.equals(""))
+		if(!basicData.getEmail().equals(""))
 		{
-			filename = GameConstants.PATH_CHARACTERS + email + ".dat"; // filename of the character file
+			filename = GameConstants.PATH_CHARACTERS + basicData.getEmail() + ".dat"; // filename of the character file
 		}
 		else
 		{
@@ -1041,7 +1043,7 @@ public class FileOperations
 		{
 			// create a new default player with the given email address
 			isNewPlayer = true;
-			createNewPlayerFiles(username, email);
+			createNewPlayerFiles(basicData);
 		}
 		
 		Scanner fileReader;
@@ -1148,10 +1150,10 @@ public class FileOperations
 			}
 			else
 			{
-				// file doesn't exist
+				// new character creation didn't work, so the file doesn't exist
 				// create a new character and don't worry about it
 				AStarCharacter newCharacter = new AStarCharacter(username, 15, 7);
-				newCharacter.setEmail(email);
+				newCharacter.setEmail(basicData.getEmail());
 				newCharacter.setCredits(credits);
 				newCharacter.setSignature(signature);
 				
@@ -1179,7 +1181,8 @@ public class FileOperations
 
 		// create a new character from the file data
 		AStarCharacter newCharacter = new AStarCharacter(username, 15, 7);
-		newCharacter.setEmail(email);
+		newCharacter.setGender(basicData.getGender());
+		newCharacter.setEmail(basicData.getEmail());
 		newCharacter.setCredits(credits);
 		newCharacter.setSignature(signature);
 		newCharacter.setContentRating(contentRating);
@@ -1228,6 +1231,9 @@ public class FileOperations
 			
 			// write out the username
 			fileWriter.println("USERNAME: " + character.getUsername());
+			
+			// write out the gender
+			fileWriter.println("GENDER: " + character.getGender());
 			
 			// write out the credits
 			fileWriter.println("CREDITS: " + character.getCredits());

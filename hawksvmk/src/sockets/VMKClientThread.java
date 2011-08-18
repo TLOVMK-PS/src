@@ -119,11 +119,10 @@ public class VMKClientThread extends Thread
 							// login response from server
 							MessageLogin loginMessage = (MessageLogin)inputMessage;
 							System.out.println("Login response received from server");
-							System.out.println("Changing thread name: " + ((MessageLogin)inputMessage).getName());
+							System.out.println("Changing thread name: " + ((MessageLogin)inputMessage).getAvatarBasicData().getUsername());
 							
 							// change the thread name and the UI object name
-							this.setName(loginMessage.getName());
-							uiObject.setUsername(loginMessage.getName());
+							this.setName(loginMessage.getAvatarBasicData().getUsername());
 							
 							// send an "Add To Room" message
 							roomID = "template_gr4";
@@ -195,7 +194,7 @@ public class VMKClientThread extends Thread
 							System.out.println("Move character response received from server for thread: " + this.getName());
 						
 							// move the character in the current room (if it's not user that issued the instruction)
-							if(!moveMsg.getCharacter().getUsername().equals(uiObject.getUsername()))
+							if(!moveMsg.getCharacter().getUsername().equals(uiObject.getAvatarBasicData().getUsername()))
 							{
 								uiObject.moveCharacter(moveMsg.getCharacter(), moveMsg.getDestGridX(), moveMsg.getDestGridY());
 							}
@@ -293,7 +292,7 @@ public class VMKClientThread extends Thread
 							MessageUpdateItemInRoom updateItemMsg = (MessageUpdateItemInRoom)inputMessage;
 							
 							// update item in room message received from server (if it's not from the user that issued it)
-							if(!updateItemMsg.getItem().getOwner().equals(uiObject.getUsername()))
+							if(!updateItemMsg.getItem().getOwner().equals(uiObject.getAvatarBasicData().getUsername()))
 							{
 								uiObject.updateRoomItem(updateItemMsg.getItem());
 							}
@@ -332,7 +331,7 @@ public class VMKClientThread extends Thread
 							System.out.println("Game move user in room response received from server");
 							
 							// check to make sure this is not the client that issued the message
-							if(!gameMoveUserMsg.getUsername().equals(uiObject.getUsername()))
+							if(!gameMoveUserMsg.getUsername().equals(uiObject.getAvatarBasicData().getUsername()))
 							{
 								// move the character in the game room
 								uiObject.gameMoveCharacter(gameMoveUserMsg.getUsername(), gameMoveUserMsg.getGameID(), gameMoveUserMsg.getDestGridX(), gameMoveUserMsg.getDestGridY());

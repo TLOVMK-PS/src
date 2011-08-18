@@ -871,7 +871,7 @@ class FireworkEntryPollingThread implements Runnable
 					if(!countdownActive)
 					{
 						// send a score message to the server
-						fireworksGame.getUIObject().sendAddGameScoreMessage(new GameScore("fireworks",fireworksGame.getUIObject().getUsername(),fireworksGame.getPlayerScore()));
+						fireworksGame.getUIObject().sendAddGameScoreMessage(new GameScore("fireworks",fireworksGame.getUIObject().getAvatarBasicData().getUsername(),fireworksGame.getPlayerScore()));
 						
 						// start the countdown for the next round
 						Thread.sleep(ROUND_COUNTDOWN_DELAY * 3);

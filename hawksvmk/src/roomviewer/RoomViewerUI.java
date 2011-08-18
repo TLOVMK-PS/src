@@ -6,47 +6,35 @@ package roomviewer;
 
 import games.GameScore;
 import games.fireworks.GameFireworks;
-import games.pirates.AStarShip;
 import games.pirates.GamePirates;
 
 import java.applet.Applet;
-import java.awt.AWTKeyStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
-import javax.swing.ImageIcon;
-import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import astar.AStarCharacter;
+import astar.AStarCharacterBasicData;
 
 import login.LoginModule;
 import mainProgram.VMKClient;
@@ -55,17 +43,13 @@ import roomobject.RoomItem;
 import sockets.messages.MessageSecure;
 import sockets.messages.MessageAddChatToRoom;
 import sockets.messages.MessageLogout;
-import sockets.messages.MessageRemoveUserFromRoom;
 import sockets.messages.MessageSendMailToUser;
-import sockets.messages.MessageUpdateCharacterInRoom;
 import sockets.messages.games.MessageGameAddUserToRoom;
 import sockets.messages.games.MessageGameMoveCharacter;
 import sockets.messages.games.MessageGameRemoveUserFromRoom;
 import sockets.messages.games.MessageGameScore;
 import sockets.messages.games.pirates.MessageGamePiratesFireCannons;
 import ui.WindowLoading;
-import ui.WindowMap;
-import ui.WindowRoomDescription;
 import util.Dictionary;
 import util.FileOperations;
 import util.AppletResourceLoader;
@@ -81,11 +65,9 @@ public class RoomViewerUI extends Applet
 	private boolean windowClosing = false; // TRUE when the window is closing
 	
 	private VMKClient theVMKClient; // VMK client socket connection
-	
-	private String email = "";
 
 	private String filename = GameConstants.PATH_ROOMS_TEMPLATES + "gr4.room";
-	private String username = "VMK Player"; // username of the avatar
+	private AStarCharacterBasicData basicAvatarData; // structure to hold basic avatar information
 	
 	private JTextField chatTextBox;
 	private Font textFont;
@@ -309,8 +291,8 @@ public class RoomViewerUI extends Applet
 					// load up the Room Viewer window
 					if(!loginModule.getUsername().trim().equals(""))
 					{
-						roomViewerUI.setUsername(loginModule.getUsername());
-						roomViewerUI.setEmail(emailTextBox.getText());
+						// set basic properties based upon the login result
+						roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender()));
 					}
 					
 					// close the login window
@@ -368,21 +350,23 @@ public class RoomViewerUI extends Applet
 		}
 	}
 	
-	// set the username
-	public void setUsername(String username) {
-		this.username = username;
+	// get the basic avatar data structure
+	public AStarCharacterBasicData getAvatarBasicData()
+	{
+		return basicAvatarData;
 	}
 	
-	// get the username
-	public String getUsername() {
-		return username;
+	// set the basic avatar data structure
+	public void setAvatarBasicData(AStarCharacterBasicData basicAvatarData)
+	{
+		this.basicAvatarData = basicAvatarData;
 	}
 	
 	// add a character to the grid
 	public void addCharacterToRoom(AStarCharacter character)
 	{
 		// make sure the current character hasn't been created on the grid yet
-		if(character.getUsername().equals(getUsername()) && !theGridView.getMyCharacter().getEmail().equals(getEmail()))
+		if(character.getUsername().equals(basicAvatarData.getUsername()) && !theGridView.getMyCharacter().getEmail().equals(basicAvatarData.getEmail()))
 		{
 			// it's the current player's character, so set their displayed pins
 			theGridView.setInventoryPinsWorn(character.getDisplayedPins());
@@ -401,7 +385,7 @@ public class RoomViewerUI extends Applet
 	public void addChatToRoom(String username, String text)
 	{
 		// make sure we're not sending the current user's recent chat again
-		if(!getUsername().equals(username))
+		if(!basicAvatarData.getUsername().equals(username))
 		{
 			theGridView.addTextBubble(username, text, 100);
 		}
@@ -411,7 +395,7 @@ public class RoomViewerUI extends Applet
 	public void moveCharacter(AStarCharacter character, int destGridX, int destGridY)
 	{
 		// make sure we're not moving the current user's character again
-		if(!character.getUsername().equals(username))
+		if(!character.getUsername().equals(basicAvatarData.getUsername()))
 		{
 			theGridView.moveCharacterInRoom(character, destGridX, destGridY);
 		}
@@ -497,9 +481,6 @@ public class RoomViewerUI extends Applet
 	{
 		new MessageSenderThread(m).start();
 	}
-	
-	public String getEmail() {return email;}
-	public void setEmail(String email) {this.email = email;}
 	
 	// show/hide the toolbar elements based upon the value of the "visible" boolean
 	public void showToolbar(boolean visible)
@@ -596,10 +577,10 @@ public class RoomViewerUI extends Applet
 			theGridView.getMyCharacter().addCredits(gameFireworks.getCreditsWon());
 			
 			// send a message to the user informing him of his accomplishment
-			sendMessageToServer(new MessageSendMailToUser("HVMK Staff",username,"Nice job with your fireworks display in Castle Fireworks!<br /><br />In recognition of your accomplishment, you have been awarded " + gameFireworks.getCreditsWon() + " credits.",new Date()));
+			sendMessageToServer(new MessageSendMailToUser("HVMK Staff",basicAvatarData.getUsername(),"Nice job with your fireworks display in Castle Fireworks!<br /><br />In recognition of your accomplishment, you have been awarded " + gameFireworks.getCreditsWon() + " credits.",new Date()));
 			
 			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
-			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
+			sendMessageToServer(new MessageGameRemoveUserFromRoom(basicAvatarData.getUsername(), theGridView.getMyCharacter(), gameFireworks.getRoomID(), theGridView.getRoomInfo().get("ID")));
 			
 			// hide the game area
 			gameFireworks.setVisible(false);
@@ -611,7 +592,7 @@ public class RoomViewerUI extends Applet
 			theGridView.getMyCharacter().addCredits(gamePirates.getCreditsWon());
 			
 			// send the "Game Remove User" message to remove the user from the game room and add him back to the original room
-			sendMessageToServer(new MessageGameRemoveUserFromRoom(username, theGridView.getMyCharacter(), gamePirates.getRoomID(), theGridView.getRoomInfo().get("ID")));
+			sendMessageToServer(new MessageGameRemoveUserFromRoom(basicAvatarData.getUsername(), theGridView.getMyCharacter(), gamePirates.getRoomID(), theGridView.getRoomInfo().get("ID")));
 			
 			// hide the game area
 			gamePirates.setVisible(false);
@@ -658,7 +639,7 @@ public class RoomViewerUI extends Applet
 	public void gameMoveCharacter(String username, String gameID, int destGridX, int destGridY)
 	{
 		// make sure we're not moving the current user's character again
-		if(!getUsername().equals(username))
+		if(!basicAvatarData.getUsername().equals(username))
 		{
 			// check the game ID
 			if(gameID.toLowerCase().equals("pirates"))
@@ -872,7 +853,7 @@ public class RoomViewerUI extends Applet
 					public void actionPerformed(ActionEvent ae)
 					{
 						// add a chat bubble to the grid view
-						theGridView.addTextBubble(username, "This is another chat bubble!", 100);
+						theGridView.addTextBubble(basicAvatarData.getUsername(), "This is another chat bubble!", 100);
 					}
 				});
 				add(addChatButton);
@@ -1059,10 +1040,10 @@ public class RoomViewerUI extends Applet
 					if(e.getKeyCode() == KeyEvent.VK_ENTER) // check for an ENTER key
 					{
 						// send the input to the chat bubbles object in the grid
-						theGridView.addTextBubble(username, chatTextBox.getText(), 100);
+						theGridView.addTextBubble(basicAvatarData.getUsername(), chatTextBox.getText(), 100);
 
 						// send an "Add Chat" message to the server
-						theVMKClient.sendMessageToServer(new MessageAddChatToRoom(username, roomID, chatTextBox.getText()));
+						theVMKClient.sendMessageToServer(new MessageAddChatToRoom(basicAvatarData.getUsername(), roomID, chatTextBox.getText()));
 
 						// clear the text box
 						chatTextBox.setText("");
@@ -1144,7 +1125,7 @@ public class RoomViewerUI extends Applet
 			loadingWindow.setDescription("Starting authentication client...");
 			
 			// connect to the server and start the client connection
-			theVMKClient = new VMKClient(getUsername());
+			theVMKClient = new VMKClient();
 			theVMKClient.setUIObject(roomViewerUI);
 			theVMKClient.startClient();
 		}

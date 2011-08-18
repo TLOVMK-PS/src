@@ -172,8 +172,8 @@ public class VMKServerThread extends Thread
 			    			MessageLogin loginMessage = (MessageLogin)inputMessage;
 			    			System.out.println("Login message received from client");
 	
-			    			// load the character from a file
-			    			AStarCharacter authCharacter = FileOperations.loadCharacter(loginMessage.getEmail());
+			    			// load the character from a file (or create a new one from the username in the login message)
+			    			AStarCharacter authCharacter = FileOperations.loadCharacter(loginMessage.getAvatarBasicData());
 	
 			    			// set the username for the first time if necessary
 			    			if(authCharacter.getUsername().equals(""))
@@ -182,8 +182,7 @@ public class VMKServerThread extends Thread
 			    				authCharacter.setUsername("VMK Player");
 			    			}
 			    			
-			    			// set the thread and message names depending on the character that was loaded
-			    			loginMessage.setName(authCharacter.getUsername());
+			    			// set the thread name depending on the character that was loaded
 			    			this.setName(authCharacter.getUsername());
 	
 			    			System.out.println("Changing thread name for client " + socket.getRemoteSocketAddress().toString() + ": " + authCharacter.getUsername());
@@ -192,10 +191,10 @@ public class VMKServerThread extends Thread
 			    			loginMessage.setCharacter(authCharacter);
 	
 			    			// make sure we have an actual email address
-			    			if(!loginMessage.getEmail().equals(""))
+			    			if(!loginMessage.getAvatarBasicData().getEmail().equals(""))
 			    			{
 			    				// add the username:email mapping
-			    				VMKServerPlayerData.addUsernameEmailMapping(authCharacter.getUsername(), loginMessage.getEmail());
+			    				VMKServerPlayerData.addUsernameEmailMapping(authCharacter.getUsername(), loginMessage.getAvatarBasicData().getEmail());
 			    			}
 	
 			    			// send the login message back to the client
@@ -205,7 +204,7 @@ public class VMKServerThread extends Thread
 			    			updatePlayerStatusInDatabase(this.getName(), "online");
 	
 			    			// load up the friends list in the VMKServerPlayerData class
-			    			VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getEmail()));
+			    			VMKServerPlayerData.addFriendsList(this.getName(), FileOperations.loadFriendsList(loginMessage.getAvatarBasicData().getEmail()));
 	
 			    			// send the player's friends list to him
 			    			FriendsList playerFriends = VMKServerPlayerData.getFriendsList(this.getName());
@@ -228,10 +227,10 @@ public class VMKServerThread extends Thread
 			    			}
 	
 			    			// load a user's offline messages and send them to him
-			    			sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getEmail())));
+			    			sendMessageToClient(new MessageGetOfflineMailMessages(this.getName(), FileOperations.loadMailMessages(this.getName(), loginMessage.getAvatarBasicData().getEmail())));
 	
 			    			// load a user's inventory and send it to him
-			    			sendMessageToClient(new MessageGetInventory(FileOperations.loadInventory(loginMessage.getEmail())));
+			    			sendMessageToClient(new MessageGetInventory(FileOperations.loadInventory(loginMessage.getAvatarBasicData().getEmail())));
 			    		}
 			    		else if (inputMessage instanceof MessageLogout)
 			    		{

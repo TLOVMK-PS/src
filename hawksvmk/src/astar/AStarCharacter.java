@@ -24,6 +24,7 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 {
 	private String username = "";
 	private String email = "";
+	private String gender = "";
 	
 	private int x = 0;
 	private int y = 0;
@@ -115,6 +116,14 @@ public class AStarCharacter implements Serializable, ContentRateable, GridSortab
 	
 	public String getUsername() {
 		return username;
+	}
+	
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	
+	public String getGender() {
+		return gender;
 	}
 
 	public int getX() {

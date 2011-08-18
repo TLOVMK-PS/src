@@ -369,7 +369,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     			if(c.getBoundingBox().contains(mousePoint) && !c.isTransparentAt(mousePoint.x - c.getBoundingBox().x, mousePoint.y - c.getBoundingBox().y))
 	     			{
 	     				// check if it should be inactive
-	     				if(c.getUsername().equals(uiObject.getUsername()))
+	     				if(c.getUsername().equals(uiObject.getAvatarBasicData().getUsername()))
 	     				{
 	     					avatarInfoWindow.setInactive(true);
 	     				}
@@ -388,7 +388,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	     				
 	     				avatarInfoWindow.setBadges(c.getDisplayedBadges());
 	     				
-	     				if(c.getUsername().equals(uiObject.getUsername()))
+	     				if(c.getUsername().equals(uiObject.getAvatarBasicData().getUsername()))
 	     				{
 	     					avatarInfoWindow.setPins(myCharacter.getDisplayedPins());
 	     				}
@@ -1010,7 +1010,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		// set up the clothing window
 		clothingWindow = new WindowClothing(textFont, textFontBold, 200, 50);
 		clothingWindow.setGridObject(this);
-		clothingWindow.setUsername(uiObject.getUsername());
+		clothingWindow.setUsername(uiObject.getAvatarBasicData().getUsername());
 		clothingWindow.setVisible(false);
 		add(clothingWindow);
 
@@ -1139,12 +1139,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		//pathfinder.setTiles(tilesMap);
 		
 		// set up the character
-		myCharacter.setUsername(uiObject.getUsername());
+		myCharacter.setUsername(uiObject.getAvatarBasicData().getUsername());
 		myCharacter.setCurrentTile(tilesMap.get("15-7"));
 		myCharacter.setX(myCharacter.getCurrentTile().getX());
 		myCharacter.setY(myCharacter.getCurrentTile().getY());
 		
-		characters.put(uiObject.getUsername(), myCharacter);
+		characters.put(uiObject.getAvatarBasicData().getUsername(), myCharacter);
 		
 		// create the charactersArray array of characters
 		generateAllGridObjects();
@@ -1266,7 +1266,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 	public void addCharacterToRoom(AStarCharacter character)
 	{
 		// check to see if this is the first time the user has been created, and if so, play the music
-		if(myCharacter.getEmail().equals("") && !uiObject.getEmail().equals(""))
+		if(myCharacter.getEmail().equals("") && !uiObject.getAvatarBasicData().getEmail().equals(""))
 		{
 			// make sure sounds are enabled before we play the sound
 			if(startSounds)
@@ -1279,12 +1279,12 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 		// make sure it's not the character already referenced for this user
 		if(character != null)
 		{
-			if(character.getEmail().equals(uiObject.getEmail()))
+			if(character.getEmail().equals(uiObject.getAvatarBasicData().getEmail()))
 			{
-				System.out.println("Character (" + uiObject.getUsername() + ") already exists in room");
+				System.out.println("Character (" + uiObject.getAvatarBasicData().getUsername() + ") already exists in room");
 				
 				myCharacter = character;
-				myCharacter.setUsername(uiObject.getUsername());
+				myCharacter.setUsername(uiObject.getAvatarBasicData().getUsername());
 				
 				// set the content rating and the currently-selected clothing
 				settingsWindow.setSelectedRating(myCharacter.getContentRatingAsString());
@@ -1335,7 +1335,7 @@ public class RoomViewerGrid extends JPanel implements GridViewable, Runnable
 					myCharacter.setY(character.getCurrentTile().getY());
 				}
 				
-				characters.put(uiObject.getUsername(), myCharacter);
+				characters.put(uiObject.getAvatarBasicData().getUsername(), myCharacter);
 				
 				//uiObject.sendMessageToServer(new MessageUpdateCharacterInRoom(myCharacter, roomID));
 				

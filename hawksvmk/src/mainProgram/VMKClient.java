@@ -24,19 +24,15 @@ import svc.WebService;
 public class VMKClient
 {
 	private Socket vmkSocket = null;
-	private String username = "";
 	private VMKClientThread clientThread; // client thread
 	private RoomViewerUI uiObject; // room viewer UI object
 	
 	private WebService webServiceModule = new WebService();
 	
-	public VMKClient(String username) {this.username = username;}
+	public VMKClient() {}
 	
 	public void setUIObject(RoomViewerUI uiObject) {this.uiObject = uiObject;}
 	public RoomViewerUI getUIObject() {return uiObject;}
-	
-	// get the username of the client
-	public String getUsername() {return username;}
 	
 	// start the VMK client
     public void startClient()
@@ -127,8 +123,8 @@ public class VMKClient
         clientThread.start();
         
         // send a login message to the server to perform an authentication handshake
-        System.out.println("Sending login message to server for email " + uiObject.getEmail() + "...");
-        sendMessageToServer(new MessageLogin(username, uiObject.getEmail()));
+        System.out.println("Sending login message to server for email " + uiObject.getAvatarBasicData().getEmail() + "...");
+        sendMessageToServer(new MessageLogin(uiObject.getAvatarBasicData()));
         System.out.println("Login message sent");
     }
     
@@ -176,6 +172,6 @@ public class VMKClient
 
     public static void main(String args[])
     {
-    	new VMKClient("VMKPlayer").startClient();
+    	new VMKClient().startClient();
     }
 }

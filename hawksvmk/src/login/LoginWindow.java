@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import astar.AStarCharacterBasicData;
+
 import roomviewer.RoomViewerUI;
 import util.AppletResourceLoader;
 
@@ -103,7 +105,7 @@ public class LoginWindow extends JFrame
 					catch(Exception ex) {}
 					
 					// load up the Room Viewer window
-					roomViewerUI.setUsername(loginModule.getUsername());
+					roomViewerUI.setAvatarBasicData(new AStarCharacterBasicData(loginModule.getUsername(), emailTextBox.getText(), loginModule.getGender()));
 					roomViewerUI.loadRoomViewerUI();
 				}
 				else

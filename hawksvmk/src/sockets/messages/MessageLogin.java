@@ -5,25 +5,21 @@
 package sockets.messages;
 
 import astar.AStarCharacter;
+import astar.AStarCharacterBasicData;
 
 public class MessageLogin extends MessageSecure
 {
-	private String name = "";
-	private String email = "";
+	private AStarCharacterBasicData basicData;
 	private AStarCharacter character;
 	
-	public MessageLogin(String name, String email)
+	public MessageLogin(AStarCharacterBasicData basicData)
 	{
 		super("MessageLogin");
-		this.name = name;
-		this.email = email;
+		this.basicData = basicData;
 	}
 	
-	public void setName(String name) {this.name = name;}
-	public String getName() {return name;}
-	
-	public void setEmail(String email) {this.email = email;}
-	public String getEmail() {return email;}
+	public void setAvatarBasicData(AStarCharacterBasicData basicData) {this.basicData = basicData;}
+	public AStarCharacterBasicData getAvatarBasicData() {return basicData;}
 	
 	public void setCharacter(AStarCharacter character) {this.character = character;}
 	public AStarCharacter getCharacter() {return character;}

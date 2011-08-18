@@ -27,6 +27,8 @@ public class GamePirates extends InternalGame implements Runnable
 {	
 	private Thread gameThread = null; // thread to handle the running of the game
 	
+	private String username = "";
+	
 	private int mouseX = 0;
 	private int mouseY = 0;
 	private int gridX = 0;
@@ -122,8 +124,8 @@ public class GamePirates extends InternalGame implements Runnable
 			public void mouseReleased(MouseEvent e)
 			{
 				// move the ship to this tile
-				new MoveMessageSenderThread(getUIObject().getUsername(), (gridX / 2), gridY).start();
-				moveShip(getUIObject().getUsername(), (gridX / 2), gridY);
+				new MoveMessageSenderThread(username, (gridX / 2), gridY).start();
+				moveShip(username, (gridX / 2), gridY);
 				
 				// move the enemy ship to the previously occupied tile
 				//Tile currentPlayerTile = ships.get(getUIObject().getUsername()).getCurrentTile();
@@ -151,8 +153,8 @@ public class GamePirates extends InternalGame implements Runnable
 					if(keysLeft >= 2)
 					{
 						// FIRE FUCKING EVERYTHING
-						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "left").start();
-						fireCannons(getUIObject().getUsername(), "left");
+						new FireCannonsMessageSenderThread(username, "left").start();
+						fireCannons(username, "left");
 					}
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_KP_RIGHT)
@@ -165,8 +167,8 @@ public class GamePirates extends InternalGame implements Runnable
 					if(keysRight >= 2)
 					{
 						// FIRE FUCKING EVERYTHING
-						new FireCannonsMessageSenderThread(getUIObject().getUsername(), "right").start();
-						fireCannons(getUIObject().getUsername(), "right");
+						new FireCannonsMessageSenderThread(username, "right").start();
+						fireCannons(username, "right");
 					}
 				}
 			}
@@ -225,6 +227,9 @@ public class GamePirates extends InternalGame implements Runnable
 	// start the game
 	public void start()
 	{
+		// set the username variable
+		username = getUIObject().getAvatarBasicData().getUsername();
+		
 		// create the offscreen buffer
 		offscreen = createImage(getWidth(), getHeight());
 		
@@ -245,11 +250,11 @@ public class GamePirates extends InternalGame implements Runnable
 		tilesMap = levelsMap.get(getLevelNum() + "_" + getRoundNum());
 		
 		// add a default ship
-		AStarShip defaultShip = new AStarShip(getUIObject().getUsername(),12,2);
+		AStarShip defaultShip = new AStarShip(username,12,2);
 		defaultShip.setCurrentTile(tilesMap.get("12-2"));
 		defaultShip.snapToCurrentTile();
 		defaultShip.updateShipImages();
-		ships.put(getUIObject().getUsername(),defaultShip);
+		ships.put(username,defaultShip);
 		
 		// add an enemy ship
 		AStarShip enemyShip = new AStarShip("Enemy", 14, 7);
@@ -833,7 +838,7 @@ public class GamePirates extends InternalGame implements Runnable
 		ship.subtractAmmo();
 		
 		// check to see if this ship is this player's ship
-		if(ship.getUsername().equals(getUIObject().getUsername()))
+		if(ship.getUsername().equals(username))
 		{
 			// clear the keys pressed
 			keysLeft = 0;
@@ -876,7 +881,7 @@ public class GamePirates extends InternalGame implements Runnable
 		public void run()
 		{
 			// make sure the ship has available ammunition
-			if(ships.get(getUIObject().getUsername()).getAmmo() > 0)
+			if(ships.get(username).getAmmo() > 0)
 			{
 				getUIObject().sendGamePiratesFireCannonsMessage(username, direction, getRoomID());
 			}
