@@ -1050,6 +1050,7 @@ public class FileOperations
 		
 		long credits = 1000;
 		String signature = "";
+		String gender = "";
 		String contentRating = "G";
 		
 		String baseAvatarID = "base_0_0";
@@ -1082,6 +1083,22 @@ public class FileOperations
 					{
 						username = line.replaceFirst("USERNAME: ", "");
 					}
+					else if(line.startsWith("GENDER: ")) // gender
+					{
+						gender = line.replaceFirst("GENDER: ", "");
+						
+						// make sure the two genders are equal
+						if(!gender.equals(basicData.getGender()))
+						{
+							// the gender received from the web-server is different from the file
+							if(!basicData.getGender().isEmpty())
+							{
+								// a different gender was received that is NOT a blank string, so
+								// use that one instead
+								gender = basicData.getGender();
+							}
+						}
+					}
 					else if(line.startsWith("CREDITS: ")) // credits
 					{
 						credits = Long.parseLong(line.replaceFirst("CREDITS: ", ""));
@@ -1101,6 +1118,14 @@ public class FileOperations
 					else if(line.startsWith("RATING: ")) // content rating
 					{
 						contentRating = line.replaceFirst("RATING: ", "");
+						
+						// apply the content rating that is the LEAST restrictive of the one in the file
+						// and the one received from the server
+						if(RatingSystem.getContentRatingIndex(contentRating) < RatingSystem.getContentRatingIndex(basicData.getContentRating()))
+						{
+							// the rating received from the web-server is LESS restrictive, so use that instead
+							contentRating = basicData.getContentRating();
+						}
 					}
 					else if(line.startsWith("BASE AVATAR: ")) // base avatar ID
 					{
@@ -1189,7 +1214,7 @@ public class FileOperations
 
 		// create a new character from the file data
 		AStarCharacter newCharacter = new AStarCharacter(username, 15, 7);
-		newCharacter.setGender(basicData.getGender());
+		newCharacter.setGender(gender);
 		newCharacter.setEmail(basicData.getEmail());
 		newCharacter.setCredits(credits);
 		newCharacter.setSignature(signature);

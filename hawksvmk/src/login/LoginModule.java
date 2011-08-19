@@ -14,6 +14,7 @@ public class LoginModule
 {
 	private String username = "";
 	private String gender = "";
+	private String contentRating = "G";
 	private long credits = -1L;
 	private String staffType = "";
 	private String errorMessage = "";
@@ -52,6 +53,11 @@ public class LoginModule
 				{
 					// get the gender from the connection
 					gender = line.replaceFirst("GENDER: ", "");
+				}
+				else if(line.startsWith("CONTENT: "))
+				{
+					// get the content rating from the connection
+					contentRating = line.replaceFirst("CONTENT: ", "");
 				}
 				else if(line.startsWith("CREDITS: "))
 				{
@@ -137,6 +143,11 @@ public class LoginModule
 	// return the gender
 	public String getGender() {
 		return gender;
+	}
+	
+	// return the content rating
+	public String getContentRating() {
+		return contentRating;
 	}
 	
 	// return the credits

@@ -710,7 +710,7 @@ public class VMKServerThread extends Thread
     	else
     	{
 	    	// perform a web-service call to update the data on the web-server
-	    	AStarCharacterBasicData data = new AStarCharacterBasicData(theCharacter.getUsername(), theCharacter.getEmail(), theCharacter.getGender(), theCharacter.getCredits());
+	    	AStarCharacterBasicData data = new AStarCharacterBasicData(theCharacter.getUsername(), theCharacter.getEmail(), theCharacter.getGender(), theCharacter.getContentRatingAsString(), theCharacter.getCredits());
 	    	updatePlayerDataInDatabase(data);
 	    	
 	    	// save the character to file
